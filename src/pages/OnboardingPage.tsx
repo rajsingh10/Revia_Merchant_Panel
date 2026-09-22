@@ -26,6 +26,25 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   const [isRegistered, setIsRegistered] = useState(true);
   const [activeStep, setActiveStep] = useState<number>(1);
 
+  // Mobile Verification State
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [isMobileVerified, setIsMobileVerified] = useState(false);
+  const [verificationMethod, setVerificationMethod] = useState<'sms' | 'whatsapp'>('sms');
+
+  const handleSendOtp = () => {
+    if (mobileNumber.trim().length >= 10) {
+      setIsOtpSent(true);
+    }
+  };
+
+  const handleVerifyOtp = () => {
+    if (otp.trim().length === 6) {
+      setIsMobileVerified(true);
+    }
+  };
+
   // Scroll to top when advancing onboarding steps
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -47,7 +66,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   const [hours, setHours] = useState('06:30 AM - 07:00 PM PST');
   const [registerType, setRegisterType] = useState<'counter' | 'salon' | 'express'>('counter');
 
-  // 4 Steps replacing old subscription & payment steps with Review & Launch
+  // 4 Steps
   const steps = [
     { id: 1, name: 'Business Info', icon: Building2 },
     { id: 2, name: 'Category & Time', icon: Clock },
@@ -60,7 +79,123 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] pb-16 font-sans">
+    <div className="min-h-screen bg-[#FAF8F5] pb-16 font-sans relative">
+      {!isMobileVerified && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden flex flex-col">
+            <div className="px-6 py-5 border-b border-[#E5E0D8]">
+              <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93] mb-1">SECURE AUTH GATEWAY</div>
+              <h3 className="text-xl font-bold tracking-tight text-[#1A1615]">Mobile Verification</h3>
+              <p className="text-xs text-[#6E6A66] mt-1">Verify your mobile number to begin onboarding.</p>
+            </div>
+            <div className="p-6">
+              <div className="space-y-6">
+                <div className="flex bg-[#FAF8F5] p-1 rounded-lg border border-[#E5E0D8]">
+                  <button
+                    type="button"
+                    onClick={() => setVerificationMethod('sms')}
+                    className={`flex-1 py-2 text-xs font-bold rounded-md transition-all cursor-pointer ${verificationMethod === 'sms' ? 'bg-white text-[#1A1615] shadow-xs border border-[#E5E0D8]' : 'text-[#6E6A66] hover:bg-[#E5E0D8]/50'}`}
+                  >
+                    📞 SMS OTP
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setVerificationMethod('whatsapp')}
+                    className={`flex-1 py-2 text-xs font-semibold flex items-center justify-center gap-1.5 rounded-md transition-all cursor-pointer ${verificationMethod === 'whatsapp' ? 'bg-white text-[#1A1615] shadow-xs border border-[#E5E0D8]' : 'text-[#6E6A66] hover:bg-[#E5E0D8]/50'}`}
+                  >
+                    💬 WhatsApp <span className="bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded text-[8px] font-bold">INSTANT</span>
+                  </button>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">PHONE NUMBER OR EMAIL</label>
+                  <div className="flex gap-2">
+                    <select className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]">
+                      <option>IN +91</option>
+                      <option>US +1</option>
+                    </select>
+                    <input
+                      type="text"
+                      value={mobileNumber}
+                      onChange={(e) => setMobileNumber(e.target.value)}
+                      disabled={isOtpSent}
+                      placeholder="Enter mobile number or email"
+                      className="flex-1 bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753] disabled:opacity-50"
+                    />
+                  </div>
+                  <p className="text-[10px] text-[#9E9A93] mt-2">Operator credentials provisioned by Central IT / General Management.</p>
+                </div>
+                {!isOtpSent ? (
+                  <button
+                    type="button"
+                    onClick={handleSendOtp}
+                    disabled={!mobileNumber}
+                    className="w-full py-3 bg-[#B8860B] text-white text-xs font-bold rounded-lg hover:bg-[#9E782F] disabled:opacity-50 transition-colors cursor-pointer"
+                  >
+                    Send Verification Code →
+                  </button>
+                ) : (
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6E6A66]">ENTER 6-DIGIT VERIFICATION PIN</label>
+                      <span className="text-[10px] text-[#B8860B] font-medium">Expires in 01:39</span>
+                    </div>
+                    <div className="flex justify-between gap-2 mb-3">
+                      {[0, 1, 2, 3, 4, 5].map((idx) => (
+                        <input
+                          key={idx}
+                          id={`otp-${idx}`}
+                          type="text"
+                          maxLength={1}
+                          value={otp[idx] || ''}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '');
+                            if (!val && e.target.value !== '') return;
+                            const newOtp = otp.split('');
+                            if (e.target.value.length > 1) {
+                              const pasted = e.target.value.replace(/\D/g, '').slice(0, 6);
+                              setOtp(pasted);
+                              if (pasted.length === 6) {
+                                document.getElementById('otp-5')?.focus();
+                              }
+                              return;
+                            }
+                            newOtp[idx] = val;
+                            setOtp(newOtp.join(''));
+                            if (val && idx < 5) {
+                              document.getElementById(`otp-${idx + 1}`)?.focus();
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Backspace' && !otp[idx] && idx > 0) {
+                              document.getElementById(`otp-${idx - 1}`)?.focus();
+                            }
+                          }}
+                          className="w-12 h-12 text-center text-lg font-bold bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl focus:outline-hidden focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753] shadow-xs"
+                        />
+                      ))}
+                    </div>
+                    <div className="flex justify-between items-center mb-6">
+                      <span className="text-[10px] text-[#9E9A93]">{mobileNumber.includes('@') ? mobileNumber : `Sent to +91 ${mobileNumber}`}</span>
+                      <button type="button" onClick={() => setIsOtpSent(false)} className="text-[10px] text-[#B8860B] font-semibold hover:underline cursor-pointer">Change {mobileNumber.includes('@') ? 'Email' : 'Number'}</button>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleVerifyOtp}
+                      disabled={otp.length !== 6}
+                      className="w-full py-3 bg-[#B8860B] text-white text-xs font-bold rounded-lg hover:bg-[#9E782F] disabled:opacity-50 transition-colors cursor-pointer mb-4 shadow-sm"
+                    >
+                      Verify PIN &amp; Authenticate →
+                    </button>
+                    <div className="text-center">
+                      <button type="button" className="text-[11px] text-[#B8860B] font-semibold hover:underline cursor-pointer">Didn't receive code? Resend OTP</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Top Banner & Navigation Header */}
       <div className="bg-white border-b border-[#E5E0D8] px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -99,25 +234,23 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   className="relative z-10 flex flex-col items-center group cursor-pointer"
                 >
                   <div
-                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all text-xs font-bold ${
-                      isPast
+                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all text-xs font-bold ${isPast
                         ? 'bg-[#0D7A53] text-white ring-4 ring-[#E6F4ED]'
                         : isCurrent
                           ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-md ring-4 ring-[#FDF8EB]'
                           : 'bg-white border-2 border-[#E5E0D8] text-[#9E9A93] group-hover:border-[#9E9A93]'
-                    }`}
+                      }`}
                   >
                     {isPast ? <Check className="w-4 h-4 text-white" /> : <span>{step.id}</span>}
                   </div>
                   <div className="mt-2 text-center">
                     <span
-                      className={`text-xs block ${
-                        isCurrent
+                      className={`text-xs block ${isCurrent
                           ? 'text-[#1A1615] font-bold'
                           : isPast
                             ? 'text-[#0D7A53] font-semibold'
                             : 'text-[#9E9A93] font-medium'
-                      }`}
+                        }`}
                     >
                       {step.name}
                     </span>
@@ -135,16 +268,16 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
 
         {/* Main 2-Column Area: Form + Right Progress Checklist */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          
+
           {/* Main Form Area (8 cols) */}
           <div className="lg:col-span-8 space-y-6">
             <div className="bg-white border border-[#E5E0D8] rounded-xl p-6 shadow-xs">
-              
+
               {activeStep === 1 && (
                 <>
                   <div className="border-b border-[#E5E0D8] pb-4 mb-6">
                     <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
-                      STEP 01 // BUSINESS PROFILE
+                      STEP 02 // BUSINESS PROFILE
                     </span>
                     <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1">
                       Business Information
@@ -170,7 +303,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                 <>
                   <div className="border-b border-[#E5E0D8] pb-4 mb-6">
                     <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
-                      STEP 02 // OPERATIONS
+                      STEP 03 // OPERATIONS
                     </span>
                     <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1">
                       Category &amp; Settings
@@ -192,7 +325,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                 <>
                   <div className="border-b border-[#E5E0D8] pb-4 mb-6">
                     <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
-                      STEP 03 // PHYSICAL RETAIL PROFILE
+                      STEP 04 // PHYSICAL RETAIL PROFILE
                     </span>
                     <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1">
                       Configure Flagship Outlet &amp; Register Setup
@@ -289,11 +422,10 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div
                           onClick={() => setRegisterType('counter')}
-                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
-                            registerType === 'counter'
+                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${registerType === 'counter'
                               ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
                               : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                          }`}
+                            }`}
                         >
                           <div className="flex items-center justify-between mb-2">
                             <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#E5E0D8] flex items-center justify-center text-[#9E782F]">
@@ -311,11 +443,10 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
 
                         <div
                           onClick={() => setRegisterType('salon')}
-                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
-                            registerType === 'salon'
+                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${registerType === 'salon'
                               ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
                               : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                          }`}
+                            }`}
                         >
                           <div className="flex items-center justify-between mb-2">
                             <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#E5E0D8] flex items-center justify-center text-[#9E782F]">
@@ -333,11 +464,10 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
 
                         <div
                           onClick={() => setRegisterType('express')}
-                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
-                            registerType === 'express'
+                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${registerType === 'express'
                               ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
                               : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                          }`}
+                            }`}
                         >
                           <div className="flex items-center justify-between mb-2">
                             <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#E5E0D8] flex items-center justify-center text-[#9E782F]">
@@ -358,12 +488,12 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                 </>
               )}
 
-              {/* NEW STEP 4: REVIEW & LAUNCH (Replaces old Select Plan & Payment steps) */}
+              {/* NEW STEP 4: REVIEW & LAUNCH */}
               {activeStep === 4 && (
                 <>
                   <div className="border-b border-[#E5E0D8] pb-4 mb-6">
                     <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
-                      STEP 04 // FINAL PROVISIONING
+                      STEP 05 // FINAL PROVISIONING
                     </span>
                     <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1 flex items-center gap-2">
                       <span>Review Setup &amp; Launch Merchant Panel</span>
@@ -401,7 +531,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                     <div className="p-4 rounded-xl border border-[#E5E0D8] bg-[#FAF8F5]">
                       <div className="flex items-center justify-between mb-2">
                         <div className="text-xs font-bold text-[#1A1615] uppercase tracking-wider">Flagship Outlet &amp; Register</div>
-                        <button onClick={() => setActiveStep(3)} className="text-[11px] font-bold text-[#9E782F] hover:underline cursor-pointer">Edit</button>
+                        <button onClick={() => setActiveStep(4)} className="text-[11px] font-bold text-[#9E782F] hover:underline cursor-pointer">Edit</button>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                         <div>
@@ -461,25 +591,25 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                     if (activeStep < 4) setActiveStep(activeStep + 1);
                     else onComplete();
                   }}
-                  className="py-2.5 px-5 text-xs font-bold cursor-pointer"
+                  className={`py-2.5 px-5 text-xs font-bold cursor-pointer`}
                 >
                   {activeStep === 4 ? 'Launch Merchant Panel →' : 'Continue →'}
                 </PrimaryButton>
               </div>
             </div>
-            
+
             {/* Note: System Credit Requirement */}
             <div className="bg-white border border-[#D4A753]/40 rounded-xl p-4 shadow-xs flex items-start gap-3 relative overflow-hidden">
-               <div className="absolute top-0 left-0 bottom-0 w-1 bg-gradient-to-b from-[#D4A753] to-[#9E782F]" />
-               <div className="w-8 h-8 rounded-lg bg-[#FDF8EB] flex items-center justify-center shrink-0">
-                 <Wallet className="w-4 h-4 text-[#9E782F]" />
-               </div>
-               <div>
-                 <h4 className="text-xs font-bold text-[#1A1615]">System Credit Requirement</h4>
-                 <p className="text-[11px] text-[#6E6A66] mt-0.5">
-                   Please note that to start, you need a minimum of <strong>250 credits</strong> in your wallet to run this system.
-                 </p>
-               </div>
+              <div className="absolute top-0 left-0 bottom-0 w-1 bg-gradient-to-b from-[#D4A753] to-[#9E782F]" />
+              <div className="w-8 h-8 rounded-lg bg-[#FDF8EB] flex items-center justify-center shrink-0">
+                <Wallet className="w-4 h-4 text-[#9E782F]" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-[#1A1615]">System Credit Requirement</h4>
+                <p className="text-[11px] text-[#6E6A66] mt-0.5">
+                  Please note that to start, you need a minimum of <strong>250 credits</strong> in your wallet to run this system.
+                </p>
+              </div>
             </div>
 
           </div>
