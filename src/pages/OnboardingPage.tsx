@@ -151,14 +151,22 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">PHONE NUMBER OR EMAIL</label>
                   <div className="flex gap-2">
-                    <select className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]">
-                      <option>IN +91</option>
-                      <option>US +1</option>
-                    </select>
+                    {(mobileNumber.length > 0 && /^[0-9+]/.test(mobileNumber)) && (
+                      <select className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]">
+                        <option>IN +91</option>
+                        <option>US +1</option>
+                      </select>
+                    )}
                     <input
                       type="text"
                       value={mobileNumber}
-                      onChange={(e) => dispatch(setMobileNumber(e.target.value))}
+                      onChange={(e) => {
+                        let val = e.target.value;
+                        if (/^[0-9+]/.test(val)) {
+                          val = val.replace(/[^\d+]/g, '');
+                        }
+                        dispatch(setMobileNumber(val));
+                      }}
                       disabled={isOtpSent || isLoading}
                       placeholder="Enter mobile number or email"
                       className="flex-1 bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753] disabled:opacity-50"
