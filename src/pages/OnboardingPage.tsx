@@ -16,6 +16,9 @@ import {
   Rocket
 } from 'lucide-react';
 import { PrimaryButton } from '../components/common/Badges';
+import { useDispatch, useSelector } from 'react-redux';
+import { requestRegisterOtp, registerMerchant, setMobileNumber, resetAuthState } from '../store/slices/authSlice';
+import { AppDispatch, RootState } from '../store/store';
 
 interface OnboardingPageProps {
   onComplete: () => void;
@@ -27,23 +30,35 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   const [activeStep, setActiveStep] = useState<number>(1);
 
   // Mobile Verification State
-  const [mobileNumber, setMobileNumber] = useState('');
-  const [isOtpSent, setIsOtpSent] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { mobileNumber, isOtpSent, isMobileVerified, isLoading, error } = useSelector((state: RootState) => state.auth);
   const [otp, setOtp] = useState('');
-  const [isMobileVerified, setIsMobileVerified] = useState(false);
   const [verificationMethod, setVerificationMethod] = useState<'sms' | 'whatsapp'>('sms');
+  const [merchantName, setMerchantName] = useState('');
 
   const handleSendOtp = () => {
     if (mobileNumber.trim().length >= 10) {
-      setIsOtpSent(true);
+      dispatch(requestRegisterOtp(mobileNumber));
     }
   };
 
   const handleVerifyOtp = () => {
     if (otp.trim().length === 6) {
-      setIsMobileVerified(true);
+      const isEmail = mobileNumber.includes('@');
+      dispatch(registerMerchant({
+        name: merchantName || 'Merchant',
+        ...(isEmail ? { email: mobileNumber } : { phone: mobileNumber }),
+        otp
+      }));
     }
   };
+
+  // Optional: clear auth state on unmount
+  useEffect(() => {
+    return () => {
+      dispatch(resetAuthState());
+    };
+  }, [dispatch]);
 
   // Scroll to top when advancing onboarding steps
   useEffect(() => {
@@ -107,6 +122,15 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   </button>
                 </div>
                 <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">FULL NAME</label>
+                  <input
+                    type="text"
+                    value={merchantName}
+                    onChange={(e) => setMerchantName(e.target.value)}
+                    disabled={isOtpSent || isLoading}
+                    placeholder="Enter your full name"
+                    className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753] disabled:opacity-50 mb-4"
+                  />
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">PHONE NUMBER OR EMAIL</label>
                   <div className="flex gap-2">
                     <select className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]">
@@ -116,8 +140,8 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                     <input
                       type="text"
                       value={mobileNumber}
-                      onChange={(e) => setMobileNumber(e.target.value)}
-                      disabled={isOtpSent}
+                      onChange={(e) => dispatch(setMobileNumber(e.target.value))}
+                      disabled={isOtpSent || isLoading}
                       placeholder="Enter mobile number or email"
                       className="flex-1 bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753] disabled:opacity-50"
                     />
@@ -125,14 +149,17 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   <p className="text-[10px] text-[#9E9A93] mt-2">Operator credentials provisioned by Central IT / General Management.</p>
                 </div>
                 {!isOtpSent ? (
-                  <button
-                    type="button"
-                    onClick={handleSendOtp}
-                    disabled={!mobileNumber}
-                    className="w-full py-3 bg-[#B8860B] text-white text-xs font-bold rounded-lg hover:bg-[#9E782F] disabled:opacity-50 transition-colors cursor-pointer"
-                  >
-                    Send Verification Code →
-                  </button>
+                  <div className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={handleSendOtp}
+                      disabled={!mobileNumber || !merchantName || isLoading}
+                      className="w-full py-3 bg-[#B8860B] text-white text-xs font-bold rounded-lg hover:bg-[#9E782F] disabled:opacity-50 transition-colors cursor-pointer"
+                    >
+                      {isLoading ? 'Sending...' : 'Send Verification Code →'}
+                    </button>
+                    {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+                  </div>
                 ) : (
                   <div>
                     <div className="flex items-center justify-between mb-3">
@@ -176,16 +203,19 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                     </div>
                     <div className="flex justify-between items-center mb-6">
                       <span className="text-[10px] text-[#9E9A93]">{mobileNumber.includes('@') ? mobileNumber : `Sent to +91 ${mobileNumber}`}</span>
-                      <button type="button" onClick={() => setIsOtpSent(false)} className="text-[10px] text-[#B8860B] font-semibold hover:underline cursor-pointer">Change {mobileNumber.includes('@') ? 'Email' : 'Number'}</button>
+                      <button type="button" onClick={() => dispatch(resetAuthState())} className="text-[10px] text-[#B8860B] font-semibold hover:underline cursor-pointer">Change {mobileNumber.includes('@') ? 'Email' : 'Number'}</button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={handleVerifyOtp}
-                      disabled={otp.length !== 6}
-                      className="w-full py-3 bg-[#B8860B] text-white text-xs font-bold rounded-lg hover:bg-[#9E782F] disabled:opacity-50 transition-colors cursor-pointer mb-4 shadow-sm"
-                    >
-                      Verify PIN &amp; Authenticate →
-                    </button>
+                    <div className="space-y-2 mb-4">
+                      <button
+                        type="button"
+                        onClick={handleVerifyOtp}
+                        disabled={otp.length !== 6 || isLoading}
+                        className="w-full py-3 bg-[#B8860B] text-white text-xs font-bold rounded-lg hover:bg-[#9E782F] disabled:opacity-50 transition-colors cursor-pointer shadow-sm"
+                      >
+                        {isLoading ? 'Verifying...' : 'Verify PIN & Authenticate →'}
+                      </button>
+                      {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+                    </div>
                     <div className="text-center">
                       <button type="button" className="text-[11px] text-[#B8860B] font-semibold hover:underline cursor-pointer">Didn't receive code? Resend OTP</button>
                     </div>
