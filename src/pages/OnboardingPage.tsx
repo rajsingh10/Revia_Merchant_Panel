@@ -30,6 +30,7 @@ interface OnboardingPageProps {
 export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCancel }) => {
   const [isRegistered, setIsRegistered] = useState(true);
   const [activeStep, setActiveStep] = useState<number>(1);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Mobile Verification State
   const dispatch = useDispatch<AppDispatch>();
@@ -77,6 +78,23 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   const [hours, setHours] = useState('06:30 AM - 07:00 PM PST');
   const [registerType, setRegisterType] = useState<'counter' | 'salon' | 'express'>('counter');
   const [isMapOpen, setIsMapOpen] = useState(false);
+
+  const validateStep = (step: number) => {
+    const newErrors: Record<string, string> = {};
+    if (step === 1) {
+      if (!businessName.trim()) newErrors.businessName = 'Business Name is required';
+      if (!ownerName.trim()) newErrors.ownerName = 'Owner Name is required';
+    } else if (step === 2) {
+      if (!businessCategory.trim()) newErrors.businessCategory = 'Business Category is required';
+    } else if (step === 3) {
+      if (!branchName.trim()) newErrors.branchName = 'Branch Name is required';
+      if (!address.trim()) newErrors.address = 'Address is required';
+      if (!timezone.trim()) newErrors.timezone = 'Timezone is required';
+      if (!hours.trim()) newErrors.hours = 'Operating hours are required';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // 4 Steps
   const steps = [
@@ -278,8 +296,9 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
         {/* Top 4-Step Horizontal Wizard */}
         <div className="bg-white border border-[#E5E0D8] rounded-xl p-4 sm:p-5 mb-6 shadow-xs">
-          <div className="flex items-center justify-between relative">
-            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#E5E0D8] -translate-y-1/2 z-0 hidden md:block" />
+          <div className="flex items-start justify-between relative">
+            {/* The circle is h-9 (36px), so its center is at 18px. Position the line at top-[18px] */}
+            <div className="absolute top-[18px] left-8 right-8 h-0.5 bg-[#E5E0D8] -translate-y-1/2 z-0 hidden md:block" />
 
             {steps.map((step) => {
               const isPast = step.id < activeStep;
@@ -289,10 +308,10 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                 <div
                   key={step.id}
                   onClick={() => setActiveStep(step.id)}
-                  className="relative z-10 flex flex-col items-center group cursor-pointer"
+                  className="relative z-10 flex flex-col items-center group cursor-pointer w-24"
                 >
                   <div
-                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all text-xs font-bold ${isPast
+                    className={`w-9 h-9 shrink-0 rounded-full flex items-center justify-center transition-all text-xs font-bold ${isPast
                         ? 'bg-[#0D7A53] text-white ring-4 ring-[#E6F4ED]'
                         : isCurrent
                           ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-md ring-4 ring-[#FDF8EB]'
@@ -313,7 +332,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                       {step.name}
                     </span>
                     {isCurrent && (
-                      <span className="text-[9px] uppercase font-bold text-[#9E782F] tracking-wider block">
+                      <span className="text-[9px] uppercase font-bold text-[#9E782F] tracking-wider block mt-0.5">
                         • ACTIVE STEP
                       </span>
                     )}
@@ -346,12 +365,24 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Business Name</label>
-                      <input type="text" value={businessName} onChange={(e) => setBusinessName(e.target.value)} className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]" />
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Business Name <span className="text-red-500">*</span></label>
+                      <input 
+                        type="text" 
+                        value={businessName} 
+                        onChange={(e) => { setBusinessName(e.target.value); if (errors.businessName) setErrors({...errors, businessName: ''}); }} 
+                        className={`w-full bg-[#FAF8F5] border ${errors.businessName ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden`} 
+                      />
+                      {errors.businessName && <p className="text-red-500 text-[10px] mt-1">{errors.businessName}</p>}
                     </div>
                     <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Owner Name</label>
-                      <input type="text" value={ownerName} onChange={(e) => setOwnerName(e.target.value)} className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]" />
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Owner Name <span className="text-red-500">*</span></label>
+                      <input 
+                        type="text" 
+                        value={ownerName} 
+                        onChange={(e) => { setOwnerName(e.target.value); if (errors.ownerName) setErrors({...errors, ownerName: ''}); }} 
+                        className={`w-full bg-[#FAF8F5] border ${errors.ownerName ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden`} 
+                      />
+                      {errors.ownerName && <p className="text-red-500 text-[10px] mt-1">{errors.ownerName}</p>}
                     </div>
                   </div>
                 </>
@@ -372,8 +403,15 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Business Category</label>
-                      <input type="text" value={businessCategory} onChange={(e) => setBusinessCategory(e.target.value)} className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]" placeholder="e.g. Coffee Shop, Retail" />
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Business Category <span className="text-red-500">*</span></label>
+                      <input 
+                        type="text" 
+                        value={businessCategory} 
+                        onChange={(e) => { setBusinessCategory(e.target.value); if (errors.businessCategory) setErrors({...errors, businessCategory: ''}); }} 
+                        className={`w-full bg-[#FAF8F5] border ${errors.businessCategory ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden`} 
+                        placeholder="e.g. Coffee Shop, Retail" 
+                      />
+                      {errors.businessCategory && <p className="text-red-500 text-[10px] mt-1">{errors.businessCategory}</p>}
                     </div>
                   </div>
                 </>
@@ -397,29 +435,31 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   <div className="space-y-4">
                     <div>
                       <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
-                        Official Branch Name
+                        Official Branch Name <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
                         value={branchName}
-                        onChange={(e) => setBranchName(e.target.value)}
-                        className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]"
+                        onChange={(e) => { setBranchName(e.target.value); if (errors.branchName) setErrors({...errors, branchName: ''}); }}
+                        className={`w-full bg-[#FAF8F5] border ${errors.branchName ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden`}
                       />
+                      {errors.branchName && <p className="text-red-500 text-[10px] mt-1">{errors.branchName}</p>}
                     </div>
 
                     <div>
                       <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
-                        Physical Address &amp; GPS Pin
+                        Physical Address &amp; GPS Pin <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <MapPin className="w-4 h-4 text-[#9E782F] absolute left-3 top-3" />
                         <input
                           type="text"
                           value={address}
-                          onChange={(e) => setAddress(e.target.value)}
-                          className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]"
+                          onChange={(e) => { setAddress(e.target.value); if (errors.address) setErrors({...errors, address: ''}); }}
+                          className={`w-full bg-[#FAF8F5] border ${errors.address ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden`}
                         />
                       </div>
+                      {errors.address && <p className="text-red-500 text-[10px] mt-1">{errors.address}</p>}
                     </div>
 
                     {/* Mock Map Preview Box */}
@@ -454,25 +494,27 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                       <div>
                         <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
-                          Store Timezone
+                          Store Timezone <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="text"
                           value={timezone}
-                          onChange={(e) => setTimezone(e.target.value)}
-                          className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-medium text-[#1A1615]"
+                          onChange={(e) => { setTimezone(e.target.value); if (errors.timezone) setErrors({...errors, timezone: ''}); }}
+                          className={`w-full bg-[#FAF8F5] border ${errors.timezone ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden`}
                         />
+                        {errors.timezone && <p className="text-red-500 text-[10px] mt-1">{errors.timezone}</p>}
                       </div>
                       <div>
                         <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
-                          Daily Operating Hours
+                          Daily Operating Hours <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="text"
                           value={hours}
-                          onChange={(e) => setHours(e.target.value)}
-                          className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-medium text-[#1A1615]"
+                          onChange={(e) => { setHours(e.target.value); if (errors.hours) setErrors({...errors, hours: ''}); }}
+                          className={`w-full bg-[#FAF8F5] border ${errors.hours ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden`}
                         />
+                        {errors.hours && <p className="text-red-500 text-[10px] mt-1">{errors.hours}</p>}
                       </div>
                     </div>
 
@@ -657,7 +699,9 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                     type="button"
                     onClick={() => {
                       if (activeStep < 4) {
-                        setActiveStep(activeStep + 1);
+                        if (validateStep(activeStep)) {
+                          setActiveStep(activeStep + 1);
+                        }
                       } else {
                         handleLaunch();
                       }
