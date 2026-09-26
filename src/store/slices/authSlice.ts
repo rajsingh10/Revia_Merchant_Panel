@@ -19,11 +19,11 @@ const initialState: AuthState = {
 
 export const requestRegisterOtp = createAsyncThunk(
   'auth/requestRegisterOtp',
-  async (phone: string, { rejectWithValue }) => {
+  async (identifier: string, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post('auth/merchant/request-register-otp', {
-        phone,
-      });
+      const isEmail = identifier.includes('@');
+      const payload = isEmail ? { email: identifier } : { phone: identifier };
+      const response = await apiClient.post('auth/merchant/request-register-otp', payload);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to request OTP');
@@ -33,9 +33,15 @@ export const requestRegisterOtp = createAsyncThunk(
 
 export const registerMerchant = createAsyncThunk(
   'auth/registerMerchant',
-  async (data: { name: string; phone?: string; email?: string; otp: string }, { rejectWithValue }) => {
+  async (data: { identifier: string; otp: string; name?: string }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post('auth/merchant/register', data);
+      const isEmail = data.identifier.includes('@');
+      const payload = {
+        otp: data.otp,
+        ...(data.name ? { name: data.name } : {}),
+        ...(isEmail ? { email: data.identifier } : { phone: data.identifier }),
+      };
+      const response = await apiClient.post('auth/merchant/register', payload);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to verify OTP');

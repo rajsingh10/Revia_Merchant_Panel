@@ -18,6 +18,7 @@ import {
 import { PrimaryButton } from '../components/common/Badges';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestRegisterOtp, registerMerchant, setMobileNumber, resetAuthState } from '../store/slices/authSlice';
+import { onboardMerchant, resetOnboardingState } from '../store/slices/onboardingSlice';
 import { AppDispatch, RootState } from '../store/store';
 
 interface OnboardingPageProps {
@@ -34,7 +35,6 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   const { mobileNumber, isOtpSent, isMobileVerified, isLoading, error } = useSelector((state: RootState) => state.auth);
   const [otp, setOtp] = useState('');
   const [verificationMethod, setVerificationMethod] = useState<'sms' | 'whatsapp'>('sms');
-  const [merchantName, setMerchantName] = useState('');
 
   const handleSendOtp = () => {
     if (mobileNumber.trim().length >= 10) {
@@ -44,12 +44,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
 
   const handleVerifyOtp = () => {
     if (otp.trim().length === 6) {
-      const isEmail = mobileNumber.includes('@');
-      dispatch(registerMerchant({
-        name: merchantName || 'Merchant',
-        ...(isEmail ? { email: mobileNumber } : { phone: mobileNumber }),
-        otp
-      }));
+      dispatch(registerMerchant({ identifier: mobileNumber, otp }));
     }
   };
 
@@ -89,6 +84,38 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
     { id: 4, name: 'Review & Launch', icon: Rocket },
   ];
 
+  const { isLoading: isOnboarding, error: onboardingError, isOnboardingComplete } = useSelector((state: RootState) => state.onboarding);
+
+  useEffect(() => {
+    if (isOnboardingComplete) {
+      dispatch(resetOnboardingState());
+      onComplete();
+    }
+  }, [isOnboardingComplete, onComplete, dispatch]);
+
+  const handleLaunch = () => {
+    console.log("handleLaunch triggered with data:", {
+      businessName,
+      ownerName,
+      businessCategory,
+      branchName,
+      address,
+      timezone,
+      hours,
+      registerType
+    });
+    dispatch(onboardMerchant({
+      businessName,
+      ownerName,
+      businessCategory,
+      branchName,
+      address,
+      timezone,
+      hours,
+      registerType
+    }));
+  };
+
   if (!isRegistered) {
     return <LoginPage onLoginSuccess={() => setIsRegistered(true)} />;
   }
@@ -122,15 +149,6 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   </button>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">FULL NAME</label>
-                  <input
-                    type="text"
-                    value={merchantName}
-                    onChange={(e) => setMerchantName(e.target.value)}
-                    disabled={isOtpSent || isLoading}
-                    placeholder="Enter your full name"
-                    className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753] disabled:opacity-50 mb-4"
-                  />
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">PHONE NUMBER OR EMAIL</label>
                   <div className="flex gap-2">
                     <select className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]">
@@ -153,7 +171,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                     <button
                       type="button"
                       onClick={handleSendOtp}
-                      disabled={!mobileNumber || !merchantName || isLoading}
+                      disabled={!mobileNumber || isLoading}
                       className="w-full py-3 bg-[#B8860B] text-white text-xs font-bold rounded-lg hover:bg-[#9E782F] disabled:opacity-50 transition-colors cursor-pointer"
                     >
                       {isLoading ? 'Sending...' : 'Send Verification Code →'}
@@ -615,16 +633,23 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                 ) : (
                   <div></div>
                 )}
-                <PrimaryButton
-                  type="button"
-                  onClick={() => {
-                    if (activeStep < 4) setActiveStep(activeStep + 1);
-                    else onComplete();
-                  }}
-                  className={`py-2.5 px-5 text-xs font-bold cursor-pointer`}
-                >
-                  {activeStep === 4 ? 'Launch Merchant Panel →' : 'Continue →'}
-                </PrimaryButton>
+                <div className="flex items-center gap-4">
+                  {onboardingError && <span className="text-xs text-red-500 font-medium">{onboardingError}</span>}
+                  <PrimaryButton
+                    type="button"
+                    onClick={() => {
+                      if (activeStep < 4) {
+                        setActiveStep(activeStep + 1);
+                      } else {
+                        handleLaunch();
+                      }
+                    }}
+                    disabled={isOnboarding}
+                    className={`py-2.5 px-5 text-xs font-bold cursor-pointer ${isOnboarding ? 'opacity-50' : ''}`}
+                  >
+                    {isOnboarding ? 'Launching...' : activeStep === 4 ? 'Launch Merchant Panel →' : 'Continue →'}
+                  </PrimaryButton>
+                </div>
               </div>
             </div>
 
