@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LoginPage } from './LoginPage';
+import { MapModal } from '../components/common/MapModal';
 import {
   Check,
   Building2,
@@ -75,6 +76,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   const [timezone, setTimezone] = useState('America/Los_Angeles (PST - UTC-8)');
   const [hours, setHours] = useState('06:30 AM - 07:00 PM PST');
   const [registerType, setRegisterType] = useState<'counter' | 'salon' | 'express'>('counter');
+  const [isMapOpen, setIsMapOpen] = useState(false);
 
   // 4 Steps
   const steps = [
@@ -421,9 +423,12 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                     </div>
 
                     {/* Mock Map Preview Box */}
-                    <div className="h-32 rounded-lg border border-[#E5E0D8] bg-[#F5F4F0] relative overflow-hidden flex items-center justify-center">
+                    <div 
+                      className="h-32 rounded-lg border border-[#E5E0D8] bg-[#F5F4F0] relative overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#D4A753] transition-colors group"
+                      onClick={() => setIsMapOpen(true)}
+                    >
                       <div
-                        className="absolute inset-0 opacity-40 bg-cover bg-center"
+                        className="absolute inset-0 opacity-40 bg-cover bg-center group-hover:opacity-60 transition-opacity"
                         style={{
                           backgroundImage:
                             'radial-gradient(#D4A753 1px, transparent 1px), radial-gradient(#9E782F 1px, #FAF8F5 1px)',
@@ -436,6 +441,11 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                         <span className="text-xs font-bold text-[#1A1615]">Montgomery Flagship Beacon Verified</span>
                         <span className="text-[10px] text-[#0D7A53] font-semibold bg-[#E6F4ED] px-1.5 py-0.5 rounded">
                           ±1.2m Accuracy
+                        </span>
+                      </div>
+                      <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity backdrop-blur-[1px]">
+                        <span className="bg-white text-[#1A1615] px-3 py-1.5 rounded-md text-xs font-bold shadow-sm">
+                          Click to select on map
                         </span>
                       </div>
                     </div>
@@ -467,7 +477,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                     </div>
 
                     {/* Selection Cards: Primary Register Architecture */}
-                    <div className="pt-4 border-t border-[#E5E0D8]">
+                    {/* <div className="pt-4 border-t border-[#E5E0D8]">
                       <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1">
                         Primary Register Architecture
                       </label>
@@ -539,7 +549,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                           <div className="text-[10px] text-[#6E6A66] mt-0.5">Sub-20s tap &amp; go scan, automated loyalty stamp batching.</div>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </>
               )}
@@ -587,7 +597,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                     <div className="p-4 rounded-xl border border-[#E5E0D8] bg-[#FAF8F5]">
                       <div className="flex items-center justify-between mb-2">
                         <div className="text-xs font-bold text-[#1A1615] uppercase tracking-wider">Flagship Outlet &amp; Register</div>
-                        <button onClick={() => setActiveStep(4)} className="text-[11px] font-bold text-[#9E782F] hover:underline cursor-pointer">Edit</button>
+                        <button onClick={() => setActiveStep(3)} className="text-[11px] font-bold text-[#9E782F] hover:underline cursor-pointer">Edit</button>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                         <div>
@@ -764,6 +774,11 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
           </div>
         </div>
       </div>
+      <MapModal 
+        isOpen={isMapOpen} 
+        onClose={() => setIsMapOpen(false)} 
+        onSelectLocation={(addr) => setAddress(addr)} 
+      />
     </div>
   );
 };
