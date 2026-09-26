@@ -472,11 +472,11 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={() => {
                   setNotificationsOpen(false);
-                  onNavigate('/settings/audit');
+                  onNavigate('/notifications');
                 }}
                 className="w-full mt-1 text-center py-1.5 text-[11px] font-semibold text-[#A37837] hover:underline cursor-pointer"
               >
-                View Audit Log Trail →
+                View all Notifications →
               </button>
             </div>
           )}
