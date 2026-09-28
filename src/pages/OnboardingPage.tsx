@@ -38,6 +38,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   const { mobileNumber, isOtpSent, isMobileVerified, isLoading, error } = useSelector((state: RootState) => state.auth);
   const [otp, setOtp] = useState('');
   const [verificationMethod, setVerificationMethod] = useState<'sms' | 'whatsapp'>('sms');
+  const [validationError, setValidationError] = useState('');
 
   const handleSendOtp = () => {
     if (mobileNumber.trim().length >= 10) {
@@ -203,7 +204,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">PHONE NUMBER OR EMAIL</label>
                   <div className="flex gap-2">
-                    {(mobileNumber.length > 0 && /^[0-9+]/.test(mobileNumber)) && (
+                    {(!mobileNumber || /^[0-9+]/.test(mobileNumber)) && (
                       <select className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]">
                         <option>IN +91</option>
                         <option>US +1</option>
@@ -213,21 +214,36 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                       type="text"
                       value={mobileNumber}
                       onChange={(e) => {
-                        dispatch(setMobileNumber(e.target.value));
+                        let val = e.target.value;
+                        if (/^[0-9+]/.test(val)) {
+                          val = val.replace(/[^\d+]/g, '');
+                        }
+                        dispatch(setMobileNumber(val));
+                        if (val.trim()) setValidationError('');
                       }}
                       disabled={isOtpSent || isLoading}
                       placeholder="Enter mobile number or email"
-                      className="flex-1 bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753] disabled:opacity-50"
+                      className={`w-full pl-9 pr-3 py-2.5 bg-[#FAF8F5] border rounded-lg text-xs font-medium text-[#1A1615] focus:outline-hidden disabled:opacity-50 transition-colors ${validationError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753] focus:ring-[#D4A753] focus:ring-1'}`}
                     />
                   </div>
+                  {validationError && (
+                    <p className="text-red-500 text-[10px] mt-1 font-semibold">{validationError}</p>
+                  )}
                   <p className="text-[10px] text-[#9E9A93] mt-2">Operator credentials provisioned by Central IT / General Management.</p>
                 </div>
                 {!isOtpSent ? (
                   <div className="space-y-2">
                     <button
                       type="button"
-                      onClick={handleSendOtp}
-                      disabled={!mobileNumber || isLoading}
+                      onClick={() => {
+                        if (mobileNumber.trim().length >= 5) {
+                          setValidationError('');
+                          dispatch(requestRegisterOtp(mobileNumber));
+                        } else {
+                          setValidationError('Phone number or email is required');
+                        }
+                      }}
+                      disabled={isLoading}
                       className="w-full py-3 bg-[#B8860B] text-white text-xs font-bold rounded-lg hover:bg-[#9E782F] disabled:opacity-50 transition-colors cursor-pointer"
                     >
                       {isLoading ? 'Sending...' : 'Send Verification Code →'}
