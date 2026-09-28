@@ -215,23 +215,32 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
                   Phone Number or Email
                 </label>
                 <div className="flex gap-2">
-                  <select
-                    value={countryCode}
-                    onChange={(e) => setCountryCode(e.target.value)}
-                    aria-label="Country Dialing Code"
-                    className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-2.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#D4A753] cursor-pointer"
-                  >
-                    <option value="+91">IN +91</option>
-                    <option value="+1">US +1</option>
-                    <option value="+44">UK +44</option>
-                    <option value="+61">AU +61</option>
-                    <option value="+81">JP +81</option>
-                    <option value="+49">DE +49</option>
-                  </select>
+                  {(!phone || /^[0-9+]/.test(phone)) && (
+                    <select
+                      value={countryCode}
+                      onChange={(e) => setCountryCode(e.target.value)}
+                      aria-label="Country Dialing Code"
+                      className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-2.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#D4A753] cursor-pointer"
+                    >
+                      <option value="+91">IN +91</option>
+                      <option value="+1">US +1</option>
+                      <option value="+44">UK +44</option>
+                      <option value="+61">AU +61</option>
+                      <option value="+81">JP +81</option>
+                      <option value="+49">DE +49</option>
+                    </select>
+                  )}
                   <input
                     type="text"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(e) => {
+                      let val = e.target.value;
+                      // If it starts with a number or +, treat as phone and strip alphabets
+                      if (/^[0-9+]/.test(val)) {
+                        val = val.replace(/[^\d+]/g, '');
+                      }
+                      setPhone(val);
+                    }}
                     placeholder="Enter registered mobile number or email"
                     className="flex-1 bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]"
                   />
