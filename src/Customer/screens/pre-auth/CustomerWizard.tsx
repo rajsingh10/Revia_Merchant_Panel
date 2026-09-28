@@ -9,6 +9,9 @@ import { CustomerHeader } from '../../components/shared/CustomerHeader';
 import { MOCK_BUSINESS } from '../../data/mockData';
 import { MOCK_CATALOG_ITEMS } from '../../../data/mockData';
 import { useCustomer } from '../../CustomerContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../../../store/store';
+import { fetchStates, fetchCities, clearCities } from '../../../store/slices/locationSlice';
 
 export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => void, onNavigate?: (route: string) => void }) => {
   const { cartItems, addItem } = useCustomer();
@@ -31,6 +34,29 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
   const [city, setCity] = useState('');
   const [stateText, setStateText] = useState('');
   const [pincode, setPincode] = useState('');
+
+  const dispatch = useDispatch<AppDispatch>();
+  const { states, cities, isStatesLoading, isCitiesLoading } = useSelector((state: RootState) => state.location);
+
+  useEffect(() => {
+    if (step === 2) {
+      dispatch(fetchStates());
+    }
+  }, [step, dispatch]);
+
+  const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const stateName = e.target.value;
+    setStateText(stateName);
+    setCity('');
+    if (!stateName) {
+      dispatch(clearCities());
+      return;
+    }
+    const selectedStateObj = states.find(s => s.name === stateName);
+    if (selectedStateObj) {
+      dispatch(fetchCities(selectedStateObj.id));
+    }
+  };
 
   const goNext = () => { if (step < totalSteps) setStep(step + 1); else onComplete(); };
 
@@ -375,21 +401,31 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
                       <div>
-                        <label htmlFor="city" className="block text-[12px] font-black uppercase tracking-wider text-[#111] mb-1.5">City</label>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                            <Building className="h-4 w-4 text-[#666]" />
-                          </div>
-                          <input type="text" id="city" name="city" value={city} onChange={e => setCity(e.target.value)} placeholder="New York" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-10 pr-3 py-2.5 text-sm font-bold text-[#111] focus:outline-hidden focus:border-[#D4A753] transition-colors placeholder:text-[#888]" />
-                        </div>
-                      </div>
-                      <div>
                         <label htmlFor="state" className="block text-[12px] font-black uppercase tracking-wider text-[#111] mb-1.5">State</label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                             <MapPin className="h-4 w-4 text-[#666]" />
                           </div>
-                          <input type="text" id="state" name="state" value={stateText} onChange={e => setStateText(e.target.value)} placeholder="NY" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-10 pr-3 py-2.5 text-sm font-bold text-[#111] focus:outline-hidden focus:border-[#D4A753] transition-colors placeholder:text-[#888]" />
+                          <select id="state" name="state" value={stateText} onChange={handleStateChange} className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-10 pr-3 py-2.5 text-sm font-bold text-[#111] focus:outline-hidden focus:border-[#D4A753] transition-colors cursor-pointer appearance-none">
+                            <option value="">Select State</option>
+                            {states.map(s => (
+                              <option key={s.id} value={s.name}>{s.name}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label htmlFor="city" className="block text-[12px] font-black uppercase tracking-wider text-[#111] mb-1.5">City</label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <Building className="h-4 w-4 text-[#666]" />
+                          </div>
+                          <select id="city" name="city" value={city} onChange={e => setCity(e.target.value)} disabled={!stateText || isCitiesLoading} className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-10 pr-3 py-2.5 text-sm font-bold text-[#111] focus:outline-hidden focus:border-[#D4A753] transition-colors cursor-pointer appearance-none disabled:opacity-50 disabled:cursor-not-allowed">
+                            <option value="">Select City</option>
+                            {cities.map(c => (
+                              <option key={c.id} value={c.name}>{c.name}</option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                       <div>
