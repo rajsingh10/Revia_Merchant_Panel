@@ -181,7 +181,7 @@ export default function App() {
     return (
       <OnboardingPage
         onComplete={() => handleNavigate('/dashboard')}
-        onCancel={() => handleNavigate('/login')}
+        onCancel={() => handleNavigate('/')}
       />
     );
   }

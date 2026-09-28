@@ -77,7 +77,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await apiClient.get('admin/business-categories');
+        const response = await apiClient.get('/business-categories');
         const data = response.data?.data || response.data;
         if (Array.isArray(data)) {
           setCategories(data);
@@ -165,10 +165,22 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
       {!isMobileVerified && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden flex flex-col">
-            <div className="px-6 py-5 border-b border-[#E5E0D8]">
-              <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93] mb-1">SECURE AUTH GATEWAY</div>
-              <h3 className="text-xl font-bold tracking-tight text-[#1A1615]">Mobile Verification</h3>
-              <p className="text-xs text-[#6E6A66] mt-1">Verify your mobile number to begin onboarding.</p>
+            <div className="px-6 py-5 border-b border-[#E5E0D8] flex justify-between items-start">
+              <div>
+                <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93] mb-1">SECURE AUTH GATEWAY</div>
+                <h3 className="text-xl font-bold tracking-tight text-[#1A1615]">Mobile Verification</h3>
+                <p className="text-xs text-[#6E6A66] mt-1">Verify your mobile number to begin onboarding.</p>
+              </div>
+              <button 
+                onClick={onCancel}
+                className="text-[#9E9A93] hover:text-[#1A1615] transition-colors p-1"
+                aria-label="Close"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
             </div>
             <div className="p-6">
               <div className="space-y-6">
