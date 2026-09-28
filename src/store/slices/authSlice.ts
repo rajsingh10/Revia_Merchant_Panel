@@ -1,13 +1,30 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import apiClient from '../../api/apiClient';
 
+interface User {
+  user_id: number;
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+  role: string;
+  merchant_status: string;
+  admin_approved: boolean;
+  has_business: boolean;
+}
+
 interface AuthState {
   mobileNumber: string;
   isOtpSent: boolean;
   isMobileVerified: boolean;
   isLoading: boolean;
   error: string | null;
+  token: string | null;
+  user: User | null;
+  isAuthenticated: boolean;
 }
+
+const tokenFromStorage = localStorage.getItem('token');
+const userFromStorage = localStorage.getItem('user');
 
 const initialState: AuthState = {
   mobileNumber: '',
@@ -15,6 +32,9 @@ const initialState: AuthState = {
   isMobileVerified: false,
   isLoading: false,
   error: null,
+  token: tokenFromStorage,
+  user: userFromStorage ? JSON.parse(userFromStorage) : null,
+  isAuthenticated: !!tokenFromStorage,
 };
 
 export const requestRegisterOtp = createAsyncThunk(
@@ -60,6 +80,13 @@ const authSlice = createSlice({
       state.isOtpSent = false;
       state.isMobileVerified = false;
       state.error = null;
+    },
+    logout(state) {
+      state.token = null;
+      state.user = null;
+      state.isAuthenticated = false;
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
     }
   },
   extraReducers: (builder) => {
@@ -80,9 +107,20 @@ const authSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(registerMerchant.fulfilled, (state) => {
+      .addCase(registerMerchant.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isMobileVerified = true;
+        
+        const payloadData = action.payload?.data || action.payload;
+        
+        if (payloadData?.token) {
+          state.token = payloadData.token;
+          const { token, ...userData } = payloadData;
+          state.user = userData;
+          state.isAuthenticated = true;
+          localStorage.setItem('token', payloadData.token);
+          localStorage.setItem('user', JSON.stringify(userData));
+        }
       })
       .addCase(registerMerchant.rejected, (state, action) => {
         state.isLoading = false;
@@ -91,6 +129,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setMobileNumber, resetAuthState } = authSlice.actions;
+export const { setMobileNumber, resetAuthState, logout } = authSlice.actions;
 
 export default authSlice.reducer;

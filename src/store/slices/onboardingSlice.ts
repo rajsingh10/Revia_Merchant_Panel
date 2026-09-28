@@ -30,9 +30,9 @@ export const onboardMerchant = createAsyncThunk(
   ) => {
     try {
       const payload = {
-        business_name: data.businessName,
+        name: data.businessName,
         owner_name: data.ownerName,
-        business_category: data.businessCategory,
+        category_id: data.businessCategory,
         branch_name: data.branchName,
         address: data.address,
         timezone: data.timezone,
@@ -46,7 +46,15 @@ export const onboardMerchant = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       console.error('Onboard error:', error);
-      return rejectWithValue(error.response?.data?.message || 'Failed to onboard merchant');
+      const data = error.response?.data;
+      let errorMsg = data?.message || 'Failed to onboard merchant';
+      if (data?.errors) {
+        const errorList = Object.values(data.errors).flat();
+        if (errorList.length > 0) {
+          errorMsg = errorList.join(' ');
+        }
+      }
+      return rejectWithValue(errorMsg);
     }
   }
 );

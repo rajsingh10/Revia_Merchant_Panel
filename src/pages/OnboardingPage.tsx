@@ -21,6 +21,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { requestRegisterOtp, registerMerchant, setMobileNumber, resetAuthState } from '../store/slices/authSlice';
 import { onboardMerchant, resetOnboardingState } from '../store/slices/onboardingSlice';
 import { AppDispatch, RootState } from '../store/store';
+import apiClient from '../api/apiClient';
 
 interface OnboardingPageProps {
   onComplete: () => void;
@@ -68,8 +69,27 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
 
   // M-01 Business Info
   const [businessName, setBusinessName] = useState('Blue Bottle Specialty Roasters');
-  const [businessCategory, setBusinessCategory] = useState('Coffee Shop & Artisanal Bakery');
+  const [businessCategory, setBusinessCategory] = useState<number | ''>('');
   const [ownerName, setOwnerName] = useState('Elena Vance');
+  
+  const [categories, setCategories] = useState<{ id: number, name: string }[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await apiClient.get('admin/business-categories');
+        const data = response.data?.data || response.data;
+        if (Array.isArray(data)) {
+          setCategories(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      }
+    };
+    if (isRegistered) {
+      fetchCategories();
+    }
+  }, [isRegistered]);
 
   // Step 3 First Branch
   const [branchName, setBranchName] = useState('Blue Bottle Cafe - Downtown Flagship');
@@ -85,7 +105,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
       if (!businessName.trim()) newErrors.businessName = 'Business Name is required';
       if (!ownerName.trim()) newErrors.ownerName = 'Owner Name is required';
     } else if (step === 2) {
-      if (!businessCategory.trim()) newErrors.businessCategory = 'Business Category is required';
+      if (!businessCategory) newErrors.businessCategory = 'Business Category is required';
     } else if (step === 3) {
       if (!branchName.trim()) newErrors.branchName = 'Branch Name is required';
       if (!address.trim()) newErrors.address = 'Address is required';
@@ -127,7 +147,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
     dispatch(onboardMerchant({
       businessName,
       ownerName,
-      businessCategory,
+      businessCategory: businessCategory.toString(),
       branchName,
       address,
       timezone,
@@ -404,13 +424,16 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   <div className="space-y-4">
                     <div>
                       <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Business Category <span className="text-red-500">*</span></label>
-                      <input 
-                        type="text" 
+                      <select 
                         value={businessCategory} 
-                        onChange={(e) => { setBusinessCategory(e.target.value); if (errors.businessCategory) setErrors({...errors, businessCategory: ''}); }} 
+                        onChange={(e) => { setBusinessCategory(Number(e.target.value)); if (errors.businessCategory) setErrors({...errors, businessCategory: ''}); }} 
                         className={`w-full bg-[#FAF8F5] border ${errors.businessCategory ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden`} 
-                        placeholder="e.g. Coffee Shop, Retail" 
-                      />
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map((cat) => (
+                          <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
+                      </select>
                       {errors.businessCategory && <p className="text-red-500 text-[10px] mt-1">{errors.businessCategory}</p>}
                     </div>
                   </div>
@@ -630,7 +653,9 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                         </div>
                         <div>
                           <span className="text-[#6E6A66] block">Category</span>
-                          <strong className="text-[#1A1615]">{businessCategory || 'Coffee Shop & Artisanal Bakery'}</strong>
+                          <strong className="text-[#1A1615]">
+                            {categories.find((c) => c.id === businessCategory)?.name || 'Not selected'}
+                          </strong>
                         </div>
                       </div>
                     </div>
