@@ -522,7 +522,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <div className="text-[10px] font-bold tracking-widest text-[#7C746C] uppercase mb-1">STEP 1 OF 2 &middot; REQUIRED</div>
-                      <h3 className="text-3xl font-black text-[#1A1615] tracking-tight mt-2">Basic <span className="text-[#9E782F]">Information</span></h3>
+                      <h3 className="text-2xl font-black text-[#1A1615] tracking-tight mt-2">Basic <span className="text-[#9E782F]">Information</span></h3>
                     </div>
                   </div>
 
@@ -640,48 +640,50 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="text-[10px] font-bold tracking-widest text-[#7C746C] uppercase mb-1">STEP 2 OF 2 &middot; OPTIONAL</div>
-                      <h3 className="text-3xl font-black text-[#1A1615] tracking-tight mt-2">Demographics & <span className="text-[#9E782F]">Address</span></h3>
+                      <h3 className="text-2xl font-black text-[#1A1615] tracking-tight mt-2">Demographics & <span className="text-[#9E782F]">Address</span></h3>
                       <p className="text-[14px] text-[#7C746C] mt-2.5 leading-relaxed max-w-[90%]">Share these details to receive personalized offers, physical birthday gifts, and specialized rewards.</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6 pt-2">
 
-                    {/* Date of Birth */}
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615]">Date of Birth</label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Calendar className="h-4 w-4 text-[#7C746C]" />
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:col-span-2">
+                      {/* Date of Birth */}
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615]">Date of Birth</label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <Calendar className="h-4 w-4 text-[#7C746C]" />
+                          </div>
+                          <input type="date" value={newCustDob} onChange={e => setNewCustDob(e.target.value)} className="w-full pl-9 pr-3 py-2.5 bg-transparent border border-[#EAE6E1] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#9E782F] transition-colors cursor-pointer" />
                         </div>
-                        <input type="date" value={newCustDob} onChange={e => setNewCustDob(e.target.value)} className="w-full pl-9 pr-3 py-2.5 bg-transparent border border-[#EAE6E1] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#9E782F] transition-colors cursor-pointer" />
                       </div>
-                    </div>
 
-                    {/* Age */}
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615]">Age</label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Hash className="h-4 w-4 text-[#7C746C]" />
+                      {/* Age */}
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615]">Age</label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <Hash className="h-4 w-4 text-[#7C746C]" />
+                          </div>
+                          <input type="number" value={newCustAge} onChange={e => setNewCustAge(e.target.value)} placeholder="e.g. 28" className="w-full pl-9 pr-3 py-2.5 bg-transparent border border-[#EAE6E1] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#9E782F] transition-colors" />
                         </div>
-                        <input type="number" value={newCustAge} onChange={e => setNewCustAge(e.target.value)} placeholder="e.g. 28" className="w-full pl-9 pr-3 py-2.5 bg-transparent border border-[#EAE6E1] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#9E782F] transition-colors" />
                       </div>
-                    </div>
 
-                    {/* Gender */}
-                    <div className="space-y-1.5 md:col-span-2 md:w-[calc(50%-12px)]">
-                      <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615]">Gender</label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <User className="h-4 w-4 text-[#7C746C]" />
+                      {/* Gender */}
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615]">Gender</label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <User className="h-4 w-4 text-[#7C746C]" />
+                          </div>
+                          <select value={newCustGender} onChange={e => setNewCustGender(e.target.value)} className="w-full pl-9 pr-3 py-2.5 bg-transparent border border-[#EAE6E1] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#9E782F] transition-colors appearance-none cursor-pointer">
+                            <option value="">Prefer not to say</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                          </select>
                         </div>
-                        <select value={newCustGender} onChange={e => setNewCustGender(e.target.value)} className="w-full pl-9 pr-3 py-2.5 bg-transparent border border-[#EAE6E1] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#9E782F] transition-colors appearance-none cursor-pointer">
-                          <option value="">Prefer not to say</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                          <option value="Other">Other</option>
-                        </select>
                       </div>
                     </div>
 
