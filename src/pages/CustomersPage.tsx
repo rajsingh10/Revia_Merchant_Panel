@@ -26,6 +26,7 @@ import { Customer, LoyaltyTier } from '../types';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../store/store';
 import { fetchStates, fetchCities, clearCities } from '../store/slices/locationSlice';
+import apiClient from '../api/apiClient';
 
 interface CustomersPageProps {
   customers: Customer[];
@@ -43,6 +44,56 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>(customers[0]?.id || '');
   const [expandedCustomerRow, setExpandedCustomerRow] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  
+  const [localCustomers, setLocalCustomers] = useState<Customer[]>(customers);
+  const [isFetchingCustomers, setIsFetchingCustomers] = useState(false);
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      setIsFetchingCustomers(true);
+      try {
+        const response = await apiClient.get('merchant/customers');
+        const resData = response.data;
+        let customersArray = [];
+        if (Array.isArray(resData?.data?.data)) {
+          customersArray = resData.data.data;
+        } else if (Array.isArray(resData?.data)) {
+          customersArray = resData.data;
+        } else if (Array.isArray(resData)) {
+          customersArray = resData;
+        }
+
+        if (customersArray.length >= 0) {
+          const mappedCustomers: Customer[] = customersArray.map((item: any) => ({
+            id: item.id?.toString() || `C${Math.floor(100000 + Math.random() * 900000)}`,
+            name: item.name || `${item.first_name || ''} ${item.last_name || ''}`.trim() || 'Unknown',
+            avatar: item.profile_image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(item.name || item.first_name || 'U')}&background=FAF8F5&color=1A1615`,
+            phone: item.phone || 'N/A',
+            email: item.email || 'N/A',
+            tier: item.tier || 'Standard',
+            stampsCount: item.stampsCount || item.loyalty_points || 0,
+            stampsMax: item.stampsMax || 10,
+            lifetimeSpend: item.lifetimeSpend || item.total_spent || 0,
+            totalVisits: item.totalVisits || item.total_visits || 0,
+            joinedDate: item.created_at ? new Date(item.created_at).toLocaleDateString() : 'Unknown',
+            lastVisit: item.last_visit || 'Never',
+            preferredBranch: item.preferredBranch || 'Unknown',
+            favoriteItem: item.favoriteItem || 'None',
+            recentActivity: item.recentActivity || [],
+          }));
+          setLocalCustomers(mappedCustomers);
+          if (mappedCustomers.length > 0 && !selectedCustomerId) {
+            setSelectedCustomerId(mappedCustomers[0].id);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch customers from API:', error);
+      } finally {
+        setIsFetchingCustomers(false);
+      }
+    };
+    fetchCustomers();
+  }, []);
 
   const dispatch = useDispatch<AppDispatch>();
   const { states, cities, isStatesLoading, isCitiesLoading } = useSelector((state: RootState) => state.location);
@@ -97,7 +148,15 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(customers.length / itemsPerPage);
+  
+  const filteredCustomers = localCustomers.filter(c =>
+    c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.phone.includes(searchQuery) ||
+    c.id.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
+  const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
+  const paginatedCustomers = filteredCustomers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editCustName, setEditCustName] = useState('');
@@ -163,7 +222,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
     setIsEditModalOpen(false);
   };
 
-  const selectedCustomer = customers.find((c) => c.id === selectedCustomerId) || customers[0];
+  const selectedCustomer = localCustomers.find((c) => c.id === selectedCustomerId) || localCustomers[0];
 
   const handleAddStamp = () => {
     if (!selectedCustomer) return;
@@ -247,7 +306,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
               Total Directory Members
               <span className="bg-[#EBF7F0] text-[#15803D] text-[11px] font-bold px-2 py-0.5 rounded-full">+12.4%</span>
             </div>
-            <div className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1A1615] mt-1.5">{customers.length}</div>
+            <div className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1A1615] mt-1.5">{localCustomers.length}</div>
             <div className="text-[11px] text-[#7C746C] mt-1">Active hospitality patrons</div>
           </div>
           <div className="bg-white border border-[#EAE6E1] rounded-xl p-4 shadow-2xs">
@@ -256,7 +315,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
               <span className="bg-[#FAF6EE] text-[#9E782F] text-[11px] font-bold px-2 py-0.5 rounded-full border border-[#E5D7BE]">Top 28%</span>
             </div>
             <div className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1A1615] mt-1.5">
-              {customers.filter(c => c.tier !== 'Standard').length}
+              {localCustomers.filter(c => c.tier !== 'Standard').length}
             </div>
             <div className="text-[11px] text-[#7C746C] mt-1">High-LTV loyalty tier holders</div>
           </div>
@@ -266,17 +325,21 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
               <span className="bg-[#EBF7F0] text-[#15803D] text-[11px] font-bold px-2 py-0.5 rounded-full">6.4 avg</span>
             </div>
             <div className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1A1615] mt-1.5">
-              {(customers.reduce((acc, c) => acc + c.stampsCount, 0) / (customers.length || 1)).toFixed(1)}
+              {(localCustomers.reduce((acc, c) => acc + c.stampsCount, 0) / (localCustomers.length || 1)).toFixed(1)}
             </div>
             <div className="text-[11px] text-[#7C746C] mt-1">Out of 10 max reward threshold</div>
           </div>
           <div className="bg-white border border-[#EAE6E1] rounded-xl p-4 shadow-2xs">
             <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]">
               Retention Velocity
-              <span className="bg-[#EBF7F0] text-[#15803D] text-[11px] font-bold px-2 py-0.5 rounded-full">94.8%</span>
+              <span className="bg-[#EBF7F0] text-[#15803D] text-[11px] font-bold px-2 py-0.5 rounded-full">
+                {localCustomers.length > 0 ? ((localCustomers.filter(c => c.totalVisits > 1).length / localCustomers.length) * 100).toFixed(1) : '0.0'}%
+              </span>
             </div>
-            <div className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1A1615] mt-1.5">94.8%</div>
-            <div className="text-[11px] text-[#7C746C] mt-1">30-day repeat visit rate</div>
+            <div className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1A1615] mt-1.5">
+              {localCustomers.length > 0 ? ((localCustomers.filter(c => c.totalVisits > 1).length / localCustomers.length) * 100).toFixed(1) : '0.0'}%
+            </div>
+            <div className="text-[11px] text-[#7C746C] mt-1">Repeat visit rate</div>
           </div>
         </div>
 
@@ -314,14 +377,8 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#EAE6E1]">
-                  {customers
-                    .filter(c =>
-                      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      c.phone.includes(searchQuery) ||
-                      c.id.toLowerCase().includes(searchQuery.toLowerCase())
-                    )
-                    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-                    .map((cust) => {
+                  {paginatedCustomers.length > 0 ? (
+                    paginatedCustomers.map((cust) => {
                       const isSelected = cust.id === selectedCustomerId;
                       const progressPct = (cust.stampsCount / cust.stampsMax) * 100;
                       return (
@@ -385,14 +442,26 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                           </td>
                         </tr>
                       );
-                    })}
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan={6} className="py-12 text-center">
+                        <div className="flex flex-col items-center justify-center text-[#7C746C]">
+                          <User className="w-10 h-10 mb-3 text-[#D4A753]/40" />
+                          <div className="text-sm font-bold text-[#1A1615]">No customers found</div>
+                          <div className="text-xs mt-1">Try adjusting your search or add a new customer.</div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
 
             {/* Mobile Expandable List */}
             <div className="md:hidden flex flex-col">
-              {customers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((cust) => {
+              {paginatedCustomers.length > 0 ? (
+                paginatedCustomers.map((cust) => {
                 const isSelected = cust.id === selectedCustomerId;
                 const isExpanded = expandedCustomerRow === cust.id;
                 const progressPct = (cust.stampsCount / cust.stampsMax) * 100;
@@ -467,13 +536,20 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                     )}
                   </div>
                 );
-              })}
+              })
+            ) : (
+              <div className="py-10 flex flex-col items-center justify-center text-center px-4 bg-white">
+                <User className="w-10 h-10 mb-3 text-[#D4A753]/40" />
+                <div className="text-sm font-bold text-[#1A1615]">No customers found</div>
+                <div className="text-xs text-[#7C746C] mt-1">Try adjusting your search or add a new customer.</div>
+              </div>
+            )}
             </div>
 
             {/* Table Footer / Pagination */}
             <div className="px-5 py-4 border-t border-[#EAE6E1] bg-[#FAF8F5] flex items-center justify-between text-xs">
               <span className="font-semibold text-[#7C746C]">
-                Showing {customers.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, customers.length)} of {customers.length} records
+                Showing {filteredCustomers.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredCustomers.length)} of {filteredCustomers.length} records
               </span>
               <div className="flex items-center gap-1.5">
                 <button

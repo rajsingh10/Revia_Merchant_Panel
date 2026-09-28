@@ -182,33 +182,35 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
           </div>
 
           {/* Tab switchers: SMS OTP vs WhatsApp OTP */}
-          <div className="grid grid-cols-2 p-1 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl mb-6">
-            <button
-              type="button"
-              onClick={() => setAuthMethod('sms')}
-              className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${authMethod === 'sms'
-                ? 'bg-white text-[#1A1615] shadow-xs'
-                : 'text-[#6E6A66] hover:text-[#1A1615]'
-                }`}
-            >
-              <Phone className="w-3.5 h-3.5 text-[#9E782F]" />
-              <span>SMS OTP</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setAuthMethod('whatsapp')}
-              className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${authMethod === 'whatsapp'
-                ? 'bg-white text-[#1A1615] shadow-xs'
-                : 'text-[#6E6A66] hover:text-[#1A1615]'
-                }`}
-            >
-              <MessageSquare className="w-3.5 h-3.5 text-[#0D7A53]" />
-              <span>WhatsApp</span>
-              <span className="bg-[#E6F4ED] text-[#0D7A53] border border-[#BCE3D1] text-[9px] font-bold px-1.5 py-0.2 rounded-full">
-                INSTANT
-              </span>
-            </button>
-          </div>
+          {(!phone || /^[0-9+]/.test(phone)) && (
+            <div className="grid grid-cols-2 p-1 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl mb-6">
+              <button
+                type="button"
+                onClick={() => setAuthMethod('sms')}
+                className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${authMethod === 'sms'
+                  ? 'bg-white text-[#1A1615] shadow-xs'
+                  : 'text-[#6E6A66] hover:text-[#1A1615]'
+                  }`}
+              >
+                <Phone className="w-3.5 h-3.5 text-[#9E782F]" />
+                <span>SMS OTP</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setAuthMethod('whatsapp')}
+                className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${authMethod === 'whatsapp'
+                  ? 'bg-white text-[#1A1615] shadow-xs'
+                  : 'text-[#6E6A66] hover:text-[#1A1615]'
+                  }`}
+              >
+                <MessageSquare className="w-3.5 h-3.5 text-[#0D7A53]" />
+                <span>WhatsApp</span>
+                <span className="bg-[#E6F4ED] text-[#0D7A53] border border-[#BCE3D1] text-[9px] font-bold px-1.5 py-0.2 rounded-full">
+                  INSTANT
+                </span>
+              </button>
+            </div>
+          )}
 
           {step === 'input' ? (
             <div className="space-y-4">
@@ -252,7 +254,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
                   <p className="text-red-500 text-[10px] mt-1 font-semibold">{validationError}</p>
                 )}
                 <p className="text-[10px] text-[#9E9A93] mt-1.5">
-                  Operator credentials provisioned by Central IT / General Management.
+                  {(!phone || /^[0-9+]/.test(phone)) 
+                    ? "A secure OTP will be sent via your selected method."
+                    : "A secure verification code will be sent to your email address."}
                 </p>
               </div>
 

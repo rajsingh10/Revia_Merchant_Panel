@@ -114,6 +114,9 @@ export interface OutletsData {
   timezone: string;
   currency: string;
   taxProfile: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  dailyFootfall?: number;
   hardware: {
     name: string;
     badge: 'Square' | 'Clover' | 'Revia Stand';

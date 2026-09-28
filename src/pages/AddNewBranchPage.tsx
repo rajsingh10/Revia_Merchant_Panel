@@ -39,28 +39,31 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
 }) => {
   const { checkAndDeductCredit } = useWallet();
 
-  // Form State initialized to exact Figma defaults
-  const [branchName, setBranchName] = useState('SoHo Roastery & Tasting Salon');
-  const [outletCode, setOutletCode] = useState('REV-NYC-04');
+  // Form State initialized as empty
+  const [branchName, setBranchName] = useState('');
+  const [outletCode, setOutletCode] = useState('');
   const [venueProfile, setVenueProfile] = useState<VenueProfile>('roastery');
 
   // Physical Address
-  const [streetAddress, setStreetAddress] = useState('482 Broome Street, Floor 1');
-  const [city, setCity] = useState('New York');
-  const [state, setState] = useState('NY');
-  const [zipCode, setZipCode] = useState('10013');
-  const [country, setCountry] = useState('United States');
+  const [streetAddress, setStreetAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [zipCode, setZipCode] = useState('');
+  const [country, setCountry] = useState('');
 
   // Operating Hours
   const [selectedDays, setSelectedDays] = useState<string[]>([
     'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'
   ]);
-  const [openTime, setOpenTime] = useState('07:30 AM');
-  const [closeTime, setCloseTime] = useState('08:00 PM');
+  const [openTime, setOpenTime] = useState('07:30');
+  const [closeTime, setCloseTime] = useState('20:00');
 
   // Contact
-  const [phone, setPhone] = useState('+1 (212) 555-0198');
-  const [email, setEmail] = useState('soho.roastery@revia.coffee');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  
+  // Validation State
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Phase 2: POS & Hardware
   const [posCount, setPosCount] = useState<number>(2);
@@ -97,6 +100,23 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
 
   // Provision and launch branch handler (CREDIT GATED)
   const handleProvisionBranch = () => {
+    const newErrors: Record<string, string> = {};
+    if (!branchName.trim()) newErrors.branchName = 'Branch name is required';
+    if (!outletCode.trim()) newErrors.outletCode = 'Outlet code is required';
+    if (!streetAddress.trim()) newErrors.streetAddress = 'Address is required';
+    if (!city.trim()) newErrors.city = 'City is required';
+    if (!state.trim()) newErrors.state = 'State is required';
+    if (!zipCode.trim()) newErrors.zipCode = 'ZIP code is required';
+    if (!country.trim()) newErrors.country = 'Country is required';
+    if (!phone.trim()) newErrors.phone = 'Phone number is required';
+    if (!email.trim()) newErrors.email = 'Email address is required';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
+
     const branchId = `branch-rev-${Date.now()}`;
     const allowed = checkAndDeductCredit('branch_setup', 100, branchId, 'New Branch Setup');
     if (!allowed) {
@@ -268,20 +288,28 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                   <input
                     type="text"
                     value={branchName}
-                    onChange={(e) => setBranchName(e.target.value)}
+                    onChange={(e) => { setBranchName(e.target.value); if (errors.branchName) setErrors({ ...errors, branchName: '' }); }}
                     placeholder="e.g. SoHo Roastery & Tasting Salon"
-                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
+                    className={`w-full px-3 py-2 bg-[#FAF8F5] border ${errors.branchName ? 'border-[#D32F2F]' : 'border-[#EAE6E1]'} rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors`}
                   />
+                  {errors.branchName && <p className="text-[10px] text-[#D32F2F] font-medium">{errors.branchName}</p>}
                 </div>
 
                 <div className="md:col-span-5 space-y-1.5">
-                  <label className="text-xs font-semibold text-[#3D3732]">
-                    Outlet Identifier
+                  <label className="text-xs font-semibold text-[#3D3732] flex items-center gap-1">
+                    Outlet Identifier <span className="text-[#D32F2F]">*</span>
                   </label>
-                  <div className="flex items-center px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#5C554E] font-mono font-medium">
+                  <div className={`flex items-center px-3 py-2 bg-[#FAF8F5] border ${errors.outletCode ? 'border-[#D32F2F]' : 'border-[#EAE6E1]'} rounded-lg text-xs text-[#5C554E] font-mono font-medium`}>
                     <span className="text-[#8C827A] mr-1">#</span>
-                    <span>{outletCode}</span>
+                    <input
+                      type="text"
+                      value={outletCode}
+                      onChange={(e) => { setOutletCode(e.target.value); if (errors.outletCode) setErrors({ ...errors, outletCode: '' }); }}
+                      placeholder="REV-NYC-04"
+                      className="w-full bg-transparent focus:outline-none text-[#1A1615]"
+                    />
                   </div>
+                  {errors.outletCode && <p className="text-[10px] text-[#D32F2F] font-medium">{errors.outletCode}</p>}
                 </div>
               </div>
 
@@ -367,48 +395,63 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
 
               {/* Physical Address */}
               <div className="space-y-2.5">
-                <label className="text-xs font-semibold text-[#3D3732] block">
-                  Physical Address
+                <label className="text-xs font-semibold text-[#3D3732] flex items-center gap-1">
+                  Physical Address <span className="text-[#D32F2F]">*</span>
                 </label>
                 {/* Line 1: Street */}
-                <input
-                  type="text"
-                  value={streetAddress}
-                  onChange={(e) => setStreetAddress(e.target.value)}
-                  placeholder="Street Address, Suite / Floor"
-                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
-                />
+                <div>
+                  <input
+                    type="text"
+                    value={streetAddress}
+                    onChange={(e) => { setStreetAddress(e.target.value); if (errors.streetAddress) setErrors({ ...errors, streetAddress: '' }); }}
+                    placeholder="Street Address, Suite / Floor"
+                    className={`w-full px-3 py-2 bg-[#FAF8F5] border ${errors.streetAddress ? 'border-[#D32F2F]' : 'border-[#EAE6E1]'} rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors`}
+                  />
+                  {errors.streetAddress && <p className="text-[10px] text-[#D32F2F] font-medium mt-1">{errors.streetAddress}</p>}
+                </div>
 
                 {/* Line 2: City, State, Zip, Country */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  <input
-                    type="text"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    placeholder="City"
-                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
-                  />
-                  <input
-                    type="text"
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                    placeholder="State"
-                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
-                  />
-                  <input
-                    type="text"
-                    value={zipCode}
-                    onChange={(e) => setZipCode(e.target.value)}
-                    placeholder="Zip Code"
-                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
-                  />
-                  <input
-                    type="text"
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                    placeholder="Country"
-                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
-                  />
+                  <div>
+                    <input
+                      type="text"
+                      value={city}
+                      onChange={(e) => { setCity(e.target.value); if (errors.city) setErrors({ ...errors, city: '' }); }}
+                      placeholder="City"
+                      className={`w-full px-3 py-2 bg-[#FAF8F5] border ${errors.city ? 'border-[#D32F2F]' : 'border-[#EAE6E1]'} rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors`}
+                    />
+                    {errors.city && <p className="text-[10px] text-[#D32F2F] font-medium mt-1">{errors.city}</p>}
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      value={state}
+                      onChange={(e) => { setState(e.target.value); if (errors.state) setErrors({ ...errors, state: '' }); }}
+                      placeholder="State"
+                      className={`w-full px-3 py-2 bg-[#FAF8F5] border ${errors.state ? 'border-[#D32F2F]' : 'border-[#EAE6E1]'} rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors`}
+                    />
+                    {errors.state && <p className="text-[10px] text-[#D32F2F] font-medium mt-1">{errors.state}</p>}
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      value={zipCode}
+                      onChange={(e) => { setZipCode(e.target.value); if (errors.zipCode) setErrors({ ...errors, zipCode: '' }); }}
+                      placeholder="Zip Code"
+                      className={`w-full px-3 py-2 bg-[#FAF8F5] border ${errors.zipCode ? 'border-[#D32F2F]' : 'border-[#EAE6E1]'} rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors`}
+                    />
+                    {errors.zipCode && <p className="text-[10px] text-[#D32F2F] font-medium mt-1">{errors.zipCode}</p>}
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      value={country}
+                      onChange={(e) => { setCountry(e.target.value); if (errors.country) setErrors({ ...errors, country: '' }); }}
+                      placeholder="Country"
+                      className={`w-full px-3 py-2 bg-[#FAF8F5] border ${errors.country ? 'border-[#D32F2F]' : 'border-[#EAE6E1]'} rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors`}
+                    />
+                    {errors.country && <p className="text-[10px] text-[#D32F2F] font-medium mt-1">{errors.country}</p>}
+                  </div>
                 </div>
               </div>
 
@@ -452,19 +495,19 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                   <div className="flex items-center gap-2 bg-white border border-[#EAE6E1] rounded-lg px-3 py-1.5">
                     <span className="text-xs text-[#7C746C]">Open:</span>
                     <input
-                      type="text"
+                      type="time"
                       value={openTime}
                       onChange={(e) => setOpenTime(e.target.value)}
-                      className="text-xs font-bold text-[#1A1615] w-20 focus:outline-none bg-transparent"
+                      className="text-xs font-bold text-[#1A1615] w-24 focus:outline-none bg-transparent cursor-pointer"
                     />
                   </div>
                   <div className="flex items-center gap-2 bg-white border border-[#EAE6E1] rounded-lg px-3 py-1.5">
                     <span className="text-xs text-[#7C746C]">Close:</span>
                     <input
-                      type="text"
+                      type="time"
                       value={closeTime}
                       onChange={(e) => setCloseTime(e.target.value)}
-                      className="text-xs font-bold text-[#1A1615] w-20 focus:outline-none bg-transparent"
+                      className="text-xs font-bold text-[#1A1615] w-24 focus:outline-none bg-transparent cursor-pointer"
                     />
                   </div>
                 </div>
@@ -473,33 +516,37 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
               {/* Concierge Phone & Outlet Mailbox */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-[#3D3732] block">
-                    Concierge &amp; Order Phone
+                  <label className="text-xs font-semibold text-[#3D3732] flex items-center gap-1">
+                    Concierge &amp; Order Phone <span className="text-[#D32F2F]">*</span>
                   </label>
                   <div className="relative">
                     <Phone className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#8C827A]" />
                     <input
                       type="text"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="w-full pl-8 pr-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
+                      onChange={(e) => { setPhone(e.target.value); if (errors.phone) setErrors({ ...errors, phone: '' }); }}
+                      placeholder="+1 (000) 000-0000"
+                      className={`w-full pl-8 pr-3 py-2 bg-[#FAF8F5] border ${errors.phone ? 'border-[#D32F2F]' : 'border-[#EAE6E1]'} rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors`}
                     />
                   </div>
+                  {errors.phone && <p className="text-[10px] text-[#D32F2F] font-medium mt-1">{errors.phone}</p>}
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-[#3D3732] block">
-                    Dedicated Outlet Mailbox
+                  <label className="text-xs font-semibold text-[#3D3732] flex items-center gap-1">
+                    Dedicated Outlet Mailbox <span className="text-[#D32F2F]">*</span>
                   </label>
                   <div className="relative">
                     <Mail className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#8C827A]" />
                     <input
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-8 pr-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
+                      onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors({ ...errors, email: '' }); }}
+                      placeholder="branch@revia.coffee"
+                      className={`w-full pl-8 pr-3 py-2 bg-[#FAF8F5] border ${errors.email ? 'border-[#D32F2F]' : 'border-[#EAE6E1]'} rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors`}
                     />
                   </div>
+                  {errors.email && <p className="text-[10px] text-[#D32F2F] font-medium mt-1">{errors.email}</p>}
                 </div>
               </div>
             </div>

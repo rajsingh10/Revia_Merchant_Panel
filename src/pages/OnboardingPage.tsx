@@ -169,8 +169,8 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
             <div className="px-6 py-5 border-b border-[#E5E0D8] flex justify-between items-start">
               <div>
                 <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93] mb-1">SECURE AUTH GATEWAY</div>
-                <h3 className="text-xl font-bold tracking-tight text-[#1A1615]">Mobile Verification</h3>
-                <p className="text-xs text-[#6E6A66] mt-1">Verify your mobile number to begin onboarding.</p>
+                <h3 className="text-xl font-bold tracking-tight text-[#1A1615]">Identity Verification</h3>
+                <p className="text-xs text-[#6E6A66] mt-1">Verify your phone or email to begin onboarding.</p>
               </div>
               <button 
                 onClick={onCancel}
@@ -185,22 +185,24 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
             </div>
             <div className="p-6">
               <div className="space-y-6">
-                <div className="flex bg-[#FAF8F5] p-1 rounded-lg border border-[#E5E0D8]">
-                  <button
-                    type="button"
-                    onClick={() => setVerificationMethod('sms')}
-                    className={`flex-1 py-2 text-xs font-bold rounded-md transition-all cursor-pointer ${verificationMethod === 'sms' ? 'bg-white text-[#1A1615] shadow-xs border border-[#E5E0D8]' : 'text-[#6E6A66] hover:bg-[#E5E0D8]/50'}`}
-                  >
-                    📞 SMS OTP
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setVerificationMethod('whatsapp')}
-                    className={`flex-1 py-2 text-xs font-semibold flex items-center justify-center gap-1.5 rounded-md transition-all cursor-pointer ${verificationMethod === 'whatsapp' ? 'bg-white text-[#1A1615] shadow-xs border border-[#E5E0D8]' : 'text-[#6E6A66] hover:bg-[#E5E0D8]/50'}`}
-                  >
-                    💬 WhatsApp <span className="bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded text-[8px] font-bold">INSTANT</span>
-                  </button>
-                </div>
+                {(!mobileNumber || /^[0-9+]/.test(mobileNumber)) && (
+                  <div className="flex bg-[#FAF8F5] p-1 rounded-lg border border-[#E5E0D8]">
+                    <button
+                      type="button"
+                      onClick={() => setVerificationMethod('sms')}
+                      className={`flex-1 py-2 text-xs font-bold rounded-md transition-all cursor-pointer ${verificationMethod === 'sms' ? 'bg-white text-[#1A1615] shadow-xs border border-[#E5E0D8]' : 'text-[#6E6A66] hover:bg-[#E5E0D8]/50'}`}
+                    >
+                      📞 SMS OTP
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setVerificationMethod('whatsapp')}
+                      className={`flex-1 py-2 text-xs font-semibold flex items-center justify-center gap-1.5 rounded-md transition-all cursor-pointer ${verificationMethod === 'whatsapp' ? 'bg-white text-[#1A1615] shadow-xs border border-[#E5E0D8]' : 'text-[#6E6A66] hover:bg-[#E5E0D8]/50'}`}
+                    >
+                      💬 WhatsApp <span className="bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded text-[8px] font-bold">INSTANT</span>
+                    </button>
+                  </div>
+                )}
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">PHONE NUMBER OR EMAIL</label>
                   <div className="flex gap-2">
@@ -229,7 +231,11 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   {validationError && (
                     <p className="text-red-500 text-[10px] mt-1 font-semibold">{validationError}</p>
                   )}
-                  <p className="text-[10px] text-[#9E9A93] mt-2">Operator credentials provisioned by Central IT / General Management.</p>
+                  <p className="text-[10px] text-[#9E9A93] mt-2">
+                    {(!mobileNumber || /^[0-9+]/.test(mobileNumber)) 
+                      ? "A secure OTP will be sent via your selected method."
+                      : "A secure verification code will be sent to your email address."}
+                  </p>
                 </div>
                 {!isOtpSent ? (
                   <div className="space-y-2">

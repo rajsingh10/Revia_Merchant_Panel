@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { NavRoute, OutletsData } from '../types';
 import { INITIAL_OUTLETS } from '../data/outletsData';
+import apiClient from '../api/apiClient';
 
 interface BranchesPageProps {
   onNavigate?: (route: NavRoute) => void;
@@ -52,8 +53,8 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
   selectedOutletId: externalSelectedOutletId,
   onSelectOutletId: externalOnSelectOutletId,
 }) => {
-  const [internalOutlets, setInternalOutlets] = useState<OutletsData[]>(INITIAL_OUTLETS);
-  const outlets = externalOutlets || internalOutlets;
+  const [internalOutlets, setInternalOutlets] = useState<OutletsData[]>(externalOutlets || INITIAL_OUTLETS);
+  const outlets = internalOutlets;
   const setOutlets = (newOutlets: OutletsData[]) => {
     setInternalOutlets(newOutlets);
   };
@@ -78,6 +79,53 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
   }, []);
+
+  useEffect(() => {
+    const loadBranches = async () => {
+      try {
+        const response = await apiClient.get('merchant/branches');
+        const branchList = response.data.data?.data || response.data.data || response.data;
+        if (Array.isArray(branchList)) {
+          const mappedOutlets: OutletsData[] = branchList.map((branch: any) => ({
+            id: branch.id?.toString() || `branch-${Date.now()}`,
+            name: branch.name || '',
+            shortName: branch.code || branch.name?.split(' ')[0] || '',
+            type: (branch.status === 'active' ? 'Active' : 'Active') as 'Active',
+            address: branch.address || 'No Address',
+            manager: branch.manager?.name || (branch.manager_id ? `Manager ${branch.manager_id}` : 'Unassigned'),
+            managerAvatar: branch.manager?.profile_image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+            terminalsActive: 2,
+            membersLinked: '0 Linked',
+            volume30d: '₹0',
+            hours: 'Mon–Sat 9:00 AM – 5:00 PM',
+            timezone: branch.timezone || 'UTC',
+            currency: 'INR ($)',
+            taxProfile: 'Default',
+            contactEmail: branch.contact_email || '',
+            contactPhone: branch.contact_phone || '',
+            dailyFootfall: branch.daily_footfall || branch.operating_details?.footfall || 0,
+            hardware: [],
+            loyaltyRules: {
+              baseMultiplier: '1.0× (Standard)',
+              specialRuleName: 'Welcome Month Bonus',
+              specialRuleTime: 'All day during launch',
+              specialRuleBadge: 'Active Now',
+              specialMultiplier: '2.0× Double',
+              exclusivePerk: 'Complimentary Single Origin upgrade',
+            },
+          }));
+          setOutlets(mappedOutlets);
+          if (mappedOutlets.length > 0 && !externalSelectedOutletId) {
+            setInternalSelectedOutletId(mappedOutlets[0].id);
+          }
+        }
+      } catch (error) {
+        // Fallback to initial if fail
+      }
+    };
+    
+    loadBranches();
+  }, [externalSelectedOutletId]);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -136,23 +184,35 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
       setEditState(stateZip[0] || '');
       setEditZipCode(stateZip[1] || '');
       setEditCountry('United States');
+      
+      setEditEmail(selectedOutlet.contactEmail || 'soho.roastery@revia.coffee');
+      setEditPhone(selectedOutlet.contactPhone || '+1 (212) 555-0198');
     }
   }, [isEditModalOpen, selectedOutlet]);
 
   const [branchToDelete, setBranchToDelete] = useState<string | null>(null);
+  const [isDeletingBranch, setIsDeletingBranch] = useState(false);
 
-  const handleDeleteBranch = (id: string) => {
-    setOutlets(outlets.filter(o => o.id !== id));
-    if (selectedOutletId === id) {
-      const remaining = outlets.filter(o => o.id !== id);
-      if (remaining.length > 0) {
-        setSelectedOutletId(remaining[0].id);
-      } else {
-        setInspectorVisible(false);
+  const handleDeleteBranch = async (id: string) => {
+    setIsDeletingBranch(true);
+    try {
+      await apiClient.delete(`merchant/branches/${id}`);
+      setOutlets(outlets.filter(o => o.id !== id));
+      if (selectedOutletId === id) {
+        const remaining = outlets.filter(o => o.id !== id);
+        if (remaining.length > 0) {
+          setSelectedOutletId(remaining[0].id);
+        } else {
+          setInspectorVisible(false);
+        }
       }
+      setBranchToDelete(null);
+      showToast('Branch deleted successfully.');
+    } catch (error: any) {
+      showToast(`Error: ${error.response?.data?.message || 'Failed to delete branch'}`);
+    } finally {
+      setIsDeletingBranch(false);
     }
-    setBranchToDelete(null);
-    showToast('Branch deleted successfully.');
   };
 
   const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
@@ -199,60 +259,77 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
     }
   };
 
-  const handleAddBranch = (e: React.FormEvent) => {
+  const handleAddBranch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName) return;
 
-    const newBranch: OutletsData = {
-      id: `branch-${Date.now()}`,
-      name: newName,
-      shortName: newName.split(' ')[0],
-      type: 'Active',
-      address: newAddress || '700 S Flower St, Los Angeles, CA 90017',
-      manager: newManager || 'Alex Rivera',
-      managerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-      terminalsActive: 2,
-      membersLinked: '1,200 Linked',
-      volume30d: '₹18,400',
-      hours: 'Mon–Sat 7:00 AM – 7:00 PM',
-      timezone: 'PST (America/Los_Angeles)',
-      currency: 'INR ($)',
-      taxProfile: 'CA State + LA City (9.5%)',
-      hardware: [
-        {
-          name: 'Terminal 1 (Counter POS)',
-          badge: 'Square',
-          detail: 'Square Register v2.4 • Online, 1s ago',
-          icon: 'register',
-        },
-        {
-          name: 'Beacon #D1 (Entrance Stand)',
-          badge: 'Revia Stand',
-          detail: 'Smart Beacon #BB-04 • Online',
-          icon: 'beacon',
-        },
-      ],
-      loyaltyRules: {
-        baseMultiplier: '1.0× (Standard)',
-        specialRuleName: 'Welcome Month Bonus',
-        specialRuleTime: 'All day during launch',
-        specialRuleBadge: 'Active Now',
-        specialMultiplier: '2.0× Double',
-        exclusivePerk: 'Complimentary Single Origin upgrade',
-      },
-    };
+    try {
+      const response = await apiClient.post('merchant/branches', {
+        name: newName,
+        code: newName.substring(0, 5).toUpperCase(),
+        address: newAddress || 'N/A',
+        contact_email: 'new@branch.com',
+        contact_phone: '0000000000',
+        timezone: 'UTC',
+        status: 'active'
+      });
+      const data = response.data.data || response.data;
 
-    if (externalOnAddBranch) {
-      externalOnAddBranch(newBranch);
-    } else {
-      setOutlets([...outlets, newBranch]);
+      const newBranch: OutletsData = {
+        id: data.id?.toString() || `branch-${Date.now()}`,
+        name: data.name || newName,
+        shortName: data.code || newName.split(' ')[0],
+        type: (data.status === 'active' ? 'Active' : 'Active') as 'Active',
+        address: data.address || newAddress || '',
+        manager: newManager || 'Alex Rivera',
+        managerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+        terminalsActive: 2,
+        membersLinked: '0 Linked',
+        volume30d: '₹0',
+        hours: 'Mon–Sat 9:00 AM – 5:00 PM',
+        timezone: data.timezone || 'UTC',
+        currency: 'INR ($)',
+        taxProfile: 'Default',
+        contactEmail: data.contact_email || 'new@branch.com',
+        contactPhone: data.contact_phone || '0000000000',
+        dailyFootfall: data.daily_footfall || 0,
+        hardware: [],
+        loyaltyRules: {
+          baseMultiplier: '1.0× (Standard)',
+          specialRuleName: 'Welcome Month Bonus',
+          specialRuleTime: 'All day during launch',
+          specialRuleBadge: 'Active Now',
+          specialMultiplier: '2.0× Double',
+          exclusivePerk: 'Complimentary Single Origin upgrade',
+        },
+      };
+
+      if (externalOnAddBranch) {
+        externalOnAddBranch(newBranch);
+      } else {
+        setOutlets([...outlets, newBranch]);
+      }
+      setSelectedOutletId(newBranch.id);
+      setIsAddModalOpen(false);
+      setNewName('');
+      setNewAddress('');
+      setNewManager('');
+      showToast('Branch added successfully.');
+    } catch (error: any) {
+      showToast(`Error adding branch: ${error.response?.data?.message || error.message}`);
     }
-    setSelectedOutletId(newBranch.id);
-    setIsAddModalOpen(false);
-    setNewName('');
-    setNewAddress('');
-    setNewManager('');
   };
+
+  // Calculate dynamic metrics
+  const activeCount = outlets.length;
+  const totalFootfall = outlets.reduce((sum, o) => sum + (o.dailyFootfall || 0), 0);
+  
+  const totalRevenue = outlets.reduce((sum, o) => {
+    const val = parseFloat(o.volume30d.replace(/[^0-9.-]+/g, '')) || 0;
+    return sum + val;
+  }, 0);
+  const avgRevenue = activeCount > 0 ? Math.round(totalRevenue / activeCount) : 0;
+  const totalTerminals = outlets.reduce((sum, o) => sum + (o.terminalsActive || 0), 0);
 
   return (
     <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-5 text-[#1A1615]">
@@ -319,9 +396,9 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
             <div className="mt-3 pt-2.5 border-t border-[#F5F2EC] flex items-center justify-between text-[11px]">
               <span className="text-[#7C746C] flex items-center gap-1.5 font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#B38637]" />
-                1 in final setup
+                {activeCount === 0 ? 'No active outlets' : 'All setup complete'}
               </span>
-              <span className="text-[#B38637] font-semibold">+1 planned Q3</span>
+              <span className="text-[#B38637] font-semibold">{activeCount > 0 ? '+1 planned' : 'Plan your first'}</span>
             </div>
           </div>
         </div>
@@ -338,12 +415,12 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
           </div>
           <div className="mt-2">
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-bold text-[#1A1615] tracking-tight">1,842</span>
+              <span className="text-3xl font-bold text-[#1A1615] tracking-tight">{totalFootfall.toLocaleString()}</span>
               <span className="text-sm font-medium text-[#7C746C]">visits</span>
             </div>
             <div className="mt-3 pt-2.5 border-t border-[#F5F2EC] flex items-center justify-between text-[11px]">
-              <span className="bg-[#EBF7F0] text-[#15803D] font-bold px-2 py-0.5 rounded text-[10px] flex items-center gap-1">
-                ↑ +14.2%
+              <span className={`font-bold px-2 py-0.5 rounded text-[10px] flex items-center gap-1 ${totalFootfall > 0 ? 'bg-[#EBF7F0] text-[#15803D]' : 'bg-neutral-100 text-neutral-500'}`}>
+                {totalFootfall > 0 ? '↑ +14.2%' : '0%'}
               </span>
               <span className="text-[#7C746C]">vs last 7 days</span>
             </div>
@@ -362,10 +439,10 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
           </div>
           <div className="mt-2">
             <div className="text-3xl font-bold text-[#1A1615] tracking-tight">
-              ₹184,920
+              ₹{totalRevenue.toLocaleString()}
             </div>
             <div className="mt-3 pt-2.5 border-t border-[#F5F2EC] flex items-center justify-between text-[11px]">
-              <span className="text-[#7C746C]">Avg. ₹61,640 / outlet</span>
+              <span className="text-[#7C746C]">Avg. ₹{avgRevenue.toLocaleString()} / outlet</span>
               <span className="font-bold text-[#1A1615]">30D Window</span>
             </div>
           </div>
@@ -383,15 +460,15 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
           </div>
           <div className="mt-2">
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-bold text-[#15803D] tracking-tight">100%</span>
-              <span className="text-sm font-medium text-[#7C746C]">Online</span>
+              <span className="text-3xl font-bold text-[#15803D] tracking-tight">{activeCount > 0 ? '100%' : '0%'}</span>
+              <span className="text-sm font-medium text-[#7C746C]">{activeCount > 0 ? 'Online' : 'No Data'}</span>
             </div>
             <div className="mt-3 pt-2.5 border-t border-[#F5F2EC] flex items-center justify-between text-[11px]">
               <span className="text-[#7C746C] flex items-center gap-1 font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]" />
-                7/7 Terminals connected
+                {totalTerminals}/{totalTerminals} Terminals connected
               </span>
-              <span className="text-[#15803D] font-medium">0 latency drops</span>
+              <span className="text-[#15803D] font-medium ml-2">0 latency drops</span>
             </div>
           </div>
         </div>
@@ -1318,9 +1395,30 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                     Cancel
                   </button>
                   <button
-                    onClick={() => {
-                      setIsEditModalOpen(false);
-                      showToast('Branch details updated successfully.');
+                    onClick={async () => {
+                      try {
+                        await apiClient.patch(`merchant/branches/${selectedOutletId}`, {
+                          name: editBranchName,
+                          code: editOutletCode,
+                          address: `${editStreetAddress}, ${editCity}, ${editState} ${editZipCode}`,
+                          contact_phone: editPhone,
+                          contact_email: editEmail,
+                          status: 'active'
+                        });
+                        
+                        const updatedOutlets = outlets.map(o => o.id === selectedOutletId ? {
+                          ...o,
+                          name: editBranchName,
+                          shortName: editOutletCode,
+                          address: `${editStreetAddress}, ${editCity}, ${editState} ${editZipCode}`,
+                        } : o);
+                        setOutlets(updatedOutlets);
+                        
+                        setIsEditModalOpen(false);
+                        showToast('Branch details updated successfully.');
+                      } catch (error: any) {
+                        showToast(`Error updating branch: ${error.response?.data?.message || error.message}`);
+                      }
                     }}
                     className="px-4 py-2 text-[13px] font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer"
                   >
@@ -1349,10 +1447,12 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                 Cancel
               </button>
               <button
+                disabled={isDeletingBranch}
                 onClick={() => handleDeleteBranch(branchToDelete)}
-                className="px-4 py-2 text-sm font-bold text-white bg-[#DC2626] hover:bg-[#B91C1C] rounded-lg transition-colors shadow-sm cursor-pointer"
+                className="px-4 py-2 text-sm font-bold text-white bg-[#DC2626] hover:bg-[#B91C1C] rounded-lg transition-colors shadow-sm cursor-pointer disabled:opacity-70 flex items-center gap-2"
               >
-                Delete
+                {isDeletingBranch && <RotateCw className="w-3.5 h-3.5 animate-spin" />}
+                <span>{isDeletingBranch ? 'Deleting...' : 'Delete'}</span>
               </button>
             </div>
           </div>
