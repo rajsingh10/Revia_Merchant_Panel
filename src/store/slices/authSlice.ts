@@ -2,14 +2,17 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import apiClient from '../../api/apiClient';
 
 interface User {
-  user_id: number;
+  id?: number;
+  user_id?: number;
   name: string | null;
   email: string | null;
   phone: string | null;
-  role: string;
-  merchant_status: string;
-  admin_approved: boolean;
-  has_business: boolean;
+  role?: string;
+  roles?: string[];
+  merchant_status?: string;
+  admin_approved?: boolean;
+  has_business?: boolean;
+  [key: string]: any;
 }
 
 interface AuthState {
@@ -36,6 +39,36 @@ const initialState: AuthState = {
   user: userFromStorage ? JSON.parse(userFromStorage) : null,
   isAuthenticated: !!tokenFromStorage,
 };
+
+export const requestLoginOtp = createAsyncThunk(
+  'auth/requestLoginOtp',
+  async (identifier: string, { rejectWithValue }) => {
+    try {
+      const isEmail = identifier.includes('@');
+      const payload = isEmail ? { email: identifier } : { phone: identifier };
+      const response = await apiClient.post('auth/request-login-otp', payload);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to request login OTP');
+    }
+  }
+);
+
+export const loginWithOtp = createAsyncThunk(
+  'auth/loginWithOtp',
+  async (data: { identifier: string; otp: string }, { rejectWithValue }) => {
+    try {
+      const isEmail = data.identifier.includes('@');
+      const payload = isEmail 
+        ? { email: data.identifier, otp: data.otp } 
+        : { phone: data.identifier, otp: data.otp };
+      const response = await apiClient.post('auth/login-with-otp', payload);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to verify login OTP');
+    }
+  }
+);
 
 export const requestRegisterOtp = createAsyncThunk(
   'auth/requestRegisterOtp',
@@ -115,7 +148,7 @@ const authSlice = createSlice({
         
         if (payloadData?.token) {
           state.token = payloadData.token;
-          const { token, ...userData } = payloadData;
+          const userData = payloadData.user || payloadData;
           state.user = userData;
           state.isAuthenticated = true;
           localStorage.setItem('token', payloadData.token);
@@ -123,6 +156,42 @@ const authSlice = createSlice({
         }
       })
       .addCase(registerMerchant.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(requestLoginOtp.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(requestLoginOtp.fulfilled, (state) => {
+        state.isLoading = false;
+        state.isOtpSent = true;
+      })
+      .addCase(requestLoginOtp.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(loginWithOtp.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(loginWithOtp.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isMobileVerified = true;
+        
+        const payloadData = action.payload?.data || action.payload;
+        
+        if (payloadData?.token) {
+          state.token = payloadData.token;
+          // The login API returns { token, user: { ... } }
+          const userData = payloadData.user || payloadData;
+          state.user = userData;
+          state.isAuthenticated = true;
+          localStorage.setItem('token', payloadData.token);
+          localStorage.setItem('user', JSON.stringify(userData));
+        }
+      })
+      .addCase(loginWithOtp.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });

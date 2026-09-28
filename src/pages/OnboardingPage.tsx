@@ -213,11 +213,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                       type="text"
                       value={mobileNumber}
                       onChange={(e) => {
-                        let val = e.target.value;
-                        if (/^[0-9+]/.test(val)) {
-                          val = val.replace(/[^\d+]/g, '');
-                        }
-                        dispatch(setMobileNumber(val));
+                        dispatch(setMobileNumber(e.target.value));
                       }}
                       disabled={isOtpSent || isLoading}
                       placeholder="Enter mobile number or email"

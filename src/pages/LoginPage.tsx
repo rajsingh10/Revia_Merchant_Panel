@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { ShieldCheck, MessageSquare, Phone, Lock, Sparkles, ArrowRight, CheckCircle2, Store, Award, BarChart2 } from 'lucide-react';
 import { PrimaryButton, LiveBadge } from '../components/common/Badges';
+import { AppDispatch, RootState } from '../store/store';
+import { requestLoginOtp, loginWithOtp, resetAuthState } from '../store/slices/authSlice';
 
 interface LoginPageProps {
   onLoginSuccess: (role: 'merchant' | 'customer' | string) => void;
@@ -8,14 +11,34 @@ interface LoginPageProps {
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnboarding }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { isLoading, error, isOtpSent, isMobileVerified, isAuthenticated } = useSelector((state: RootState) => state.auth);
+
   const [authMethod, setAuthMethod] = useState<'sms' | 'whatsapp'>('sms');
   const [countryCode, setCountryCode] = useState('+91');
   const [phone, setPhone] = useState('');
-  const [pin, setPin] = useState(['4', '8', '2', '', '', '']);
+  const [pin, setPin] = useState(['', '', '', '', '', '']);
   const [step, setStep] = useState<'input' | 'verify'>('input');
   const [timeLeft, setTimeLeft] = useState(105); // 01:45
   const [verifyMode, setVerifyMode] = useState<'otp' | 'password'>('otp');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    // Reset auth state on mount
+    dispatch(resetAuthState());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (isAuthenticated && isMobileVerified) {
+      onLoginSuccess('merchant');
+    }
+  }, [isAuthenticated, isMobileVerified, onLoginSuccess]);
+
+  useEffect(() => {
+    if (isOtpSent && step === 'input') {
+      setStep('verify');
+    }
+  }, [isOtpSent, step]);
 
   useEffect(() => {
     if (step === 'verify' && timeLeft > 0) {
@@ -220,11 +243,19 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
 
               <PrimaryButton
                 type="button"
-                onClick={() => setStep('verify')}
+                onClick={() => {
+                  if (phone.trim()) {
+                    dispatch(requestLoginOtp(phone));
+                  }
+                }}
+                disabled={isLoading}
                 className="w-full py-2.5 text-sm mt-2"
               >
-                Send Verification Code →
+                {isLoading ? 'Sending...' : 'Send Verification Code →'}
               </PrimaryButton>
+              {error && step === 'input' && (
+                <p className="text-red-500 text-xs text-center mt-2">{error}</p>
+              )}
             </div>
           ) : (
             <div className="space-y-5">
@@ -289,18 +320,36 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
 
               <PrimaryButton
                 type="button"
-                onClick={() => onLoginSuccess('merchant')}
+                onClick={() => {
+                  if (verifyMode === 'otp') {
+                    const enteredOtp = pin.join('');
+                    if (enteredOtp.length === 6) {
+                      dispatch(loginWithOtp({ identifier: phone, otp: enteredOtp }));
+                    }
+                  } else {
+                    // Password login could be dispatched here if implemented
+                    onLoginSuccess('merchant');
+                  }
+                }}
+                disabled={isLoading || (verifyMode === 'otp' && pin.join('').length < 6)}
                 className="w-full py-2.5 text-sm"
               >
-                {verifyMode === 'otp' ? 'Verify PIN & Authenticate →' : 'Login →'}
+                {isLoading ? 'Verifying...' : (verifyMode === 'otp' ? 'Verify PIN & Authenticate →' : 'Login →')}
               </PrimaryButton>
+              {error && step === 'verify' && (
+                <p className="text-red-500 text-xs text-center">{error}</p>
+              )}
 
               {verifyMode === 'otp' && (
-                <div className="text-center">
+                <div className="text-center mt-2">
                   <button
                     type="button"
-                    onClick={() => setTimeLeft(105)}
-                    className="text-xs text-[#9E782F] font-semibold hover:underline cursor-pointer"
+                    onClick={() => {
+                      setTimeLeft(105);
+                      dispatch(requestLoginOtp(phone));
+                    }}
+                    disabled={isLoading}
+                    className="text-xs text-[#9E782F] font-semibold hover:underline cursor-pointer disabled:opacity-50"
                   >
                     Didn&apos;t receive code? Resend OTP
                   </button>
