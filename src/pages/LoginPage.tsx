@@ -22,6 +22,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
   const [timeLeft, setTimeLeft] = useState(105); // 01:45
   const [verifyMode, setVerifyMode] = useState<'otp' | 'password'>('otp');
   const [password, setPassword] = useState('');
+  const [validationError, setValidationError] = useState('');
 
   useEffect(() => {
     // Reset auth state on mount
@@ -37,6 +38,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
   useEffect(() => {
     if (isOtpSent && step === 'input') {
       setStep('verify');
+      setValidationError('');
     }
   }, [isOtpSent, step]);
 
@@ -240,11 +242,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
                         val = val.replace(/[^\d+]/g, '');
                       }
                       setPhone(val);
+                      if (val.trim()) setValidationError('');
                     }}
                     placeholder="Enter registered mobile number or email"
-                    className="flex-1 bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]"
+                    className={`flex-1 bg-[#FAF8F5] border rounded-lg px-3 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden ${validationError ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'}`}
                   />
                 </div>
+                {validationError && (
+                  <p className="text-red-500 text-[10px] mt-1 font-semibold">{validationError}</p>
+                )}
                 <p className="text-[10px] text-[#9E9A93] mt-1.5">
                   Operator credentials provisioned by Central IT / General Management.
                 </p>
@@ -254,7 +260,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
                 type="button"
                 onClick={() => {
                   if (phone.trim()) {
+                    setValidationError('');
                     dispatch(requestLoginOtp(phone));
+                  } else {
+                    setValidationError('Phone number or email is required');
                   }
                 }}
                 disabled={isLoading}
