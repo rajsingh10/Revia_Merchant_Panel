@@ -68,9 +68,9 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   }, [activeStep]);
 
   // M-01 Business Info
-  const [businessName, setBusinessName] = useState('Blue Bottle Specialty Roasters');
+  const [businessName, setBusinessName] = useState('');
   const [businessCategory, setBusinessCategory] = useState<number | ''>('');
-  const [ownerName, setOwnerName] = useState('Elena Vance');
+  const [ownerName, setOwnerName] = useState('');
   
   const [categories, setCategories] = useState<{ id: number, name: string }[]>([]);
 
@@ -92,10 +92,10 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   }, [isRegistered]);
 
   // Step 3 First Branch
-  const [branchName, setBranchName] = useState('Blue Bottle Cafe - Downtown Flagship');
-  const [address, setAddress] = useState('315 Montgomery St, Financial District, San Francisco, CA');
-  const [timezone, setTimezone] = useState('America/Los_Angeles (PST - UTC-8)');
-  const [hours, setHours] = useState('06:30 AM - 07:00 PM PST');
+  const [branchName, setBranchName] = useState('');
+  const [address, setAddress] = useState('');
+  const [timezone, setTimezone] = useState('');
+  const [hours, setHours] = useState('');
   const [registerType, setRegisterType] = useState<'counter' | 'salon' | 'express'>('counter');
   const [isMapOpen, setIsMapOpen] = useState(false);
 
@@ -398,6 +398,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                         type="text" 
                         value={businessName} 
                         onChange={(e) => { setBusinessName(e.target.value); if (errors.businessName) setErrors({...errors, businessName: ''}); }} 
+                        placeholder="e.g. Blue Bottle Specialty Roasters"
                         className={`w-full bg-[#FAF8F5] border ${errors.businessName ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden`} 
                       />
                       {errors.businessName && <p className="text-red-500 text-[10px] mt-1">{errors.businessName}</p>}
@@ -408,6 +409,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                         type="text" 
                         value={ownerName} 
                         onChange={(e) => { setOwnerName(e.target.value); if (errors.ownerName) setErrors({...errors, ownerName: ''}); }} 
+                        placeholder="e.g. Elena Vance"
                         className={`w-full bg-[#FAF8F5] border ${errors.ownerName ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden`} 
                       />
                       {errors.ownerName && <p className="text-red-500 text-[10px] mt-1">{errors.ownerName}</p>}
@@ -472,6 +474,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                         type="text"
                         value={branchName}
                         onChange={(e) => { setBranchName(e.target.value); if (errors.branchName) setErrors({...errors, branchName: ''}); }}
+                        placeholder="e.g. Blue Bottle Cafe - Downtown Flagship"
                         className={`w-full bg-[#FAF8F5] border ${errors.branchName ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden`}
                       />
                       {errors.branchName && <p className="text-red-500 text-[10px] mt-1">{errors.branchName}</p>}
@@ -487,6 +490,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                           type="text"
                           value={address}
                           onChange={(e) => { setAddress(e.target.value); if (errors.address) setErrors({...errors, address: ''}); }}
+                          placeholder="e.g. 315 Montgomery St, Financial District, San Francisco, CA"
                           className={`w-full bg-[#FAF8F5] border ${errors.address ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden`}
                         />
                       </div>
@@ -531,6 +535,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                           type="text"
                           value={timezone}
                           onChange={(e) => { setTimezone(e.target.value); if (errors.timezone) setErrors({...errors, timezone: ''}); }}
+                          placeholder="e.g. America/Los_Angeles (PST - UTC-8)"
                           className={`w-full bg-[#FAF8F5] border ${errors.timezone ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden`}
                         />
                         {errors.timezone && <p className="text-red-500 text-[10px] mt-1">{errors.timezone}</p>}
@@ -543,6 +548,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                           type="text"
                           value={hours}
                           onChange={(e) => { setHours(e.target.value); if (errors.hours) setErrors({...errors, hours: ''}); }}
+                          placeholder="e.g. 06:30 AM - 07:00 PM PST"
                           className={`w-full bg-[#FAF8F5] border ${errors.hours ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden`}
                         />
                         {errors.hours && <p className="text-red-500 text-[10px] mt-1">{errors.hours}</p>}
