@@ -25,6 +25,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, onA
   const [newItemPrice, setNewItemPrice] = useState('');
   const [newItemCost, setNewItemCost] = useState('');
   const [addLoyaltyIntegration, setAddLoyaltyIntegration] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -45,7 +46,11 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, onA
   };
 
   const handleAddItem = () => {
-    if (!newItemTitle.trim()) return; // minimal validation
+    setHasSubmitted(true);
+    
+    if (!newItemTitle.trim() || !newItemBranch || !newItemCategory || !newItemPrice) {
+      return;
+    }
 
     onAdd({
       title: newItemTitle,
@@ -67,6 +72,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, onA
     setNewItemCost('');
     setNewItemImage(null);
     setAddLoyaltyIntegration(false);
+    setHasSubmitted(false);
     onClose();
   };
 
@@ -143,29 +149,32 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, onA
           {/* Form Fields */}
           <div className="space-y-4">
             <div>
-              <label className="block text-[11px] font-bold text-[#1A1615] mb-1.5">Item Title</label>
-              <input type="text" value={newItemTitle} onChange={e => setNewItemTitle(e.target.value)} placeholder="Enter item title" className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-4 py-3 text-sm text-[#1A1615] focus:outline-none focus:border-[#B38637]" />
+              <label className="block text-[11px] font-bold text-[#1A1615] mb-1.5">Item Title <span className="text-[#DC2626]">*</span></label>
+              <input type="text" value={newItemTitle} onChange={e => setNewItemTitle(e.target.value)} placeholder="Enter item title" className={`w-full bg-[#FAF8F5] border rounded-lg px-4 py-3 text-sm text-[#1A1615] focus:outline-none focus:border-[#B38637] ${hasSubmitted && !newItemTitle.trim() ? 'border-[#DC2626] bg-[#FEF2F2]' : 'border-[#EAE6E1]'}`} />
+              {hasSubmitted && !newItemTitle.trim() && <p className="text-[#DC2626] text-[10px] font-bold mt-1">Item Title is required</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-[11px] font-bold text-[#1A1615] mb-1.5">Branch</label>
-                <select value={newItemBranch} onChange={e => setNewItemBranch(e.target.value)} className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-4 py-3 text-sm text-[#1A1615] focus:outline-none focus:border-[#B38637] appearance-none cursor-pointer">
+                <label className="block text-[11px] font-bold text-[#1A1615] mb-1.5">Branch <span className="text-[#DC2626]">*</span></label>
+                <select value={newItemBranch} onChange={e => setNewItemBranch(e.target.value)} className={`w-full bg-[#FAF8F5] border rounded-lg px-4 py-3 text-sm text-[#1A1615] focus:outline-none focus:border-[#B38637] appearance-none cursor-pointer ${hasSubmitted && !newItemBranch ? 'border-[#DC2626] bg-[#FEF2F2]' : 'border-[#EAE6E1]'}`}>
                   <option value="" disabled>Select branch</option>
                   <option value="Downtown Flagship">Downtown Flagship</option>
                   <option value="Northside Mall">Northside Mall</option>
                   <option value="West End Kiosk">West End Kiosk</option>
                 </select>
+                {hasSubmitted && !newItemBranch && <p className="text-[#DC2626] text-[10px] font-bold mt-1">Branch is required</p>}
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-[#1A1615] mb-1.5">Category</label>
-                <select value={newItemCategory} onChange={e => setNewItemCategory(e.target.value)} className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-4 py-3 text-sm text-[#1A1615] focus:outline-none focus:border-[#B38637] appearance-none cursor-pointer">
+                <label className="block text-[11px] font-bold text-[#1A1615] mb-1.5">Category <span className="text-[#DC2626]">*</span></label>
+                <select value={newItemCategory} onChange={e => setNewItemCategory(e.target.value)} className={`w-full bg-[#FAF8F5] border rounded-lg px-4 py-3 text-sm text-[#1A1615] focus:outline-none focus:border-[#B38637] appearance-none cursor-pointer ${hasSubmitted && !newItemCategory ? 'border-[#DC2626] bg-[#FEF2F2]' : 'border-[#EAE6E1]'}`}>
                   <option value="" disabled>Select category</option>
                   <option value="Single Origin Coffee">Single Origin Coffee</option>
                   <option value="Tasting Flights">Tasting Flights</option>
                   <option value="Artisanal Bakery">Artisanal Bakery</option>
                   <option value="Seasonal Brews">Seasonal Brews</option>
                 </select>
+                {hasSubmitted && !newItemCategory && <p className="text-[#DC2626] text-[10px] font-bold mt-1">Category is required</p>}
               </div>
               <div>
                 <label className="block text-[11px] font-bold text-[#1A1615] mb-1.5">SKU Barcode</label>
@@ -175,14 +184,15 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, onA
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-[11px] font-bold text-[#6E6A66] uppercase tracking-wider mb-1.5">RETAIL PRICE ($)</label>
+                <label className="block text-[11px] font-bold text-[#6E6A66] uppercase tracking-wider mb-1.5">RETAIL PRICE ($) <span className="text-[#DC2626]">*</span></label>
                 <input
                   type="number"
                   value={newItemPrice}
                   onChange={(e) => setNewItemPrice(e.target.value)}
                   placeholder="0.00"
-                  className="w-full bg-white border border-[#EAE6E1] rounded-lg px-4 py-3 text-base font-bold text-[#1A1615] focus:outline-none focus:border-[#B38637]"
+                  className={`w-full bg-white border rounded-lg px-4 py-3 text-base font-bold text-[#1A1615] focus:outline-none focus:border-[#B38637] ${hasSubmitted && !newItemPrice ? 'border-[#DC2626] bg-[#FEF2F2]' : 'border-[#EAE6E1]'}`}
                 />
+                {hasSubmitted && !newItemPrice && <p className="text-[#DC2626] text-[10px] font-bold mt-1">Price is required</p>}
               </div>
               <div>
                 <label className="block text-[11px] font-bold text-[#6E6A66] uppercase tracking-wider mb-1.5">COST OF GOODS ($)</label>
@@ -246,12 +256,18 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, onA
 
         <div className="px-6 py-4 border-t border-[#EAE6E1] bg-[#FAF8F5] flex items-center justify-between gap-3">
           <button
-            onClick={onClose}
+            onClick={() => {
+              setHasSubmitted(false);
+              onClose();
+            }}
             className="px-6 py-3 bg-white border border-[#EAE6E1] hover:bg-[#F2EFE9] text-[#1A1615] text-sm font-bold rounded-xl transition-colors cursor-pointer"
           >
             Cancel
           </button>
-          <button onClick={handleAddItem} className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-sm font-bold rounded-xl transition-all shadow-md cursor-pointer">
+          <button 
+            onClick={handleAddItem} 
+            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 text-white text-sm font-bold rounded-xl transition-all shadow-md bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 cursor-pointer"
+          >
             <Plus className="w-4 h-4 text-white" />
             Add Item to Catalog
           </button>

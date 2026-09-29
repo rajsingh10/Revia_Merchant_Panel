@@ -34,6 +34,12 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
   const [isTierModalOpen, setIsTierModalOpen] = useState(false);
   const [editingTier, setEditingTier] = useState<TierOption | null>(null);
 
+  // Delete Confirmation State
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ type: 'field' | 'tier', id: string, name: string } | null>(null);
+
+  const [hasSubmittedField, setHasSubmittedField] = useState(false);
+  const [hasSubmittedTier, setHasSubmittedTier] = useState(false);
+
   // Field Form State
   const [fieldKey, setFieldKey] = useState('');
   const [fieldLabel, setFieldLabel] = useState('');
@@ -52,6 +58,7 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
     setFieldLabel('');
     setFieldType('currency');
     setFieldIsActive(true);
+    setHasSubmittedField(false);
     setIsFieldModalOpen(true);
   };
 
@@ -61,11 +68,13 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
     setFieldLabel(field.label);
     setFieldType(field.type);
     setFieldIsActive(field.isActive ?? true);
+    setHasSubmittedField(false);
     setIsFieldModalOpen(true);
   };
 
   const handleSaveField = () => {
-    if (!fieldLabel) return;
+    setHasSubmittedField(true);
+    if (!fieldLabel.trim()) return;
     
     // Auto-generate key from label for new fields
     const actualKey = editingField ? editingField.key : fieldLabel.toLowerCase().replace(/[^a-z0-9]+/g, '_');
@@ -76,13 +85,12 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
     } else {
       dispatch(addRuleField(fieldData));
     }
+    setHasSubmittedField(false);
     setIsFieldModalOpen(false);
   };
 
-  const handleDeleteField = (key: string) => {
-    if (window.confirm('Are you sure you want to delete this field?')) {
-      dispatch(deleteRuleField(key));
-    }
+  const handleDeleteField = (field: RuleField) => {
+    setDeleteConfirmation({ type: 'field', id: field.key, name: field.label });
   };
 
   const handleAddTier = () => {
@@ -90,6 +98,7 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
     setTierValue('');
     setTierLabel('');
     setTierIsActive(true);
+    setHasSubmittedTier(false);
     setIsTierModalOpen(true);
   };
 
@@ -98,11 +107,13 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
     setTierValue(tier.value);
     setTierLabel(tier.label);
     setTierIsActive(tier.isActive ?? true);
+    setHasSubmittedTier(false);
     setIsTierModalOpen(true);
   };
 
   const handleSaveTier = () => {
-    if (!tierLabel) return;
+    setHasSubmittedTier(true);
+    if (!tierLabel.trim()) return;
 
     // Auto-generate value from label for new tiers
     const actualValue = editingTier ? editingTier.value : tierLabel.toLowerCase().replace(/[^a-z0-9]+/g, '_');
@@ -113,13 +124,12 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
     } else {
       dispatch(addTierOption(tierData));
     }
+    setHasSubmittedTier(false);
     setIsTierModalOpen(false);
   };
 
-  const handleDeleteTier = (value: string) => {
-    if (window.confirm('Are you sure you want to delete this tier?')) {
-      dispatch(deleteTierOption(value));
-    }
+  const handleDeleteTier = (tier: TierOption) => {
+    setDeleteConfirmation({ type: 'tier', id: tier.value, name: tier.label });
   };
 
   return (
@@ -192,8 +202,8 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
                       )}
                     </td>
                     <td className="py-3 px-4 flex items-center justify-end gap-2">
-                      <button onClick={() => handleEditField(field)} className="p-1.5 text-[#6E6A66] hover:bg-[#EFECE6] rounded-md transition-colors"><Edit2 className="w-4 h-4" /></button>
-                      <button onClick={() => handleDeleteField(field.key)} className="p-1.5 text-[#6E6A66] hover:bg-red-50 hover:text-red-600 rounded-md transition-colors"><Trash2 className="w-4 h-4" /></button>
+                      <button onClick={() => handleEditField(field)} className="p-1.5 text-[#6E6A66] hover:bg-[#EFECE6] rounded-md transition-colors cursor-pointer"><Edit2 className="w-4 h-4" /></button>
+                      <button onClick={() => handleDeleteField(field)} className="p-1.5 text-[#6E6A66] hover:bg-red-50 hover:text-red-600 rounded-md transition-colors cursor-pointer"><Trash2 className="w-4 h-4" /></button>
                     </td>
                   </tr>
                 ))
@@ -238,8 +248,8 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
                       )}
                     </td>
                     <td className="py-3 px-4 flex items-center justify-end gap-2">
-                      <button onClick={() => handleEditTier(tier)} className="p-1.5 text-[#6E6A66] hover:bg-[#EFECE6] rounded-md transition-colors"><Edit2 className="w-4 h-4" /></button>
-                      <button onClick={() => handleDeleteTier(tier.value)} className="p-1.5 text-[#6E6A66] hover:bg-red-50 hover:text-red-600 rounded-md transition-colors"><Trash2 className="w-4 h-4" /></button>
+                      <button onClick={() => handleEditTier(tier)} className="p-1.5 text-[#6E6A66] hover:bg-[#EFECE6] rounded-md transition-colors cursor-pointer"><Edit2 className="w-4 h-4" /></button>
+                      <button onClick={() => handleDeleteTier(tier)} className="p-1.5 text-[#6E6A66] hover:bg-red-50 hover:text-red-600 rounded-md transition-colors cursor-pointer"><Trash2 className="w-4 h-4" /></button>
                     </td>
                   </tr>
                 ))
@@ -264,14 +274,15 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-[#6E6A66] mb-1">Label</label>
+                <label className="block text-xs font-bold text-[#6E6A66] mb-1">Label <span className="text-[#DC2626]">*</span></label>
                 <input 
                   type="text" 
                   value={fieldLabel}
                   onChange={e => setFieldLabel(e.target.value)}
-                  className="w-full border border-[#EAE6E1] rounded-lg px-3 py-2 text-sm focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753] outline-none" 
+                  className={`w-full border rounded-lg px-3 py-2 text-sm focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753] outline-none ${hasSubmittedField && !fieldLabel.trim() ? 'border-[#DC2626] bg-[#FEF2F2]' : 'border-[#EAE6E1]'}`} 
                   placeholder="Enter field label"
                 />
+                {hasSubmittedField && !fieldLabel.trim() && <p className="text-[#DC2626] text-[10px] font-bold mt-1">Label is required</p>}
               </div>
               <div>
                 <label className="block text-xs font-bold text-[#6E6A66] mb-1">Type</label>
@@ -320,8 +331,8 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-6">
-              <button onClick={() => setIsFieldModalOpen(false)} className="px-4 py-2 text-sm font-bold text-[#6E6A66] hover:bg-[#FAF8F5] rounded-lg transition-colors">Cancel</button>
-              <button onClick={handleSaveField} className="px-4 py-2 text-sm font-bold text-white bg-[#D4A753] hover:bg-[#B68F45] rounded-lg transition-colors">Save</button>
+              <button onClick={() => { setHasSubmittedField(false); setIsFieldModalOpen(false); }} className="px-4 py-2 text-sm font-bold text-[#6E6A66] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer">Cancel</button>
+              <button onClick={handleSaveField} className="px-4 py-2 text-sm font-bold text-white bg-[#D4A753] hover:bg-[#B68F45] rounded-lg transition-colors cursor-pointer">Save</button>
             </div>
           </div>
         </div>
@@ -342,14 +353,15 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-[#6E6A66] mb-1">Label</label>
+                <label className="block text-xs font-bold text-[#6E6A66] mb-1">Label <span className="text-[#DC2626]">*</span></label>
                 <input 
                   type="text" 
                   value={tierLabel}
                   onChange={e => setTierLabel(e.target.value)}
-                  className="w-full border border-[#EAE6E1] rounded-lg px-3 py-2 text-sm focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753] outline-none" 
+                  className={`w-full border rounded-lg px-3 py-2 text-sm focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753] outline-none ${hasSubmittedTier && !tierLabel.trim() ? 'border-[#DC2626] bg-[#FEF2F2]' : 'border-[#EAE6E1]'}`} 
                   placeholder="Enter tier label"
                 />
+                {hasSubmittedTier && !tierLabel.trim() && <p className="text-[#DC2626] text-[10px] font-bold mt-1">Label is required</p>}
               </div>
               <div className="pt-2">
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -362,8 +374,46 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-6">
-              <button onClick={() => setIsTierModalOpen(false)} className="px-4 py-2 text-sm font-bold text-[#6E6A66] hover:bg-[#FAF8F5] rounded-lg transition-colors">Cancel</button>
-              <button onClick={handleSaveTier} className="px-4 py-2 text-sm font-bold text-white bg-[#D4A753] hover:bg-[#B68F45] rounded-lg transition-colors">Save</button>
+              <button onClick={() => { setHasSubmittedTier(false); setIsTierModalOpen(false); }} className="px-4 py-2 text-sm font-bold text-[#6E6A66] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer">Cancel</button>
+              <button onClick={handleSaveTier} className="px-4 py-2 text-sm font-bold text-white bg-[#D4A753] hover:bg-[#B68F45] rounded-lg transition-colors cursor-pointer">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmation && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="w-[400px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            <div className="p-6">
+              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
+                <Trash2 className="w-6 h-6 text-red-600" />
+              </div>
+              <h2 className="text-xl font-bold text-[#1A1615] mb-2">Delete {deleteConfirmation.type === 'field' ? 'Rule Field' : 'Tier Option'}</h2>
+              <p className="text-sm text-[#6E6A66]">
+                Are you sure you want to delete <span className="font-bold text-[#1A1615]">{deleteConfirmation.name}</span>? This action cannot be undone.
+              </p>
+            </div>
+            <div className="px-6 py-4 bg-[#FAF8F5] border-t border-[#EAE6E1] flex items-center justify-end gap-3">
+              <button
+                onClick={() => setDeleteConfirmation(null)}
+                className="px-4 py-2 text-sm font-bold text-[#6E6A66] hover:bg-[#EAE6E1] rounded-lg transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (deleteConfirmation.type === 'field') {
+                    dispatch(deleteRuleField(deleteConfirmation.id));
+                  } else {
+                    dispatch(deleteTierOption(deleteConfirmation.id));
+                  }
+                  setDeleteConfirmation(null);
+                }}
+                className="px-4 py-2 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors cursor-pointer"
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>

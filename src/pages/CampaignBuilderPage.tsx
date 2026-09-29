@@ -64,6 +64,7 @@ import { FormInput } from '../components/FormInput';
 import { AddItemModal } from '../components/AddItemModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCampaigns, setCurrentCampaign, createCampaign, updateCampaign, deleteCampaign } from '../store/slices/campaignSlice';
+import { fetchProducts } from '../store/slices/catalogSlice';
 import { fetchBranches } from '../store/slices/branchSlice';
 import type { AppDispatch, RootState } from '../store/store';
 import apiClient from '../api/apiClient';
@@ -121,6 +122,23 @@ export const FIELD_OPTIONS_FALLBACK = Object.entries(FIELDS).map(([key, val]) =>
   value: key,
   label: val.label
 }));
+
+export const getCampaignTypeLabel = (type: string) => {
+  if (!type) return '—';
+  const labels: Record<string, string> = {
+    new_customer: 'New Customer',
+    existing_customer: 'Existing Customer',
+    direct_customer: 'Direct Special Offer',
+    product_qr: 'Product Batch QR',
+    welcome_campaign: 'Welcome Campaign',
+    old_customer: 'Old Customer',
+    visit_campaign: 'Visit Campaign',
+    billing_campaign: 'Billing Campaign',
+    stamp_campaign: 'Stamp Campaign',
+    happy_hours: 'Happy Hours'
+  };
+  return labels[type] || type.replace(/_/g, ' ');
+};
 
 interface CampaignRulesStepProps {
   campaignType: string;
@@ -961,7 +979,7 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
               </div>
               <div>
                 <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#D4A753] text-[#1A1615] text-[9px] font-bold rounded mb-1.5 uppercase">
-                  <span className="w-1 h-1 rounded-full bg-[#1A1615]"></span> {campaignType ? `${campaignType.replace(/_/g, ' ')} PRIVILEGE` : 'SPECIAL PRIVILEGE'}
+                  <span className="w-1 h-1 rounded-full bg-[#1A1615]"></span> {campaignType ? `${getCampaignTypeLabel(campaignType).toUpperCase()} PRIVILEGE` : 'SPECIAL PRIVILEGE'}
                 </div>
                 <h4 className="text-[13px] font-bold text-white leading-tight mb-1">{campaignName || 'Your Campaign Name'}</h4>
                 <p className="text-[9px] text-[#9E9A93] leading-relaxed">Valid for selected members<br />based on rules above</p>
@@ -1020,19 +1038,14 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
 
   const [rewardPoints, setRewardPoints] = useState<number>(500);
 
-  const [freeItem, setFreeItem] = useState<string>('Single Origin Geisha (250g Whole Bean)');
+  const [freeItem, setFreeItem] = useState<string>('');
   const [freeItemDropdownOpen, setFreeItemDropdownOpen] = useState(false);
   const [showFreeItemNewInput, setShowFreeItemNewInput] = useState(false);
   const [freeItemNewName, setFreeItemNewName] = useState('');
-  const [catalogProducts, setCatalogProducts] = useState([
-    'Panama Boquete Geisha Tasting Flight',
-    'Ethiopia Yirgacheffe Washed Grade 1',
-    'Colombia Huila Pink Bourbon Anaerobic',
-    'Artisanal Cardamom Kouign-Amann',
-    'Bourbon Cask 24h Kyoto Drip Cold Brew',
-    'Valrhona Dark Chocolate Hazelnut Cruffin',
-    'Single Origin Geisha (250g Whole Bean)',
-  ]);
+  const storeItems = useSelector((state: RootState) => state.catalog.items);
+  const storeProducts = storeItems.map(item => item.title);
+  const [localProducts, setLocalProducts] = useState<string[]>([]);
+  const catalogProducts = [...storeProducts, ...localProducts];
 
   const [maxRedemptions, setMaxRedemptions] = useState<number>(1);
   const [totalBudgetCap, setTotalBudgetCap] = useState<number>(500);
@@ -1230,7 +1243,14 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
 
           {rewardType === 'free_item' && (
             <div className="mt-5 pt-5 border-t border-[#EFECE6] bg-[#FAF8F5] rounded-xl p-4 border">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] block mb-2">FREE ITEM PRODUCT NAME</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] block">FREE ITEM PRODUCT NAME</label>
+                {!(campaignType === 'existing_stamp' && !!ruleConfig?.stampItem) && (
+                  <button type="button" onClick={() => { setFreeItemDropdownOpen(true); setShowFreeItemNewInput(true); }} className="text-[11px] font-bold text-[#D4A753] flex items-center gap-1 hover:underline cursor-pointer">
+                    <Plus className="w-3 h-3" /> Add New Item
+                  </button>
+                )}
+              </div>
               <div className="relative">
                 <button
                   type="button"
@@ -1253,40 +1273,35 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
                 {freeItemDropdownOpen && !(campaignType === 'existing_stamp' && !!ruleConfig?.stampItem) && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#EFECE6] rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
                     <div className="max-h-[220px] overflow-y-auto py-1">
-                      {catalogProducts.map((product) => (
-                        <button
-                          key={product}
-                          type="button"
-                          onClick={() => {
-                            setFreeItem(product);
-                            setFreeItemDropdownOpen(false);
-                          }}
-                          className={`w-full text-left px-4 py-2.5 text-[13px] font-semibold flex items-center justify-between gap-2 cursor-pointer transition-colors ${
-                            freeItem === product
-                              ? 'bg-[#FDF8EB] text-[#9E782F]'
-                              : 'text-[#3D3732] hover:bg-[#FAF8F5]'
-                          }`}
-                        >
-                          <span className="truncate">{product}</span>
-                          {freeItem === product && <Check className="w-4 h-4 text-[#D4A753] shrink-0" />}
-                        </button>
-                      ))}
+                      {catalogProducts.length === 0 ? (
+                        <div className="px-4 py-4 text-center">
+                          <p className="text-[12px] font-medium text-[#9E9A93]">No items available. Add one above.</p>
+                        </div>
+                      ) : (
+                        catalogProducts.map((product) => (
+                          <button
+                            key={product}
+                            type="button"
+                            onClick={() => {
+                              setFreeItem(product);
+                              setFreeItemDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-4 py-2.5 text-[13px] font-semibold flex items-center justify-between gap-2 cursor-pointer transition-colors ${
+                              freeItem === product
+                                ? 'bg-[#FDF8EB] text-[#9E782F]'
+                                : 'text-[#3D3732] hover:bg-[#FAF8F5]'
+                            }`}
+                          >
+                            <span className="truncate">{product}</span>
+                            {freeItem === product && <Check className="w-4 h-4 text-[#D4A753] shrink-0" />}
+                          </button>
+                        ))
+                      )}
                     </div>
 
-                    {/* Divider */}
-                    <div className="border-t border-[#EFECE6]" />
-
-                    {/* Add New Item */}
-                    {!showFreeItemNewInput ? (
-                      <button
-                        type="button"
-                        onClick={() => setShowFreeItemNewInput(true)}
-                        className="w-full text-left px-4 py-3 text-[13px] font-bold text-[#D4A753] flex items-center gap-1.5 cursor-pointer hover:bg-[#FDF8EB] transition-colors"
-                      >
-                        <Plus className="w-4 h-4" />
-                        Add New Item
-                      </button>
-                    ) : (
+                    {/* Add New Item Input */}
+                    {showFreeItemNewInput && (
+                      <div className="border-t border-[#EFECE6]">
                       <div className="px-3 py-2.5 flex items-center gap-2">
                         <input
                           type="text"
@@ -1295,7 +1310,7 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
                           onChange={e => setFreeItemNewName(e.target.value)}
                           onKeyDown={e => {
                             if (e.key === 'Enter' && freeItemNewName.trim()) {
-                              setCatalogProducts(prev => [...prev, freeItemNewName.trim()]);
+                              setLocalProducts(prev => [...prev, freeItemNewName.trim()]);
                               setFreeItem(freeItemNewName.trim());
                               setFreeItemNewName('');
                               setShowFreeItemNewInput(false);
@@ -1309,7 +1324,7 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
                           type="button"
                           onClick={() => {
                             if (freeItemNewName.trim()) {
-                              setCatalogProducts(prev => [...prev, freeItemNewName.trim()]);
+                              setLocalProducts(prev => [...prev, freeItemNewName.trim()]);
                               setFreeItem(freeItemNewName.trim());
                               setFreeItemNewName('');
                               setShowFreeItemNewInput(false);
@@ -1320,6 +1335,7 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
                         >
                           Add
                         </button>
+                      </div>
                       </div>
                     )}
                   </div>
@@ -1797,29 +1813,24 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const [directCustomerMobile, setDirectCustomerMobile] = useState<string>('+91 98765 43210');
   const [directCustomerBillNo, setDirectCustomerBillNo] = useState<string>('INV-88219');
   const [directRedemptionMode, setDirectRedemptionMode] = useState<'auto' | 'merchant_approval'>('merchant_approval');
-  const [productQrName, setProductQrName] = useState<string>('Single Origin Geisha (250g Whole Bean)');
+  const [productQrName, setProductQrName] = useState<string>('');
   const [productDropdownOpen, setProductDropdownOpen] = useState(false);
   
   // Modal states for Add New Item
   const [isAddCatalogItemModalOpen, setIsAddCatalogItemModalOpen] = useState(false);
 
   const handleAddCatalogItem = (item: any) => {
-    setCatalogProducts(prev => [...prev, item.title]);
+    setLocalProducts(prev => [...prev, item.title]);
     setProductQrName(item.title);
     setIsAddCatalogItemModalOpen(false);
   };
 
   const [showNewItemInput, setShowNewItemInput] = useState(false);
   const [newItemName, setNewItemName] = useState('');
-  const [catalogProducts, setCatalogProducts] = useState([
-    'Panama Boquete Geisha Tasting Flight',
-    'Ethiopia Yirgacheffe Washed Grade 1',
-    'Colombia Huila Pink Bourbon Anaerobic',
-    'Artisanal Cardamom Kouign-Amann',
-    'Bourbon Cask 24h Kyoto Drip Cold Brew',
-    'Valrhona Dark Chocolate Hazelnut Cruffin',
-    'Single Origin Geisha (250g Whole Bean)',
-  ]);
+  const storeItems = useSelector((state: RootState) => state.catalog.items);
+  const storeProducts = storeItems.map(item => item.title);
+  const [localProducts, setLocalProducts] = useState<string[]>([]);
+  const catalogProducts = [...storeProducts, ...localProducts];
   const [productQrQuantity, setProductQrQuantity] = useState<number>(100);
   const [productQrRedemptionMode, setProductQrRedemptionMode] = useState<'auto' | 'merchant_approval'>('merchant_approval');
   const [startDate, setStartDate] = useState('');
@@ -1884,6 +1895,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     dispatch(fetchCampaigns(undefined));
     dispatch(fetchBranches());
     dispatch(fetchTierOptions());
+    dispatch(fetchProducts());
   }, [dispatch]);
 
   // Populate form if we are editing an existing campaign
@@ -2110,19 +2122,6 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       {/* ── LEFT COLUMN ── */}
       <div className="lg:col-span-7 flex flex-col gap-4 lg:block lg:bg-white lg:border lg:border-[#EFECE6] lg:rounded-xl lg:p-6 lg:shadow-sm lg:space-y-6">
 
-        {/* Mobile: Estimated Reach banner */}
-        <div className="lg:hidden bg-white border border-[#EFECE6] rounded-xl p-4 flex items-center justify-between shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#FDF8EB] rounded-full flex items-center justify-center text-[#9E782F]"><Users className="w-5 h-5" /></div>
-            <div>
-              <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93] mb-0.5">ESTIMATED LIVE REACH</div>
-              <div className="text-sm font-bold text-[#1A1615]">~1,840 <span className="font-medium text-[#6E6A66]">VIP Members</span></div>
-            </div>
-          </div>
-          <div className="px-2 py-1 bg-[#E0F9ED] text-[#0D7A53] rounded font-bold text-[10px] flex items-center gap-1">
-            <TrendingUp className="w-3 h-3" /> +18.4%
-          </div>
-        </div>
 
         {/* Desktop section label */}
         <div className="hidden lg:block border-b border-[#EFECE6] pb-3">
@@ -2398,7 +2397,12 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="relative">
-                    <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Target Specific Product / Item</label>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-[11px] font-bold text-[#6E6A66] block">Target Specific Product / Item</label>
+                      <button type="button" onClick={() => setIsAddCatalogItemModalOpen(true)} className="text-[11px] font-bold text-[#D4A753] flex items-center gap-1 hover:underline cursor-pointer">
+                        <Plus className="w-3 h-3" /> Add New Item
+                      </button>
+                    </div>
                     <button
                       type="button"
                       onClick={() => { setProductDropdownOpen(!productDropdownOpen); setShowNewItemInput(false); }}
@@ -2412,41 +2416,31 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
                     {productDropdownOpen && (
                       <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#EFECE6] rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-                        {/* Add New Item */}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsAddCatalogItemModalOpen(true);
-                            setProductDropdownOpen(false);
-                          }}
-                          className="w-full text-left px-3.5 py-2.5 text-[11px] font-bold text-[#D4A753] flex items-center gap-1.5 cursor-pointer hover:bg-[#FDF8EB] transition-colors"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          Add New Item
-                        </button>
-                        
-                        {/* Divider */}
-                        <div className="border-b border-[#EFECE6]" />
-
                         <div className="max-h-[220px] overflow-y-auto py-1">
-                          {catalogProducts.map((product) => (
-                            <button
-                              key={product}
-                              type="button"
-                              onClick={() => {
-                                setProductQrName(product);
-                                setProductDropdownOpen(false);
-                              }}
-                              className={`w-full text-left px-3.5 py-2 text-[11px] font-semibold flex items-center justify-between gap-2 cursor-pointer transition-colors ${
-                                productQrName === product
-                                  ? 'bg-[#FDF8EB] text-[#9E782F]'
-                                  : 'text-[#3D3732] hover:bg-[#FAF8F5]'
-                              }`}
-                            >
-                              <span className="truncate">{product}</span>
-                              {productQrName === product && <Check className="w-3.5 h-3.5 text-[#D4A753] shrink-0" />}
-                            </button>
-                          ))}
+                          {catalogProducts.length === 0 ? (
+                            <div className="px-3.5 py-4 text-center">
+                              <p className="text-[11px] font-medium text-[#9E9A93]">No items available. Add one above.</p>
+                            </div>
+                          ) : (
+                            catalogProducts.map((product) => (
+                              <button
+                                key={product}
+                                type="button"
+                                onClick={() => {
+                                  setProductQrName(product);
+                                  setProductDropdownOpen(false);
+                                }}
+                                className={`w-full text-left px-3.5 py-2 text-[11px] font-semibold flex items-center justify-between gap-2 cursor-pointer transition-colors ${
+                                  productQrName === product
+                                    ? 'bg-[#FDF8EB] text-[#9E782F]'
+                                    : 'text-[#3D3732] hover:bg-[#FAF8F5]'
+                                }`}
+                              >
+                                <span className="truncate">{product}</span>
+                                {productQrName === product && <Check className="w-3.5 h-3.5 text-[#D4A753] shrink-0" />}
+                              </button>
+                            ))
+                          )}
                         </div>
                       </div>
                     )}
@@ -2693,7 +2687,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <div className="mt-3 flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#0D7A53]" />
                 <span className="text-[11px] font-bold text-[#0D7A53]">
-                  Type resolved: <span className="capitalize">{fullCampaignType.replace(/_/g, ' ')}</span>
+                  Type resolved: <span className="capitalize">{getCampaignTypeLabel(fullCampaignType)}</span>
                 </span>
               </div>
             )}
@@ -2921,7 +2915,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
             <div className="flex items-center justify-between mb-6">
               <span className="text-[10px] font-bold tracking-widest uppercase text-white/60">REVIA ARTISAN PASS</span>
               <span className="px-2 py-0.5 bg-[#D4A753]/20 text-[#D4A753] border border-[#D4A753]/30 rounded text-[9px] font-bold tracking-widest uppercase">
-                {topLevelType ? topLevelType.replace(/_/g, ' ').toUpperCase() : 'NEW CAMPAIGN'}
+                {topLevelType ? getCampaignTypeLabel(topLevelType).toUpperCase() : 'NEW CAMPAIGN'}
               </span>
             </div>
             <div className="h-32 bg-neutral-800 rounded-xl mb-4 overflow-hidden border border-neutral-700">
@@ -2949,7 +2943,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
           <div className="space-y-3">
             <div className="flex items-center justify-between text-xs font-semibold">
               <span className="text-[#6E6A66]">Campaign Type</span>
-              <span className="text-[#1A1615] capitalize">{fullCampaignType ? fullCampaignType.replace(/_/g, ' ') : '—'}</span>
+              <span className="text-[#1A1615]">{getCampaignTypeLabel(fullCampaignType)}</span>
             </div>
             <div className="flex items-center justify-between text-xs font-semibold">
               <span className="text-[#6E6A66]">Branch Eligibility</span>
@@ -2958,13 +2952,6 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
             <div className="flex items-center justify-between text-xs font-semibold">
               <span className="text-[#6E6A66]">Conflict Resolution</span>
               <span className="text-[#1A1615]">Level {priorityLevel} (P{priorityLevel})</span>
-            </div>
-            <div className="pt-3 border-t border-[#EFECE6] flex items-center justify-between">
-              <div>
-                <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">Estimated Scope</div>
-                <div className="text-sm font-bold text-[#1A1615]">~1,420 Target Members</div>
-              </div>
-              <span className="px-2 py-1 bg-[#E6F4ED] text-[#0D7A53] rounded text-[10px] font-bold">+18.4% vs last cohort</span>
             </div>
           </div>
         </div>

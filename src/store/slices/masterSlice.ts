@@ -35,7 +35,11 @@ export const fetchRuleFields = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await apiClient.get('/merchant/masters/rule-fields');
-      return response.data?.data || response.data || [];
+      // Handle nested pagination structure
+      let items = response.data;
+      if (items?.data && !Array.isArray(items)) items = items.data;
+      if (items?.data && !Array.isArray(items)) items = items.data;
+      return Array.isArray(items) ? items : [];
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch rule fields');
     }
@@ -47,7 +51,11 @@ export const fetchTierOptions = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await apiClient.get('/merchant/masters/tiers');
-      return response.data?.data || response.data || [];
+      // Handle nested pagination structure
+      let items = response.data;
+      if (items?.data && !Array.isArray(items)) items = items.data;
+      if (items?.data && !Array.isArray(items)) items = items.data;
+      return Array.isArray(items) ? items : [];
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch tier options');
     }
@@ -141,7 +149,7 @@ const masterSlice = createSlice({
       })
       .addCase(fetchRuleFields.fulfilled, (state, action) => {
         state.isLoadingFields = false;
-        state.ruleFields = action.payload;
+        state.ruleFields = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(fetchRuleFields.rejected, (state, action) => {
         state.isLoadingFields = false;
@@ -156,7 +164,7 @@ const masterSlice = createSlice({
       })
       .addCase(fetchTierOptions.fulfilled, (state, action) => {
         state.isLoadingTiers = false;
-        state.tierOptions = action.payload;
+        state.tierOptions = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(fetchTierOptions.rejected, (state, action) => {
         state.isLoadingTiers = false;

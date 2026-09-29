@@ -8,6 +8,7 @@ import campaignReducer from './slices/campaignSlice';
 import customerReducer from './slices/customerSlice';
 import qrCodeReducer from './slices/qrCodeSlice';
 import masterReducer from './slices/masterSlice';
+import catalogReducer from './slices/catalogSlice';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     customer: customerReducer,
     qrCode: qrCodeReducer,
     master: masterReducer,
+    catalog: catalogReducer,
   },
 });
 
