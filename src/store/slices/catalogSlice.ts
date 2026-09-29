@@ -7,6 +7,8 @@ export interface CatalogItem {
   sku: string;
   category: string;
   branch?: string;
+  branch_id?: string | number | null;
+  description?: string;
   price: number;
   cost: number;
   image: string;
@@ -84,7 +86,21 @@ export const fetchProducts = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await apiClient.get('/v1/catalog/products');
-      return response.data.data?.items || response.data.data || response.data;
+      let rawData = response.data;
+      if (rawData.data && Array.isArray(rawData.data)) {
+        rawData = rawData.data;
+      } else if (rawData.data && rawData.data.data && Array.isArray(rawData.data.data)) {
+        rawData = rawData.data.data;
+      } else if (!Array.isArray(rawData)) {
+        rawData = [];
+      }
+      return rawData.map((item: any) => ({
+        ...item,
+        image: item.image_url || item.image || '',
+        branch: item.branch_name || (item.branch_id ? `Branch ${item.branch_id}` : ''),
+        branch_id: item.branch_id || null,
+        description: item.description || '',
+      }));
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch products');
     }
@@ -96,7 +112,12 @@ export const addProduct = createAsyncThunk(
   async (productData: Partial<CatalogItem>, { rejectWithValue }) => {
     try {
       const response = await apiClient.post('/v1/catalog/products', productData);
-      return response.data.data || response.data;
+      const item = response.data.data || response.data;
+      return {
+        ...item,
+        image: item.image_url || item.image || '',
+        branch: item.branch_name || (item.branch_id ? `Branch ${item.branch_id}` : ''),
+      };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to add product');
     }
@@ -108,7 +129,12 @@ export const updateProduct = createAsyncThunk(
   async ({ id, data }: { id: string; data: Partial<CatalogItem> }, { rejectWithValue }) => {
     try {
       const response = await apiClient.patch(`/v1/catalog/products/${id}`, data);
-      return response.data.data || response.data;
+      const item = response.data.data || response.data;
+      return {
+        ...item,
+        image: item.image_url || item.image || '',
+        branch: item.branch_name || (item.branch_id ? `Branch ${item.branch_id}` : ''),
+      };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to update product');
     }

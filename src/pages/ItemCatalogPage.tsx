@@ -10,7 +10,10 @@ import {
   X,
   Check,
   ImageIcon,
-  Award
+  Award,
+  Trash2,
+  AlertTriangle,
+  Edit2
 } from 'lucide-react';
 import { AddItemModal } from '../components/AddItemModal';
 
@@ -20,18 +23,22 @@ import {
   fetchProducts,
   addProduct,
   updateProduct,
+  deleteProduct,
   toggleItemSelection,
   selectAllItems,
   deselectAllItems,
   CatalogItem
 } from '../store/slices/catalogSlice';
+import { fetchBranches } from '../store/slices/branchSlice';
 
 export const ItemCatalogPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { items, isLoading } = useSelector((state: RootState) => state.catalog);
+  const branches = useSelector((state: RootState) => state.branch.branches);
 
   useEffect(() => {
     dispatch(fetchProducts());
+    dispatch(fetchBranches());
   }, [dispatch]);
 
   const [editingItem, setEditingItem] = useState<CatalogItem | null>(null);
@@ -46,6 +53,7 @@ export const ItemCatalogPage: React.FC = () => {
 
   // Add Modal state
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ id: string, name: string } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editFileInputRef = useRef<HTMLInputElement>(null);
@@ -79,8 +87,17 @@ export const ItemCatalogPage: React.FC = () => {
       selected: false,
     };
 
-    dispatch(addProduct(newItem));
-    setIsAddModalOpen(false);
+    dispatch(addProduct(newItem))
+      .unwrap()
+      .then(() => {
+        setToastMessage('Item added successfully');
+        setIsAddModalOpen(false);
+        setTimeout(() => setToastMessage(null), 3000);
+      })
+      .catch((err) => {
+        setToastMessage(`Failed to add item: ${err}`);
+        setTimeout(() => setToastMessage(null), 3000);
+      });
   };
 
   const handleUpdateItem = () => {
@@ -90,7 +107,17 @@ export const ItemCatalogPage: React.FC = () => {
       setTimeout(() => setToastMessage(null), 3000);
       return;
     }
-    dispatch(updateProduct({ id: editingItem.id, data: editingItem }));
+    dispatch(updateProduct({ id: editingItem.id, data: editingItem }))
+      .unwrap()
+      .then(() => {
+        setToastMessage('Item updated successfully');
+        setEditingItem(null);
+        setTimeout(() => setToastMessage(null), 3000);
+      })
+      .catch((err) => {
+        setToastMessage(`Failed to update item: ${err}`);
+        setTimeout(() => setToastMessage(null), 3000);
+      });
   };
 
   const editCalculatedMargin = useMemo(() => {
@@ -164,7 +191,8 @@ export const ItemCatalogPage: React.FC = () => {
   return (
     <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6 flex flex-col h-full font-sans relative">
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-[60] bg-[#DC2626] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-semibold border border-[#991B1B] animate-in slide-in-from-bottom-5 fade-in">
+        <div className="fixed bottom-6 right-6 z-[60] bg-[#1A1615] text-white px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 text-[13px] font-bold border border-[#3D3732] animate-in slide-in-from-bottom-5 fade-in">
+          <div className="w-1.5 h-1.5 rounded-full bg-[#D4A753]"></div>
           <span>{toastMessage}</span>
         </div>
       )}
@@ -334,12 +362,14 @@ export const ItemCatalogPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="px-5 py-3 border-b border-[#EAE6E1] bg-white">
-            <div className="grid grid-cols-[auto_1fr] gap-4 items-center">
+          <div className="px-5 py-3 border-b border-[#EAE6E1] bg-white hidden md:block">
+            <div className="grid grid-cols-[auto_2fr_1fr_1fr_1fr_auto] gap-4 items-center">
               <div className="w-4"></div>
-              <span className="text-[10px] font-bold text-[#8C827A] uppercase tracking-wider pl-[56px]">
-                PRODUCT & SKU
-              </span>
+              <span className="text-[10px] font-bold text-[#8C827A] uppercase tracking-wider pl-[68px]">Product & SKU</span>
+              <span className="text-[10px] font-bold text-[#8C827A] uppercase tracking-wider">Branch</span>
+              <span className="text-[10px] font-bold text-[#8C827A] uppercase tracking-wider">Category</span>
+              <span className="text-[10px] font-bold text-[#8C827A] uppercase tracking-wider">Price (Cost)</span>
+              <span className="text-[10px] font-bold text-[#8C827A] uppercase tracking-wider text-right pr-2">Actions</span>
             </div>
           </div>
 
@@ -362,26 +392,55 @@ export const ItemCatalogPage: React.FC = () => {
             ) : paginatedItems.map((item) => (
               <div
                 key={item.id}
-                className={`group flex items-center gap-4 px-5 py-4 border-b border-[#F2EFE9] last:border-b-0 transition-colors hover:bg-[#FAF8F5] cursor-pointer ${item.selected ? 'bg-[#FAF8F5]' : 'bg-white'
+                className={`group flex flex-col md:grid md:grid-cols-[auto_2fr_1fr_1fr_1fr_auto] gap-4 items-start md:items-center px-5 py-4 border-b border-[#F2EFE9] last:border-b-0 transition-colors hover:bg-[#FAF8F5] cursor-pointer ${item.selected ? 'bg-[#FAF8F5]' : 'bg-white'
                   }`}
                 onClick={() => setEditingItem(item)}
               >
-                <div onClick={(e) => e.stopPropagation()}>
+                <div onClick={(e) => e.stopPropagation()} className="mt-1 md:mt-0">
                   <input
                     type="checkbox"
                     checked={item.selected}
-                    onChange={() => toggleSelect(item.id)}
+                    onChange={() => dispatch(toggleItemSelection(item.id))}
                     className="w-4 h-4 rounded border-[#D1CDC7] text-[#B38637] focus:ring-[#B38637] cursor-pointer"
                   />
                 </div>
-                <div className="flex items-center gap-4 flex-1">
-                  <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-[#EAE6E1]">
-                    <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-[#EAE6E1] bg-[#FAF8F5] flex items-center justify-center">
+                    {item.image ? (
+                      <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <ImageIcon className="w-5 h-5 text-[#D1CDC7]" />
+                    )}
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-[#1A1615] group-hover:text-[#A37837] transition-colors">{item.title}</h4>
-                    <p className="text-[11px] font-bold text-[#8C827A] mt-0.5">{item.sku}</p>
+                    <h4 className="text-sm font-bold text-[#1A1615] group-hover:text-[#A37837] transition-colors line-clamp-1">{item.title}</h4>
+                    <p className="text-[11px] font-bold text-[#8C827A] mt-0.5 font-mono">{item.sku}</p>
                   </div>
+                </div>
+
+                <div className="text-[13px] font-semibold text-[#3D3732] truncate">
+                  {item.branch_id 
+                    ? branches.find(b => b.id.toString() === item.branch_id?.toString())?.name || item.branch || `Branch ${item.branch_id}`
+                    : item.branch || 'All Branches'}
+                </div>
+                
+                <div className="text-[13px] text-[#6E6A66]">
+                  <span className="px-2 py-0.5 bg-[#F5F2EC] rounded-md text-[11px] font-bold text-[#6E6A66] whitespace-nowrap">{item.category}</span>
+                </div>
+
+                <div>
+                  <div className="text-[13px] font-bold text-[#1A1615]">₹{item.price}</div>
+                  {item.cost && <div className="text-[11px] text-[#8C827A]">Cost: ₹{item.cost}</div>}
+                </div>
+
+                <div className="flex items-center gap-2 justify-end" onClick={(e) => e.stopPropagation()}>
+                  <button onClick={() => setEditingItem(item)} className="p-1.5 text-[#8C827A] hover:text-[#B38637] hover:bg-[#FDF8EB] rounded transition-colors cursor-pointer" title="Edit">
+                    <Edit2 className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => setDeleteConfirmation({ id: item.id, name: item.title })} className="p-1.5 text-[#8C827A] hover:text-[#DC2626] hover:bg-[#FEF2F2] rounded transition-colors cursor-pointer" title="Delete">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             ))}
@@ -448,22 +507,31 @@ export const ItemCatalogPage: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Right Drawer (Edit Item) */}
-        {editingItem && (
-          <div className="w-full lg:w-[400px] xl:w-[500px] shrink-0 bg-white rounded-2xl border border-[#EAE6E1] shadow-xl flex flex-col overflow-hidden">
-            <div className="px-5 py-4 border-b border-[#EAE6E1] flex items-start justify-between bg-white relative z-10">
+      {/* Edit Item Modal */}
+      {editingItem && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="w-[600px] max-h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-5 border-b border-[#EAE6E1] flex items-start justify-between bg-white relative z-10">
               <div className="flex items-start gap-3">
                 <div className="mt-1">
-                  <SlidersHorizontal className="w-4 h-4 text-[#B38637]" />
+                  <SlidersHorizontal className="w-5 h-5 text-[#B38637]" />
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-[#1A1615] leading-tight">Edit Item: {editingItem.title}</h2>
+                  <p className="text-[11px] font-bold text-[#8C827A] mt-1">Update product details and sync to POS</p>
                 </div>
               </div>
+              <button
+                onClick={() => setEditingItem(null)}
+                className="p-2 hover:bg-[#F2EFE9] rounded-full transition-colors group cursor-pointer"
+              >
+                <X className="w-5 h-5 text-[#8C827A] group-hover:text-[#1A1615]" />
+              </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-5 space-y-6">
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
 
               {/* Product Asset */}
               <div>
@@ -476,9 +544,13 @@ export const ItemCatalogPage: React.FC = () => {
                     accept="image/*"
                     className="hidden"
                   />
-                  <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 border border-[#D1CDC7] relative bg-white">
-                    <img src={editingItem.image} alt={editingItem.title} className="w-full h-full object-cover" />
-                    <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[8px] font-bold px-1 rounded">RAW</span>
+                  <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 border border-[#D1CDC7] relative bg-white flex items-center justify-center">
+                    {editingItem.image ? (
+                      <img src={editingItem.image} alt={editingItem.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <ImageIcon className="w-6 h-6 text-[#D1CDC7]" />
+                    )}
+                    {editingItem.image && <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[8px] font-bold px-1 rounded">RAW</span>}
                   </div>
                   <div className="flex flex-col justify-center">
                     <p className="text-xs font-bold text-[#1A1615] mb-1">product_image.jpg</p>
@@ -491,7 +563,7 @@ export const ItemCatalogPage: React.FC = () => {
                         Change Image
                       </button>
                       <button
-                        onClick={() => setEditingItem({ ...editingItem, image: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?auto=format&fit=crop&q=80&w=200' })}
+                        onClick={() => setEditingItem({ ...editingItem, image: '' })}
                         className="text-[13px] font-bold text-[#DC2626] hover:underline cursor-pointer"
                       >
                         Remove
@@ -511,11 +583,18 @@ export const ItemCatalogPage: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-[11px] font-bold text-[#1A1615] mb-1.5">Branch</label>
-                    <select value={editingItem.branch || ''} onChange={e => setEditingItem({ ...editingItem, branch: e.target.value })} className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-3 py-2.5 text-[13px] text-[#1A1615] focus:outline-none focus:border-[#B38637] appearance-none cursor-pointer">
+                    <select value={editingItem.branch_id || ''} onChange={e => {
+                      const selectedBranch = branches.find(b => b.id.toString() === e.target.value);
+                      setEditingItem({ 
+                        ...editingItem, 
+                        branch_id: selectedBranch ? selectedBranch.id : null,
+                        branch: selectedBranch ? selectedBranch.name : ''
+                      });
+                    }} className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-3 py-2.5 text-[13px] text-[#1A1615] focus:outline-none focus:border-[#B38637] appearance-none cursor-pointer">
                       <option value="" disabled>Select branch</option>
-                      <option value="Downtown Flagship">Downtown Flagship</option>
-                      <option value="Northside Mall">Northside Mall</option>
-                      <option value="West End Kiosk">West End Kiosk</option>
+                      {branches.map(branch => (
+                        <option key={branch.id} value={branch.id}>{branch.name}</option>
+                      ))}
                     </select>
                   </div>
                   <div>
@@ -535,11 +614,11 @@ export const ItemCatalogPage: React.FC = () => {
 
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-[11px] font-bold text-[#6E6A66] uppercase tracking-wider mb-1.5">RETAIL PRICE ($)</label>
+                    <label className="block text-[11px] font-bold text-[#6E6A66] uppercase tracking-wider mb-1.5">RETAIL PRICE (₹)</label>
                     <input type="number" value={editingItem.price} onChange={e => setEditingItem({ ...editingItem, price: parseFloat(e.target.value) || 0 })} className="w-full bg-white border border-[#EAE6E1] rounded-lg px-3 py-2.5 text-[15px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B38637]" />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-[#6E6A66] uppercase tracking-wider mb-1.5">COST OF GOODS ($)</label>
+                    <label className="block text-[11px] font-bold text-[#6E6A66] uppercase tracking-wider mb-1.5">COST OF GOODS (₹)</label>
                     <input type="number" value={editingItem.cost} onChange={e => setEditingItem({ ...editingItem, cost: parseFloat(e.target.value) || 0 })} className="w-full bg-white border border-[#EAE6E1] rounded-lg px-3 py-2.5 text-[15px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B38637]" />
                   </div>
                   <div>
@@ -552,7 +631,7 @@ export const ItemCatalogPage: React.FC = () => {
 
                 <div>
                   <label className="block text-[11px] font-bold text-[#1A1615] mb-1.5">Sensory Cupping Notes</label>
-                  <textarea rows={3} defaultValue="Washed Geisha with intense jasmine florals, white peach, bergamot finish, and clean silky tea-like body." className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-3 py-2.5 text-[12px] text-[#6E6A66] leading-relaxed resize-none focus:outline-none focus:border-[#B38637]" />
+                  <textarea rows={3} value={editingItem.description || ''} onChange={e => setEditingItem({ ...editingItem, description: e.target.value })} placeholder="Enter notes here..." className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-3 py-2.5 text-[12px] text-[#6E6A66] leading-relaxed resize-none focus:outline-none focus:border-[#B38637]" />
                 </div>
               </div>
 
@@ -595,15 +674,55 @@ export const ItemCatalogPage: React.FC = () => {
             </div>
 
             {/* Footer Actions */}
-            <div className="px-5 py-4 border-t border-[#EAE6E1] bg-[#FAF8F5] flex items-center justify-between gap-3">
-              <button onClick={handleUpdateItem} className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-[13px] font-bold rounded-lg transition-all shadow-md cursor-pointer">
+            <div className="px-6 py-4 border-t border-[#EAE6E1] bg-[#FAF8F5] flex justify-end gap-3">
+              <button
+                onClick={() => setEditingItem(null)}
+                className="px-6 py-2.5 text-[13px] font-bold text-[#6E6A66] hover:bg-white rounded-lg transition-colors border border-[#EAE6E1] cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button onClick={handleUpdateItem} className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-[13px] font-bold rounded-lg transition-all shadow-md cursor-pointer">
                 <Upload className="w-4 h-4 text-white" />
-                Save & Publish to POS
+                Save Changes
               </button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Custom Delete Confirmation Modal */}
+      {deleteConfirmation && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="w-[400px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6">
+              <div className="w-12 h-12 rounded-full bg-[#FEF2F2] flex items-center justify-center mb-4 border border-[#FEE2E2]">
+                <AlertTriangle className="w-6 h-6 text-[#DC2626]" />
+              </div>
+              <h3 className="text-xl font-bold text-[#1A1615] mb-2">Delete Item</h3>
+              <p className="text-[13px] text-[#6E6A66] leading-relaxed">
+                Are you sure you want to delete <span className="font-bold text-[#1A1615]">"{deleteConfirmation.name}"</span>? This action cannot be undone.
+              </p>
+            </div>
+            <div className="px-6 py-4 bg-[#FAF8F5] border-t border-[#EAE6E1] flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteConfirmation(null)}
+                className="px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-white rounded-lg transition-colors border border-[#EAE6E1] cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  dispatch(deleteProduct(deleteConfirmation.id));
+                  setDeleteConfirmation(null);
+                }}
+                className="px-4 py-2 text-[13px] font-bold text-white bg-[#DC2626] hover:bg-[#B91C1C] rounded-lg transition-colors cursor-pointer"
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Add Item Modal */}
       <AddItemModal

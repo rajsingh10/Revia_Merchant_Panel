@@ -1,5 +1,8 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { Plus, X, Image as ImageIcon, Award } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store/store';
+import { fetchBranches } from '../store/slices/branchSlice';
 
 interface AddItemModalProps {
   isOpen: boolean;
@@ -26,6 +29,15 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, onA
   const [newItemCost, setNewItemCost] = useState('');
   const [addLoyaltyIntegration, setAddLoyaltyIntegration] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  
+  const dispatch = useDispatch<AppDispatch>();
+  const branches = useSelector((state: RootState) => state.branch.branches);
+
+  useEffect(() => {
+    if (isOpen) {
+      dispatch(fetchBranches());
+    }
+  }, [isOpen, dispatch]);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -159,9 +171,9 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, onA
                 <label className="block text-[11px] font-bold text-[#1A1615] mb-1.5">Branch <span className="text-[#DC2626]">*</span></label>
                 <select value={newItemBranch} onChange={e => setNewItemBranch(e.target.value)} className={`w-full bg-[#FAF8F5] border rounded-lg px-4 py-3 text-sm text-[#1A1615] focus:outline-none focus:border-[#B38637] appearance-none cursor-pointer ${hasSubmitted && !newItemBranch ? 'border-[#DC2626] bg-[#FEF2F2]' : 'border-[#EAE6E1]'}`}>
                   <option value="" disabled>Select branch</option>
-                  <option value="Downtown Flagship">Downtown Flagship</option>
-                  <option value="Northside Mall">Northside Mall</option>
-                  <option value="West End Kiosk">West End Kiosk</option>
+                  {branches.map(branch => (
+                    <option key={branch.id} value={branch.name}>{branch.name}</option>
+                  ))}
                 </select>
                 {hasSubmitted && !newItemBranch && <p className="text-[#DC2626] text-[10px] font-bold mt-1">Branch is required</p>}
               </div>
