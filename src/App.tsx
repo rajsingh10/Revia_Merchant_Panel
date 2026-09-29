@@ -34,6 +34,7 @@ import { AuditLogPage } from './pages/AuditLogPage';
 import { StaffPage } from './pages/StaffPage';
 import { QrCodesPage } from './pages/QrCodesPage';
 import { ItemCatalogPage } from './pages/ItemCatalogPage';
+import { MastersPage } from './pages/MastersPage';
 import { OrderQueuePage } from './pages/OrderQueuePage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { RewardsPage } from './pages/RewardsPage';
@@ -56,7 +57,7 @@ import { NotEnoughCreditModal } from './components/wallet/NotEnoughCreditModal';
 
 const VALID_ROUTES = [
   '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
-  '/loyalty', '/qr-codes', '/item-catalog', '/catalog', '/orders', '/invoices',
+  '/loyalty', '/qr-codes', '/item-catalog', '/masters/rule-fields', '/masters/tier-options', '/catalog', '/orders', '/invoices',
   '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
   '/terminal', '/rewards', '/rewards/new', '/analytics', '/billing', '/notifications',
   '/settings/audit', '/settings/branding', '/login', '/onboarding',
@@ -275,6 +276,14 @@ export default function App() {
 
             {currentRoute === '/item-catalog' && (
               <ItemCatalogPage />
+            )}
+
+            {currentRoute === '/masters/rule-fields' && (
+              <MastersPage defaultTab="fields" />
+            )}
+
+            {currentRoute === '/masters/tier-options' && (
+              <MastersPage defaultTab="tiers" />
             )}
 
             {currentRoute === '/orders' && (
