@@ -1878,10 +1878,12 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const apiCampaigns = useSelector((state: RootState) => state.campaign.campaigns);
   const currentCampaign = useSelector((state: RootState) => state.campaign.currentCampaign);
   const branches = useSelector((state: RootState) => state.branch.branches);
+  const tierOptions = useSelector((state: RootState) => state.master.tierOptions);
 
   useEffect(() => {
     dispatch(fetchCampaigns(undefined));
     dispatch(fetchBranches());
+    dispatch(fetchTierOptions());
   }, [dispatch]);
 
   // Populate form if we are editing an existing campaign
@@ -1954,7 +1956,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   }, [campaigns]);
 
   const [priorityLevel, setPriorityLevel] = useState<number>(1);
-  const [selectedTiers, setSelectedTiers] = useState<string[]>(['Obsidian VIP', 'Gold Reserve']);
+  const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
   const [lifecycleType, setLifecycleType] = useState<string>('Both');
   const [birthdayHorizon, setBirthdayHorizon] = useState<number>(7);
   const [minAge, setMinAge] = useState<number>(21);
@@ -2060,7 +2062,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
   const toggleTier = (tier: string) => {
     if (tier === 'All Tiers' || tier === 'All Customers') {
-      setSelectedTiers(['Obsidian VIP', 'VVIP', 'VIP', 'Gold', 'Silver', 'Bronze']);
+      setSelectedTiers((tierOptions.length > 0 ? tierOptions : TIER_OPTIONS_FALLBACK).map(t => t.value));
     } else {
       setSelectedTiers(prev =>
         prev.includes(tier) ? prev.filter(t => t !== tier) : [...prev, tier]
@@ -2993,30 +2995,36 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
           </div>
           {formErrors.selectedTiers && <p className="text-red-500 text-xs font-semibold mb-1 mt-[-4px]">{formErrors.selectedTiers}</p>}
           <div className={`flex flex-wrap gap-2.5 ${formErrors.selectedTiers ? 'p-3 border border-red-500 ring-1 ring-red-500/20 rounded-xl' : ''}`}>
-            <button onClick={() => toggleTier('Obsidian VIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors cursor-pointer ${selectedTiers.includes('Obsidian VIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
-              {selectedTiers.includes('Obsidian VIP') ? <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
-              Obsidian VIP
-            </button>
-            <button onClick={() => toggleTier('VVIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors cursor-pointer ${selectedTiers.includes('VVIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
-              {selectedTiers.includes('VVIP') ? <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
-              VVIP
-            </button>
-            <button onClick={() => toggleTier('VIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors cursor-pointer ${selectedTiers.includes('VIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
-              {selectedTiers.includes('VIP') ? <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
-              VIP
-            </button>
-            <button onClick={() => toggleTier('Gold')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors cursor-pointer ${selectedTiers.includes('Gold') ? 'bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
-              {selectedTiers.includes('Gold') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#D4A753]" /> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
-              Gold
-            </button>
-            <button onClick={() => toggleTier('Silver')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors cursor-pointer ${selectedTiers.includes('Silver') ? 'bg-[#F0F2F5] border border-[#E2E8F0] text-[#475569]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
-              {selectedTiers.includes('Silver') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#64748B]" /> : <span className="w-3.5 h-3.5 rounded-full border-2 border-[#D1CDC7]"></span>}
-              Silver
-            </button>
-            <button onClick={() => toggleTier('Bronze')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors cursor-pointer ${selectedTiers.includes('Bronze') ? 'bg-[#F0F2F5] border border-[#E2E8F0] text-[#475569]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
-              {selectedTiers.includes('Bronze') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#64748B]" /> : <span className="w-3.5 h-3.5 rounded-full border-2 border-[#D1CDC7]"></span>}
-              Bronze
-            </button>
+            {(tierOptions.length > 0 ? tierOptions : TIER_OPTIONS_FALLBACK).filter((t: any) => t.isActive !== false).map(tier => {
+              const labelLower = tier.label.toLowerCase();
+              const isGold = labelLower.includes('gold');
+              const isSilver = labelLower.includes('silver') || labelLower.includes('bronze');
+              
+              let baseClass = 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]';
+              let activeClass = 'bg-[#1A1615] text-white';
+              
+              if (isGold) activeClass = 'bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F]';
+              else if (isSilver) activeClass = 'bg-[#F0F2F5] border border-[#E2E8F0] text-[#475569]';
+
+              const isSelected = selectedTiers.includes(tier.value);
+
+              return (
+                <button 
+                  key={tier.value} 
+                  onClick={() => toggleTier(tier.value)} 
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors cursor-pointer ${isSelected ? activeClass : baseClass}`}
+                >
+                  {isSelected ? (
+                    isGold ? <CheckCircle2 className="w-3.5 h-3.5 text-[#D4A753]" /> :
+                    isSilver ? <CheckCircle2 className="w-3.5 h-3.5 text-[#64748B]" /> :
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span>
+                  ) : (
+                    <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>
+                  )}
+                  {tier.label}
+                </button>
+              );
+            })}
             <button onClick={() => toggleTier('All Tiers')} className={`flex items-center px-4 py-2 rounded-full text-[13px] font-bold transition-colors cursor-pointer ${selectedTiers.includes('All Tiers') ? 'bg-[#EFECE6] text-[#1A1615]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] hover:bg-[#EFECE6]'}`}>
               All Customers
             </button>

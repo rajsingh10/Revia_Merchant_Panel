@@ -152,9 +152,9 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-[#FAF8F5] border-b border-[#EFECE6]">
-                <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider">Key</th>
                 <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider">Label</th>
                 <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider">Type</th>
+                <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider">Status</th>
                 <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
@@ -174,12 +174,22 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
               ) : (
                 ruleFields.map(field => (
                   <tr key={field.key} className="border-b border-[#EFECE6] hover:bg-[#FAF8F5]">
-                    <td className="py-3 px-4 text-sm font-medium text-[#1A1615]">{field.key}</td>
-                    <td className="py-3 px-4 text-sm text-[#6E6A66]">{field.label}</td>
+                    <td className="py-3 px-4 text-sm font-medium text-[#1A1615]">{field.label}</td>
                     <td className="py-3 px-4">
                       <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-[#EFECE6] text-[#6E6A66]">
                         {field.type}
                       </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      {field.isActive !== false ? (
+                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold bg-[#E0F9ED] text-[#0D7A53]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Active
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold bg-[#F0F2F5] text-[#6E6A66]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#9E9A93]"></span> Inactive
+                        </span>
+                      )}
                     </td>
                     <td className="py-3 px-4 flex items-center justify-end gap-2">
                       <button onClick={() => handleEditField(field)} className="p-1.5 text-[#6E6A66] hover:bg-[#EFECE6] rounded-md transition-colors"><Edit2 className="w-4 h-4" /></button>
@@ -194,8 +204,8 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-[#FAF8F5] border-b border-[#EFECE6]">
-                <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider">Value</th>
                 <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider">Label</th>
+                <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider">Status</th>
                 <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
@@ -215,8 +225,18 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
               ) : (
                 tierOptions.map(tier => (
                   <tr key={tier.value} className="border-b border-[#EFECE6] hover:bg-[#FAF8F5]">
-                    <td className="py-3 px-4 text-sm font-medium text-[#1A1615]">{tier.value}</td>
-                    <td className="py-3 px-4 text-sm text-[#6E6A66]">{tier.label}</td>
+                    <td className="py-3 px-4 text-sm font-medium text-[#1A1615]">{tier.label}</td>
+                    <td className="py-3 px-4">
+                      {tier.isActive !== false ? (
+                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold bg-[#E0F9ED] text-[#0D7A53]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Active
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold bg-[#F0F2F5] text-[#6E6A66]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#9E9A93]"></span> Inactive
+                        </span>
+                      )}
+                    </td>
                     <td className="py-3 px-4 flex items-center justify-end gap-2">
                       <button onClick={() => handleEditTier(tier)} className="p-1.5 text-[#6E6A66] hover:bg-[#EFECE6] rounded-md transition-colors"><Edit2 className="w-4 h-4" /></button>
                       <button onClick={() => handleDeleteTier(tier.value)} className="p-1.5 text-[#6E6A66] hover:bg-red-50 hover:text-red-600 rounded-md transition-colors"><Trash2 className="w-4 h-4" /></button>
