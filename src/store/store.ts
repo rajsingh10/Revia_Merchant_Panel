@@ -7,6 +7,7 @@ import branchReducer from './slices/branchSlice';
 import campaignReducer from './slices/campaignSlice';
 import customerReducer from './slices/customerSlice';
 import masterReducer from './slices/masterSlice';
+import catalogReducer from './slices/catalogSlice';
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     campaign: campaignReducer,
     customer: customerReducer,
     master: masterReducer,
+    catalog: catalogReducer,
   },
 });
 

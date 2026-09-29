@@ -14,74 +14,27 @@ import {
 } from 'lucide-react';
 import { AddItemModal } from '../components/AddItemModal';
 
-interface CatalogItem {
-  id: string;
-  title: string;
-  sku: string;
-  category: string;
-  branch?: string;
-  price: number;
-  cost: number;
-  image: string;
-  selected: boolean;
-}
-
-const mockCatalog: CatalogItem[] = [
-  {
-    id: '1',
-    title: 'Panama Geisha Reserve',
-    sku: '#ROAST-PAN-01 • Boquete • Washed',
-    category: 'Single Origin Coffee',
-    price: 28.00,
-    cost: 6.20,
-    image: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?auto=format&fit=crop&q=80&w=200',
-    selected: false,
-  },
-  {
-    id: '2',
-    title: 'Specialty Tasting Flight & Brioche',
-    sku: '#MENU-FLIGHT-04 • Pairing Experience',
-    category: 'Tasting Flights',
-    price: 32.00,
-    cost: 8.50,
-    image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=80&w=200',
-    selected: false,
-  },
-  {
-    id: '3',
-    title: 'Whole Bean 250g Ethiopia Yirgacheffe',
-    sku: '#ROAST-ETH-250 • Natural • Heirloom',
-    category: 'Single Origin Coffee',
-    price: 24.00,
-    cost: 5.50,
-    image: 'https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&q=80&w=200',
-    selected: false,
-  },
-  {
-    id: '4',
-    title: 'Valrhona Dark Chocolate Croissant',
-    sku: '#BAKE-VAL-03 • Daily Fresh Daily Bake',
-    category: 'Artisanal Bakery',
-    price: 6.50,
-    cost: 1.80,
-    image: 'https://images.unsplash.com/photo-1549903072-7e6e0d656112?auto=format&fit=crop&q=80&w=200',
-    selected: false,
-  },
-  {
-    id: '5',
-    title: 'Cascara Fizz Botanic Mocktail',
-    sku: '#BEV-BOT-09 • Seasonal Harvest',
-    category: 'Seasonal Brews',
-    price: 8.00,
-    cost: 2.20,
-    image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&q=80&w=200',
-    selected: false,
-  },
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store/store';
+import {
+  fetchProducts,
+  addProduct,
+  updateProduct,
+  toggleItemSelection,
+  selectAllItems,
+  deselectAllItems,
+  CatalogItem
+} from '../store/slices/catalogSlice';
 
 export const ItemCatalogPage: React.FC = () => {
-  const [items, setItems] = useState<CatalogItem[]>(mockCatalog);
-  const [editingItem, setEditingItem] = useState<CatalogItem | null>(mockCatalog[0]);
+  const dispatch = useDispatch<AppDispatch>();
+  const { items, isLoading } = useSelector((state: RootState) => state.catalog);
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
+
+  const [editingItem, setEditingItem] = useState<CatalogItem | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [loyaltyIntegration, setLoyaltyIntegration] = useState(true);
   const [addLoyaltyIntegration, setAddLoyaltyIntegration] = useState(false);
@@ -126,7 +79,7 @@ export const ItemCatalogPage: React.FC = () => {
       selected: false,
     };
 
-    setItems([newItem, ...items]);
+    dispatch(addProduct(newItem));
     setIsAddModalOpen(false);
   };
 
@@ -137,7 +90,7 @@ export const ItemCatalogPage: React.FC = () => {
       setTimeout(() => setToastMessage(null), 3000);
       return;
     }
-    setItems(items.map(i => i.id === editingItem.id ? editingItem : i));
+    dispatch(updateProduct({ id: editingItem.id, data: editingItem }));
   };
 
   const editCalculatedMargin = useMemo(() => {
@@ -197,12 +150,15 @@ export const ItemCatalogPage: React.FC = () => {
 
   const toggleSelectAll = () => {
     const allSelected = paginatedItems.length > 0 && paginatedItems.every((i) => i.selected);
-    const paginatedIds = new Set(paginatedItems.map(i => i.id));
-    setItems(items.map((i) => paginatedIds.has(i.id) ? { ...i, selected: !allSelected } : i));
+    if (allSelected) {
+      dispatch(deselectAllItems());
+    } else {
+      dispatch(selectAllItems());
+    }
   };
 
   const toggleSelect = (id: string) => {
-    setItems(items.map((i) => (i.id === id ? { ...i, selected: !i.selected } : i)));
+    dispatch(toggleItemSelection(id));
   };
 
   return (
@@ -239,6 +195,7 @@ export const ItemCatalogPage: React.FC = () => {
       </div>
 
       {/* SUMMARY CARDS */}
+      {items.length > 0 && (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {/* Card 1 */}
         <div className="bg-white rounded-2xl p-5 border border-[#EAE6E1] shadow-sm relative overflow-hidden flex flex-col justify-between">
@@ -251,9 +208,9 @@ export const ItemCatalogPage: React.FC = () => {
               </div>
             </div>
             <div className="flex items-baseline gap-2 mb-4">
-              <span className="text-4xl font-black text-[#1A1615] tracking-tight">48</span>
+              <span className="text-4xl font-black text-[#1A1615] tracking-tight">{items.length}</span>
               <span className="text-[11px] font-bold text-[#15803D] flex items-center gap-0.5">
-                ↑ 3 from last wk
+                Up to date
               </span>
             </div>
           </div>
@@ -277,13 +234,13 @@ export const ItemCatalogPage: React.FC = () => {
               </div>
             </div>
             <div className="flex items-baseline gap-2 mb-4">
-              <span className="text-[22px] font-black text-[#1A1615] tracking-tight">Panama Geisha</span>
-              <span className="text-[13px] font-bold text-[#B38637]">₹8.4k</span>
+              <span className="text-[22px] font-black text-[#1A1615] tracking-tight">{items[0]?.title || 'None'}</span>
+              <span className="text-[13px] font-bold text-[#B38637] ml-2">₹{items[0]?.price || 0}</span>
             </div>
           </div>
           <div className="pt-3 border-t border-[#EAE6E1] flex items-center justify-between text-xs">
-            <span className="text-[#6E6A66]">Margin: <span className="font-bold text-[#1A1615]">77.8%</span></span>
-            <span className="font-bold text-[#1A1615]">300 Units sold (MTD)</span>
+            <span className="text-[#6E6A66]">Margin: <span className="font-bold text-[#1A1615]">{(items[0]?.cost ? ((items[0].price - items[0].cost) / items[0].price * 100).toFixed(1) : 0)}%</span></span>
+            <span className="font-bold text-[#1A1615]">Trending ↑</span>
           </div>
         </div>
 
@@ -298,16 +255,17 @@ export const ItemCatalogPage: React.FC = () => {
               </div>
             </div>
             <div className="flex items-baseline gap-2 mb-4">
-              <span className="text-4xl font-black text-[#DC2626] tracking-tight">3 Items</span>
-              <span className="bg-[#FEF2F2] text-[#DC2626] text-[10px] font-bold px-2 py-0.5 rounded border border-[#FECACA]">Action Required</span>
+              <span className="text-4xl font-black text-[#DC2626] tracking-tight">0 Items</span>
+              <span className="bg-[#E0F9ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded border border-[#0D7A53]/30 ml-2">All Good</span>
             </div>
           </div>
           <div className="pt-3 border-t border-[#FECACA] flex items-center justify-between text-xs">
-            <span className="text-[#6E6A66] truncate max-w-[200px]">Cascara Fizz • Yirgacheffe • Nitro Cold Brew</span>
+            <span className="text-[#6E6A66] truncate max-w-[200px]">No critical shortages</span>
             <span className="font-bold text-[#B38637] cursor-pointer hover:underline">Reorder</span>
           </div>
         </div>
       </div>
+      )}
 
       {/* TABS & FILTERS */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
@@ -388,7 +346,19 @@ export const ItemCatalogPage: React.FC = () => {
           {/* Table Body */}
           <div className="flex-1 overflow-y-auto">
             {paginatedItems.length === 0 ? (
-              <div className="p-8 text-center text-[#8C827A] text-sm">No items found matching your filters.</div>
+              <div className="p-16 flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 bg-[#FDF8EB] rounded-full flex items-center justify-center mb-4 border border-[#F3E5C8]">
+                  <ShoppingCart className="w-8 h-8 text-[#D4A753]" />
+                </div>
+                <h4 className="text-[#1A1615] font-bold text-lg mb-2">
+                  {items.length === 0 ? "Your catalog is empty" : "No items found"}
+                </h4>
+                <p className="text-[#8C827A] text-sm max-w-sm mb-6">
+                  {items.length === 0 
+                    ? "Start adding products, seasonal tastings, and artisanal bakery items to build your catalog."
+                    : "We couldn't find any items matching your current filters. Try adjusting your search criteria."}
+                </p>
+              </div>
             ) : paginatedItems.map((item) => (
               <div
                 key={item.id}
