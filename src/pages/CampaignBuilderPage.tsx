@@ -169,14 +169,14 @@ const RuleDropdown = ({ value, options, onChange, placeholder, minWidth = '160px
   const Icon = selected?.icon;
 
   return (
-    <div className={`relative shrink-0 ${className.includes('w-full') ? 'w-full' : ''} ${className.includes('flex-1') ? 'flex-1' : ''}`} style={{ minWidth: className.includes('w-full') || className.includes('flex-1') ? 'auto' : minWidth }}>
+    <div className={`relative shrink-0 ${className.includes('w-full') ? 'w-full' : ''} ${className.includes('flex-1') ? 'flex-1' : ''}`} style={{ minWidth: className.includes('w-full') || className.includes('flex-1') ? 'auto' : minWidth, zIndex: isOpen ? 50 : 1 }}>
       <div
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center gap-2 px-3 py-2 border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] cursor-pointer ${className || 'bg-[#FAF8F5]'}`}
       >
-        {Icon && <Icon className="w-4 h-4 text-[#D4A753]" />}
-        {selected ? selected.label : placeholder}
-        <ChevronDown className="w-4 h-4 text-[#9E9A93] ml-auto" />
+        {Icon && <Icon className="w-4 h-4 text-[#D4A753] shrink-0" />}
+        <span className="truncate whitespace-nowrap overflow-hidden flex-1 text-left">{selected ? selected.label : placeholder}</span>
+        <ChevronDown className="w-4 h-4 text-[#9E9A93] ml-auto shrink-0" />
       </div>
 
       {isOpen && (
@@ -628,7 +628,7 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
       <div className="lg:col-span-8 flex-1 w-full space-y-6">
 
         {/* Trigger & Qualification Rules */}
-        <div className="bg-white border border-[#EFECE6] rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-white border border-[#EFECE6] rounded-2xl shadow-sm">
           <div className="p-6">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
