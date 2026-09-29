@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store/store';
+import { fetchQrCodes } from '../store/slices/qrCodeSlice';
 import { useWallet } from '../context/WalletContext';
 import {
   Download,
@@ -22,8 +25,11 @@ import {
 } from 'lucide-react';
 
 export const QrCodesPage: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { qrCodes, isLoading, error } = useSelector((state: RootState) => state.qrCode);
+  
   const { checkAndDeductCredit } = useWallet();
-  const [activeAsset, setActiveAsset] = useState<string>('asset-1');
+  const [activeAsset, setActiveAsset] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'front' | 'back'>('front');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -33,7 +39,7 @@ export const QrCodesPage: React.FC = () => {
     setFeedbackToast(msg);
     setTimeout(() => setFeedbackToast(null), 3000);
   };
-  const [venueFilter, setVenueFilter] = useState('VENUE: Downtown Flagship');
+  const [venueFilter, setVenueFilter] = useState('VENUE: All');
   const [assetTypeFilter, setAssetTypeFilter] = useState('ASSET TYPE: All (Acrylic, Brass, NFC)');
   const [destinationFilter, setDestinationFilter] = useState('DESTINATION: All Routing Targets');
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -53,6 +59,10 @@ export const QrCodesPage: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    dispatch(fetchQrCodes());
+  }, [dispatch]);
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [createForm, setCreateForm] = useState({
     standName: '',
@@ -67,52 +77,28 @@ export const QrCodesPage: React.FC = () => {
     status: 'Active'
   });
 
-  const [assets, setAssets] = useState([
-    {
-      id: 'asset-1',
-      title: 'Downtown Flagship • Tabletop Acrylic #01 to #08',
-      status: 'Active',
-      inspecting: true,
-      location: 'Main Salon Dining',
-      material: 'Acrylic Dual-Sided A6 (Walnut Base)',
-      destination: 'VIP Onboarding + Instant 1st Stamp Perk',
-      scans: '14,210',
-      tag: 'NFC + QR',
-    },
-    {
-      id: 'asset-2',
-      title: 'Downtown Flagship • Counter Barista NFC/QR Puck #01',
-      status: 'Active',
-      inspecting: false,
-      location: 'Espresso Bar Order Point',
-      material: 'Milled Brass & Smoked Ash Puck',
-      destination: 'Quick Loyalty Stamp + Wallet Pass Tap',
-      scans: '18,450',
-      tag: 'Direct NFC Priority',
-    },
-    {
-      id: 'asset-3',
-      title: 'Northside Mall • Atrium Patio Stand #A1–#A5',
-      status: 'Active',
-      inspecting: false,
-      location: 'Outdoor Garden Lounge',
-      material: 'Brushed Anodized Aluminum',
-      destination: 'Afternoon 2x Points Happy Hour Portal',
-      scans: '6,120',
-      tag: 'Time-Gated Routing',
-    },
-    {
-      id: 'asset-4',
-      title: 'West End Kiosk • Commuter Window Sticker #01',
-      status: 'Active',
-      inspecting: false,
-      location: 'Express Curbside Pickup Bay',
-      material: 'UV Weatherproof Vinyl Decal',
-      destination: 'Fast Mobile Quick-Order & Repeat Perk',
-      scans: '4,110',
-      tag: 'Geo-Fenced Beacon',
+  const [assets, setAssets] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (qrCodes && qrCodes.length > 0) {
+      const mapped = qrCodes.map((qr: any) => ({
+        id: String(qr.identifier || qr.id),
+        title: `${qr.branch?.name || 'Venue'} • ${qr.type === 'branch' ? 'Branch QR' : 'Table QR'} ${qr.table_number ? '#' + qr.table_number : ''}`,
+        status: qr.status === 'active' ? 'Active' : 'Inactive',
+        inspecting: false,
+        location: qr.branch?.address || 'Location',
+        material: 'Digital QR Code',
+        destination: 'Default Routing',
+        scans: '0',
+        tag: 'QR Only',
+        raw: qr
+      }));
+      setAssets(mapped);
+      if (mapped.length > 0 && (!activeAsset || !mapped.find(a => a.id === activeAsset))) {
+        setActiveAsset(mapped[0].id);
+      }
     }
-  ]);
+  }, [qrCodes]);
 
   const handleCreateAsset = (e: React.FormEvent) => {
     e.preventDefault();
@@ -461,7 +447,12 @@ export const QrCodesPage: React.FC = () => {
 
           {/* 5. RIGHT SECTION: LIVE VECTOR PREVIEW & ASSET CUSTOMIZER */}
           <div className="lg:col-span-5 sticky top-6 space-y-4">
-            <div className="bg-white rounded-xl border border-[#EFECE6] shadow-sm overflow-hidden flex flex-col h-[calc(100vh-8rem)]">
+            {!selectedAssetDetails ? (
+              <div className="bg-white rounded-xl border border-[#EFECE6] shadow-sm flex items-center justify-center h-[calc(100vh-8rem)] text-[#9E9A93] font-semibold text-sm">
+                Select an asset to view details
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl border border-[#EFECE6] shadow-sm overflow-hidden flex flex-col h-[calc(100vh-8rem)]">
 
               {/* Card Header & Toggle */}
               <div className="px-5 py-4 border-b border-[#EFECE6] bg-[#FAF8F5] shrink-0">
@@ -472,7 +463,7 @@ export const QrCodesPage: React.FC = () => {
                   </span> */}
                 </div>
 
-                <div className="flex p-0.5 bg-[#EFECE6] rounded-lg">
+                {/* <div className="flex p-0.5 bg-[#EFECE6] rounded-lg">
                   <button
                     onClick={() => setActiveTab('front')}
                     className={`flex-1 px-3 py-1.5 text-xs font-bold rounded-md transition-all ${activeTab === 'front' ? 'bg-white shadow-xs text-[#1A1615]' : 'text-[#6E6A66] hover:text-[#1A1615]'} cursor-pointer`}>
@@ -483,7 +474,7 @@ export const QrCodesPage: React.FC = () => {
                     className={`flex-1 px-3 py-1.5 text-xs font-bold rounded-md transition-all ${activeTab === 'back' ? 'bg-white shadow-xs text-[#1A1615]' : 'text-[#6E6A66] hover:text-[#1A1615]'} cursor-pointer`}>
                     Back Side
                   </button>
-                </div>
+                </div> */}
               </div>
 
               {/* Scrollable Configuration Area */}
@@ -505,13 +496,12 @@ export const QrCodesPage: React.FC = () => {
 
                     {/* Vector QR Code Core */}
                     <div className="w-32 h-32 bg-white border border-[#EFECE6] rounded-lg p-2 shadow-sm mb-4 z-10 relative flex items-center justify-center">
-                      <QrCode className="w-full h-full text-[#1A1615]" strokeWidth={1} />
-                      {/* Center Brand Emblem */}
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="w-8 h-8 bg-white rounded flex items-center justify-center border border-[#1A1615]">
-                          <span className="font-sans font-bold text-lg text-[#1A1615]">R</span>
-                        </div>
-                      </div>
+                      {selectedAssetDetails.raw?.qr_image_url ? (
+                        <img src={selectedAssetDetails.raw.qr_image_url} alt="QR Code" className="w-full h-full object-contain" />
+                      ) : (
+                        <QrCode className="w-full h-full text-[#1A1615]" strokeWidth={1} />
+                      )}
+
                     </div>
 
                     <div className="flex items-center gap-1.5 text-[9px] font-bold text-[#1A1615] uppercase tracking-widest mb-6 z-10">
@@ -528,11 +518,7 @@ export const QrCodesPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="text-center">
-                  <span className="inline-block px-3 py-1 bg-white border border-[#EFECE6] rounded-full text-[10px] font-bold text-[#6E6A66] tracking-widest shadow-xs">
-                    ⊙ Vector Asset Ready • CMYK 300 DPI Export
-                  </span>
-                </div>
+
 
                 {/* Material & Dynamic Routing Configuration Controls */}
                 <div className="space-y-5">
@@ -623,7 +609,8 @@ export const QrCodesPage: React.FC = () => {
                 </div>
               </div>
 
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

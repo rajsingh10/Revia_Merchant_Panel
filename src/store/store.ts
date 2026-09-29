@@ -6,6 +6,7 @@ import staffReducer from './slices/staffSlice';
 import branchReducer from './slices/branchSlice';
 import campaignReducer from './slices/campaignSlice';
 import customerReducer from './slices/customerSlice';
+import qrCodeReducer from './slices/qrCodeSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     branch: branchReducer,
     campaign: campaignReducer,
     customer: customerReducer,
+    qrCode: qrCodeReducer,
   },
 });
 
