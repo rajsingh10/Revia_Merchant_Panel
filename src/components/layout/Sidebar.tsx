@@ -18,7 +18,8 @@ import {
   ClipboardList,
   ScanLine,
   X,
-  ChevronDown
+  ChevronDown,
+  Database
 } from 'lucide-react';
 import { NavRoute } from '../../types';
 
@@ -53,6 +54,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onMobileClose,
 }) => {
   const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({
+    'MASTERS': false,
     'SALES & REWARDS': false,
     'INSIGHTS & CONFIG': false,
   });
@@ -70,7 +72,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Loyalty Program', route: '/loyalty', icon: Gift },
         { name: 'QR Codes', route: '/qr-codes', icon: QrCode },
         { name: 'Item Catalog', route: '/item-catalog', icon: Package },
-
+      ],
+    },
+    {
+      label: 'MASTERS',
+      items: [
+        { name: 'Rule Fields', route: '/masters/rule-fields', icon: Database },
+        { name: 'Tier Options', route: '/masters/tier-options', icon: Database },
       ],
     },
     // {

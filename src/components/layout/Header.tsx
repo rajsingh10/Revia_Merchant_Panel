@@ -159,6 +159,10 @@ export const Header: React.FC<HeaderProps> = ({
         return { category: 'Catalog', page: 'Item Catalog' };
       case '/orders':
         return { category: 'Orders', page: 'Order Queue' };
+      case '/masters/rule-fields':
+        return { category: 'Masters', page: 'Rule Fields' };
+      case '/masters/tier-options':
+        return { category: 'Masters', page: 'Tier Options' };
       case '/dashboard':
       default:
         return { category: 'Merchant Portal', page: 'Dashboard Overview' };

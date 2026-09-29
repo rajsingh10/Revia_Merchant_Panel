@@ -147,6 +147,8 @@ export type NavRoute =
   | '/loyalty'
   | '/qr-codes'
   | '/item-catalog'
+  | '/masters/rule-fields'
+  | '/masters/tier-options'
   | '/catalog'
   | '/orders'
   | '/invoices'
