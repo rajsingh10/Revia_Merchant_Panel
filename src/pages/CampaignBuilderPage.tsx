@@ -60,7 +60,66 @@ import {
   Image as ImageIcon,
   Award
 } from 'lucide-react';
+import { FormInput } from '../components/FormInput';
 import { AddItemModal } from '../components/AddItemModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCampaigns, setCurrentCampaign, createCampaign, updateCampaign, deleteCampaign } from '../store/slices/campaignSlice';
+import { fetchBranches } from '../store/slices/branchSlice';
+import type { AppDispatch, RootState } from '../store/store';
+import apiClient from '../api/apiClient';
+
+
+export const FIELDS: Record<string, { label: string, type: 'currency' | 'number' | 'date' | 'select' }> = {
+  customer_lifetime: { label: "Customer Lifetime", type: "currency" },
+  total_stamp_cycle: { label: "Total Stamp Cycle", type: "number" },
+  last_visit_date:   { label: "Last Visit Date",   type: "date" },
+  current_tier:      { label: "Current Tier",      type: "select" },
+  bill_amount:       { label: "Bill Amount",       type: "currency" }
+};
+
+export const OPERATORS_BY_TYPE: Record<string, Array<{value: string, label: string}>> = {
+  currency: [
+    { value: '>', label: 'is greater than' },
+    { value: '>=', label: 'is greater than or equal to' },
+    { value: '<', label: 'is less than' },
+    { value: '<=', label: 'is less than or equal to' },
+    { value: '=', label: 'is exactly' },
+    { value: 'between', label: 'is between' }
+  ],
+  number: [
+    { value: '>', label: 'is greater than' },
+    { value: '>=', label: 'is greater than or equal to' },
+    { value: '<', label: 'is less than' },
+    { value: '<=', label: 'is less than or equal to' },
+    { value: '=', label: 'is exactly' },
+    { value: 'between', label: 'is between' }
+  ],
+  date: [
+    { value: 'within_last', label: 'is within the last' },
+    { value: 'not_within_last', label: 'is not within the last' },
+    { value: 'before', label: 'is before date' },
+    { value: 'after', label: 'is after date' },
+    { value: 'between', label: 'is between dates' }
+  ],
+  select: [
+    { value: 'is_one_of', label: 'is one of' },
+    { value: 'is_not_one_of', label: 'is not one of' }
+  ]
+};
+
+export const TIER_OPTIONS = [
+  { value: 'obsidian_vip', label: 'Obsidian VIP' },
+  { value: 'vvip', label: 'VVIP' },
+  { value: 'vip', label: 'VIP' },
+  { value: 'gold_reserve', label: 'Gold Reserve' },
+  { value: 'silver_tier', label: 'Silver Tier' },
+  { value: 'bronze', label: 'Bronze' }
+];
+
+export const FIELD_OPTIONS = Object.entries(FIELDS).map(([key, val]) => ({
+  value: key,
+  label: val.label
+}));
 
 interface CampaignRulesStepProps {
   campaignType: string;
@@ -75,6 +134,8 @@ type RuleCondition = {
   field: string;
   operator: string;
   value: any;
+  unit?: string;
+  error?: string;
 };
 
 type RuleGroup = {
@@ -140,6 +201,7 @@ const RuleDropdown = ({ value, options, onChange, placeholder, minWidth = '160px
 const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, currency, onContinue, onBack }) => {
   const currSymbol = currency.match(/\((.*?)\)/)?.[1] || '₹';
   const [matchType, setMatchType] = useState<'ALL' | 'ANY'>('ALL');
+  const [showErrors, setShowErrors] = useState<boolean>(false);
 
   // Delivery Timing & Branch Eligibility state
   const [triggerEvent, setTriggerEvent] = useState<string>('qr_scan');
@@ -175,27 +237,58 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
 
   const [rules, setRules] = useState<RuleNode[]>([
     {
-      id: 'r1', type: 'condition', field: 'Customer Lifetime', operator: 'is greater than or equal to', value: '₹ 250.00'
+      id: 'r1', type: 'condition', field: 'customer_lifetime', operator: '>=', value: 250
     },
     {
-      id: 'r2', type: 'condition', field: 'Last Visit Date', operator: 'is within the last', value: '14 days'
+      id: 'r2', type: 'condition', field: 'last_visit_date', operator: 'within_last', value: 14, unit: 'days'
     },
     {
       id: 'g1', type: 'group', matchType: 'ANY', rules: [
-        { id: 'sr1', type: 'condition', field: 'Current Tier', operator: 'is one of', value: 'Obsidian VIP, Gold Reserve' },
-        { id: 'sr2', type: 'condition', field: 'Total Stamp Cyc', operator: 'is greater than', value: '' }
+        { id: 'sr1', type: 'condition', field: 'current_tier', operator: 'is_one_of', value: ['obsidian_vip', 'gold_reserve'] },
+        { id: 'sr2', type: 'condition', field: 'total_stamp_cycle', operator: '>', value: 5 }
       ]
     }
   ]);
 
+  const validateRule = (rule: RuleCondition) => {
+    if (!rule.field || !rule.operator) return "Incomplete rule";
+    const type = FIELDS[rule.field]?.type;
+    if (!type) return "Invalid field";
+    if (rule.operator === 'between') {
+      if (!rule.value || typeof rule.value !== 'object') return "Value required";
+      if (type === 'date') {
+         if (!rule.value.from || !rule.value.to) return "Both dates required";
+         if (new Date(rule.value.from) > new Date(rule.value.to)) return "From date must be before To date";
+      } else {
+         if (rule.value.min === undefined || rule.value.max === undefined || rule.value.min === '' || rule.value.max === '') return "Both values required";
+         if (Number(rule.value.min) > Number(rule.value.max)) return "Min must be <= Max";
+      }
+    } else if (type === 'select') {
+      if (!rule.value || !Array.isArray(rule.value) || rule.value.length === 0) return "Select at least one option";
+    } else {
+      if (rule.value === undefined || rule.value === '') return "Value required";
+      if ((type === 'currency' || type === 'number' || rule.unit === 'days') && Number(rule.value) < 0) return "Cannot be negative";
+    }
+    return "";
+  };
+
+
+  const createEmptyRule = (): RuleCondition => ({
+    id: Date.now().toString(),
+    type: 'condition',
+    field: 'customer_lifetime',
+    operator: '>',
+    value: ''
+  });
+
   const addRule = () => {
-    setRules([...rules, { id: Date.now().toString(), type: 'condition', field: 'Customer Lifetime', operator: 'is greater than or equal to', value: '' }]);
+    setRules([...rules, createEmptyRule()]);
   };
 
   const addGroup = () => {
     setRules([...rules, {
       id: Date.now().toString(), type: 'group', matchType: 'ANY', rules: [
-        { id: Date.now().toString() + 'sub', type: 'condition', field: 'Customer Lifetime', operator: 'is greater than or equal to', value: '' }
+        { ...createEmptyRule(), id: Date.now().toString() + 'sub' }
       ]
     }]);
   };
@@ -203,19 +296,59 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
   const addSubRule = (groupId: string) => {
     setRules(rules.map(r => {
       if (r.id === groupId && r.type === 'group') {
-        return { ...r, rules: [...r.rules, { id: Date.now().toString(), type: 'condition', field: 'Customer Lifetime', operator: 'is greater than or equal to', value: '' }] };
+        return { ...r, rules: [...r.rules, createEmptyRule()] };
       }
       return r;
     }));
   };
 
-  const updateRule = (ruleId: string, field: string, value: any, groupId?: string) => {
+  const updateRule = (ruleId: string, key: string, value: any, groupId?: string) => {
+    const updateRuleLogic = (rule: RuleCondition): RuleCondition => {
+      const newRule = { ...rule, [key]: value };
+      if (key === 'field') {
+        const fieldType = FIELDS[value]?.type;
+        const oldFieldType = FIELDS[rule.field]?.type;
+        if (fieldType !== oldFieldType) {
+          newRule.operator = OPERATORS_BY_TYPE[fieldType]?.[0]?.value || '';
+          newRule.value = '';
+          if (fieldType === 'date' && (newRule.operator === 'within_last' || newRule.operator === 'not_within_last')) {
+            newRule.unit = 'days';
+          } else {
+            delete newRule.unit;
+          }
+        }
+      }
+      if (key === 'operator') {
+         const fieldType = FIELDS[newRule.field]?.type;
+         if (fieldType === 'date') {
+             const oldOp = rule.operator;
+             const newOp = value;
+             const oldNeedsUnit = oldOp === 'within_last' || oldOp === 'not_within_last';
+             const newNeedsUnit = newOp === 'within_last' || newOp === 'not_within_last';
+             const oldNeedsBetween = oldOp === 'between';
+             const newNeedsBetween = newOp === 'between';
+             if (oldNeedsUnit !== newNeedsUnit || oldNeedsBetween !== newNeedsBetween) {
+                 newRule.value = '';
+             }
+             if (newNeedsUnit) newRule.unit = 'days';
+             else delete newRule.unit;
+         } else if (fieldType === 'currency' || fieldType === 'number') {
+             const oldNeedsBetween = rule.operator === 'between';
+             const newNeedsBetween = value === 'between';
+             if (oldNeedsBetween !== newNeedsBetween) {
+                 newRule.value = '';
+             }
+         }
+      }
+      return newRule;
+    };
+
     setRules(rules.map(r => {
       if (groupId && r.id === groupId && r.type === 'group') {
-        return { ...r, rules: r.rules.map(sr => sr.id === ruleId ? { ...sr, [field]: value } : sr) };
+        return { ...r, rules: r.rules.map(sr => sr.id === ruleId ? updateRuleLogic(sr) : sr) };
       }
       if (!groupId && r.id === ruleId && r.type === 'condition') {
-        return { ...r, [field]: value };
+        return updateRuleLogic(r);
       }
       return r;
     }));
@@ -235,68 +368,156 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
   };
 
   const handleContinue = () => {
+    let hasError = false;
+    rules.forEach(r => {
+      if (r.type === 'condition') {
+        if (validateRule(r)) hasError = true;
+      } else if (r.type === 'group') {
+        r.rules.forEach(sr => {
+          if (validateRule(sr)) hasError = true;
+        });
+      }
+    });
+    if (hasError) {
+      setShowErrors(true);
+      return;
+    }
     onContinue({});
   };
 
-  const renderCondition = (rule: RuleCondition, groupId?: string, idx?: number) => (
-    <div key={rule.id} className="flex flex-col sm:flex-row sm:items-center gap-3 bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 sm:p-3 shadow-2xs group hover:border-[#D4A753] transition-colors relative">
+  const renderCondition = (rule: RuleCondition, groupId?: string, idx?: number) => {
+    const fieldConfig = FIELDS[rule.field];
+    const operators = OPERATORS_BY_TYPE[fieldConfig?.type] || [];
+    const errorMsg = showErrors ? validateRule(rule) : "";
+    
+    return (
+      <div key={rule.id} className="flex flex-col gap-1 relative">
+        <div className={`flex flex-col sm:flex-row sm:items-center gap-3 bg-[#FAF8F5] border rounded-xl p-3 sm:p-3 shadow-2xs group transition-colors relative ${errorMsg ? 'border-red-500' : 'border-[#EAE6E1] hover:border-[#D4A753]'}`}>
 
-      {/* Mobile Header (hidden on desktop) */}
-      <div className="flex items-center justify-between sm:hidden mb-1">
-        <span className="text-[10px] font-bold text-[#9E782F] tracking-widest uppercase">
-          {groupId ? `Criteria ${String.fromCharCode(65 + (idx || 0))}` : `Metric Rule 0${(idx || 0) + 1}`}
-        </span>
-        <button onClick={() => removeRule(rule.id, groupId)} className="p-1 text-[#9E9A93] hover:text-[#1A1615] transition-colors">
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-
-      <div className="hidden sm:block text-[#D1CDC7] cursor-grab shrink-0 pl-1"><GripVertical className="w-5 h-5" /></div>
-
-      <div className="flex-1 flex flex-col sm:flex-row sm:items-stretch gap-3">
-        {/* Field */}
-        <div className="flex-1 sm:flex-[1.5]">
-          <RuleDropdown
-            value={rule.field}
-            options={RULE_FIELDS}
-            onChange={(v: any) => updateRule(rule.id, 'field', v, groupId)}
-            placeholder="Select Field"
-            minWidth="100%"
-            className="w-full h-full bg-white border border-[#EFECE6] shadow-sm rounded-lg"
-          />
-        </div>
-
-        {/* Operator */}
-        <div className="flex-1 sm:flex-[1]">
-          <RuleDropdown
-            value={rule.operator}
-            options={RULE_OPERATORS}
-            onChange={(v: any) => updateRule(rule.id, 'operator', v, groupId)}
-            placeholder="Select Operator"
-            minWidth="100%"
-            className="w-full h-full bg-white border border-[#EFECE6] shadow-sm rounded-lg"
-          />
-        </div>
-
-        {/* Value */}
-        <div className="flex-1 sm:flex-[1.5]">
-          <div className="flex items-center w-full h-full px-3 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] shadow-sm">
-            <input
-              type="text"
-              value={rule.value}
-              onChange={e => updateRule(rule.id, 'value', e.target.value, groupId)}
-              className="w-full bg-transparent focus:outline-none placeholder:text-[#9E9A93]"
-              placeholder="Value..."
-            />
+          <div className="flex items-center justify-between sm:hidden mb-1">
+            <span className="text-[10px] font-bold text-[#9E782F] tracking-widest uppercase">
+              {groupId ? `Criteria ${String.fromCharCode(65 + (idx || 0))}` : `Metric Rule 0${(idx || 0) + 1}`}
+            </span>
+            <button onClick={() => removeRule(rule.id, groupId)} className="p-1 text-[#9E9A93] hover:text-[#1A1615] transition-colors">
+              <X className="w-4 h-4" />
+            </button>
           </div>
-        </div>
-      </div>
 
-      <button onClick={() => removeRule(rule.id, groupId)} className="hidden sm:flex items-center justify-center p-2 text-[#9E9A93] hover:text-[#1A1615] transition-colors shrink-0 pr-1">
-        <X className="w-5 h-5" />
-      </button>
-    </div>
-  );
+          <div className="hidden sm:block text-[#D1CDC7] cursor-grab shrink-0 pl-1"><GripVertical className="w-5 h-5" /></div>
+
+          <div className="flex-1 flex flex-col sm:flex-row sm:items-stretch gap-3">
+            {/* Field */}
+            <div className="flex-1 sm:flex-[1.5]">
+              <RuleDropdown
+                value={rule.field}
+                options={FIELD_OPTIONS}
+                onChange={(v: any) => updateRule(rule.id, 'field', v, groupId)}
+                placeholder="Select Field"
+                minWidth="100%"
+                className={`w-full h-full bg-white border shadow-sm rounded-lg ${errorMsg ? 'border-red-200' : 'border-[#EFECE6]'}`}
+              />
+            </div>
+
+            {/* Operator */}
+            <div className="flex-1 sm:flex-[1]">
+              <RuleDropdown
+                value={rule.operator}
+                options={operators}
+                onChange={(v: any) => updateRule(rule.id, 'operator', v, groupId)}
+                placeholder="Select Operator"
+                minWidth="100%"
+                className={`w-full h-full bg-white border shadow-sm rounded-lg ${errorMsg ? 'border-red-200' : 'border-[#EFECE6]'}`}
+              />
+            </div>
+
+            {/* Value */}
+            <div className="flex-1 sm:flex-[2]">
+              {fieldConfig?.type === 'currency' && rule.operator !== 'between' && (
+                <div className={`flex items-center w-full h-full px-3 py-2.5 bg-white border rounded-lg text-[14px] font-bold text-[#1A1615] shadow-sm ${errorMsg ? 'border-red-500' : 'border-[#EFECE6]'}`}>
+                  <span className="text-[#9E9A93] mr-1">₹</span>
+                  <input type="number" min="0" step="0.01" value={rule.value || ''} onChange={e => updateRule(rule.id, 'value', e.target.value, groupId)} className="w-full bg-transparent focus:outline-none placeholder:text-[#9E9A93]" placeholder="0.00" />
+                </div>
+              )}
+              {fieldConfig?.type === 'number' && rule.operator !== 'between' && (
+                <div className={`flex items-center w-full h-full px-3 py-2.5 bg-white border rounded-lg text-[14px] font-bold text-[#1A1615] shadow-sm ${errorMsg ? 'border-red-500' : 'border-[#EFECE6]'}`}>
+                  <input type="number" min="0" value={rule.value || ''} onChange={e => updateRule(rule.id, 'value', e.target.value, groupId)} className="w-full bg-transparent focus:outline-none placeholder:text-[#9E9A93]" placeholder="0" />
+                </div>
+              )}
+              {(fieldConfig?.type === 'currency' || fieldConfig?.type === 'number') && rule.operator === 'between' && (
+                <div className="flex items-center gap-2 h-full">
+                  <div className={`flex items-center flex-1 px-3 py-2.5 bg-white border rounded-lg text-[14px] font-bold text-[#1A1615] shadow-sm ${errorMsg ? 'border-red-500' : 'border-[#EFECE6]'}`}>
+                    {fieldConfig?.type === 'currency' && <span className="text-[#9E9A93] mr-1">₹</span>}
+                    <input type="number" min="0" step={fieldConfig?.type === 'currency' ? '0.01' : '1'} value={rule.value?.min || ''} onChange={e => updateRule(rule.id, 'value', { ...rule.value, min: e.target.value }, groupId)} className="w-full bg-transparent focus:outline-none placeholder:text-[#9E9A93]" placeholder="Min" />
+                  </div>
+                  <span className="text-[#9E9A93] font-bold text-[12px] uppercase">AND</span>
+                  <div className={`flex items-center flex-1 px-3 py-2.5 bg-white border rounded-lg text-[14px] font-bold text-[#1A1615] shadow-sm ${errorMsg ? 'border-red-500' : 'border-[#EFECE6]'}`}>
+                    {fieldConfig?.type === 'currency' && <span className="text-[#9E9A93] mr-1">₹</span>}
+                    <input type="number" min="0" step={fieldConfig?.type === 'currency' ? '0.01' : '1'} value={rule.value?.max || ''} onChange={e => updateRule(rule.id, 'value', { ...rule.value, max: e.target.value }, groupId)} className="w-full bg-transparent focus:outline-none placeholder:text-[#9E9A93]" placeholder="Max" />
+                  </div>
+                </div>
+              )}
+              {fieldConfig?.type === 'date' && (rule.operator === 'within_last' || rule.operator === 'not_within_last') && (
+                <div className={`flex items-center w-full h-full px-3 py-2.5 bg-white border rounded-lg text-[14px] font-bold text-[#1A1615] shadow-sm ${errorMsg ? 'border-red-500' : 'border-[#EFECE6]'}`}>
+                  <input type="number" min="1" value={rule.value || ''} onChange={e => updateRule(rule.id, 'value', e.target.value, groupId)} className="w-full bg-transparent focus:outline-none placeholder:text-[#9E9A93]" placeholder="0" />
+                  <span className="text-[#9E9A93] ml-2 font-medium text-[12px]">days</span>
+                </div>
+              )}
+              {fieldConfig?.type === 'date' && (rule.operator === 'before' || rule.operator === 'after') && (
+                <div className={`flex items-center w-full h-full px-3 py-2.5 bg-white border rounded-lg text-[14px] font-bold text-[#1A1615] shadow-sm ${errorMsg ? 'border-red-500' : 'border-[#EFECE6]'}`}>
+                  <input type="date" value={rule.value || ''} onChange={e => updateRule(rule.id, 'value', e.target.value, groupId)} className="w-full bg-transparent focus:outline-none placeholder:text-[#9E9A93]" />
+                </div>
+              )}
+              {fieldConfig?.type === 'date' && rule.operator === 'between' && (
+                <div className="flex items-center gap-2 h-full">
+                  <div className={`flex items-center flex-1 px-3 py-2.5 bg-white border rounded-lg text-[14px] font-bold text-[#1A1615] shadow-sm ${errorMsg ? 'border-red-500' : 'border-[#EFECE6]'}`}>
+                    <input type="date" value={rule.value?.from || ''} onChange={e => updateRule(rule.id, 'value', { ...rule.value, from: e.target.value }, groupId)} className="w-full bg-transparent focus:outline-none" />
+                  </div>
+                  <span className="text-[#9E9A93] font-bold text-[12px] uppercase">AND</span>
+                  <div className={`flex items-center flex-1 px-3 py-2.5 bg-white border rounded-lg text-[14px] font-bold text-[#1A1615] shadow-sm ${errorMsg ? 'border-red-500' : 'border-[#EFECE6]'}`}>
+                    <input type="date" value={rule.value?.to || ''} onChange={e => updateRule(rule.id, 'value', { ...rule.value, to: e.target.value }, groupId)} className="w-full bg-transparent focus:outline-none" />
+                  </div>
+                </div>
+              )}
+              {fieldConfig?.type === 'select' && (
+                <div className={`flex flex-wrap items-center gap-1 w-full min-h-[42px] px-2 py-1 bg-white border rounded-lg text-[13px] shadow-sm ${errorMsg ? 'border-red-500' : 'border-[#EFECE6]'}`}>
+                  {(rule.value || []).map((val: string) => (
+                    <span key={val} className="px-2 py-1 bg-[#FDF8EB] text-[#1A1615] font-bold rounded flex items-center gap-1">
+                      {TIER_OPTIONS.find(t => t.value === val)?.label || val}
+                      <X className="w-3 h-3 text-[#9E782F] cursor-pointer" onClick={() => updateRule(rule.id, 'value', rule.value.filter((v: string) => v !== val), groupId)} />
+                    </span>
+                  ))}
+                  <select
+                    className="flex-1 bg-transparent focus:outline-none text-[#1A1615] font-medium min-w-[100px]"
+                    value=""
+                    onChange={e => {
+                      if (e.target.value && !(rule.value || []).includes(e.target.value)) {
+                        updateRule(rule.id, 'value', [...(rule.value || []), e.target.value], groupId);
+                      }
+                      e.target.value = '';
+                    }}
+                  >
+                    <option value="" disabled>Add option...</option>
+                    {TIER_OPTIONS.filter(t => !(rule.value || []).includes(t.value)).map(t => (
+                      <option key={t.value} value={t.value}>{t.label}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <button onClick={() => removeRule(rule.id, groupId)} className="hidden sm:flex items-center justify-center p-2 text-[#9E9A93] hover:text-[#1A1615] transition-colors shrink-0 pr-1">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        {errorMsg && (
+          <div className="text-red-500 text-[11px] font-bold pl-8 mt-0.5">
+            {errorMsg}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
@@ -1276,6 +1497,141 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   }, [initialViewMode]);
 
   const handleOpenBuilder = () => {
+    dispatch(setCurrentCampaign(null)); // Clear for new campaign
+    if (onNavigate) {
+      onNavigate('/campaigns/new');
+    } else {
+      setViewMode('builder');
+    }
+    setCurrentStep(1);
+  };
+
+  const handleDeleteCampaign = (id: number, name: string) => {
+    setCampaignToDelete({ id, name });
+  };
+
+  const confirmDeleteCampaign = () => {
+    if (campaignToDelete) {
+      dispatch(deleteCampaign(campaignToDelete.id))
+        .unwrap()
+        .then(() => {
+          showToast(`Campaign "${campaignToDelete.name}" deleted.`);
+          setCampaignToDelete(null);
+        })
+        .catch(err => {
+          showToast(`Error: ${err}`);
+          setCampaignToDelete(null);
+        });
+    }
+  };
+
+  const handleSubmitCampaign = (isDraft: boolean) => {
+    const finalCampaignName = campaignName.trim() || (isDraft ? 'Untitled Draft' : 'Untitled Campaign');
+
+    if (!isDraft) {
+      const allowed = checkAndDeductCredit('campaign_creation', 50, `cmp-pub-${Date.now()}`, 'Publish & Launch Campaign');
+      if (!allowed) return;
+    }
+
+    const payload: any = {
+      title: finalCampaignName,
+      type: topLevelType || 'welcome',
+      customer_type: selectedTiers[0] || 'All Customers',
+      reward_type: rewardSelection.toLowerCase().includes('cashback') ? 'cashback' : 'discount',
+      is_active: !isDraft,
+      valid_from: startDate ? new Date(startDate).toISOString() : undefined,
+      valid_until: endDate ? new Date(endDate).toISOString() : undefined,
+    };
+
+    const handleApiError = (err: any) => {
+      let errorMsg = typeof err === 'string' ? err : (err?.message || 'Unknown error');
+      showToast(`Error: ${errorMsg}`);
+      
+      if (err?.errors) {
+        const errFields = Object.keys(err.errors);
+        if (errFields.includes('title') || errFields.includes('type')) {
+          setCurrentStep(1);
+        } else if (errFields.includes('customer_type') || errFields.includes('min_bill_amount')) {
+          setCurrentStep(2);
+        } else if (errFields.includes('valid_from') || errFields.includes('valid_until') || errFields.includes('schedule_config')) {
+          setCurrentStep(3);
+        } else if (errFields.includes('reward_type') || errFields.includes('reward_value') || errFields.includes('target_item_name')) {
+          setCurrentStep(4);
+        }
+      }
+    };
+
+    if (currentCampaign?.id) {
+      dispatch(updateCampaign({ id: currentCampaign.id, data: payload }))
+        .unwrap()
+        .then(() => {
+          showToast(`Campaign ${isDraft ? 'draft saved' : 'published'} successfully!`);
+          setTimeout(() => handleGoToDashboard(), 1200);
+        })
+        .catch(handleApiError);
+    } else {
+      dispatch(createCampaign(payload))
+        .unwrap()
+        .then(() => {
+          showToast(`Campaign ${isDraft ? 'draft saved' : 'published'} successfully!`);
+          setTimeout(() => handleGoToDashboard(), 1200);
+        })
+        .catch(handleApiError);
+    }
+  };
+
+  const handleNextStep = () => {
+    let newErrors: Record<string, string> = {};
+
+    if (currentStep === 1) {
+      if (!campaignName.trim()) newErrors.campaignName = 'Campaign Name is required';
+      if (!topLevelType) newErrors.topLevelType = 'Campaign Goal/Type is required';
+      if (!startDate) newErrors.startDate = 'Start Date is required';
+      if (!endDate) newErrors.endDate = 'End Date is required';
+      if (activeBranches.length === 0) newErrors.activeBranches = 'Please select at least one active branch';
+    } else if (currentStep === 2) {
+      if (selectedTiers.length === 0) {
+        newErrors.selectedTiers = 'Please select at least one customer tier';
+      }
+    } else if (currentStep === 3) {
+      // Step 3 specific validation if any
+    } else if (currentStep === 4) {
+      if (!rewardSelection) newErrors.rewardSelection = 'Reward selection is required';
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setFormErrors(newErrors);
+      const firstError = Object.keys(newErrors)[0];
+      let elemId = '';
+      if (firstError === 'campaignName') elemId = 'campaign-name-input';
+      else if (firstError === 'topLevelType') elemId = 'type-new-customer';
+      else if (firstError === 'startDate') elemId = 'start-date-input';
+      else if (firstError === 'endDate') elemId = 'end-date-input';
+      else if (firstError === 'activeBranches') elemId = 'active-branches-container';
+      else if (firstError === 'selectedTiers') elemId = 'selected-tiers-container';
+      
+      if (elemId) {
+        const elem = document.getElementById(elemId);
+        if (elem) {
+          elem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          elem.focus();
+        }
+      }
+      return;
+    }
+    
+    setFormErrors({});
+    setCurrentStep(prev => prev + 1);
+  };
+
+  const handleEditCampaign = (c: any) => {
+    const original = apiCampaigns.find(apiC => String(apiC.id) === String(c.id));
+    if (original) {
+      dispatch(setCurrentCampaign(original));
+    } else {
+      // Fallback if not found in API list but passed from mock data
+      dispatch(setCurrentCampaign(c));
+    }
     if (onNavigate) {
       onNavigate('/campaigns/new');
     } else {
@@ -1285,6 +1641,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   };
 
   const handleGoToDashboard = () => {
+    dispatch(setCurrentCampaign(null));
     if (onNavigate) {
       onNavigate('/campaigns');
     } else {
@@ -1294,10 +1651,12 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
   const [selectedCampaignType, setSelectedCampaignType] = useState<string>('Loyalty Boost');
   const [isAddLocationOpen, setIsAddLocationOpen] = useState<boolean>(false);
+  const [campaignToDelete, setCampaignToDelete] = useState<{id: number, name: string} | null>(null);
   const [ruleConfig, setRuleConfig] = useState<any>({});
   const [rewardConfig, setRewardConfig] = useState<any>({});
 
   // Step 1 – Basics state
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [campaignName, setCampaignName] = useState('');
   const [topLevelType, setTopLevelType] = useState<'new_customer' | 'existing_customer' | 'direct_customer' | 'product_qr' | ''>('');
   const [existingSubType, setExistingSubType] = useState<'existing_visit' | 'existing_billing' | 'existing_stamp' | 'new_welcome' | 'new_first_visit' | 'new_first_billing' | ''>('');
@@ -1382,11 +1741,77 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
   const [expandedCampaignId, setExpandedCampaignId] = useState<number | null>(null);
 
-  const [campaigns, setCampaigns] = useState([
-    { id: 1, name: 'Autumn Reserve Tasting', type: 'Welcome Campaign', status: 'Active', target: 'VIP', startDate: 'Nov 1, 2024', endDate: 'Nov 30, 2024', progress: 85, reward: 'Free Geisha Pour Over' },
-    { id: 2, name: 'Holiday Triple Stamps', type: 'Stamp Campaign', status: 'Draft', target: 'All Customers', startDate: 'Dec 1, 2024', endDate: 'Dec 31, 2024', progress: 0, reward: 'Free Pastry' },
-    { id: 3, name: 'Morning Happy Hour', type: 'Happy Hours', status: 'Active', target: 'Gold', startDate: 'Oct 15, 2024', endDate: 'Ongoing', progress: 42, reward: '10% Discount' },
-  ]);
+  const dispatch = useDispatch<AppDispatch>();
+  const apiCampaigns = useSelector((state: RootState) => state.campaign.campaigns);
+  const currentCampaign = useSelector((state: RootState) => state.campaign.currentCampaign);
+  const branches = useSelector((state: RootState) => state.branch.branches);
+
+  useEffect(() => {
+    dispatch(fetchCampaigns(undefined));
+    dispatch(fetchBranches());
+  }, [dispatch]);
+
+  // Populate form if we are editing an existing campaign
+  useEffect(() => {
+    if (currentCampaign && viewMode === 'builder') {
+      setCampaignName(currentCampaign.title || '');
+      
+      // Handle Date formats for datetime-local (YYYY-MM-DDThh:mm)
+      const formatDateTime = (isoStr: string) => isoStr ? isoStr.slice(0, 16) : '';
+      
+      if (!currentCampaign.valid_from && currentCampaign.schedule_config?.start_time) {
+        const today = new Date().toISOString().split('T')[0];
+        setStartDate(`${today}T${currentCampaign.schedule_config.start_time.slice(0, 5)}`);
+      } else {
+        setStartDate(formatDateTime(currentCampaign.valid_from));
+      }
+
+      if (!currentCampaign.valid_until && currentCampaign.schedule_config?.end_time) {
+        const today = new Date().toISOString().split('T')[0];
+        setEndDate(`${today}T${currentCampaign.schedule_config.end_time.slice(0, 5)}`);
+      } else {
+        setEndDate(formatDateTime(currentCampaign.valid_until));
+      }
+      
+      // Status mapping (ensure boolean evaluation)
+      setStatusDraft(currentCampaign.is_active ? false : true);
+      
+      // Type mapping
+      if (currentCampaign.type === 'welcome') {
+        setTopLevelType('new_customer');
+        setExistingSubType('new_welcome');
+      } else if (currentCampaign.type === 'visit' || currentCampaign.type === 'billing_one_time') {
+        setTopLevelType('existing_customer');
+        setExistingSubType('existing_visit');
+      }
+      
+      // Customer Type mapping
+      if (currentCampaign.customer_type) {
+        setSelectedTiers([currentCampaign.customer_type]);
+      }
+      
+      // Reward mapping
+      if (currentCampaign.reward_type === 'cashback') setRewardSelection('Cashback');
+      else if (currentCampaign.reward_type === 'fixed_discount') setRewardSelection('Fixed Amount Discount');
+      else if (currentCampaign.reward_type === 'percentage_discount') setRewardSelection('Percentage % Discount');
+      
+      if (currentCampaign.target_item_name) {
+        setProductQrName(currentCampaign.target_item_name);
+      }
+    }
+  }, [currentCampaign, viewMode]);
+
+  const campaigns = apiCampaigns.length > 0 ? apiCampaigns.map(c => ({
+    id: c.id,
+    name: c.title || 'Untitled Campaign',
+    type: c.type || 'Unknown Type',
+    status: c.status || 'Draft',
+    target: c.customer_type || 'All Customers',
+    startDate: c.valid_from || 'N/A',
+    endDate: c.valid_until || 'N/A',
+    progress: (c as any).performance || 0,
+    reward: c.reward_type || 'Reward'
+  })) : [];
 
   React.useEffect(() => {
     campaigns.forEach(c => {
@@ -1401,6 +1826,33 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const [birthdayHorizon, setBirthdayHorizon] = useState<number>(7);
   const [minAge, setMinAge] = useState<number>(21);
   const [maxAge, setMaxAge] = useState<number>(65);
+
+  const [simulationData, setSimulationData] = useState<any>(null);
+  const [isSimulating, setIsSimulating] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (currentStep !== 2) return;
+    const timer = setTimeout(async () => {
+      try {
+        setIsSimulating(true);
+        const response = await apiClient.post('/merchant/campaigns/simulate-audience', {
+          tiers: selectedTiers,
+          lifecycle_type: lifecycleType,
+          birthday_horizon_days: birthdayHorizon,
+          min_age: minAge,
+          max_age: maxAge,
+          min_csat_score: 4.5
+        });
+        setSimulationData(response.data?.data || response.data || null);
+      } catch (error) {
+        console.error('Failed to simulate audience', error);
+      } finally {
+        setIsSimulating(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [selectedTiers, lifecycleType, birthdayHorizon, minAge, maxAge, currentStep]);
 
   const [matchType, setMatchType] = useState<'ALL' | 'ANY'>('ALL');
   const [rewardType, setRewardType] = useState<'Same' | 'Different'>('Same');
@@ -1432,14 +1884,15 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const addOrGroupItem = () => setOrGroupItems([...orGroupItems, { id: Date.now(), type: 'stamp' }]);
   const removeOrGroupItem = (id: number) => setOrGroupItems(orGroupItems.filter(i => i.id !== id));
 
-  const [activeBranches, setActiveBranches] = useState<string[]>(['Downtown Flagship', 'Northside Mall', 'West End Kiosk']);
-  const allBranchOptions = ['Downtown Flagship', 'Northside Mall', 'West End Kiosk', 'Airport Lounge', 'Eastside Store'];
+  const [activeBranches, setActiveBranches] = useState<string[]>([]);
+  const allBranchOptions = branches.map(b => b.name);
   const toggleBranch = (branch: string) => {
     setActiveBranches(prev =>
       prev.includes(branch) ? prev.filter(b => b !== branch) : [...prev, branch]
     );
+    if (formErrors.activeBranches) setFormErrors(prev => ({...prev, activeBranches: ''}));
   };
-  const availableBranches = ['Airport Lounge', 'Eastside Store', 'Uptown Boutique'];
+  const availableBranches = allBranchOptions;
   const handleAddLocation = () => {
     const nextBranch = availableBranches.find(b => !activeBranches.includes(b));
     if (nextBranch) setActiveBranches([...activeBranches, nextBranch]);
@@ -1473,13 +1926,14 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   };
 
   const toggleTier = (tier: string) => {
-    if (tier === 'All Tiers') {
-      setSelectedTiers(['Obsidian VIP', 'Gold Reserve', 'Silver Tier']);
+    if (tier === 'All Tiers' || tier === 'All Customers') {
+      setSelectedTiers(['Obsidian VIP', 'VVIP', 'VIP', 'Gold', 'Silver', 'Bronze']);
     } else {
       setSelectedTiers(prev =>
         prev.includes(tier) ? prev.filter(t => t !== tier) : [...prev, tier]
       );
     }
+    if (formErrors.selectedTiers) setFormErrors(prev => ({...prev, selectedTiers: ''}));
   };
 
   const campaignTypes = [
@@ -1512,7 +1966,11 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
   const step1Valid = campaignName.trim().length > 0 && fullCampaignType !== '';
 
-  const renderStep1 = () => (
+  const renderStep1 = () => {
+    const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+    const currentDateTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 16);
+
+    return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
       {/* ── LEFT COLUMN ── */}
       <div className="lg:col-span-7 flex flex-col gap-4 lg:block lg:bg-white lg:border lg:border-[#EFECE6] lg:rounded-xl lg:p-6 lg:shadow-sm lg:space-y-6">
@@ -1546,27 +2004,28 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
             <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] text-[10px] font-bold rounded">Required</span>
           </div>
 
-          <div className="mb-5">
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] lg:text-[#6E6A66]">Campaign Name</label>
-              <span className="text-[11px] font-semibold text-[#9E9A93]">{campaignName.length} / 64 characters</span>
-            </div>
-            <input
-              id="campaign-name-input"
-              type="text"
-              value={campaignName}
-              maxLength={64}
-              onChange={e => setCampaignName(e.target.value)}
-              placeholder="e.g. Autumn Reserve Tasting & Geisha Perk"
-              className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] placeholder:text-[#B0ABA5] focus:outline-none focus:border-[#D4A753] transition-colors"
-            />
-          </div>
+          <FormInput
+            id="campaign-name-input"
+            label="Campaign Name"
+            required={true}
+            type="text"
+            value={campaignName}
+            maxLength={64}
+            rightLabel={`${campaignName.length} / 64 characters`}
+            onChange={e => {
+              setCampaignName(e.target.value);
+              if (formErrors.campaignName) setFormErrors(prev => ({...prev, campaignName: ''}));
+            }}
+            placeholder="e.g. Autumn Reserve Tasting & Geisha Perk"
+            error={formErrors.campaignName}
+          />
 
           {/* ── CAMPAIGN TYPE (nested radio-cards) ── */}
-          <div>
+          <div className={formErrors.topLevelType ? "p-3 border border-red-500 rounded-2xl bg-red-50/10" : ""}>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-[#1A1615] lg:text-[#6E6A66] mb-3">
               Campaign Type <span className="text-[#B7362F] ml-0.5">*</span>
             </label>
+            {formErrors.topLevelType && <p className="text-red-500 text-xs font-semibold mb-3 -mt-2">{formErrors.topLevelType}</p>}
 
             {/* Level 1 – 4 top-level cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-2">
@@ -1576,6 +2035,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 type="button"
                 onClick={() => {
                   setTopLevelType('new_customer');
+                  if (formErrors.topLevelType) setFormErrors(prev => ({...prev, topLevelType: ''}));
                   if (!['new_welcome', 'new_first_visit', 'new_first_billing'].includes(existingSubType)) {
                     setExistingSubType('new_welcome');
                   }
@@ -1605,6 +2065,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 type="button"
                 onClick={() => {
                   setTopLevelType('existing_customer');
+                  if (formErrors.topLevelType) setFormErrors(prev => ({...prev, topLevelType: ''}));
                   if (!['existing_visit', 'existing_billing', 'existing_stamp'].includes(existingSubType)) {
                     setExistingSubType('existing_visit');
                   }
@@ -1632,7 +2093,11 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <button
                 id="type-direct-customer"
                 type="button"
-                onClick={() => { setTopLevelType('direct_customer'); setExistingSubType(''); }}
+                onClick={() => { 
+                  setTopLevelType('direct_customer'); 
+                  setExistingSubType(''); 
+                  if (formErrors.topLevelType) setFormErrors(prev => ({...prev, topLevelType: ''}));
+                }}
                 className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'direct_customer'
                   ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
                   : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
@@ -1656,7 +2121,11 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <button
                 id="type-product-qr"
                 type="button"
-                onClick={() => { setTopLevelType('product_qr'); setExistingSubType(''); }}
+                onClick={() => { 
+                  setTopLevelType('product_qr'); 
+                  setExistingSubType(''); 
+                  if (formErrors.topLevelType) setFormErrors(prev => ({...prev, topLevelType: ''}));
+                }}
                 className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'product_qr'
                   ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
                   : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
@@ -2100,30 +2569,44 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
         <div className="space-y-4 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5">
           <div className="flex items-center justify-between mb-1">
             <label className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">MANDATORY CAMPAIGN VALIDITY</label>
-            <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] border border-[#F3E5C8] rounded text-[10px] font-bold uppercase">Required</span>
+            {/* <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] border border-[#F3E5C8] rounded text-[10px] font-bold uppercase">Required</span> */}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Start Date & Time</label>
-              <input
-                id="start-date-input"
-                type="datetime-local"
-                value={startDate}
-                onChange={e => setStartDate(e.target.value)}
-                className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] shadow-sm"
-              />
-            </div>
-            <div>
-              <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">End Date & Time</label>
-              <input
-                id="end-date-input"
-                type="datetime-local"
-                value={endDate}
-                onChange={e => setEndDate(e.target.value)}
-                className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] shadow-sm"
-              />
-            </div>
+            <FormInput
+              id="start-date-input"
+              label="Start Date & Time"
+              required={true}
+              type="datetime-local"
+              min={currentDateTime}
+              value={startDate}
+              onChange={e => {
+                setStartDate(e.target.value);
+                if (formErrors.startDate) setFormErrors(prev => ({...prev, startDate: ''}));
+                // Auto-adjust end date if it is now before the start date
+                if (endDate && e.target.value && new Date(endDate) < new Date(e.target.value)) {
+                  setEndDate('');
+                }
+              }}
+              error={formErrors.startDate}
+              labelClassName="text-[11px] font-bold text-[#6E6A66]"
+              wrapperClassName=""
+            />
+            <FormInput
+              id="end-date-input"
+              label="End Date & Time"
+              required={true}
+              type="datetime-local"
+              min={startDate || currentDateTime}
+              value={endDate}
+              onChange={e => {
+                setEndDate(e.target.value);
+                if (formErrors.endDate) setFormErrors(prev => ({...prev, endDate: ''}));
+              }}
+              error={formErrors.endDate}
+              labelClassName="text-[11px] font-bold text-[#6E6A66]"
+              wrapperClassName=""
+            />
           </div>
 
           {/* Status Toggle */}
@@ -2167,17 +2650,23 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
         </div>
 
         {/* ── ACTIVE BRANCHES ── */}
-        <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-0 lg:border-none lg:shadow-none lg:bg-transparent">
+        <div className={`bg-white border ${formErrors.activeBranches ? 'border-red-500 ring-1 ring-red-500/20' : 'border-[#EFECE6]'} rounded-xl p-4 shadow-sm lg:p-0 lg:border-none lg:shadow-none lg:bg-transparent`} id="active-branches-container">
           <div className="flex items-center justify-between mb-3">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66]">Active Branches</label>
+            <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66]">
+              Active Branches <span className="text-[#B7362F] ml-0.5">*</span>
+            </label>
             <button
               type="button"
-              onClick={() => setActiveBranches([...allBranchOptions])}
+              onClick={() => {
+                setActiveBranches([...allBranchOptions]);
+                if (formErrors.activeBranches) setFormErrors(prev => ({...prev, activeBranches: ''}));
+              }}
               className="text-[11px] font-bold text-[#D4A753] hover:underline cursor-pointer"
             >
               Select All
             </button>
           </div>
+          {formErrors.activeBranches && <p className="text-red-500 text-xs font-semibold mb-3 mt-[-4px]">{formErrors.activeBranches}</p>}
           <div className="flex flex-wrap gap-2 mb-3">
             {allBranchOptions.map(branch => {
               const selected = activeBranches.includes(branch);
@@ -2346,7 +2835,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
         </div>
       </div>
     </div>
-  );
+ ) };
 
 
   const renderStep2 = () => (
@@ -2362,14 +2851,15 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
           </p>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-3" id="selected-tiers-container">
           <div>
-            <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615] mb-1">
-              <Trophy className="w-4 h-4 text-[#D4A753]" /> Tier &amp; Membership
+            <div className={`flex items-center gap-2 text-sm font-bold mb-1 ${formErrors.selectedTiers ? 'text-[#B7362F]' : 'text-[#1A1615]'}`}>
+              <Trophy className="w-4 h-4 text-[#D4A753]" /> Tier &amp; Membership <span className="text-[#B7362F] ml-0.5">*</span>
             </div>
             <p className="text-[13px] text-[#6E6A66]">Select eligible member tiers that can unlock this campaign perk.</p>
           </div>
-          <div className="flex flex-wrap gap-2.5">
+          {formErrors.selectedTiers && <p className="text-red-500 text-xs font-semibold mb-1 mt-[-4px]">{formErrors.selectedTiers}</p>}
+          <div className={`flex flex-wrap gap-2.5 ${formErrors.selectedTiers ? 'p-3 border border-red-500 ring-1 ring-red-500/20 rounded-xl' : ''}`}>
             <button onClick={() => toggleTier('Obsidian VIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors cursor-pointer ${selectedTiers.includes('Obsidian VIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
               {selectedTiers.includes('Obsidian VIP') ? <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
               Obsidian VIP
@@ -2436,7 +2926,9 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                   )}
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Start Date</label>
+                  <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">
+                    Start Date <span className="text-[#B7362F] ml-0.5">*</span>
+                  </label>
                   <input type="date" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
                 </div>
                 <div>
@@ -2612,30 +3104,40 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
             <span className="px-3 py-1 text-[10px] font-bold bg-[#E0F9ED] text-[#0D7A53] rounded-full uppercase tracking-widest">LIVE SIMULATION</span>
           </div>
 
-          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5 mb-6">
+          <div className={`bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5 mb-6 transition-opacity ${isSimulating ? 'opacity-50' : 'opacity-100'}`}>
             <div className="flex items-start justify-between mb-3">
-              <div className="text-[36px] leading-none font-bold text-[#1A1615] tracking-tight">2,840</div>
-              <span className="px-2.5 py-1 text-[11px] font-bold bg-[#E0F9ED] text-[#0D7A53] rounded-full">11.4% Reach</span>
+              <div className="text-[36px] leading-none font-bold text-[#1A1615] tracking-tight">
+                {simulationData?.eligible_patrons?.toLocaleString() || 0}
+              </div>
+              <span className="px-2.5 py-1 text-[11px] font-bold bg-[#E0F9ED] text-[#0D7A53] rounded-full">
+                {simulationData?.reach_percentage || 0}% Reach
+              </span>
             </div>
             <p className="text-[12px] text-[#6E6A66] font-medium mb-4">
-              Eligible patrons out of <span className="font-bold text-[#1A1615]">24,850</span> total enrolled members
+              Eligible patrons out of <span className="font-bold text-[#1A1615]">{simulationData?.total_enrolled_members?.toLocaleString() || 0}</span> total enrolled members
             </p>
             <div className="h-2.5 bg-[#EFECE6] rounded-full overflow-hidden flex">
-              <div className="h-full bg-[#D4A753] w-[11.4%] rounded-full"></div>
+              <div className="h-full bg-[#D4A753] rounded-full" style={{ width: `${simulationData?.reach_percentage || 0}%` }}></div>
             </div>
           </div>
 
           <div className="mb-6">
             <h4 className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-3">ACTIVE TIER COMPOSITION</h4>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between text-[13px] font-bold">
-                <span className="flex items-center gap-2.5"><span className="w-2.5 h-2.5 rounded-full bg-[#1A1615]"></span> Obsidian VIP</span>
-                <div><span className="text-[#1A1615] mr-2">1,260</span> <span className="text-[#9E9A93] text-[11px] font-semibold">(44.4%)</span></div>
-              </div>
-              <div className="flex items-center justify-between text-[13px] font-bold">
-                <span className="flex items-center gap-2.5"><span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> Gold Reserve</span>
-                <div><span className="text-[#1A1615] mr-2">1,580</span> <span className="text-[#9E9A93] text-[11px] font-semibold">(55.6%)</span></div>
-              </div>
+            <div className={`space-y-4 transition-opacity ${isSimulating ? 'opacity-50' : 'opacity-100'}`}>
+              {(simulationData?.tier_composition || []).map((tier: any, index: number) => (
+                <div key={index} className="flex items-center justify-between text-[13px] font-bold">
+                  <span className="flex items-center gap-2.5">
+                    <span className={`w-2.5 h-2.5 rounded-full ${index === 0 ? 'bg-[#1A1615]' : 'bg-[#D4A753]'}`}></span> {tier.tier_name}
+                  </span>
+                  <div>
+                    <span className="text-[#1A1615] mr-2">{tier.count?.toLocaleString() || 0}</span> 
+                    <span className="text-[#9E9A93] text-[11px] font-semibold">({tier.percentage || 0}%)</span>
+                  </div>
+                </div>
+              ))}
+              {(!simulationData?.tier_composition || simulationData.tier_composition.length === 0) && (
+                <div className="text-[12px] text-[#9E9A93] italic">No tiers qualify</div>
+              )}
               <div className="flex items-center justify-between text-[13px] font-bold">
                 <span className="flex items-center gap-2.5"><span className="w-2.5 h-2.5 rounded-full bg-[#D1CDC7]"></span> Silver Tier</span>
                 <span className="text-[#F87171] text-[11px] font-bold uppercase tracking-wider">EXCLUDED</span>
@@ -2649,23 +3151,23 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <div className="flex justify-between items-center bg-[#FAF8F5] border border-[#EFECE6] p-4 rounded-xl">
                 <div>
                   <div className="text-[11px] font-medium text-[#6E6A66] mb-0.5">Expected Redemptions</div>
-                  <div className="text-[15px] font-bold text-[#1A1615]">520 – 640 visits</div>
+                  <div className="text-[15px] font-bold text-[#1A1615]">-</div>
                 </div>
-                <span className="px-2.5 py-1 bg-[#E0F9ED] text-[#0D7A53] rounded-full text-[11px] font-bold">+22% lift</span>
+                <span className="px-2.5 py-1 bg-[#E0F9ED] text-[#0D7A53] rounded-full text-[11px] font-bold">-</span>
               </div>
 
               <div className="flex justify-between items-center bg-[#FAF8F5] border border-[#EFECE6] p-4 rounded-xl">
                 <div>
                   <div className="text-[11px] font-medium text-[#6E6A66] mb-0.5">Projected Gross GMV</div>
-                  <div className="text-[15px] font-bold text-[#0D7A53]">+₹19,800</div>
+                  <div className="text-[15px] font-bold text-[#0D7A53]">-</div>
                 </div>
-                <span className="px-2.5 py-1 bg-[#FDF8EB] text-[#9E782F] rounded-full text-[11px] font-bold uppercase border border-[#F3E5C8]">High ROI</span>
+                <span className="px-2.5 py-1 bg-[#FDF8EB] text-[#9E782F] rounded-full text-[11px] font-bold uppercase border border-[#F3E5C8]">Pending</span>
               </div>
 
               <div className="flex justify-between items-center bg-white border border-[#EFECE6] p-4 rounded-xl">
                 <div>
                   <div className="text-[11px] font-medium text-[#6E6A66] mb-0.5">Estimated Incentive Cost</div>
-                  <div className="text-[15px] font-bold text-[#1A1615]">₹2,860 – ₹3,320</div>
+                  <div className="text-[15px] font-bold text-[#1A1615]">-</div>
                 </div>
                 <span className="text-[12px] font-medium text-[#6E6A66]">Within Budget</span>
               </div>
@@ -3237,7 +3739,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     </div>
   );
 
-  const renderDashboard = () => (
+  const renderDashboard = () => {
+    const filteredCampaigns = campaigns.filter(c =>
+      (statusFilter === 'All' || statusFilter === 'All Status' || c.status === statusFilter) &&
+      (c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.reward.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+
+    return (
     <div className="p-4 sm:p-6 space-y-6 font-sans text-[#1A1615]">
       <div className="max-w-[1400px] mx-auto space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -3333,10 +3841,21 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 </tr>
               </thead>
               <tbody>
-                {campaigns.filter(c =>
-                  (statusFilter === 'All' || statusFilter === 'All Status' || c.status === statusFilter) &&
-                  (c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.reward.toLowerCase().includes(searchQuery.toLowerCase()))
-                ).map(c => (
+                {filteredCampaigns.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-12 text-center border-b border-[#EAE6E1]">
+                      <div className="flex flex-col items-center justify-center">
+                        <div className="w-12 h-12 bg-[#F3EDE6] rounded-full flex items-center justify-center mb-3">
+                          <Gift className="w-6 h-6 text-[#9E9A93]" />
+                        </div>
+                        <h3 className="text-[13px] font-bold text-[#1A1615] mb-1">No campaigns found</h3>
+                        <p className="text-xs text-[#7C746C] max-w-sm mx-auto">
+                          {searchQuery || statusFilter !== 'All' ? "Try adjusting your filters or search query to find what you're looking for." : "You haven't created any campaigns yet. Click 'Create New Campaign' to get started!"}
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredCampaigns.map(c => (
                   <tr key={c.id} className="border-b border-[#EAE6E1] hover:bg-[#FAF8F5]/60 transition-colors">
                     <td className="py-4 px-5">
                       <div className="text-sm font-bold text-[#1A1615] mb-0.5">{c.name}</div>
@@ -3372,9 +3891,9 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                     <td className="py-4 px-5 text-right space-x-2 flex justify-end">
                       <button onClick={() => setQrModalCampaign(c)} onMouseEnter={() => { const img = new Image(); img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${c.id || 'promo'}`; }} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="View QR"><Eye className="w-4 h-4" /></button>
                       <button onClick={() => handleDownload(c)} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Download"><Download className="w-4 h-4" /></button>
-                      <button onClick={handleOpenBuilder} className="p-1.5 text-[#6E6A66] hover:text-[#D4A753] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Edit"><Edit2 className="w-4 h-4" /></button>
+                      <button onClick={() => handleEditCampaign(c)} className="p-1.5 text-[#6E6A66] hover:text-[#D4A753] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Edit"><Edit2 className="w-4 h-4" /></button>
                       <button className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Duplicate"><Copy className="w-4 h-4" /></button>
-                      <button className="p-1.5 text-[#6E6A66] hover:text-[#EF4444] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Delete"><Trash2 className="w-4 h-4" /></button>
+                      <button onClick={() => handleDeleteCampaign(c.id, c.name)} className="p-1.5 text-[#6E6A66] hover:text-[#EF4444] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Delete"><Trash2 className="w-4 h-4" /></button>
                     </td>
                   </tr>
                 ))}
@@ -3384,10 +3903,19 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
           {/* Mobile Accordion List */}
           <div className="md:hidden flex flex-col">
-            {campaigns.filter(c =>
-              (statusFilter === 'All' || statusFilter === 'All Status' || c.status === statusFilter) &&
-              (c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.reward.toLowerCase().includes(searchQuery.toLowerCase()))
-            ).map((c) => {
+            {filteredCampaigns.length === 0 ? (
+              <div className="py-12 px-4 text-center bg-white">
+                <div className="flex flex-col items-center justify-center">
+                  <div className="w-12 h-12 bg-[#F3EDE6] rounded-full flex items-center justify-center mb-3">
+                    <Gift className="w-6 h-6 text-[#9E9A93]" />
+                  </div>
+                  <h3 className="text-[13px] font-bold text-[#1A1615] mb-1">No campaigns found</h3>
+                  <p className="text-xs text-[#7C746C]">
+                    {searchQuery || statusFilter !== 'All' ? "Try adjusting your filters." : "Create your first campaign!"}
+                  </p>
+                </div>
+              </div>
+            ) : filteredCampaigns.map((c) => {
               const isExpanded = expandedCampaignId === c.id;
 
               return (
@@ -3454,13 +3982,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                         <button onClick={() => handleDownload(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
                           <Download className="w-3.5 h-3.5" /> DL
                         </button>
-                        <button onClick={handleOpenBuilder} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                        <button onClick={() => handleEditCampaign(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
                           <Edit2 className="w-3.5 h-3.5" /> Edit
                         </button>
                         <button className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
                           <Copy className="w-3.5 h-3.5" /> Dup
                         </button>
-                        <button className="flex-1 min-w-[30%] py-2 bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] font-semibold text-xs rounded-lg hover:bg-[#FCA5A5] transition-colors flex justify-center items-center gap-1.5">
+                        <button onClick={() => handleDeleteCampaign(c.id, c.name)} className="flex-1 min-w-[30%] py-2 bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] font-semibold text-xs rounded-lg hover:bg-[#FCA5A5] transition-colors flex justify-center items-center gap-1.5">
                           <Trash2 className="w-3.5 h-3.5" /> Del
                         </button>
                       </div>
@@ -3474,12 +4002,35 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       </div>
     </div>
   );
+  };
 
   if (viewMode === 'dashboard') {
     return (
       <>
         {renderDashboard()}
         
+        {/* Delete Confirmation Modal for Dashboard */}
+        {campaignToDelete && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 relative text-center">
+              <div className="w-12 h-12 bg-[#FEE2E2] text-[#DC2626] rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-[#1A1615] mb-2">Delete Campaign</h3>
+              <p className="text-sm text-[#6E6A66] mb-6">
+                Are you sure you want to permanently delete the campaign <span className="font-bold text-[#1A1615]">"{campaignToDelete.name}"</span>? This action cannot be undone.
+              </p>
+              <div className="flex items-center gap-3">
+                <button onClick={() => setCampaignToDelete(null)} className="flex-1 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] rounded-lg text-sm font-bold shadow-sm hover:bg-[#EAE6E1] transition-colors cursor-pointer">
+                  Cancel
+                </button>
+                <button onClick={confirmDeleteCampaign} className="flex-1 py-2.5 bg-[#DC2626] text-white rounded-lg text-sm font-bold shadow-sm hover:bg-[#B91C1C] transition-colors cursor-pointer">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       {/* QR Code Modal */}
         {qrModalCampaign && (
@@ -3535,10 +4086,33 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
         </div>
       )}
 
+      {/* Delete Confirmation Modal */}
+      {campaignToDelete && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 relative text-center">
+            <div className="w-12 h-12 bg-[#FEE2E2] text-[#DC2626] rounded-full flex items-center justify-center mx-auto mb-4">
+              <Trash2 className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-bold text-[#1A1615] mb-2">Delete Campaign</h3>
+            <p className="text-sm text-[#6E6A66] mb-6">
+              Are you sure you want to permanently delete the campaign <span className="font-bold text-[#1A1615]">"{campaignToDelete.name}"</span>? This action cannot be undone.
+            </p>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setCampaignToDelete(null)} className="flex-1 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] rounded-lg text-sm font-bold shadow-sm hover:bg-[#EAE6E1] transition-colors cursor-pointer">
+                Cancel
+              </button>
+              <button onClick={confirmDeleteCampaign} className="flex-1 py-2.5 bg-[#DC2626] text-white rounded-lg text-sm font-bold shadow-sm hover:bg-[#B91C1C] transition-colors cursor-pointer">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 2. SHARED LAYOUT & TOP HEADER BAR */}
       <div className="p-4 lg:p-6 space-y-5 flex-1 max-w-[1600px] mx-auto w-full">
-        {/* Desktop Header */}
-        <div className="hidden lg:flex bg-white border border-[#EAE6E1] rounded-xl px-4 sm:px-6 py-4 flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs mb-4">
+        {/* Responsive Header */}
+        <div className="flex bg-white border border-[#EAE6E1] rounded-xl px-4 sm:px-6 py-4 flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 shadow-2xs mb-4">
         <div className="flex items-center gap-3">
           <button onClick={handleGoToDashboard} className="p-2 bg-[#FAF8F5] text-[#1A1615] hover:bg-[#FAF6EE] border border-[#EAE6E1] rounded-lg transition-colors cursor-pointer" title="Back to Dashboard">
             <ArrowLeft className="w-5 h-5" />
@@ -3549,7 +4123,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
           </div>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">
+        {/* <div className="flex flex-wrap items-center gap-3 shrink-0">
           <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 flex items-center gap-3 shadow-2xs min-w-[160px]">
             <div className="w-9 h-9 bg-white border border-[#EAE6E1] rounded-full flex items-center justify-center shrink-0 shadow-2xs relative">
               <Users className="w-4 h-4 text-[#D4A753]" />
@@ -3571,10 +4145,10 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <div className="text-base font-bold text-[#15803D] leading-tight">+₹16,400</div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
         {/* Stepper Indicator */}
-        <div className="lg:hidden flex justify-between items-center mb-4 px-1">
+        <div className="md:hidden flex justify-between items-center mb-4 px-1">
           <div className="flex items-center gap-3">
             {currentStep > 1 && (
               <button onClick={() => setCurrentStep(prev => prev - 1)} className="w-8 h-8 flex items-center justify-center bg-white border border-[#EAE6E1] rounded-full text-[#1A1615] shadow-2xs cursor-pointer shrink-0">
@@ -3632,17 +4206,11 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <button onClick={() => setCurrentStep(4)} className="flex-1 md:flex-none px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[12px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors shadow-sm whitespace-nowrap text-center flex items-center justify-center gap-1.5 cursor-pointer">
                 <ArrowLeft className="w-3.5 h-3.5" /> Back to Reward Def
               </button>
-              <button className="flex-1 md:flex-none px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[12px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors shadow-sm whitespace-nowrap text-center cursor-pointer">
+              <button onClick={() => handleSubmitCampaign(true)} className="flex-1 md:flex-none px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[12px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors shadow-sm whitespace-nowrap text-center cursor-pointer">
                 Save Draft
               </button>
               <button
-                onClick={() => {
-                  const allowed = checkAndDeductCredit('campaign_creation', 50, `cmp-pub-${Date.now()}`, 'Publish & Launch Campaign');
-                  if (!allowed) return;
-
-                  showToast('Campaign deployed & published! 50 credits deducted from wallet.');
-                  setTimeout(() => handleGoToDashboard(), 1200);
-                }}
+                onClick={() => handleSubmitCampaign(false)}
                 className="w-full md:w-auto px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-[13px] font-bold shadow-md transition-opacity flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Zap className="w-4 h-4" /> Deploy &amp; Publish Campaign <ArrowRight className="w-4 h-4" />
@@ -3662,11 +4230,11 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                   <ArrowLeft className="w-4 h-4" /> Back
                 </button>
               )}
-              <button className="px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors cursor-pointer">
+              <button onClick={() => handleSubmitCampaign(true)} className="px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors cursor-pointer">
                 Save as Draft
               </button>
               {currentStep < 5 && (
-                <button onClick={() => setCurrentStep(prev => prev + 1)} className="px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-[13px] font-bold shadow-md transition-opacity flex items-center gap-1.5 cursor-pointer">
+                <button onClick={handleNextStep} className="px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-[13px] font-bold shadow-md transition-opacity flex items-center gap-1.5 cursor-pointer">
                   <span>Continue to {steps.find(s => s.id === currentStep + 1)?.name}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
