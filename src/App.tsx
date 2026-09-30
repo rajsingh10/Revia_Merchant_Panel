@@ -61,7 +61,7 @@ import { NotEnoughCreditModal } from './components/wallet/NotEnoughCreditModal';
 
 const VALID_ROUTES = [
   '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
-  '/loyalty', '/qr-codes', '/item-catalog', '/masters/rule-fields', '/masters/tier-options', '/masters/reward-types', '/catalog', '/orders', '/invoices',
+  '/loyalty', '/qr-codes', '/item-catalog', '/masters/rule-fields', '/masters/tier-options', '/masters/reward-types', '/masters/asset-types', '/masters/placement-types', '/catalog', '/orders', '/invoices',
   '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
   '/terminal', '/rewards', '/rewards/new', '/analytics', '/billing', '/notifications',
   '/settings/audit', '/settings/branding', '/login', '/onboarding',
@@ -277,6 +277,8 @@ export default function App() {
                 <Route path="/masters/rule-fields" element={<ProtectedRoute><MastersPage defaultTab="fields" /></ProtectedRoute>} />
                 <Route path="/masters/tier-options" element={<ProtectedRoute><MastersPage defaultTab="tiers" /></ProtectedRoute>} />
                 <Route path="/masters/reward-types" element={<ProtectedRoute><MastersPage defaultTab="rewards" /></ProtectedRoute>} />
+                <Route path="/masters/asset-types" element={<ProtectedRoute><MastersPage defaultTab="assets" /></ProtectedRoute>} />
+                <Route path="/masters/placement-types" element={<ProtectedRoute><MastersPage defaultTab="placements" /></ProtectedRoute>} />
                 <Route path="/orders" element={<ProtectedRoute><OrderQueuePage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/customerlist" element={<ProtectedRoute><CustomersPage customers={customers} onUpdateCustomer={(updated) => setCustomers((c) => c.map((cust) => (cust.id === updated.id ? updated : cust)))} onAddCustomer={(newCustomer) => setCustomers((c) => [newCustomer, ...c])} onViewCustomer={(id) => handleNavigate(`/customerlist/detail?id=${id}` as any)} /></ProtectedRoute>} />
                 <Route path="/customerlist/detail" element={<ProtectedRoute><CustomerDetailPage onNavigate={handleNavigate as any} customer={customers.find(c => { const searchParams = new URLSearchParams(window.location.search); return c.id === searchParams.get('id'); })} /></ProtectedRoute>} />

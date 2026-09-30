@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store/store';
+import { fetchTransactions, addTransaction } from '../store/slices/transactionSlice';
 import {
   Bell,
   Search,
@@ -20,6 +23,9 @@ import {
 } from 'lucide-react';
 
 export const TransactionsPage: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { transactions, isLoading } = useSelector((state: RootState) => state.transactions);
+  
   const [fastEntryMode, setFastEntryMode] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [branchFilter, setBranchFilter] = useState('All Branches (Downtown)');
@@ -63,83 +69,14 @@ export const TransactionsPage: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const [transactions, setTransactions] = useState([
-    {
-      id: '#ORD-94812 (NFC-TAP-44)',
-      guestName: 'Marcus Vance',
-      avatar: 'MV',
-      tier: 'BLACK TIER',
-      type: 'Purchase + 2 Stamps',
-      items: '2x Panama Geisha Pour-Over',
-      channel: 'Mobile App Redeem',
-      time: '2m ago',
-      amount: '₹18.50',
-      commission: '1.85',
-      stamps: '+2 Stamps',
-      status: 'Completed',
-    },
-    {
-      id: '#ORD-94811 (VOUCHER-51)',
-      guestName: 'Sophia Lin',
-      avatar: 'SL',
-      tier: 'RESERVE',
-      type: 'Voucher Redemption',
-      items: 'Free Pour-Over Reward [-10 Stamps]',
-      channel: 'Mobile App Redeem',
-      time: '8m ago',
-      amount: 'Free Perk',
-      commission: '0.00',
-      stamps: '-10 Stamps',
-      status: 'Verified',
-    },
-    {
-      id: '#ORD-94810 (STAMP-EARN)',
-      guestName: 'Arthur Lehmann',
-      avatar: 'AL',
-      tier: 'MEMBER',
-      type: 'Stamp Earn Only',
-      items: 'Counter Scan [Cold Brew Growler]',
-      channel: 'Mobile App Redeem',
-      time: '14m ago',
-      amount: '₹24.00',
-      commission: '2.40',
-      stamps: '+1 Stamp',
-      status: 'Completed',
-    },
-    {
-      id: '#ORD-94889 (NFC-TAP-43)',
-      guestName: 'Clara Hughes',
-      avatar: 'CH',
-      tier: 'BLACK TIER',
-      type: 'Single Origin Tasting Flight',
-      items: '3-Varietal Cup Tasting + Beans',
-      channel: 'Mobile App Redeem',
-      time: '22m ago',
-      amount: '₹36.50',
-      commission: '3.65',
-      stamps: '+3 Stamps',
-      status: 'Completed',
-    },
-    {
-      id: '#ORD-94888 (FAST-COUNTER)',
-      guestName: 'Guest Walk-in',
-      avatar: 'GW',
-      tier: 'NON-MEMBER',
-      type: 'Espresso Romano + Croissant',
-      items: 'Direct Register Entry',
-      channel: '2-Varietal Cup Tasting ',
-      time: '31m ago',
-      amount: '₹11.20',
-      commission: '1.12',
-      stamps: '0 Stamps',
-      status: 'Completed',
-    },
-  ]);
+  useEffect(() => {
+    dispatch(fetchTransactions());
+  }, [dispatch]);
 
   const filteredTransactions = transactions.filter(tx => {
-    const matchesSearch = tx.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tx.guestName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tx.items.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = (tx.id || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (tx.guestName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (tx.items || '').toLowerCase().includes(searchQuery.toLowerCase());
 
     let matchesStatus = true;
     if (statusFilter !== 'Status: All') {
@@ -147,20 +84,20 @@ export const TransactionsPage: React.FC = () => {
     }
 
     let matchesCategory = true;
-    if (categoryFilter === 'Purchases') matchesCategory = tx.type.toLowerCase().includes('purchase') || tx.type.toLowerCase().includes('flight') || tx.amount.includes('$');
-    if (categoryFilter === 'Stamps Only') matchesCategory = tx.type.toLowerCase().includes('stamp earn');
-    if (categoryFilter === 'Redemptions') matchesCategory = tx.type.toLowerCase().includes('redemption');
+    if (categoryFilter === 'Purchases') matchesCategory = (tx.type || '').toLowerCase().includes('purchase') || (tx.type || '').toLowerCase().includes('flight') || (tx.amount || '').includes('$');
+    if (categoryFilter === 'Stamps Only') matchesCategory = (tx.type || '').toLowerCase().includes('stamp earn');
+    if (categoryFilter === 'Redemptions') matchesCategory = (tx.type || '').toLowerCase().includes('redemption');
 
     let matchesBranch = true;
     if (branchFilter !== 'All Branches (Downtown)') {
-      if (branchFilter.includes('Northside')) matchesBranch = tx.channel.includes('POS-02') || tx.channel.includes('POS-03');
-      if (branchFilter.includes('West End')) matchesBranch = tx.channel.includes('POS-04');
+      if (branchFilter.includes('Northside')) matchesBranch = (tx.channel || '').includes('POS-02') || (tx.channel || '').includes('POS-03');
+      if (branchFilter.includes('West End')) matchesBranch = (tx.channel || '').includes('POS-04');
     }
 
     let matchesPayment = true;
     if (paymentFilter !== 'Payment: All') {
-      if (paymentFilter.includes('Credit Card')) matchesPayment = tx.amount.includes('$');
-      if (paymentFilter.includes('Voucher')) matchesPayment = tx.type.includes('Voucher');
+      if (paymentFilter.includes('Credit Card')) matchesPayment = (tx.amount || '').includes('$');
+      if (paymentFilter.includes('Voucher')) matchesPayment = (tx.type || '').includes('Voucher');
     }
 
     return matchesSearch && matchesStatus && matchesCategory && matchesBranch && matchesPayment;
@@ -416,7 +353,7 @@ export const TransactionsPage: React.FC = () => {
                         </td>
                         <td className="py-3 px-4">
                           <div className="text-xs font-bold text-[#1A1615]">{tx.amount}</div>
-                          <div className={`text-[10px] font-bold mt-0.5 ${tx.stamps.includes('+') ? 'text-[#D4A753]' : tx.stamps.includes('-') ? 'text-[#0D7A53]' : 'text-[#9E9A93]'}`}>
+                          <div className={`text-[10px] font-bold mt-0.5 ${(tx.stamps || '').includes('+') ? 'text-[#D4A753]' : (tx.stamps || '').includes('-') ? 'text-[#0D7A53]' : 'text-[#9E9A93]'}`}>
                             {tx.stamps}
                           </div>
                         </td>
@@ -469,10 +406,10 @@ export const TransactionsPage: React.FC = () => {
                               {tx.guestName}
                             </div>
                             <div className="text-xs font-mono font-bold text-[#D4A753]">
-                              {tx.id.split(' ')[0]}
+                              {(tx.id || '').split(' ')[0]}
                             </div>
                             <div className="text-[10px] font-semibold text-[#9E9A93] mt-0.5">
-                              {tx.id.split(' ')[1]}
+                              {(tx.id || '').split(' ')[1]}
                             </div>
                           </div>
                         </div>
@@ -509,7 +446,7 @@ export const TransactionsPage: React.FC = () => {
                           </div>
                           <div>
                             <div className="text-[9px] uppercase font-bold text-[#9E9A93] mb-1 tracking-wider">Stamps</div>
-                            <div className={`text-[11px] font-bold ${tx.stamps.includes('+') ? 'text-[#D4A753]' : tx.stamps.includes('-') ? 'text-[#0D7A53]' : 'text-[#1A1615]'}`}>
+                            <div className={`text-[11px] font-bold ${(tx.stamps || '').includes('+') ? 'text-[#D4A753]' : (tx.stamps || '').includes('-') ? 'text-[#0D7A53]' : 'text-[#1A1615]'}`}>
                               {tx.stamps}
                             </div>
                           </div>
@@ -711,7 +648,7 @@ export const TransactionsPage: React.FC = () => {
                     stamps: '0 Stamps',
                     status: 'Completed',
                   };
-                  setTransactions([newTx, ...transactions]);
+                  dispatch(addTransaction(newTx));
                   showToast('Transaction submitted successfully.');
                   setFastPosModalOpen(false);
                 }}

@@ -1874,6 +1874,23 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     setCurrentStep(1);
   };
 
+  const handleDuplicateCampaign = (c: any) => {
+    const original = apiCampaigns.find(apiC => String(apiC.id) === String(c.id)) || c;
+    // Strip the ID and add "(Copy)" to the title so the API treats it as a new creation
+    const duplicatedCampaign = { 
+      ...original, 
+      id: undefined, 
+      title: `${original.title || original.name || 'Untitled'} (Copy)` 
+    };
+    dispatch(setCurrentCampaign(duplicatedCampaign));
+    if (onNavigate) {
+      onNavigate('/campaigns/new');
+    } else {
+      setViewMode('builder');
+    }
+    setCurrentStep(1);
+  };
+
   const handleGoToDashboard = () => {
     dispatch(setCurrentCampaign(null));
     if (onNavigate) {
@@ -2061,8 +2078,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     }
   }, [currentCampaign, viewMode, branches]);
 
-  const campaigns = apiCampaigns.length > 0 ? apiCampaigns.map(c => {
-    let finalStatus = c.status || 'Draft';
+  const campaigns = apiCampaigns.length > 0 ? [...apiCampaigns].sort((a: any, b: any) => (b.id || 0) - (a.id || 0)).map(c => {
+    let finalStatus = c.is_active ? 'Active' : 'Draft';
     if (finalStatus === 'Active') {
       const now = new Date();
       const start = c.valid_from ? new Date(c.valid_from) : null;
@@ -3955,7 +3972,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       <button onClick={async () => { setQrModalCampaign(c); setQrModalImgUrl(null); const url = await fetchCampaignQr(c.id); setQrModalImgUrl(url); }} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="View QR"><Eye className="w-4 h-4" /></button>
                       <button onClick={() => handleDownload(c)} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Download"><Download className="w-4 h-4" /></button>
                       <button onClick={() => handleEditCampaign(c)} className="p-1.5 text-[#6E6A66] hover:text-[#D4A753] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Edit"><Edit2 className="w-4 h-4" /></button>
-                      <button className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Duplicate"><Copy className="w-4 h-4" /></button>
+                      <button onClick={() => handleDuplicateCampaign(c)} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Duplicate"><Copy className="w-4 h-4" /></button>
                       <button onClick={() => handleDeleteCampaign(c.id, c.name)} className="p-1.5 text-[#6E6A66] hover:text-[#EF4444] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Delete"><Trash2 className="w-4 h-4" /></button>
                     </td>
                   </tr>
@@ -4056,7 +4073,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                         <button onClick={() => handleEditCampaign(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
                           <Edit2 className="w-3.5 h-3.5" /> Edit
                         </button>
-                        <button className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                        <button onClick={() => handleDuplicateCampaign(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
                           <Copy className="w-3.5 h-3.5" /> Dup
                         </button>
                         <button onClick={() => handleDeleteCampaign(c.id, c.name)} className="flex-1 min-w-[30%] py-2 bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] font-semibold text-xs rounded-lg hover:bg-[#FCA5A5] transition-colors flex justify-center items-center gap-1.5">

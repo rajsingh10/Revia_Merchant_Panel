@@ -80,6 +80,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Rule Fields', route: '/masters/rule-fields', icon: Database },
         { name: 'Tier Options', route: '/masters/tier-options', icon: Database },
         { name: 'Reward Types', route: '/masters/reward-types', icon: Package },
+        { name: 'Asset Types', route: '/masters/asset-types', icon: QrCode },
+        { name: 'Placement Types', route: '/masters/placement-types', icon: QrCode },
       ],
     },
     // {
