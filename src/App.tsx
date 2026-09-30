@@ -23,6 +23,7 @@ import { CustomerDetailPage } from './pages/CustomerDetailPage';
 
 import { MarketingLandingPage } from './pages/MarketingLandingPage';
 import { CustomerRouter } from './Customer/CustomerRouter';
+import { CampaignLandingPage } from './pages/CampaignLandingPage';
 import { CatalogPage } from './pages/CatalogPage';
 import { LoyaltyPage } from './pages/LoyaltyPage';
 import { CampaignBuilderPage } from './pages/CampaignBuilderPage';
@@ -126,7 +127,7 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/') || currentRoute.startsWith('/customerlist/detail');
+  const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/') || currentRoute.startsWith('/customerlist/detail') || currentRoute.startsWith('/c/');
   if (!isValidRoute) {
     return <NotFoundPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
@@ -157,6 +158,11 @@ export default function App() {
 
   if (currentRoute === '/customer' || currentRoute.startsWith('/customer/')) {
     return <CustomerRouter currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute.startsWith('/c/')) {
+    const campaignId = currentRoute.split('/')[2];
+    return <CampaignLandingPage campaignId={campaignId} onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
   // Render auth and onboarding pages directly as standalone

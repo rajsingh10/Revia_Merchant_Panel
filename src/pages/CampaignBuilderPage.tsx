@@ -1618,23 +1618,44 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
   const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>(initialViewMode);
   const [qrModalCampaign, setQrModalCampaign] = useState<any | null>(null);
+  const [qrModalImgUrl, setQrModalImgUrl] = useState<string | null>(null);
+
+  const fetchCampaignQr = async (campaignId: string | number) => {
+    try {
+      const response = await apiClient.get(`/merchant/campaigns/${campaignId}/qr`, {
+        responseType: 'blob'
+      });
+      if (response.data.type === 'application/json') {
+        const text = await response.data.text();
+        const json = JSON.parse(text);
+        if (json.data && typeof json.data === 'string') return json.data;
+        if (json.data && json.data.qr_code) return json.data.qr_code;
+      }
+      return URL.createObjectURL(new Blob([response.data], { type: (response.headers['content-type'] as string) || 'image/png' }));
+    } catch (error) {
+      console.error('API QR failed, falling back', error);
+      return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${campaignId || 'promo'}`;
+    }
+  };
 
   const handleDownload = async (campaign: any) => {
     try {
-      const url = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${campaign.id || 'promo'}`;
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
+      const url = await fetchCampaignQr(campaign.id);
+      
       const a = document.createElement('a');
-      a.href = blobUrl;
+      if (url.startsWith('blob:') || url.startsWith('data:')) {
+        a.href = url;
+      } else {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        a.href = URL.createObjectURL(blob);
+      }
       a.download = `${campaign.name.replace(/\s+/g, '_')}_QR.png`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      URL.revokeObjectURL(blobUrl);
     } catch (error) {
       console.error('Download failed', error);
-      // Fallback to opening in a new tab if fetch fails due to CORS
       window.open(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${campaign.id || 'promo'}`, '_blank');
     }
   };
@@ -1681,15 +1702,61 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       if (!allowed) return;
     }
 
+    // Map frontend topLevelType + existingSubType to backend-expected `type` enum values
+    // Backend accepts: welcome, visit, billing_one_time, stamp, happy_hours, etc.
+    const typeMap: Record<string, string> = {
+      'new_welcome': 'welcome',
+      'new_first_visit': 'visit',
+      'new_first_billing': 'billing_one_time',
+      'existing_visit': 'visit',
+      'existing_billing': 'billing_one_time',
+      'existing_stamp': 'stamp',
+      'new_customer': 'welcome',
+      'existing_customer': 'visit',
+      'direct_customer': 'welcome',
+      'product_qr': 'welcome',
+    };
+    const resolvedType = typeMap[existingSubType || topLevelType] || topLevelType || 'welcome';
+
+    // Map frontend rewardSelection to backend-expected `reward_type` enum values
+    // Backend accepts: cashback, fixed_discount, percentage_discount
+    const rewardTypeMap: Record<string, string> = {
+      'cashback': 'cashback',
+      'fixed amount discount': 'fixed_discount',
+      'percentage % discount': 'percentage_discount',
+      'free item / bog': 'cashback',
+    };
+    const resolvedRewardType = rewardTypeMap[rewardSelection.toLowerCase()] || 'cashback';
+
     const payload: any = {
       title: finalCampaignName,
-      type: topLevelType || 'welcome',
-      customer_type: selectedTiers[0] || 'All Customers',
-      reward_type: rewardSelection.toLowerCase().includes('cashback') ? 'cashback' : 'discount',
+      type: resolvedType,
+      customer_type: selectedTiers[0] || 'VIP',
+      reward_type: resolvedRewardType,
+      reward_value: rewardConfig?.rewardValue || rewardConfig?.discountValue || '50',
       is_active: !isDraft,
       valid_from: startDate ? new Date(startDate).toISOString() : undefined,
       valid_until: endDate ? new Date(endDate).toISOString() : undefined,
     };
+
+    // Add optional fields only if they have values
+    if (activeBranches.length > 0) {
+      // activeBranches stores names, look up the numeric ID from the branches list
+      const matchedBranch = branches.find((b: any) => b.name === activeBranches[0]);
+      payload.branch_id = matchedBranch?.id ? String(matchedBranch.id) : activeBranches[0];
+    }
+    if (rewardConfig?.targetValue) {
+      payload.target_value = rewardConfig.targetValue;
+    }
+    if (rewardConfig?.minBillAmount) {
+      payload.min_bill_amount = rewardConfig.minBillAmount;
+    }
+    if (productQrName) {
+      payload.target_item_name = productQrName;
+    }
+    if (rewardConfig?.scheduleConfig) {
+      payload.schedule_config = rewardConfig.scheduleConfig;
+    }
 
     const handleApiError = (err: any) => {
       let errorMsg = typeof err === 'string' ? err : (err?.message || 'Unknown error');
@@ -1966,8 +2033,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       type: c.type || 'Unknown Type',
       status: finalStatus,
       target: c.customer_type || 'All Customers',
-      startDate: c.valid_from || 'N/A',
-      endDate: c.valid_until || 'N/A',
+      startDate: c.valid_from ? new Date(c.valid_from).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A',
+      endDate: c.valid_until ? new Date(c.valid_until).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A',
       progress: (c as any).performance || 0,
       reward: c.reward_type || 'Reward'
     };
@@ -3839,7 +3906,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       </div>
                     </td>
                     <td className="py-4 px-5 text-right space-x-2 flex justify-end">
-                      <button onClick={() => setQrModalCampaign(c)} onMouseEnter={() => { const img = new Image(); img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${c.id || 'promo'}`; }} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="View QR"><Eye className="w-4 h-4" /></button>
+                      <button onClick={async () => { setQrModalCampaign(c); setQrModalImgUrl(null); const url = await fetchCampaignQr(c.id); setQrModalImgUrl(url); }} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="View QR"><Eye className="w-4 h-4" /></button>
                       <button onClick={() => handleDownload(c)} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Download"><Download className="w-4 h-4" /></button>
                       <button onClick={() => handleEditCampaign(c)} className="p-1.5 text-[#6E6A66] hover:text-[#D4A753] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Edit"><Edit2 className="w-4 h-4" /></button>
                       <button className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Duplicate"><Copy className="w-4 h-4" /></button>
@@ -3934,7 +4001,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       </div>
 
                       <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#EFECE6]">
-                        <button onClick={() => setQrModalCampaign(c)} onMouseEnter={() => { const img = new Image(); img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${c.id || 'promo'}`; }} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                        <button onClick={async () => { setQrModalCampaign(c); setQrModalImgUrl(null); const url = await fetchCampaignQr(c.id); setQrModalImgUrl(url); }} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
                           <Eye className="w-3.5 h-3.5" /> View
                         </button>
                         <button onClick={() => handleDownload(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
@@ -4001,7 +4068,11 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <h3 className="text-lg font-bold text-[#1A1615] mb-2">{qrModalCampaign.name}</h3>
               <p className="text-xs text-[#7C746C] mb-6">Scan this QR code to join the campaign.</p>
               <div className="w-48 h-48 bg-white border-2 border-[#EFECE6] rounded-xl flex items-center justify-center mb-6 shadow-sm overflow-hidden">
-                 <img fetchPriority="high" loading="eager" src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${qrModalCampaign.id || 'promo'}`} alt="QR Code" className="w-full h-full object-contain p-2" />
+                {qrModalImgUrl ? (
+                  <img fetchPriority="high" loading="eager" src={qrModalImgUrl} alt="QR Code" className="w-full h-full object-contain p-2" />
+                ) : (
+                  <div className="w-8 h-8 border-2 border-[#A37837] border-t-transparent rounded-full animate-spin"></div>
+                )}
               </div>
               <button onClick={() => handleDownload(qrModalCampaign)} className="w-full py-3 bg-[#1A1615] text-white rounded-lg text-sm font-bold shadow-md hover:bg-black transition-colors cursor-pointer flex items-center justify-center gap-2">
                 <Download className="w-4 h-4" /> Download QR Code
