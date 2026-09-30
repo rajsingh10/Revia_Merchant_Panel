@@ -556,6 +556,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
               <button
                 onClick={() => {
+                  localStorage.removeItem('token');
                   setProfileDropdownOpen(false);
                   onNavigate('/login');
                 }}

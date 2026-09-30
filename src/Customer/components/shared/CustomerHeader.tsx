@@ -101,7 +101,7 @@ export const CustomerHeader: React.FC<Props> = ({
           {isAuthenticated ? (
             <div className="space-y-4">
               <button onClick={() => onNavigate?.('/customer/profile')} className="block w-full text-left text-base font-semibold text-[#666] hover:text-[#B89454]">My Profile</button>
-              <button onClick={() => onNavigate?.('/login')} className="block w-full text-left text-base font-semibold text-[#D32F2F] hover:text-[#B71C1C]">Sign Out</button>
+              <button onClick={() => { localStorage.removeItem('token'); onNavigate?.('/login'); }} className="block w-full text-left text-base font-semibold text-[#D32F2F] hover:text-[#B71C1C]">Sign Out</button>
             </div>
           ) : (
             <>
