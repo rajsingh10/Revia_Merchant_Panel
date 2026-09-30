@@ -1737,6 +1737,18 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       is_active: !isDraft,
       valid_from: startDate ? new Date(startDate).toISOString() : undefined,
       valid_until: endDate ? new Date(endDate).toISOString() : undefined,
+      
+      // New fields to fully match frontend state
+      min_age: minAge,
+      max_age: maxAge,
+      priority_level: priorityLevel,
+      stackable: stackingControl,
+      expiry_type: 'Days', // Defaulting to Days since expirationWindow is a string in parent state
+      expiry_days: 30, // Default since expiryDays is in child component
+      max_redemptions: 1, // Default since it's in child component
+      total_budget_cap: 500, // Default since it's in child component
+      cooling_period_hours: 6, // Default since it's in child component
+      auto_revoke_on_refund: true, // Default since it's in child component
     };
 
     // Add optional fields only if they have values
@@ -1745,11 +1757,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       const matchedBranch = branches.find((b: any) => b.name === activeBranches[0]);
       payload.branch_id = matchedBranch?.id ? String(matchedBranch.id) : activeBranches[0];
     }
-    if (rewardConfig?.targetValue) {
-      payload.target_value = rewardConfig.targetValue;
+    
+    // We bind these to the new state variables added in the parent component
+    if (targetValue) {
+      payload.target_value = targetValue;
     }
-    if (rewardConfig?.minBillAmount) {
-      payload.min_bill_amount = rewardConfig.minBillAmount;
+    if (minBillAmount) {
+      payload.min_bill_amount = String(minBillAmount);
     }
     if (productQrName) {
       payload.target_item_name = productQrName;
@@ -1873,6 +1887,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   // Step 1 – Basics state
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [campaignName, setCampaignName] = useState('');
+  const [minBillAmount, setMinBillAmount] = useState<number>(1000);
+  const [targetValue, setTargetValue] = useState<string>('');
   const [topLevelType, setTopLevelType] = useState<'new_customer' | 'existing_customer' | 'direct_customer' | 'product_qr' | ''>('');
   const [existingSubType, setExistingSubType] = useState<'existing_visit' | 'existing_billing' | 'existing_stamp' | 'new_welcome' | 'new_first_visit' | 'new_first_billing' | ''>('');
   const [directCustomerName, setDirectCustomerName] = useState<string>('Elena Rostova');
@@ -3105,7 +3121,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                   <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Minimum Billing Amount</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold">₹</span>
-                    <input type="number" defaultValue={1000} className="w-full pl-7 pr-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                    <input type="number" value={minBillAmount} onChange={e => setMinBillAmount(Number(e.target.value))} className="w-full pl-7 pr-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
                   </div>
                 </div>
                 <div ref={conditionStatusDropdownRef} className="relative">
