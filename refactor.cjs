@@ -1,75 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Routes, Route, Navigate, useNavigate, useLocation, useParams } from 'react-router-dom';
-import { NavRoute, OutletsData } from './types';
-import {
-  MOCK_CUSTOMERS,
-  MOCK_CATALOG_ITEMS,
-  MOCK_BRANCHES,
-  MOCK_AUDIT_LOGS,
-  AVAILABLE_BRANCHES
-} from './data/mockData';
-import { INITIAL_OUTLETS } from './data/outletsData';
+const fs = require('fs');
+let content = fs.readFileSync('src/App.tsx', 'utf-8');
 
-// Shell components
-import { Sidebar } from './components/layout/Sidebar';
-import { Header } from './components/layout/Header';
-import { CommandPalette } from './components/common/CommandPalette';
-import { PendingApprovalModal } from './components/common/PendingApprovalModal';
-import apiClient from './api/apiClient';
+// 1. Add imports
+content = content.replace(
+  'import React, { useState, useEffect, useRef } from \'react\';',
+  'import React, { useState, useEffect, useRef } from \'react\';\nimport { Routes, Route, Navigate, useNavigate, useLocation, useParams } from \'react-router-dom\';'
+);
 
-// Pages
-import { DashboardPage } from './pages/DashboardPage';
-import { LoginPage } from './pages/LoginPage';
-import { OnboardingPage } from './pages/OnboardingPage';
-import { CustomersPage } from './pages/CustomersPage';
-import { CustomerDetailPage } from './pages/CustomerDetailPage';
-
-import { MarketingLandingPage } from './pages/MarketingLandingPage';
-import { CustomerRouter } from './Customer/CustomerRouter';
-import { CampaignLandingPage } from './pages/CampaignLandingPage';
-import { CatalogPage } from './pages/CatalogPage';
-import { LoyaltyPage } from './pages/LoyaltyPage';
-import { CampaignBuilderPage } from './pages/CampaignBuilderPage';
-import { BranchesPage } from './pages/BranchesPage';
-import { AddNewBranchPage } from './pages/AddNewBranchPage';
-import { BrandingPage } from './pages/BrandingPage';
-import { AnalyticsPage } from './pages/AnalyticsPage';
-import { AuditLogPage } from './pages/AuditLogPage';
-import { StaffPage } from './pages/StaffPage';
-import { QrCodesPage } from './pages/QrCodesPage';
-import { ItemCatalogPage } from './pages/ItemCatalogPage';
-import { MastersPage } from './pages/MastersPage';
-import { OrderQueuePage } from './pages/OrderQueuePage';
-import { TransactionsPage } from './pages/TransactionsPage';
-import { RewardsPage } from './pages/RewardsPage';
-import { CreateRewardPage } from './pages/CreateRewardPage';
-import { RedemptionTerminalPage } from './pages/RedemptionTerminalPage';
-import { BillingPage } from './pages/BillingPage';
-import { NotificationPage } from './pages/NotificationPage';
-import { NotFoundPage } from './pages/NotFoundPage';
-// Marketing Pages
-import { AboutUsPage } from './pages/AboutUsPage';
-import { ContactPage } from './pages/ContactPage';
-import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
-import { TermsOfServicePage } from './pages/TermsOfServicePage';
-
-// Wallet Components & Context
-import { WalletProvider } from './context/WalletContext';
-import { LowBalanceBanner } from './components/wallet/LowBalanceBanner';
-import { AddCreditModal } from './components/wallet/AddCreditModal';
-import { NotEnoughCreditModal } from './components/wallet/NotEnoughCreditModal';
-
-const VALID_ROUTES = [
-  '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
-  '/loyalty', '/qr-codes', '/item-catalog', '/masters/rule-fields', '/masters/tier-options', '/masters/reward-types', '/catalog', '/orders', '/invoices',
-  '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
-  '/terminal', '/rewards', '/rewards/new', '/analytics', '/billing', '/notifications',
-  '/settings/audit', '/settings/branding', '/login', '/onboarding',
-  '/customer/landing', '/customer', '/customer/identify', '/',
-  '/about', '/contact', '/privacy', '/terms'
-];
-
-
+// 2. Add Route Wrappers
+const routeWrappers = `
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
   if (!token) return <Navigate to="/login" replace />;
@@ -86,98 +25,37 @@ const CampaignLandingWrapper = ({ onNavigate }: any) => {
   const { campaignId } = useParams();
   return <CampaignLandingPage campaignId={campaignId || ''} onNavigate={onNavigate} />;
 };
+`;
 
-export default function App() {
-  const navigate = useNavigate();
+content = content.replace('export default function App() {', routeWrappers + '\nexport default function App() {');
+
+// 3. Replace state block
+content = content.replace(
+  /  const \[currentRoute, setCurrentRouteState\][^]+?const \[activeBranch, setActiveBranch\] = useState<string>\(AVAILABLE_BRANCHES\[0\]\);/,
+  `  const navigate = useNavigate();
   const location = useLocation();
   const currentRoute = location.pathname;
 
-  const [activeBranch, setActiveBranch] = useState<string>(AVAILABLE_BRANCHES[0]);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
-  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
-  const [isStandaloneAuthView, setStandaloneAuthView] = useState<boolean>(false);
-  const mainContentRef = useRef<HTMLDivElement>(null);
+  const [activeBranch, setActiveBranch] = useState<string>(AVAILABLE_BRANCHES[0]);`
+);
 
-  const [businessStatus, setBusinessStatus] = useState<string | null>(null);
-  const [debugApiData, setDebugApiData] = useState<any>(null);
-
-  // Core Mock Datasets
-  const [customers, setCustomers] = useState(MOCK_CUSTOMERS);
-  const [catalog, setCatalog] = useState(MOCK_CATALOG_ITEMS);
-  const [branches, setBranches] = useState(MOCK_BRANCHES);
-  const [auditLogs] = useState(MOCK_AUDIT_LOGS);
-
-  // Outlets Data
-  const [outlets, setOutlets] = useState<OutletsData[]>(INITIAL_OUTLETS);
-  const [selectedOutletId, setSelectedOutletId] = useState<string>('downtown');
-  const [branchList, setBranchList] = useState<string[]>(AVAILABLE_BRANCHES);
-
-  const handleAddOutlet = (newOutlet: OutletsData) => {
-    setOutlets((prev) => [newOutlet, ...prev]);
-    setSelectedOutletId(newOutlet.id);
-    setActiveBranch(newOutlet.shortName);
-    if (!branchList.includes(newOutlet.shortName)) {
-      setBranchList((prev) => [newOutlet.shortName, ...prev]);
-    }
-  };
-
-
-  const handleNavigate = (route: string) => {
+// 4. Replace handleNavigate
+content = content.replace(
+  /  const handleNavigate = \(route: NavRoute\) => \{[^]+?window\.scrollTo\(0, 0\);\n  \};\n\n  useEffect\(\(\) => \{\n    if \(mainContentRef\.current\)[^]+?\n  \}, \[currentRoute\]\);\n\n  useEffect\(\(\) => \{\n    const handlePopState = \(\) => \{[^]+?\n  \}, \[\]\);/,
+  `  const handleNavigate = (route: string) => {
     navigate(route);
     setIsMobileMenuOpen(false);
     if (mainContentRef.current) {
       mainContentRef.current.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
     }
     window.scrollTo(0, 0);
-  };
+  };`
+);
 
-  useEffect(() => {
-    if (mainContentRef.current) {
-      mainContentRef.current.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
-    }
-    window.scrollTo(0, 0);
-  }, [currentRoute]);
-
-  useEffect(() => {
-    const isMerchantPanelRoute = !(
-      currentRoute === '/' ||
-      currentRoute === '/login' ||
-      currentRoute === '/onboarding' ||
-      currentRoute.startsWith('/customer') ||
-      currentRoute.startsWith('/c/') ||
-      ['/about', '/contact', '/privacy', '/terms'].includes(currentRoute)
-    );
-
-    const token = localStorage.getItem('token');
-
-    if (isMerchantPanelRoute && token) {
-      const fetchBusinessStatus = async () => {
-        try {
-          const response = await apiClient.get('/merchant/business');
-          const responseData = response.data;
-          
-          // The API structure is typically { status: true, data: { business: { ... status: 'pending_approval' } } }
-          const businessData = responseData?.data?.business;
-          
-          if (businessData && businessData.status) {
-            setBusinessStatus(businessData.status);
-          } else if (responseData?.data?.status) {
-            setBusinessStatus(responseData.data.status);
-          } else if (Array.isArray(responseData?.data) && responseData.data.length > 0) {
-            setBusinessStatus(responseData.data[0].status || 'success');
-          } else {
-             setBusinessStatus('success');
-          }
-        } catch (error) {
-          console.error("Failed to check business status", error);
-        }
-      };
-      
-      fetchBusinessStatus();
-    }
-  }, [currentRoute]);
-
-  const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/') || currentRoute.startsWith('/customerlist/detail') || currentRoute.startsWith('/c/');
+// 5. Replace render block
+content = content.replace(
+  /  const isValidRoute = VALID_ROUTES[^]+$/,
+  `  const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/') || currentRoute.startsWith('/customerlist/detail') || currentRoute.startsWith('/c/');
   
   const isMerchantPanelRoute = !(
     currentRoute === '/' ||
@@ -263,7 +141,7 @@ export default function App() {
             onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             onNavigate={handleNavigate as any}
           />
-          <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-0'} ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
+          <main className={\`flex-1 \${currentRoute === '/analytics' ? 'pb-0' : 'pb-0'} \${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}\`}>
             {!isValidRoute ? (
               <NotFoundPage onNavigate={(route) => handleNavigate(route as NavRoute)} />
             ) : (
@@ -279,7 +157,7 @@ export default function App() {
                 <Route path="/masters/tier-options" element={<ProtectedRoute><MastersPage defaultTab="tiers" /></ProtectedRoute>} />
                 <Route path="/masters/reward-types" element={<ProtectedRoute><MastersPage defaultTab="rewards" /></ProtectedRoute>} />
                 <Route path="/orders" element={<ProtectedRoute><OrderQueuePage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
-                <Route path="/customerlist" element={<ProtectedRoute><CustomersPage customers={customers} onUpdateCustomer={(updated) => setCustomers((c) => c.map((cust) => (cust.id === updated.id ? updated : cust)))} onAddCustomer={(newCustomer) => setCustomers((c) => [newCustomer, ...c])} onViewCustomer={(id) => handleNavigate(`/customerlist/detail?id=${id}` as any)} /></ProtectedRoute>} />
+                <Route path="/customerlist" element={<ProtectedRoute><CustomersPage customers={customers} onUpdateCustomer={(updated) => setCustomers((c) => c.map((cust) => (cust.id === updated.id ? updated : cust)))} onAddCustomer={(newCustomer) => setCustomers((c) => [newCustomer, ...c])} onViewCustomer={(id) => handleNavigate(\`/customerlist/detail?id=\${id}\`)} /></ProtectedRoute>} />
                 <Route path="/customerlist/detail" element={<ProtectedRoute><CustomerDetailPage onNavigate={handleNavigate as any} customer={customers.find(c => { const searchParams = new URLSearchParams(window.location.search); return c.id === searchParams.get('id'); })} /></ProtectedRoute>} />
                 <Route path="/transactions" element={<ProtectedRoute><TransactionsPage /></ProtectedRoute>} />
                 <Route path="/campaigns" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="dashboard" onNavigate={(route) => handleNavigate(route as NavRoute)} /></ProtectedRoute>} />
@@ -302,3 +180,7 @@ export default function App() {
     </WalletProvider>
   );
 }
+`
+);
+
+fs.writeFileSync('src/App.tsx', content);

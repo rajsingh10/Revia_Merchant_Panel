@@ -40,7 +40,7 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
 
   useEffect(() => {
     if (step === 2) {
-      dispatch(fetchStates());
+      dispatch(fetchStates(101)); // Default to India for now
     }
   }, [step, dispatch]);
 

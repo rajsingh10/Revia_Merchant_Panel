@@ -117,7 +117,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
 
   useEffect(() => {
     if (isRegisterModalOpen) {
-      dispatch(fetchStates());
+      dispatch(fetchStates(101)); // Default to India for now
     }
   }, [isRegisterModalOpen, dispatch]);
 
@@ -468,7 +468,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
 
                 return (
                   <div key={cust.id} className="border-b border-[#EAE6E1] last:border-b-0 overflow-hidden">
-                    <button
+                    <div
                       onClick={() => {
                         setSelectedCustomerId(cust.id);
                         setExpandedCustomerRow(isExpanded ? null : cust.id);
@@ -502,7 +502,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                           <ChevronRight className="w-4 h-4 text-[#8C827A]" />
                         )}
                       </div>
-                    </button>
+                    </div>
 
                     {isExpanded && (
                       <div className={`p-4 grid grid-cols-2 md:grid-cols-3 gap-4 border-t border-[#EAE6E1] ${isSelected ? 'bg-[#FDF8EB]/30' : 'bg-[#FAF8F5]/50'}`}>

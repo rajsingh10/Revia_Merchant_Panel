@@ -20,6 +20,7 @@ import { PrimaryButton } from '../components/common/Badges';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestRegisterOtp, registerMerchant, setMobileNumber, resetAuthState } from '../store/slices/authSlice';
 import { onboardMerchant, resetOnboardingState } from '../store/slices/onboardingSlice';
+import { fetchCountries, fetchStates, fetchCities, clearStates, clearCities } from '../store/slices/locationSlice';
 import { AppDispatch, RootState } from '../store/store';
 import apiClient from '../api/apiClient';
 
@@ -95,10 +96,23 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   // Step 3 First Branch
   const [branchName, setBranchName] = useState('');
   const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [stateProvince, setStateProvince] = useState('');
+  const [country, setCountry] = useState('');
+  const [postalCode, setPostalCode] = useState('');
   const [timezone, setTimezone] = useState('');
   const [hours, setHours] = useState('');
   const [registerType, setRegisterType] = useState<'counter' | 'salon' | 'express'>('counter');
   const [isMapOpen, setIsMapOpen] = useState(false);
+
+  // Redux Location State
+  const { countries, states, cities, isCountriesLoading, isStatesLoading, isCitiesLoading } = useSelector((state: RootState) => state.location);
+
+  useEffect(() => {
+    if (isRegistered) {
+      dispatch(fetchCountries());
+    }
+  }, [isRegistered, dispatch]);
 
   const validateStep = (step: number) => {
     const newErrors: Record<string, string> = {};
@@ -110,6 +124,10 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
     } else if (step === 3) {
       if (!branchName.trim()) newErrors.branchName = 'Branch Name is required';
       if (!address.trim()) newErrors.address = 'Address is required';
+      if (!city.trim()) newErrors.city = 'City is required';
+      if (!stateProvince.trim()) newErrors.stateProvince = 'State/Province is required';
+      if (!country.trim()) newErrors.country = 'Country is required';
+      if (!postalCode.trim()) newErrors.postalCode = 'Postal Code is required';
       if (!timezone.trim()) newErrors.timezone = 'Timezone is required';
       if (!hours.trim()) newErrors.hours = 'Operating hours are required';
     }
@@ -135,22 +153,16 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   }, [isOnboardingComplete, onComplete, dispatch]);
 
   const handleLaunch = () => {
-    console.log("handleLaunch triggered with data:", {
-      businessName,
-      ownerName,
-      businessCategory,
-      branchName,
-      address,
-      timezone,
-      hours,
-      registerType
-    });
     dispatch(onboardMerchant({
       businessName,
       ownerName,
       businessCategory: businessCategory.toString(),
       branchName,
       address,
+      city,
+      state_province: stateProvince,
+      country,
+      postal_code: postalCode,
       timezone,
       hours,
       registerType
@@ -504,7 +516,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
 
                     <div>
                       <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
-                        Physical Address &amp; GPS Pin <span className="text-red-500">*</span>
+                        Physical Address (Street) &amp; GPS Pin <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <MapPin className="w-4 h-4 text-[#9E782F] absolute left-3 top-3" />
@@ -512,11 +524,93 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                           type="text"
                           value={address}
                           onChange={(e) => { setAddress(e.target.value); if (errors.address) setErrors({...errors, address: ''}); }}
-                          placeholder="e.g. 315 Montgomery St, Financial District, San Francisco, CA"
+                          placeholder="e.g. 315 Montgomery St, Financial District"
                           className={`w-full bg-[#FAF8F5] border ${errors.address ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden`}
                         />
                       </div>
                       {errors.address && <p className="text-red-500 text-[10px] mt-1">{errors.address}</p>}
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Country <span className="text-red-500">*</span></label>
+                        <select 
+                          value={country} 
+                          onChange={(e) => { 
+                            const val = e.target.value;
+                            setCountry(val); 
+                            if (errors.country) setErrors({...errors, country: ''});
+                            
+                            const selectedCountry = countries.find(c => c.name === val);
+                            if (selectedCountry) {
+                              dispatch(fetchStates(selectedCountry.id));
+                            } else {
+                              dispatch(clearStates());
+                            }
+                            dispatch(clearCities());
+                            setStateProvince('');
+                            setCity('');
+                          }} 
+                          disabled={isCountriesLoading}
+                          className={`w-full bg-[#FAF8F5] border ${errors.country ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden`}
+                        >
+                          <option value="">{isCountriesLoading ? 'Loading...' : 'Select Country'}</option>
+                          {countries.map((c) => (
+                            <option key={c.id} value={c.name}>{c.name}</option>
+                          ))}
+                        </select>
+                        {errors.country && <p className="text-red-500 text-[10px] mt-1">{errors.country}</p>}
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">State / Province <span className="text-red-500">*</span></label>
+                        <select 
+                          value={stateProvince} 
+                          onChange={(e) => { 
+                            const val = e.target.value;
+                            setStateProvince(val); 
+                            if (errors.stateProvince) setErrors({...errors, stateProvince: ''});
+                            
+                            const selectedState = states.find(s => s.name === val);
+                            if (selectedState) {
+                              dispatch(fetchCities(selectedState.id));
+                            } else {
+                              dispatch(clearCities());
+                            }
+                            setCity('');
+                          }} 
+                          disabled={isStatesLoading || !country || states.length === 0}
+                          className={`w-full bg-[#FAF8F5] border ${errors.stateProvince ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden disabled:opacity-50`}
+                        >
+                          <option value="">{isStatesLoading ? 'Loading...' : 'Select State'}</option>
+                          {states.map((s) => (
+                            <option key={s.id} value={s.name}>{s.name}</option>
+                          ))}
+                        </select>
+                        {errors.stateProvince && <p className="text-red-500 text-[10px] mt-1">{errors.stateProvince}</p>}
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">City <span className="text-red-500">*</span></label>
+                        <select 
+                          value={city} 
+                          onChange={(e) => { 
+                            setCity(e.target.value); 
+                            if (errors.city) setErrors({...errors, city: ''}); 
+                          }} 
+                          disabled={isCitiesLoading || !stateProvince || cities.length === 0}
+                          className={`w-full bg-[#FAF8F5] border ${errors.city ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden disabled:opacity-50`}
+                        >
+                          <option value="">{isCitiesLoading ? 'Loading...' : 'Select City'}</option>
+                          {cities.map((c) => (
+                            <option key={c.id} value={c.name}>{c.name}</option>
+                          ))}
+                        </select>
+                        {errors.city && <p className="text-red-500 text-[10px] mt-1">{errors.city}</p>}
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Postal Code <span className="text-red-500">*</span></label>
+                        <input type="text" value={postalCode} onChange={(e) => { setPostalCode(e.target.value); if (errors.postalCode) setErrors({...errors, postalCode: ''}); }} placeholder="94104" className={`w-full bg-[#FAF8F5] border ${errors.postalCode ? 'border-red-500 focus:border-red-500' : 'border-[#E5E0D8] focus:border-[#D4A753]'} rounded-lg px-3.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden`} />
+                        {errors.postalCode && <p className="text-red-500 text-[10px] mt-1">{errors.postalCode}</p>}
+                      </div>
                     </div>
 
                     {/* Mock Map Preview Box */}
@@ -882,7 +976,11 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
       <MapModal 
         isOpen={isMapOpen} 
         onClose={() => setIsMapOpen(false)} 
-        onSelectLocation={(addr) => setAddress(addr)} 
+        onSelectLocation={(addr) => {
+          setAddress(addr);
+          if (errors.address) setErrors({ ...errors, address: '' });
+        }} 
+        searchQuery={[city, stateProvince, country].filter(Boolean).join(', ')}
       />
     </div>
   );

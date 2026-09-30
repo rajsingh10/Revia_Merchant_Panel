@@ -25,6 +25,10 @@ export const onboardMerchant = createAsyncThunk(
       timezone: string;
       hours: string;
       registerType: string;
+      city?: string;
+      state_province?: string;
+      country?: string;
+      postal_code?: string;
     },
     { rejectWithValue }
   ) => {
@@ -38,6 +42,10 @@ export const onboardMerchant = createAsyncThunk(
         timezone: data.timezone,
         hours: data.hours,
         register_type: data.registerType,
+        city: data.city,
+        state_province: data.state_province,
+        country: data.country,
+        postal_code: data.postal_code,
       };
       console.log('Sending payload to onboard:', payload);
       // Important to send token if required, but assuming apiClient handles it or it relies on cookies/sessions from auth.

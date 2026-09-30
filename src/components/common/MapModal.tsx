@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import React, { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { PrimaryButton } from './Badges';
@@ -16,7 +16,16 @@ interface MapModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectLocation: (address: string) => void;
+  searchQuery?: string;
 }
+
+const MapUpdater: React.FC<{ center: L.LatLngExpression }> = ({ center }) => {
+  const map = useMap();
+  useEffect(() => {
+    map.setView(center, 13);
+  }, [center, map]);
+  return null;
+};
 
 const LocationMarker: React.FC<{ position: L.LatLng | null; setPosition: (pos: L.LatLng) => void }> = ({ position, setPosition }) => {
   useMapEvents({
@@ -30,9 +39,27 @@ const LocationMarker: React.FC<{ position: L.LatLng | null; setPosition: (pos: L
   );
 };
 
-export const MapModal: React.FC<MapModalProps> = ({ isOpen, onClose, onSelectLocation }) => {
+export const MapModal: React.FC<MapModalProps> = ({ isOpen, onClose, onSelectLocation, searchQuery }) => {
   const [position, setPosition] = useState<L.LatLng | null>(null);
   const [loading, setLoading] = useState(false);
+  const [center, setCenter] = useState<L.LatLngTuple>([37.794, -122.404]);
+
+  useEffect(() => {
+    if (isOpen && searchQuery && searchQuery.trim().length > 0) {
+      const fetchCoords = async () => {
+        try {
+          const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1`);
+          const data = await response.json();
+          if (data && data.length > 0) {
+            setCenter([parseFloat(data[0].lat), parseFloat(data[0].lon)]);
+          }
+        } catch (error) {
+          console.error("Geocoding failed", error);
+        }
+      };
+      fetchCoords();
+    }
+  }, [isOpen, searchQuery]);
 
   if (!isOpen) return null;
 
@@ -64,11 +91,12 @@ export const MapModal: React.FC<MapModalProps> = ({ isOpen, onClose, onSelectLoc
           <button onClick={onClose} className="text-[#6E6A66] hover:text-[#1A1615] font-bold text-xl cursor-pointer">&times;</button>
         </div>
         <div className="h-[400px] w-full relative z-0">
-          <MapContainer center={[37.794, -122.404]} zoom={13} style={{ height: '100%', width: '100%' }}>
+          <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+            <MapUpdater center={center} />
             <LocationMarker position={position} setPosition={setPosition} />
           </MapContainer>
         </div>

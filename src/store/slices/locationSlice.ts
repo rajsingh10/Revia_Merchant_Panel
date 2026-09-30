@@ -1,6 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import apiClient from '../../api/apiClient';
 
+interface CountryObj {
+  id: number;
+  name: string;
+  [key: string]: any;
+}
+
 interface StateObj {
   id: number;
   name: string;
@@ -14,26 +20,42 @@ interface CityObj {
 }
 
 interface LocationState {
+  countries: CountryObj[];
   states: StateObj[];
   cities: CityObj[];
+  isCountriesLoading: boolean;
   isStatesLoading: boolean;
   isCitiesLoading: boolean;
   error: string | null;
 }
 
 const initialState: LocationState = {
+  countries: [],
   states: [],
   cities: [],
+  isCountriesLoading: false,
   isStatesLoading: false,
   isCitiesLoading: false,
   error: null,
 };
 
-export const fetchStates = createAsyncThunk(
-  'location/fetchStates',
+export const fetchCountries = createAsyncThunk(
+  'location/fetchCountries',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get('/states');
+      const response = await apiClient.get('/countries');
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch countries');
+    }
+  }
+);
+
+export const fetchStates = createAsyncThunk(
+  'location/fetchStates',
+  async (countryId: string | number, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get(`/countries/${countryId}/states`);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch states');
@@ -57,12 +79,28 @@ const locationSlice = createSlice({
   name: 'location',
   initialState,
   reducers: {
+    clearStates(state) {
+      state.states = [];
+    },
     clearCities(state) {
       state.cities = [];
     }
   },
   extraReducers: (builder) => {
     builder
+      // Countries
+      .addCase(fetchCountries.pending, (state) => {
+        state.isCountriesLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchCountries.fulfilled, (state, action) => {
+        state.isCountriesLoading = false;
+        state.countries = Array.isArray(action.payload?.data) ? action.payload.data : (Array.isArray(action.payload) ? action.payload : []);
+      })
+      .addCase(fetchCountries.rejected, (state, action) => {
+        state.isCountriesLoading = false;
+        state.error = action.payload as string;
+      })
       // States
       .addCase(fetchStates.pending, (state) => {
         state.isStatesLoading = true;
@@ -93,6 +131,6 @@ const locationSlice = createSlice({
   },
 });
 
-export const { clearCities } = locationSlice.actions;
+export const { clearStates, clearCities } = locationSlice.actions;
 
 export default locationSlice.reducer;
