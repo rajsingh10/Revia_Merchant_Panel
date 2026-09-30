@@ -143,7 +143,7 @@ export default function App() {
       currentRoute === '/' ||
       currentRoute === '/login' ||
       currentRoute === '/onboarding' ||
-      currentRoute.startsWith('/customer') ||
+      (currentRoute === '/customer' || currentRoute.startsWith('/customer/')) ||
       currentRoute.startsWith('/c/') ||
       ['/about', '/contact', '/privacy', '/terms'].includes(currentRoute)
     );
@@ -183,7 +183,8 @@ export default function App() {
     currentRoute === '/' ||
     currentRoute === '/login' ||
     currentRoute === '/onboarding' ||
-    currentRoute.startsWith('/customer') ||
+    currentRoute === '/customer' ||
+    currentRoute.startsWith('/customer/') ||
     currentRoute.startsWith('/c/') ||
     ['/about', '/contact', '/privacy', '/terms'].includes(currentRoute)
   );
@@ -213,12 +214,10 @@ export default function App() {
           </PublicRoute>
         } />
         <Route path="/onboarding" element={
-          <ProtectedRoute>
-            <OnboardingPage
-              onComplete={() => handleNavigate('/dashboard')}
-              onCancel={() => handleNavigate('/')}
-            />
-          </ProtectedRoute>
+          <OnboardingPage
+            onComplete={() => handleNavigate('/dashboard')}
+            onCancel={() => handleNavigate('/')}
+          />
         } />
         <Route path="/customer/*" element={<CustomerRouter currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />} />
         <Route path="/c/:campaignId" element={<CampaignLandingWrapper onNavigate={(route: any) => handleNavigate(route as NavRoute)} />} />

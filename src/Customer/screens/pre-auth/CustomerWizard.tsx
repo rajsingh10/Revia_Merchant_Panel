@@ -11,7 +11,8 @@ import { MOCK_CATALOG_ITEMS } from '../../../data/mockData';
 import { useCustomer } from '../../CustomerContext';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../../store/store';
-import { fetchStates, fetchCities, clearCities } from '../../../store/slices/locationSlice';
+import { fetchCountries, fetchStates, fetchCities, clearStates, clearCities } from '../../../store/slices/locationSlice';
+import { requestCustomerOtp, verifyCustomerOtp, clearCustomerAuthError, saveCustomerProfile } from '../../../store/slices/customerAuthSlice';
 
 export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => void, onNavigate?: (route: string) => void }) => {
   const { cartItems, addItem } = useCustomer();
@@ -32,17 +33,35 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
   const [age, setAge] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
+  const [countryText, setCountryText] = useState('India');
   const [stateText, setStateText] = useState('');
   const [pincode, setPincode] = useState('');
 
   const dispatch = useDispatch<AppDispatch>();
-  const { states, cities, isStatesLoading, isCitiesLoading } = useSelector((state: RootState) => state.location);
+  const { countries, states, cities, isCountriesLoading, isStatesLoading, isCitiesLoading } = useSelector((state: RootState) => state.location);
+  const { isOtpLoading, isVerifyLoading, isProfileSaving, error } = useSelector((state: RootState) => state.customerAuth);
 
   useEffect(() => {
     if (step === 2) {
       dispatch(fetchStates(101)); // Default to India for now
     }
   }, [step, dispatch]);
+
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const countryName = e.target.value;
+    setCountryText(countryName);
+    setStateText('');
+    setCity('');
+    if (!countryName) {
+      dispatch(clearStates());
+      dispatch(clearCities());
+      return;
+    }
+    const selectedCountryObj = countries.find(c => c.name === countryName);
+    if (selectedCountryObj) {
+      dispatch(fetchStates(selectedCountryObj.id));
+    }
+  };
 
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const stateName = e.target.value;
@@ -58,7 +77,32 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
     }
   };
 
-  const goNext = () => { if (step < totalSteps) setStep(step + 1); else onComplete(); };
+  const goNext = async () => { 
+    if (step < totalSteps) {
+      setStep(step + 1); 
+    } else {
+      const payload = {
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        mobile_number: mobileNumber,
+        dob: dob,
+        age: age ? parseInt(age) : undefined,
+        gender: gender,
+        address: address,
+        country: countryText,
+        state: stateText,
+        city: city,
+        pincode: pincode || zipCode,
+        profile_photo: photoUrl || undefined
+      };
+      
+      const res = await dispatch(saveCustomerProfile(payload));
+      if (saveCustomerProfile.fulfilled.match(res)) {
+        onComplete();
+      }
+    }
+  };
 
   // Mobile Verification State
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -66,15 +110,23 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
   const [isMobileVerified, setIsMobileVerified] = useState(false);
   const [verificationMethod, setVerificationMethod] = useState<'sms' | 'whatsapp'>('sms');
 
-  const handleSendOtp = () => {
-    if (mobileNumber.trim().length >= 10) {
-      setIsOtpSent(true);
+  const handleSendOtp = async () => {
+    if (mobileNumber.trim().length >= 10 || mobileNumber.includes('@')) {
+      dispatch(clearCustomerAuthError());
+      const res = await dispatch(requestCustomerOtp({ identifier: mobileNumber }));
+      if (requestCustomerOtp.fulfilled.match(res)) {
+        setIsOtpSent(true);
+      }
     }
   };
 
-  const handleVerifyOtp = () => {
+  const handleVerifyOtp = async () => {
     if (otp.trim().length === 6) {
-      setIsMobileVerified(true);
+      dispatch(clearCustomerAuthError());
+      const res = await dispatch(verifyCustomerOtp({ identifier: mobileNumber, otp }));
+      if (verifyCustomerOtp.fulfilled.match(res)) {
+        setIsMobileVerified(true);
+      }
     }
   };
 
@@ -139,14 +191,15 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
                   </p>
                 </div>
                 {!isOtpSent ? (
+                  <>
                   <button 
                     type="button"
                     onClick={handleSendOtp}
-                    disabled={!mobileNumber}
+                    disabled={!mobileNumber || isOtpLoading}
                     className="w-full py-3 bg-[#B8860B] text-white text-xs font-bold rounded-lg hover:bg-[#9E782F] disabled:opacity-50 transition-colors cursor-pointer"
-                  >
-                    Send Verification Code →
-                  </button>
+                  >{isOtpLoading ? "Sending..." : "Send Verification Code →"}</button>
+                  {error && <p className="text-xs text-red-500 mt-2 text-center">{error}</p>}
+                  </>
                 ) : (
                   <div>
                     <div className="flex items-center justify-between mb-3">
@@ -192,14 +245,15 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
                       <span className="text-[10px] text-[#9E9A93]">{mobileNumber.includes('@') ? mobileNumber : `Sent to +91 ${mobileNumber}`}</span>
                       <button type="button" onClick={() => setIsOtpSent(false)} className="text-[10px] text-[#B8860B] font-semibold hover:underline cursor-pointer">Change {mobileNumber.includes('@') ? 'Email' : 'Number'}</button>
                     </div>
+                    <>
                     <button 
                       type="button"
                       onClick={handleVerifyOtp}
-                      disabled={otp.length !== 6}
+                      disabled={otp.length !== 6 || isVerifyLoading}
                       className="w-full py-3 bg-[#B8860B] text-white text-xs font-bold rounded-lg hover:bg-[#9E782F] disabled:opacity-50 transition-colors cursor-pointer mb-4 shadow-sm"
-                    >
-                      Verify PIN &amp; Authenticate →
-                    </button>
+                    >{isVerifyLoading ? "Verifying..." : "Verify PIN & Authenticate →"}</button>
+                    {error && <p className="text-xs text-red-500 mb-4 text-center">{error}</p>}
+                    </>
                     <div className="text-center">
                       <button type="button" className="text-[11px] text-[#B8860B] font-semibold hover:underline cursor-pointer">Didn't receive code? Resend OTP</button>
                     </div>
@@ -315,7 +369,7 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
                             <input type="text" id="zipCode" name="zipCode" value={zipCode} onChange={e => setZipCode(e.target.value)} placeholder="10001" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-10 pr-3 py-2.5 text-sm font-bold text-[#111] focus:outline-hidden focus:border-[#D4A753] transition-colors placeholder:text-[#888]" />
                           </div>
                         </div>
-                        <div>
+                        {/* <div>
                           <label htmlFor="company" className="block text-[12px] font-black uppercase tracking-wider text-[#111] mb-1.5">Company (Optional)</label>
                           <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -323,13 +377,11 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
                             </div>
                             <input type="text" id="company" name="company" value={company} onChange={e => setCompany(e.target.value)} placeholder="Acme Corp" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-10 pr-3 py-2.5 text-sm font-bold text-[#111] focus:outline-hidden focus:border-[#D4A753] transition-colors placeholder:text-[#888]" />
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
 
-                    <button onClick={goNext} disabled={!firstName} className="w-full md:w-auto md:px-12 h-12 bg-[#9A7436] text-white rounded-md font-black text-[14px] flex items-center justify-center gap-3 disabled:opacity-50 hover:bg-[#886630] shadow-md shadow-[#9A7436]/20 transition-all group">
-                      Continue <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                    <button onClick={goNext} disabled={!firstName} className="w-full md:w-auto md:px-12 h-12 bg-[#9A7436] text-white rounded-md font-black text-[14px] flex items-center justify-center gap-3 disabled:opacity-50 hover:bg-[#886630] shadow-md shadow-[#9A7436]/20 transition-all group">{isProfileSaving ? "Saving..." : "Continue"} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></button>
                   </div>
 
                   <div className="hidden lg:block lg:w-[400px] shrink-0 space-y-6 pt-10">
@@ -405,14 +457,28 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                      <div>
+                        <label htmlFor="country" className="block text-[12px] font-black uppercase tracking-wider text-[#111] mb-1.5">Country</label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <MapPin className="h-4 w-4 text-[#666]" />
+                          </div>
+                          <select id="country" name="country" value={countryText} onChange={handleCountryChange} disabled={isCountriesLoading} className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-10 pr-3 py-2.5 text-sm font-bold text-[#111] focus:outline-hidden focus:border-[#D4A753] transition-colors cursor-pointer appearance-none disabled:opacity-50 disabled:cursor-not-allowed">
+                            <option value="">Select Country</option>
+                            {countries.map(c => (
+                              <option key={c.id} value={c.name}>{c.name}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
                       <div>
                         <label htmlFor="state" className="block text-[12px] font-black uppercase tracking-wider text-[#111] mb-1.5">State</label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                             <MapPin className="h-4 w-4 text-[#666]" />
                           </div>
-                          <select id="state" name="state" value={stateText} onChange={handleStateChange} className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-10 pr-3 py-2.5 text-sm font-bold text-[#111] focus:outline-hidden focus:border-[#D4A753] transition-colors cursor-pointer appearance-none">
+                          <select id="state" name="state" value={stateText} onChange={handleStateChange} disabled={!countryText || isStatesLoading} className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-10 pr-3 py-2.5 text-sm font-bold text-[#111] focus:outline-hidden focus:border-[#D4A753] transition-colors cursor-pointer appearance-none disabled:opacity-50 disabled:cursor-not-allowed">
                             <option value="">Select State</option>
                             {states.map(s => (
                               <option key={s.id} value={s.name}>{s.name}</option>
@@ -420,6 +486,8 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
                           </select>
                         </div>
                       </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                       <div>
                         <label htmlFor="city" className="block text-[12px] font-black uppercase tracking-wider text-[#111] mb-1.5">City</label>
                         <div className="relative">
@@ -445,9 +513,10 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
                       </div>
                     </div>
 
-                    <div className="flex gap-4">
+                    {error && <p className="text-red-500 text-sm font-bold mb-4">{error}</p>}
+                      <div className="flex gap-4">
                       <button onClick={() => setStep(step - 1)} className="px-6 h-12 bg-white border border-[#EAE3D9] text-[#666] font-bold rounded-md hover:bg-[#EAE3D9]/50 transition-colors shadow-sm">← Back</button>
-                      <button onClick={goNext} className="flex-1 md:flex-none md:px-12 h-12 bg-[#9A7436] text-white rounded-md font-black text-[14px] flex items-center justify-center gap-3 hover:bg-[#886630] shadow-md shadow-[#9A7436]/20 transition-all group">
+                      <button onClick={goNext} disabled={isProfileSaving} className="flex-1 md:flex-none md:px-12 h-12 bg-[#9A7436] text-white rounded-md font-black text-[14px] flex items-center justify-center gap-3 hover:bg-[#886630] shadow-md shadow-[#9A7436]/20 transition-all group disabled:opacity-50 disabled:cursor-not-allowed">
                         Continue <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </button>
                     </div>

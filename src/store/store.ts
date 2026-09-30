@@ -9,6 +9,7 @@ import customerReducer from './slices/customerSlice';
 import qrCodeReducer from './slices/qrCodeSlice';
 import masterReducer from './slices/masterSlice';
 import catalogReducer from './slices/catalogSlice';
+import customerAuthReducer from './slices/customerAuthSlice';
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     qrCode: qrCodeReducer,
     master: masterReducer,
     catalog: catalogReducer,
+    customerAuth: customerAuthReducer,
   },
 });
 
