@@ -24,6 +24,7 @@ interface AuthState {
   token: string | null;
   user: User | null;
   isAuthenticated: boolean;
+  receivedOtp?: string | null;
 }
 
 const tokenFromStorage = localStorage.getItem('token');
@@ -38,6 +39,7 @@ const initialState: AuthState = {
   token: tokenFromStorage,
   user: userFromStorage ? JSON.parse(userFromStorage) : null,
   isAuthenticated: !!tokenFromStorage,
+  receivedOtp: null,
 };
 
 export const requestLoginOtp = createAsyncThunk(
@@ -163,9 +165,14 @@ const authSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(requestLoginOtp.fulfilled, (state) => {
+      .addCase(requestLoginOtp.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isOtpSent = true;
+        if (action.payload?.data?.otp) {
+          state.receivedOtp = action.payload.data.otp;
+        } else if (action.payload?.otp) {
+          state.receivedOtp = action.payload.otp;
+        }
       })
       .addCase(requestLoginOtp.rejected, (state, action) => {
         state.isLoading = false;

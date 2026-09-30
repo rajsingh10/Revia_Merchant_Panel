@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ShieldCheck, MessageSquare, Phone, Lock, Sparkles, ArrowRight, CheckCircle2, Store, Award, BarChart2 } from 'lucide-react';
+import { ShieldCheck, MessageSquare, Phone, Lock, Sparkles, ArrowRight, CheckCircle2, Store, Award, BarChart2, Copy } from 'lucide-react';
 import { PrimaryButton, LiveBadge } from '../components/common/Badges';
 import { AppDispatch, RootState } from '../store/store';
 import { requestLoginOtp, loginWithOtp, resetAuthState } from '../store/slices/authSlice';
+import apiClient from '../api/apiClient';
 
 interface LoginPageProps {
   onLoginSuccess: (role: 'merchant' | 'customer' | string) => void;
@@ -12,7 +13,7 @@ interface LoginPageProps {
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnboarding }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isLoading, error, isOtpSent, isMobileVerified, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { isLoading, error, isOtpSent, isMobileVerified, isAuthenticated, receivedOtp } = useSelector((state: RootState) => state.auth);
 
   const [authMethod, setAuthMethod] = useState<'sms' | 'whatsapp'>('sms');
   const [countryCode, setCountryCode] = useState('+91');
@@ -23,6 +24,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
   const [verifyMode, setVerifyMode] = useState<'otp' | 'password'>('otp');
   const [password, setPassword] = useState('');
   const [validationError, setValidationError] = useState('');
+  const [isChecking, setIsChecking] = useState(false);
 
   useEffect(() => {
     // Reset auth state on mount
@@ -251,7 +253,31 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
                   />
                 </div>
                 {validationError && (
-                  <p className="text-red-500 text-[10px] mt-1 font-semibold">{validationError}</p>
+                  <div className="mt-2 animate-in fade-in slide-in-from-top-1">
+                    <p className="text-red-500 text-[10px] font-semibold mb-3">{validationError}</p>
+                    
+                    {validationError.toLowerCase().includes('not found') && (
+                      <div className="bg-red-50 border border-red-100 rounded-xl p-3 mb-2">
+                        <p className="text-[9px] font-bold uppercase tracking-widest text-red-800 mb-2.5 text-center">Register New Account</p>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => onLoginSuccess('/onboarding')}
+                            className="flex-1 bg-white hover:bg-red-50 text-red-700 cursor-pointer border border-red-200 px-3 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm"
+                          >
+                            Merchant
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => onLoginSuccess('/customer/identify')}
+                            className="flex-1 bg-white hover:bg-red-50 text-red-700 cursor-pointer border border-red-200 px-3 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm"
+                          >
+                            Customer
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 )}
                 <p className="text-[10px] text-[#9E9A93] mt-1.5">
                   {(!phone || /^[0-9+]/.test(phone)) 
@@ -262,18 +288,26 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
 
               <PrimaryButton
                 type="button"
-                onClick={() => {
+                onClick={async () => {
                   if (phone.trim()) {
                     setValidationError('');
-                    dispatch(requestLoginOtp(phone));
+                    setIsChecking(true);
+                    try {
+                      await apiClient.post('auth/check', { identifier: phone });
+                      dispatch(requestLoginOtp(phone));
+                    } catch (err: any) {
+                      setValidationError(err.response?.data?.message || 'User check failed');
+                    } finally {
+                      setIsChecking(false);
+                    }
                   } else {
                     setValidationError('Phone number or email is required');
                   }
                 }}
-                disabled={isLoading}
+                disabled={isLoading || isChecking}
                 className="w-full py-2.5 text-sm mt-2"
               >
-                {isLoading ? 'Sending...' : 'Send Verification Code →'}
+                {isLoading || isChecking ? 'Sending...' : 'Send Verification Code →'}
               </PrimaryButton>
               {error && step === 'input' && (
                 <p className="text-red-500 text-xs text-center mt-2">{error}</p>
@@ -363,7 +397,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
               )}
 
               {verifyMode === 'otp' && (
-                <div className="text-center mt-2">
+                <div className="text-center mt-2 flex flex-col items-center gap-3">
                   <button
                     type="button"
                     onClick={() => {
@@ -375,6 +409,24 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
                   >
                     Didn&apos;t receive code? Resend OTP
                   </button>
+                  
+                  {receivedOtp && (
+                    <div className="w-full mt-2 p-3 bg-blue-50/50 border border-blue-100 rounded-xl flex items-center justify-between">
+                      <div className="text-left">
+                        <p className="text-[9px] text-blue-600 font-bold uppercase tracking-wider mb-0.5">Test OTP (Demo Mode)</p>
+                        <p className="text-base font-mono font-bold text-blue-900 tracking-widest">{receivedOtp}</p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(receivedOtp);
+                        }}
+                        className="p-2 bg-white rounded-lg shadow-xs border border-blue-200 text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
+                        title="Copy OTP"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -385,29 +437,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
               <Lock className="w-3 h-3 text-[#9E9A93]" /> Hardware Security Enclave
             </span>
             <button
-              onClick={onGoToOnboarding}
+              onClick={() => onLoginSuccess('/onboarding')}
               className="text-[11px] font-semibold text-[#9E782F] hover:underline cursor-pointer"
             >
               New Outlet? Start Onboarding
             </button>
-          </div>
-          {/* Static Registration Bypass for Demo */}
-          <div className="mt-6 pt-5 border-t border-[#E5E0D8]">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-3 text-center">Create New Account</p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => onLoginSuccess('/onboarding')}
-                className="flex-1 bg-white hover:bg-gray-50 text-[#1A1615] cursor-pointer border border-[#E5E0D8] px-4 py-2.5 rounded-lg text-xs font-bold transition-colors shadow-sm"
-              >
-                Register as Merchant
-              </button>
-              <button
-                onClick={() => onLoginSuccess('/customer/identify')}
-                className="flex-1 bg-white hover:bg-gray-50 text-[#1A1615] cursor-pointer border border-[#E5E0D8] px-4 py-2.5 rounded-lg text-xs font-bold transition-colors shadow-sm"
-              >
-                Register as Customer
-              </button>
-            </div>
           </div>
         </div>
 
