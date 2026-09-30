@@ -1739,8 +1739,6 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       valid_until: endDate ? new Date(endDate).toISOString() : undefined,
       
       // New fields to fully match frontend state
-      min_age: minAge,
-      max_age: maxAge,
       priority_level: priorityLevel,
       stackable: stackingControl,
       expiry_type: 'Days', // Defaulting to Days since expirationWindow is a string in parent state
@@ -1752,6 +1750,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     };
 
     // Add optional fields only if they have values
+    if (minAge !== 18) {
+      payload.min_age = minAge;
+    }
+    if (maxAge !== 80) {
+      payload.max_age = maxAge;
+    }
+
     if (activeBranches.length > 0) {
       // activeBranches stores names, look up the numeric ID from the branches list
       const matchedBranch = branches.find((b: any) => b.name === activeBranches[0]);
@@ -2028,8 +2033,33 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       if (currentCampaign.target_item_name) {
         setProductQrName(currentCampaign.target_item_name);
       }
+      
+      // Branch mapping
+      if (currentCampaign.branch_id) {
+        // activeBranches stores the branch NAME
+        const matchedBranch = branches.find((b: any) => String(b.id) === String(currentCampaign.branch_id));
+        if (matchedBranch) {
+          setActiveBranches([matchedBranch.name]);
+        }
+      }
+      
+      if (currentCampaign.min_bill_amount) {
+        setMinBillAmount(Number(currentCampaign.min_bill_amount));
+      }
+      
+      if (currentCampaign.target_value) {
+        setTargetValue(String(currentCampaign.target_value));
+      }
+
+      if ((currentCampaign as any).min_age !== undefined && (currentCampaign as any).min_age !== null) {
+        setMinAge(Number((currentCampaign as any).min_age));
+      }
+
+      if ((currentCampaign as any).max_age !== undefined && (currentCampaign as any).max_age !== null) {
+        setMaxAge(Number((currentCampaign as any).max_age));
+      }
     }
-  }, [currentCampaign, viewMode]);
+  }, [currentCampaign, viewMode, branches]);
 
   const campaigns = apiCampaigns.length > 0 ? apiCampaigns.map(c => {
     let finalStatus = c.status || 'Draft';
@@ -2067,8 +2097,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
   const [lifecycleType, setLifecycleType] = useState<string>('Both');
   const [birthdayHorizon, setBirthdayHorizon] = useState<number>(7);
-  const [minAge, setMinAge] = useState<number>(21);
-  const [maxAge, setMaxAge] = useState<number>(65);
+  const [minAge, setMinAge] = useState<number>(18);
+  const [maxAge, setMaxAge] = useState<number>(80);
 
   const [simulationData, setSimulationData] = useState<any>(null);
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
