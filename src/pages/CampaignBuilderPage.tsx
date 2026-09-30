@@ -4174,11 +4174,11 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
           
           {/* Pagination Controls */}
           {filteredCampaigns.length > 0 && (
-            <div className="flex items-center justify-between px-5 py-4 border-t border-[#EAE6E1] bg-[#FAF8F5]">
-              <div className="text-xs font-medium text-[#6E6A66]">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 sm:px-5 py-4 border-t border-[#EAE6E1] bg-[#FAF8F5]">
+              <div className="text-xs font-medium text-[#6E6A66] text-center sm:text-left">
                 Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredCampaigns.length)} of {filteredCampaigns.length} campaigns
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <button 
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
