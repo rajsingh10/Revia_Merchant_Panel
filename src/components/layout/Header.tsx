@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Search, Bell, Menu, ChevronDown, X, Radio, Gift, Check, XCircle, Clock, User, Tag, Sparkles, Wallet, CreditCard } from 'lucide-react';
 import { NavRoute } from '../../types';
 import { useWallet } from '../../context/WalletContext';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 interface RedeemRequest {
   id: string;
@@ -65,6 +67,13 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigate,
 }) => {
   const { wallet, usableBalance } = useWallet();
+  const { user } = useSelector((state: RootState) => state.auth);
+
+  const displayName = user?.business?.name || user?.name || 'Elena Rostova';
+  const displayRole = user?.role || 'General Manager';
+  const displayAvatar = user?.business?.logo_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80';
+  const displayEmail = user?.business?.contact_email || user?.email || 'elena.rostova@bluebottle.com';
+
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [redeemOpen, setRedeemOpen] = useState(false);
@@ -496,17 +505,17 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <div className="w-8 h-8 rounded-full overflow-hidden ring-1 ring-[#EAE6E1] bg-[#FAF8F5]">
               <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
-                alt="Elena Rostova"
+                src={displayAvatar}
+                alt={displayName}
                 className="w-full h-full object-cover"
               />
             </div>
             <div className="hidden sm:block text-left leading-tight">
               <div className="text-xs font-bold text-[#1A1615]">
-                Elena Rostova
+                {displayName}
               </div>
               <div className="text-[10px] text-[#7C746C]">
-                General Manager
+                {displayRole}
               </div>
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-[#8C827A] hidden sm:block" />
@@ -515,8 +524,8 @@ export const Header: React.FC<HeaderProps> = ({
           {profileDropdownOpen && (
             <div className="absolute right-0 mt-1 w-48 bg-white border border-[#EAE6E1] rounded-xl shadow-lg z-50 py-1 text-xs">
               <div className="px-3 py-2 border-b border-[#EAE6E1]">
-                <div className="font-bold text-[#1A1615]">Elena Rostova</div>
-                <div className="text-[10px] text-[#7C746C]">elena.rostova@bluebottle.com</div>
+                <div className="font-bold text-[#1A1615]">{displayName}</div>
+                <div className="text-[10px] text-[#7C746C] truncate">{displayEmail}</div>
               </div>
               <button
                 onClick={() => {

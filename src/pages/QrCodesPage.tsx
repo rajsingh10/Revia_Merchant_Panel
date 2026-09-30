@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../store/store';
-import { fetchQrCodes } from '../store/slices/qrCodeSlice';
+import { fetchQrCodes, createQrCode, fetchQrCodeDetails, fetchQrCodeHistory, updateQrCodeStatus } from '../store/slices/qrCodeSlice';
+import { fetchBranches } from '../store/slices/branchSlice';
+import { fetchAssetTypes } from '../store/slices/masterSlice';
 import { useWallet } from '../context/WalletContext';
 import {
   Download,
@@ -26,10 +28,12 @@ import {
 
 export const QrCodesPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { qrCodes, isLoading, error } = useSelector((state: RootState) => state.qrCode);
+  const { qrCodes, currentQrCode, currentHistory, isLoading, error } = useSelector((state: RootState) => state.qrCode);
+  const { branches } = useSelector((state: RootState) => state.branch);
+  const { assetTypes } = useSelector((state: RootState) => state.master);
   
   const { checkAndDeductCredit } = useWallet();
-  const [activeAsset, setActiveAsset] = useState<string>('');
+  const [activeAsset, setActiveAsset] = useState<string>('8');
   const [activeTab, setActiveTab] = useState<'front' | 'back'>('front');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -61,7 +65,18 @@ export const QrCodesPage: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchQrCodes());
+    dispatch(fetchBranches());
+    dispatch(fetchAssetTypes());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (activeAsset) {
+      // The API expects the raw ID (e.g. '1', '2') not 'asset-xxx' if it's prefixed locally.
+      // But looking at the mapping, id: String(qr.identifier || qr.id). So activeAsset is the ID.
+      dispatch(fetchQrCodeDetails(activeAsset));
+      dispatch(fetchQrCodeHistory(activeAsset));
+    }
+  }, [activeAsset, dispatch]);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [createForm, setCreateForm] = useState({
@@ -71,7 +86,7 @@ export const QrCodesPage: React.FC = () => {
     locationPlacement: 'Table',
     materialFinish: '',
     destination: '',
-    qrNfcType: '',
+    qrNfcType: 'QR + NFC',
     patternDensity: '',
     errorCorrection: '',
     status: 'Active'
@@ -81,26 +96,49 @@ export const QrCodesPage: React.FC = () => {
 
   useEffect(() => {
     if (qrCodes && qrCodes.length > 0) {
-      const mapped = qrCodes.map((qr: any) => ({
-        id: String(qr.identifier || qr.id),
-        title: `${qr.branch?.name || 'Venue'} • ${qr.type === 'branch' ? 'Branch QR' : 'Table QR'} ${qr.table_number ? '#' + qr.table_number : ''}`,
+      const mapped = qrCodes.map((qr: any) => {
+        // Use standard ID mapping
+        const finalId = String(qr.id);
+        
+        const branchName = qr.branch?.name || 'Venue';
+        const fallbackName = qr.type === 'branch' ? 'Branch QR' : 'Table QR';
+        const tableStr = qr.table_number ? ` #${qr.table_number}` : '';
+        const titleName = qr.stand_name || (fallbackName + tableStr);
+
+        let materialName = 'Digital QR Code';
+        const foundAsset = assetTypes.find(t => String(t.id) === String(qr.asset_type_id));
+        if (foundAsset) {
+          materialName = foundAsset.name;
+        } else {
+          if (qr.asset_type_id === 100) materialName = 'Acrylic';
+          if (qr.asset_type_id === 101) materialName = 'Brass';
+          if (qr.asset_type_id === 102) materialName = 'NFC Puck';
+          if (qr.asset_type_id === 103) materialName = 'Sticker';
+        }
+
+        return {
+        id: finalId,
+        title: `${branchName} • ${titleName}`,
         status: qr.status === 'active' ? 'Active' : 'Inactive',
         inspecting: false,
         location: qr.branch?.address || 'Location',
-        material: 'Digital QR Code',
+        material: materialName,
         destination: 'Default Routing',
         scans: '0',
-        tag: 'QR Only',
+        tag: qr.qr_nfc_type || 'QR Only',
         raw: qr
-      }));
+        };
+      });
       setAssets(mapped);
-      if (mapped.length > 0 && (!activeAsset || !mapped.find(a => a.id === activeAsset))) {
+      // Only set to mapped[0].id if activeAsset is completely empty, 
+      // don't overwrite if it's our hardcoded UUID but not in the initial page list
+      if (mapped.length > 0 && !activeAsset) {
         setActiveAsset(mapped[0].id);
       }
     }
   }, [qrCodes]);
 
-  const handleCreateAsset = (e: React.FormEvent) => {
+  const handleCreateAsset = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!createForm.standName || !createForm.venue) {
       showToast('Please fill all required fields');
@@ -110,42 +148,70 @@ export const QrCodesPage: React.FC = () => {
     const newId = `asset-${Math.floor(1000 + Math.random() * 9000)}`;
 
     // CREDIT CHECK GATING (10 credits per QR generation/stand)
-    const allowed = checkAndDeductCredit('qr_generation', 10, newId, `Generate Stand QR: ${createForm.standName}`);
-    if (!allowed) {
-      return; // Blocked due to insufficient wallet credits
+    // const allowed = checkAndDeductCredit('qr_generation', 10, newId, `Generate Stand QR: ${createForm.standName}`);
+    // if (!allowed) {
+    //   return; // Blocked due to insufficient wallet credits
+    // }
+
+    // Map asset type to ID
+    let assetTypeId = 100;
+    if (createForm.assetType) {
+      const parsed = Number(createForm.assetType);
+      if (!isNaN(parsed)) {
+        assetTypeId = parsed;
+      } else {
+        if (createForm.assetType === 'Brass') assetTypeId = 101;
+        if (createForm.assetType === 'NFC Puck') assetTypeId = 102;
+        if (createForm.assetType === 'Sticker') assetTypeId = 103;
+      }
     }
 
-    const newAsset = {
-      id: newId,
-      title: `${createForm.venue} • ${createForm.standName}`,
-      status: createForm.status,
-      inspecting: false,
-      location: createForm.locationPlacement,
-      material: createForm.materialFinish || createForm.assetType,
-      destination: createForm.destination || 'Default Routing',
-      scans: '0',
-      tag: createForm.qrNfcType || 'QR Only',
+    // Map placement to ID
+    let placementId = 20;
+    if (createForm.locationPlacement === 'Counter') placementId = 21;
+    if (createForm.locationPlacement === 'Garden') placementId = 22;
+    if (createForm.locationPlacement === 'Window') placementId = 23;
+
+    const payload = {
+      stand_name: createForm.standName,
+      branch_id: Number(createForm.venue),
+      asset_type_id: assetTypeId,
+      placement_id: placementId,
+      qr_nfc_type: createForm.qrNfcType || 'QR + NFC',
+      status: createForm.status.toLowerCase()
     };
 
-    setAssets([newAsset, ...assets]);
-    setActiveAsset(newId);
-    setIsCreateModalOpen(false);
+    try {
+      await dispatch(createQrCode(payload)).unwrap();
+      setIsCreateModalOpen(false);
 
-    // Reset form
-    setCreateForm({
-      standName: '',
-      venue: '',
-      assetType: 'Acrylic',
-      locationPlacement: 'Table',
-      materialFinish: '',
-      destination: '',
-      qrNfcType: '',
-      patternDensity: '',
-      errorCorrection: '',
-      status: 'Active'
-    });
+      // Reset form
+      setCreateForm({
+        standName: '',
+        venue: '',
+        assetType: 'Acrylic',
+        locationPlacement: 'Table',
+        materialFinish: '',
+        destination: '',
+        qrNfcType: 'QR + NFC',
+        patternDensity: '',
+        errorCorrection: '',
+        status: 'Active'
+      });
 
-    showToast('New Dynamic Stand created successfully!');
+      showToast('New Dynamic Stand created successfully!');
+    } catch (err: any) {
+      showToast(err || 'Failed to create stand');
+    }
+  };
+
+  const handleUpdateStatus = async (id: string, newStatus: string) => {
+    try {
+      await dispatch(updateQrCodeStatus({ id, status: newStatus })).unwrap();
+      showToast(`Asset marked as ${newStatus}`);
+    } catch (err: any) {
+      showToast(err || 'Failed to update asset status');
+    }
   };
 
   const filteredAssets = assets.filter(a => {
@@ -396,8 +462,11 @@ export const QrCodesPage: React.FC = () => {
                                 <div className="fixed inset-0 z-[50]" onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); }} />
                                 <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-[#EFECE6] rounded-xl shadow-xl z-[60] overflow-hidden">
                                   <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); showToast('Viewing detailed analytics...'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5]">View Analytics</button>
-                                  <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); showToast('Asset temporarily paused.'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-[#B45309] hover:bg-[#FEF3C7]">Pause Asset</button>
-                                  <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); showToast('Asset permanently deactivated.'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-[#DC2626] hover:bg-[#FEE2E2]">Deactivate</button>
+                                  {asset.status.toLowerCase() === 'active' ? (
+                                    <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); handleUpdateStatus(asset.id, 'inactive'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-[#DC2626] hover:bg-[#FEE2E2]">Deactivate</button>
+                                  ) : (
+                                    <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); handleUpdateStatus(asset.id, 'active'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-[#0D7A53] hover:bg-[#E6F4ED]">Activate Asset</button>
+                                  )}
                                 </div>
                               </>
                             )}
@@ -687,12 +756,20 @@ export const QrCodesPage: React.FC = () => {
 
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Stand Name <span className="text-[#D4A753]">*</span></label>
-                  <input required type="text" value={createForm.standName} onChange={e => setCreateForm({ ...createForm, standName: e.target.value })} placeholder="e.g. Tabletop 01" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                  <input type="text" value={createForm.standName} onChange={e => setCreateForm({ ...createForm, standName: e.target.value })} placeholder="e.g. Tabletop 01" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Venue / Branch <span className="text-[#D4A753]">*</span></label>
-                  <input required type="text" value={createForm.venue} onChange={e => setCreateForm({ ...createForm, venue: e.target.value })} placeholder="e.g. Downtown Flagship" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                  <div className="relative">
+                    <select value={createForm.venue} onChange={e => setCreateForm({ ...createForm, venue: e.target.value })} className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] appearance-none cursor-pointer">
+                      <option value="" disabled>Select Venue / Branch</option>
+                      {branches && branches.map((b) => (
+                        <option key={b.id} value={b.id}>{b.name}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -700,10 +777,18 @@ export const QrCodesPage: React.FC = () => {
                     <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Asset Type</label>
                     <div className="relative">
                       <select value={createForm.assetType} onChange={e => setCreateForm({ ...createForm, assetType: e.target.value })} className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] cursor-pointer appearance-none">
-                        <option value="Acrylic">Acrylic</option>
-                        <option value="Brass">Brass</option>
-                        <option value="NFC Puck">NFC Puck</option>
-                        <option value="Sticker">Sticker</option>
+                        {assetTypes && assetTypes.length > 0 ? (
+                          assetTypes.map(t => (
+                            <option key={t.id} value={t.id}>{t.name}</option>
+                          ))
+                        ) : (
+                          <>
+                            <option value="100">Acrylic</option>
+                            <option value="101">Brass</option>
+                            <option value="102">NFC Puck</option>
+                            <option value="103">Sticker</option>
+                          </>
+                        )}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
                     </div>
@@ -735,7 +820,14 @@ export const QrCodesPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">QR / NFC Type</label>
-                    <input type="text" value={createForm.qrNfcType} onChange={e => setCreateForm({ ...createForm, qrNfcType: e.target.value })} placeholder="e.g. NFC + QR" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                    <div className="relative">
+                      <select value={createForm.qrNfcType} onChange={e => setCreateForm({ ...createForm, qrNfcType: e.target.value })} className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] cursor-pointer appearance-none">
+                        <option value="QR + NFC">QR + NFC</option>
+                        <option value="QR Only">QR Only</option>
+                        <option value="NFC Only">NFC Only</option>
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
+                    </div>
                   </div>
 
                   {/* <div className="grid grid-cols-2 gap-4">

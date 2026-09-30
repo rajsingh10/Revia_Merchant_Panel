@@ -22,13 +22,21 @@ export interface RewardTypeOption {
   isActive: boolean;
 }
 
+export interface AssetTypeOption {
+  id?: string | number;
+  name: string;
+  isActive?: boolean;
+}
+
 interface MasterState {
   ruleFields: RuleField[];
   tierOptions: TierOption[];
   rewardTypes: RewardTypeOption[];
+  assetTypes: AssetTypeOption[];
   isLoadingFields: boolean;
   isLoadingTiers: boolean;
   isLoadingRewards: boolean;
+  isLoadingAssetTypes: boolean;
   error: string | null;
 }
 
@@ -36,9 +44,11 @@ const initialState: MasterState = {
   ruleFields: [],
   tierOptions: [],
   rewardTypes: [],
+  assetTypes: [],
   isLoadingFields: false,
   isLoadingTiers: false,
   isLoadingRewards: false,
+  isLoadingAssetTypes: false,
   error: null,
 };
 
@@ -101,6 +111,21 @@ export const fetchRewardTypes = createAsyncThunk(
         { id: 'points', title: 'Reward Points', desc: 'Grant loyalty program bonus point boost', iconName: 'Star', isActive: true },
         { id: 'free_item', title: 'Free Item', desc: 'Give 100% complimentary product or Perk BOGO', iconName: 'Gift', isActive: true },
       ];
+    }
+  }
+);
+
+export const fetchAssetTypes = createAsyncThunk(
+  'master/fetchAssetTypes',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/merchant/masters/asset-types');
+      let items = response.data;
+      if (items?.data && !Array.isArray(items)) items = items.data;
+      if (items?.data && !Array.isArray(items)) items = items.data;
+      return Array.isArray(items) ? items : [];
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch asset types');
     }
   }
 );
@@ -216,6 +241,43 @@ export const deleteRewardType = createAsyncThunk(
   }
 );
 
+// --- Asset Types CRUD ---
+export const addAssetType = createAsyncThunk(
+  'master/addAssetType',
+  async (assetType: AssetTypeOption, { rejectWithValue, dispatch }) => {
+    try {
+      await apiClient.post('/merchant/masters/asset-types', assetType);
+      dispatch(fetchAssetTypes());
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to add asset type');
+    }
+  }
+);
+
+export const updateAssetType = createAsyncThunk(
+  'master/updateAssetType',
+  async (assetType: AssetTypeOption, { rejectWithValue, dispatch }) => {
+    try {
+      await apiClient.put(`/merchant/masters/asset-types/${assetType.id}`, assetType);
+      dispatch(fetchAssetTypes());
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to update asset type');
+    }
+  }
+);
+
+export const deleteAssetType = createAsyncThunk(
+  'master/deleteAssetType',
+  async (id: string | number, { rejectWithValue, dispatch }) => {
+    try {
+      await apiClient.delete(`/merchant/masters/asset-types/${id}`);
+      dispatch(fetchAssetTypes());
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to delete asset type');
+    }
+  }
+);
+
 const masterSlice = createSlice({
   name: 'master',
   initialState,
@@ -263,6 +325,21 @@ const masterSlice = createSlice({
       })
       .addCase(fetchRewardTypes.rejected, (state, action) => {
         state.isLoadingRewards = false;
+        state.error = action.payload as string;
+      });
+
+    // Asset Types
+    builder
+      .addCase(fetchAssetTypes.pending, (state) => {
+        if (state.assetTypes.length === 0) state.isLoadingAssetTypes = true;
+        state.error = null;
+      })
+      .addCase(fetchAssetTypes.fulfilled, (state, action) => {
+        state.isLoadingAssetTypes = false;
+        state.assetTypes = Array.isArray(action.payload) ? action.payload : [];
+      })
+      .addCase(fetchAssetTypes.rejected, (state, action) => {
+        state.isLoadingAssetTypes = false;
         state.error = action.payload as string;
       });
   },

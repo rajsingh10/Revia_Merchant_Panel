@@ -5,20 +5,21 @@ import type { AppDispatch, RootState } from '../store/store';
 import { 
   fetchRuleFields, fetchTierOptions, RuleField, TierOption,
   addRuleField, updateRuleField, deleteRuleField,
-  addTierOption, updateTierOption, deleteTierOption
+  addTierOption, updateTierOption, deleteTierOption,
+  fetchAssetTypes, addAssetType, updateAssetType, deleteAssetType, AssetTypeOption
 } from '../store/slices/masterSlice';
 import { fetchRewardTypes, addRewardType, updateRewardType, deleteRewardType, RewardTypeOption } from '../store/slices/masterSlice';
 
 interface MastersPageProps {
-  defaultTab?: 'fields' | 'tiers' | 'rewards';
+  defaultTab?: 'fields' | 'tiers' | 'rewards' | 'assets';
 }
 
 export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { ruleFields, tierOptions, isLoadingFields, isLoadingTiers } = useSelector((state: RootState) => state.master);
+  const { ruleFields, tierOptions, assetTypes, isLoadingFields, isLoadingTiers, isLoadingAssetTypes } = useSelector((state: RootState) => state.master);
   const { rewardTypes: rewards, isLoadingRewards: isLoadingRewardTypes } = useSelector((state: RootState) => state.master);
   
-  const [activeTab, setActiveTab] = useState<'fields' | 'tiers' | 'rewards'>(defaultTab);
+  const [activeTab, setActiveTab] = useState<'fields' | 'tiers' | 'rewards' | 'assets'>(defaultTab);
 
   useEffect(() => {
     setActiveTab(defaultTab);
@@ -28,6 +29,7 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
     dispatch(fetchRuleFields());
     dispatch(fetchTierOptions());
     dispatch(fetchRewardTypes());
+    dispatch(fetchAssetTypes());
   }, [dispatch]);
 
   // Modal states
@@ -38,7 +40,7 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
   const [editingTier, setEditingTier] = useState<TierOption | null>(null);
 
   // Delete Confirmation State
-  const [deleteConfirmation, setDeleteConfirmation] = useState<{ type: 'field' | 'tier' | 'reward', id: string, name: string } | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ type: 'field' | 'tier' | 'reward' | 'asset', id: string, name: string } | null>(null);
 
   const [hasSubmittedField, setHasSubmittedField] = useState(false);
   const [hasSubmittedTier, setHasSubmittedTier] = useState(false);
@@ -201,6 +203,50 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
     setDeleteConfirmation({ type: 'reward', id: reward.id, name: reward.title });
   };
 
+  const [isAssetTypeModalOpen, setIsAssetTypeModalOpen] = useState(false);
+  const [editingAssetType, setEditingAssetType] = useState<AssetTypeOption | null>(null);
+  const [assetTypeName, setAssetTypeName] = useState('');
+  const [assetTypeIsActive, setAssetTypeIsActive] = useState(true);
+  const [hasSubmittedAssetType, setHasSubmittedAssetType] = useState(false);
+
+  const handleAddAssetType = () => {
+    setEditingAssetType(null);
+    setAssetTypeName('');
+    setAssetTypeIsActive(true);
+    setHasSubmittedAssetType(false);
+    setIsAssetTypeModalOpen(true);
+  };
+
+  const handleEditAssetType = (asset: AssetTypeOption) => {
+    setEditingAssetType(asset);
+    setAssetTypeName(asset.name);
+    setAssetTypeIsActive(asset.status !== false);
+    setHasSubmittedAssetType(false);
+    setIsAssetTypeModalOpen(true);
+  };
+
+  const handleSaveAssetType = () => {
+    setHasSubmittedAssetType(true);
+    if (!assetTypeName.trim()) return;
+
+    const assetData: any = {
+      name: assetTypeName.trim(),
+      type: 'asset',
+      status: assetTypeIsActive
+    };
+    
+    if (editingAssetType) {
+      assetData.id = editingAssetType.id;
+      dispatch(updateAssetType(assetData as AssetTypeOption));
+      showToast('Asset Type updated successfully!');
+    } else {
+      dispatch(addAssetType(assetData as AssetTypeOption));
+      showToast('Asset Type added successfully!');
+    }
+    setHasSubmittedAssetType(false);
+    setIsAssetTypeModalOpen(false);
+  };
+
   return (
     <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6 flex flex-col h-full font-sans relative">
       {/* Header */}
@@ -208,19 +254,19 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
         <div>
           <h1 className="text-2xl font-bold text-[#1A1615] flex items-center gap-2">
             {activeTab === 'rewards' ? <Package className="w-6 h-6 text-[#D4A753]" /> : <Database className="w-6 h-6 text-[#D4A753]" />}
-            {activeTab === 'fields' ? 'Rule Fields Master' : activeTab === 'tiers' ? 'Tier Options Master' : 'Reward Types Master'}
+            {activeTab === 'fields' ? 'Rule Fields Master' : activeTab === 'tiers' ? 'Tier Options Master' : activeTab === 'rewards' ? 'Reward Types Master' : 'Asset Types Master'}
           </h1>
           <p className="text-sm text-[#6E6A66] mt-1">
-            Manage {activeTab === 'fields' ? 'rule fields' : activeTab === 'tiers' ? 'tier options' : 'rewards'} for the platform.
+            Manage {activeTab === 'fields' ? 'rule fields' : activeTab === 'tiers' ? 'tier options' : activeTab === 'rewards' ? 'rewards' : 'asset types'} for the platform.
           </p>
         </div>
         <div className="flex gap-3">
           <button 
-            onClick={activeTab === 'fields' ? handleAddField : activeTab === 'tiers' ? handleAddTier : handleAddRewardType}
-            className="flex items-center gap-2 px-4 py-2 bg-[#1A1615] text-white rounded-lg text-sm font-bold hover:bg-[#2A2422] transition-colors"
+            onClick={activeTab === 'fields' ? handleAddField : activeTab === 'tiers' ? handleAddTier : activeTab === 'rewards' ? handleAddRewardType : handleAddAssetType}
+            className="flex items-center gap-2 px-4 py-2 bg-[#1A1615] text-white rounded-lg text-sm font-bold hover:bg-[#2A2422] transition-colors cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            Add {activeTab === 'fields' ? 'Field' : activeTab === 'tiers' ? 'Tier' : 'Reward Type'}
+            Add {activeTab === 'fields' ? 'Field' : activeTab === 'tiers' ? 'Tier' : activeTab === 'rewards' ? 'Reward Type' : 'Asset Type'}
           </button>
         </div>
       </div>
@@ -325,7 +371,7 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
               )}
             </tbody>
           </table>
-        ) : (
+        ) : activeTab === 'rewards' ? (
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-[#FAF8F5] border-b border-[#EFECE6]">
@@ -374,7 +420,55 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
               )}
             </tbody>
           </table>
-        )}
+        ) : activeTab === 'assets' ? (
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-[#FAF8F5] border-b border-[#EFECE6]">
+                <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider">ID</th>
+                <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider">Name</th>
+                <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider">Status</th>
+                <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoadingAssetTypes ? (
+                <tr><td colSpan={4} className="py-8 text-center text-sm text-[#6E6A66]">Loading...</td></tr>
+              ) : assetTypes.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="py-12 text-center">
+                    <div className="flex flex-col items-center justify-center text-[#7C746C]">
+                      <Database className="w-10 h-10 mb-3 text-[#D4A753]/40" />
+                      <div className="text-sm font-bold text-[#1A1615]">No asset types found</div>
+                      <div className="text-xs mt-1">Add a new asset type to get started.</div>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                assetTypes.map(asset => (
+                  <tr key={asset.id} className="border-b border-[#EFECE6] hover:bg-[#FAF8F5]">
+                    <td className="py-3 px-4 text-sm font-medium text-[#1A1615]">{asset.id}</td>
+                    <td className="py-3 px-4 text-sm font-medium text-[#1A1615]">{asset.name}</td>
+                    <td className="py-3 px-4">
+                      {asset.status !== false ? (
+                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold bg-[#E0F9ED] text-[#0D7A53]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Active
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold bg-[#F0F2F5] text-[#6E6A66]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#9E9A93]"></span> Inactive
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-3 px-4 flex items-center justify-end gap-2">
+                      <button onClick={() => handleEditAssetType(asset)} className="p-1.5 text-[#6E6A66] hover:bg-[#EFECE6] rounded-md transition-colors cursor-pointer"><Edit2 className="w-4 h-4" /></button>
+                      <button onClick={() => asset.id && setDeleteConfirmation({ type: 'asset', id: String(asset.id), name: asset.name })} className="p-1.5 text-[#6E6A66] hover:bg-red-50 hover:text-red-600 rounded-md transition-colors cursor-pointer"><Trash2 className="w-4 h-4" /></button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        ) : null}
       </div>
 
       {/* Reward Type Modal */}
@@ -582,7 +676,7 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
               <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
                 <Trash2 className="w-6 h-6 text-red-600" />
               </div>
-              <h2 className="text-xl font-bold text-[#1A1615] mb-2">Delete {deleteConfirmation.type === 'field' ? 'Rule Field' : deleteConfirmation.type === 'tier' ? 'Tier Option' : 'Reward Type'}</h2>
+              <h2 className="text-xl font-bold text-[#1A1615] mb-2">Delete {deleteConfirmation.type === 'field' ? 'Rule Field' : deleteConfirmation.type === 'tier' ? 'Tier Option' : deleteConfirmation.type === 'reward' ? 'Reward Type' : 'Asset Type'}</h2>
               <p className="text-sm text-[#6E6A66]">
                 Are you sure you want to delete <span className="font-bold text-[#1A1615]">{deleteConfirmation.name}</span>? This action cannot be undone.
               </p>
@@ -602,9 +696,12 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
                   } else if (deleteConfirmation.type === 'tier') {
                     dispatch(deleteTierOption(deleteConfirmation.id));
                     showToast('Tier Option deleted successfully!');
-                  } else {
+                  } else if (deleteConfirmation.type === 'reward') {
                     dispatch(deleteRewardType(deleteConfirmation.id));
                     showToast('Reward Type deleted successfully!');
+                  } else {
+                    dispatch(deleteAssetType(deleteConfirmation.id));
+                    showToast('Asset Type deleted successfully!');
                   }
                   setDeleteConfirmation(null);
                 }}
@@ -624,6 +721,56 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
           <button onClick={() => setToastMessage(null)} className="ml-2 hover:opacity-75 transition-opacity">
             <X className="w-4 h-4" />
           </button>
+        </div>
+      )}
+      {/* Asset Type Modal */}
+      {isAssetTypeModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative animate-in fade-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setIsAssetTypeModalOpen(false)} 
+              className="absolute top-4 right-4 p-1.5 text-[#9E9A93] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-xl font-bold text-[#1A1615] mb-4">
+              {editingAssetType ? 'Edit Asset Type' : 'Add New Asset Type'}
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#6E6A66] mb-1">Asset Name <span className="text-[#DC2626]">*</span></label>
+                <input 
+                  type="text" 
+                  value={assetTypeName}
+                  onChange={e => setAssetTypeName(e.target.value)}
+                  className={`w-full border rounded-lg px-3 py-2 text-sm focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753] outline-none ${hasSubmittedAssetType && !assetTypeName.trim() ? 'border-[#DC2626] bg-[#FEF2F2]' : 'border-[#EAE6E1]'}`} 
+                  placeholder="Enter asset name"
+                />
+                {hasSubmittedAssetType && !assetTypeName.trim() && <p className="text-[#DC2626] text-[10px] font-bold mt-1">Name is required</p>}
+              </div>
+              <label className="flex items-center gap-3 cursor-pointer p-3 border border-[#EAE6E1] rounded-lg hover:bg-[#FAF8F5] transition-colors mt-2">
+                <div className="relative flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    checked={assetTypeIsActive}
+                    onChange={(e) => setAssetTypeIsActive(e.target.checked)}
+                    className="w-5 h-5 appearance-none border-2 border-[#D1CDC7] rounded-md checked:bg-[#D4A753] checked:border-[#D4A753] transition-colors cursor-pointer"
+                  />
+                  {assetTypeIsActive && <Check className="w-3.5 h-3.5 text-white absolute pointer-events-none" />}
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-[#1A1615]">Active Asset Type</div>
+                  <div className="text-[11px] text-[#6E6A66]">Inactive asset types won't appear as options for QR codes.</div>
+                </div>
+              </label>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => { setHasSubmittedAssetType(false); setIsAssetTypeModalOpen(false); }} className="px-4 py-2 text-sm font-bold text-[#6E6A66] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer">Cancel</button>
+              <button onClick={handleSaveAssetType} className="px-4 py-2 bg-[#D4A753] text-white text-sm font-bold rounded-lg hover:bg-[#C29543] transition-colors cursor-pointer shadow-sm">
+                {editingAssetType ? 'Save Changes' : 'Add Asset Type'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
