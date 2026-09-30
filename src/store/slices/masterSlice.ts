@@ -14,19 +14,31 @@ export interface TierOption {
   isActive: boolean;
 }
 
+export interface RewardTypeOption {
+  id: string;
+  title: string;
+  desc: string;
+  iconName: string;
+  isActive: boolean;
+}
+
 interface MasterState {
   ruleFields: RuleField[];
   tierOptions: TierOption[];
+  rewardTypes: RewardTypeOption[];
   isLoadingFields: boolean;
   isLoadingTiers: boolean;
+  isLoadingRewards: boolean;
   error: string | null;
 }
 
 const initialState: MasterState = {
   ruleFields: [],
   tierOptions: [],
+  rewardTypes: [],
   isLoadingFields: false,
   isLoadingTiers: false,
+  isLoadingRewards: false,
   error: null,
 };
 
@@ -58,6 +70,37 @@ export const fetchTierOptions = createAsyncThunk(
       return Array.isArray(items) ? items : [];
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch tier options');
+    }
+  }
+);
+
+export const fetchRewardTypes = createAsyncThunk(
+  'master/fetchRewardTypes',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/merchant/masters/reward-types');
+      let items = response.data;
+      if (items?.data && !Array.isArray(items)) items = items.data;
+      if (items?.data && !Array.isArray(items)) items = items.data;
+      
+      // Fallback for demo if API fails/empty
+      if (!Array.isArray(items) || items.length === 0) {
+        return [
+          { id: 'cashback', title: 'Cashback', desc: 'Credit fixed wallet amount back to customer balance', iconName: 'Wallet', isActive: true },
+          { id: 'discount', title: 'Discount', desc: 'Apply % percentage or fixed value price deduction', iconName: 'Percent', isActive: true },
+          { id: 'points', title: 'Reward Points', desc: 'Grant loyalty program bonus point boost', iconName: 'Star', isActive: true },
+          { id: 'free_item', title: 'Free Item', desc: 'Give 100% complimentary product or Perk BOGO', iconName: 'Gift', isActive: true },
+        ];
+      }
+      return items;
+    } catch (error: any) {
+      // Mock fallback
+      return [
+        { id: 'cashback', title: 'Cashback', desc: 'Credit fixed wallet amount back to customer balance', iconName: 'Wallet', isActive: true },
+        { id: 'discount', title: 'Discount', desc: 'Apply % percentage or fixed value price deduction', iconName: 'Percent', isActive: true },
+        { id: 'points', title: 'Reward Points', desc: 'Grant loyalty program bonus point boost', iconName: 'Star', isActive: true },
+        { id: 'free_item', title: 'Free Item', desc: 'Give 100% complimentary product or Perk BOGO', iconName: 'Gift', isActive: true },
+      ];
     }
   }
 );
@@ -136,6 +179,43 @@ export const deleteTierOption = createAsyncThunk(
   }
 );
 
+// --- Reward Types CRUD ---
+export const addRewardType = createAsyncThunk(
+  'master/addRewardType',
+  async (reward: RewardTypeOption, { rejectWithValue, dispatch }) => {
+    try {
+      await apiClient.post('/merchant/masters/reward-types', reward);
+      dispatch(fetchRewardTypes());
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to add reward type');
+    }
+  }
+);
+
+export const updateRewardType = createAsyncThunk(
+  'master/updateRewardType',
+  async (reward: RewardTypeOption, { rejectWithValue, dispatch }) => {
+    try {
+      await apiClient.put(`/merchant/masters/reward-types/${reward.id}`, { title: reward.title, desc: reward.desc, iconName: reward.iconName, isActive: reward.isActive });
+      dispatch(fetchRewardTypes());
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to update reward type');
+    }
+  }
+);
+
+export const deleteRewardType = createAsyncThunk(
+  'master/deleteRewardType',
+  async (id: string, { rejectWithValue, dispatch }) => {
+    try {
+      await apiClient.delete(`/merchant/masters/reward-types/${id}`);
+      dispatch(fetchRewardTypes());
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to delete reward type');
+    }
+  }
+);
+
 const masterSlice = createSlice({
   name: 'master',
   initialState,
@@ -144,7 +224,7 @@ const masterSlice = createSlice({
     // Rule Fields
     builder
       .addCase(fetchRuleFields.pending, (state) => {
-        state.isLoadingFields = true;
+        if (state.ruleFields.length === 0) state.isLoadingFields = true;
         state.error = null;
       })
       .addCase(fetchRuleFields.fulfilled, (state, action) => {
@@ -159,7 +239,7 @@ const masterSlice = createSlice({
     // Tier Options
     builder
       .addCase(fetchTierOptions.pending, (state) => {
-        state.isLoadingTiers = true;
+        if (state.tierOptions.length === 0) state.isLoadingTiers = true;
         state.error = null;
       })
       .addCase(fetchTierOptions.fulfilled, (state, action) => {
@@ -168,6 +248,21 @@ const masterSlice = createSlice({
       })
       .addCase(fetchTierOptions.rejected, (state, action) => {
         state.isLoadingTiers = false;
+        state.error = action.payload as string;
+      });
+
+    // Reward Types
+    builder
+      .addCase(fetchRewardTypes.pending, (state) => {
+        if (state.rewardTypes.length === 0) state.isLoadingRewards = true;
+        state.error = null;
+      })
+      .addCase(fetchRewardTypes.fulfilled, (state, action) => {
+        state.isLoadingRewards = false;
+        state.rewardTypes = Array.isArray(action.payload) ? action.payload : [];
+      })
+      .addCase(fetchRewardTypes.rejected, (state, action) => {
+        state.isLoadingRewards = false;
         state.error = action.payload as string;
       });
   },

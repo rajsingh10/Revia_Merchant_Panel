@@ -57,7 +57,7 @@ import { NotEnoughCreditModal } from './components/wallet/NotEnoughCreditModal';
 
 const VALID_ROUTES = [
   '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
-  '/loyalty', '/qr-codes', '/item-catalog', '/masters/rule-fields', '/masters/tier-options', '/catalog', '/orders', '/invoices',
+  '/loyalty', '/qr-codes', '/item-catalog', '/masters/rule-fields', '/masters/tier-options', '/masters/reward-types', '/catalog', '/orders', '/invoices',
   '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
   '/terminal', '/rewards', '/rewards/new', '/analytics', '/billing', '/notifications',
   '/settings/audit', '/settings/branding', '/login', '/onboarding',
@@ -284,6 +284,10 @@ export default function App() {
 
             {currentRoute === '/masters/tier-options' && (
               <MastersPage defaultTab="tiers" />
+            )}
+
+            {currentRoute === '/masters/reward-types' && (
+              <MastersPage defaultTab="rewards" />
             )}
 
             {currentRoute === '/orders' && (

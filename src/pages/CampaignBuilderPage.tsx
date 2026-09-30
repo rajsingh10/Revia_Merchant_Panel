@@ -68,7 +68,7 @@ import { fetchProducts } from '../store/slices/catalogSlice';
 import { fetchBranches } from '../store/slices/branchSlice';
 import type { AppDispatch, RootState } from '../store/store';
 import apiClient from '../api/apiClient';
-import { fetchRuleFields, fetchTierOptions } from '../store/slices/masterSlice';
+import { fetchRuleFields, fetchTierOptions, fetchRewardTypes } from '../store/slices/masterSlice';
 
 
 export const FIELDS: Record<string, { label: string, type: 'currency' | 'number' | 'date' | 'select' }> = {
@@ -221,11 +221,14 @@ const RuleDropdown = ({ value, options, onChange, placeholder, minWidth = '160px
 const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, currency, onContinue, onBack, campaignName }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { ruleFields, tierOptions } = useSelector((state: RootState) => state.master);
+  const reduxBranches = useSelector((state: RootState) => state.branch.branches);
 
   // Fetch masters on mount
   useEffect(() => {
     dispatch(fetchRuleFields());
     dispatch(fetchTierOptions());
+    dispatch(fetchRewardTypes());
+    dispatch(fetchBranches());
   }, [dispatch]);
 
   // Derive FIELD_OPTIONS and TIER_OPTIONS from API, with fallbacks
@@ -305,11 +308,17 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
   // Calculate initial datetime strings for local timezone
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
-  const [branches, setBranches] = useState<Array<{ id: string; name: string; selected: boolean }>>([
-    { id: '1', name: 'Downtown Flagship', selected: true },
-    { id: '2', name: 'Northside Mall', selected: true },
-    { id: '3', name: 'West End Kiosk', selected: true }
-  ]);
+  const [branches, setBranches] = useState<Array<{ id: string; name: string; selected: boolean }>>([]);
+
+  useEffect(() => {
+    if (reduxBranches && reduxBranches.length > 0) {
+      setBranches(reduxBranches.map(b => ({
+        id: String(b.id),
+        name: b.name,
+        selected: true // Default to true when fetched
+      })));
+    }
+  }, [reduxBranches]);
   const [isAddingLocation, setIsAddingLocation] = useState<boolean>(false);
   const [newLocationName, setNewLocationName] = useState<string>('');
 
@@ -494,7 +503,7 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
       setShowErrors(true);
       return;
     }
-    onContinue({});
+    onContinue({ rules, matchType });
   };
 
   const renderCondition = (rule: RuleCondition, groupId?: string, idx?: number) => {
@@ -1037,6 +1046,18 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
   const [discountValue, setDiscountValue] = useState<number>(15);
 
   const [rewardPoints, setRewardPoints] = useState<number>(500);
+  const { rewardTypes } = useSelector((state: RootState) => state.master);
+  
+  const getIconComponent = (iconName: string) => {
+    switch (iconName) {
+      case 'Wallet': return Wallet;
+      case 'Percent': return Percent;
+      case 'Star': return Star;
+      case 'Gift': return Gift;
+      case 'Package': return Package;
+      default: return Gift;
+    }
+  };
 
   const [freeItem, setFreeItem] = useState<string>('');
   const [freeItemDropdownOpen, setFreeItemDropdownOpen] = useState(false);
@@ -1056,6 +1077,12 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
   const [applicableBranches, setApplicableBranches] = useState<string>('all');
   const [applicableBranchesDropdownOpen, setApplicableBranchesDropdownOpen] = useState(false);
   const applicableBranchesDropdownRef = useRef<HTMLDivElement>(null);
+
+  const branches = useSelector((state: RootState) => state.branch.branches);
+  const branchOptions = [
+    { value: 'all', label: 'All Outlets & Branches' },
+    ...branches.map(b => ({ value: String(b.id), label: b.name }))
+  ];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -1085,32 +1112,12 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
     }
   }, [campaignType, ruleConfig, rewardType]);
 
-  const rewardOptions = [
-    {
-      id: 'cashback',
-      title: 'Cashback',
-      desc: 'Credit fixed wallet amount back to customer balance',
-      icon: Wallet,
-    },
-    {
-      id: 'discount',
-      title: 'Discount',
-      desc: 'Apply % percentage or fixed value price deduction',
-      icon: Percent,
-    },
-    {
-      id: 'points',
-      title: 'Reward Points',
-      desc: 'Grant loyalty program bonus point boost',
-      icon: Star,
-    },
-    {
-      id: 'free_item',
-      title: 'Free Item',
-      desc: 'Give 100% complimentary product or Perk BOGO',
-      icon: Gift,
-    },
-  ];
+  const rewardOptions = rewardTypes.map(rt => ({
+    id: rt.id,
+    title: rt.title,
+    desc: rt.desc,
+    icon: getIconComponent(rt.iconName),
+  }));
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
@@ -1425,21 +1432,13 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
                 className="w-full flex items-center justify-between px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] hover:border-[#D1CDC7] transition-colors shadow-2xs cursor-pointer"
               >
                 <span className="truncate">
-                  {applicableBranches === 'all' ? 'All Outlets & Branches' :
-                    applicableBranches === 'indiranagar' ? 'Indiranagar Flagship Outlet' :
-                      applicableBranches === 'mg_road' ? 'MG Road Espresso Bar' :
-                        applicableBranches === 'koramangala' ? 'Koramangala Roastery' : applicableBranches}
+                  {branchOptions.find(opt => opt.value === applicableBranches)?.label || applicableBranches}
                 </span>
                 <ChevronDown className={`w-4 h-4 shrink-0 text-[#9E9A93] transition-transform ${applicableBranchesDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               {applicableBranchesDropdownOpen && (
                 <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#EFECE6] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
-                  {[
-                    { value: 'all', label: 'All Outlets & Branches' },
-                    { value: 'indiranagar', label: 'Indiranagar Flagship Outlet' },
-                    { value: 'mg_road', label: 'MG Road Espresso Bar' },
-                    { value: 'koramangala', label: 'Koramangala Roastery' },
-                  ].map((opt) => (
+                  {branchOptions.map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
@@ -1896,6 +1895,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     dispatch(fetchBranches());
     dispatch(fetchTierOptions());
     dispatch(fetchProducts());
+    dispatch(fetchRewardTypes());
   }, [dispatch]);
 
   // Populate form if we are editing an existing campaign
@@ -1948,17 +1948,30 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     }
   }, [currentCampaign, viewMode]);
 
-  const campaigns = apiCampaigns.length > 0 ? apiCampaigns.map(c => ({
-    id: c.id,
-    name: c.title || 'Untitled Campaign',
-    type: c.type || 'Unknown Type',
-    status: c.status || 'Draft',
-    target: c.customer_type || 'All Customers',
-    startDate: c.valid_from || 'N/A',
-    endDate: c.valid_until || 'N/A',
-    progress: (c as any).performance || 0,
-    reward: c.reward_type || 'Reward'
-  })) : [];
+  const campaigns = apiCampaigns.length > 0 ? apiCampaigns.map(c => {
+    let finalStatus = c.status || 'Draft';
+    if (finalStatus === 'Active') {
+      const now = new Date();
+      const start = c.valid_from ? new Date(c.valid_from) : null;
+      const end = c.valid_until ? new Date(c.valid_until) : null;
+      if (start && now < start) {
+        finalStatus = 'Scheduled';
+      } else if (end && now > end) {
+        finalStatus = 'Ended';
+      }
+    }
+    return {
+      id: c.id,
+      name: c.title || 'Untitled Campaign',
+      type: c.type || 'Unknown Type',
+      status: finalStatus,
+      target: c.customer_type || 'All Customers',
+      startDate: c.valid_from || 'N/A',
+      endDate: c.valid_until || 'N/A',
+      progress: (c as any).performance || 0,
+      reward: c.reward_type || 'Reward'
+    };
+  }) : [];
 
   React.useEffect(() => {
     campaigns.forEach(c => {
@@ -2897,8 +2910,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
           <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
             <div>
-              <div className="text-[10px] font-bold tracking-widest uppercase text-[#D4A753] mb-1">FEATURED COHORT</div>
-              <h4 className="text-sm font-bold text-white">Geisha Harvest Collection</h4>
+              <div className="text-[10px] font-bold tracking-widest uppercase text-[#D4A753] mb-1">{topLevelType ? getCampaignTypeLabel(topLevelType).toUpperCase() : 'NEW CAMPAIGN'}</div>
+              <h4 className="text-sm font-bold text-white">{campaignName || 'Untitled Campaign'}</h4>
             </div>
             <span className="px-2 py-0.5 bg-black/50 text-[#D4A753] border border-[#D4A753]/30 rounded text-[9px] font-bold tracking-widest uppercase backdrop-blur-sm">EXCLUSIVE</span>
           </div>
@@ -3399,44 +3412,35 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
             <div>
               <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-1">CAMPAIGN NAME</div>
               <div className="flex items-center gap-2">
-                <span className="text-[14px] font-bold text-[#1A1615]">Autumn Reserve Tasting &amp; Geisha Perk</span>
-                <span className="px-2 py-0.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#9E9A93] rounded text-[9px] font-bold tracking-widest uppercase">#CMP-8821</span>
+                <span className="text-[14px] font-bold text-[#1A1615]">{campaignName || 'Unnamed Campaign'}</span>
+                <span className="px-2 py-0.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#9E9A93] rounded text-[9px] font-bold tracking-widest uppercase">#CMP-{Math.floor(1000 + Math.random() * 9000)}</span>
               </div>
             </div>
             <div>
               <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-1">CAMPAIGN TYPE</div>
               <span className="px-2.5 py-1 bg-gradient-to-r from-[#FDF8EB] to-[#FAF8F5] border border-[#F3E5C8] text-[#9E782F] rounded-full text-[11px] font-bold flex items-center gap-1.5 inline-flex shadow-sm">
-                <Trophy className="w-3.5 h-3.5 text-[#D4A753]" /> Loyalty Boost
+                <Trophy className="w-3.5 h-3.5 text-[#D4A753]" /> {getCampaignTypeLabel(fullCampaignType)}
               </span>
             </div>
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2">ACTIVE BRANCHES (3 LOCATIONS)</div>
+              <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2">ACTIVE BRANCHES</div>
               <div className="flex flex-wrap gap-2">
-                <span className="px-2.5 py-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] rounded-md text-[11px] font-semibold">Downtown Flagship</span>
-                <span className="px-2.5 py-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] rounded-md text-[11px] font-semibold">Northside Mall</span>
-                <span className="px-2.5 py-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] rounded-md text-[11px] font-semibold">West End Kiosk</span>
+                <span className="px-2.5 py-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] rounded-md text-[11px] font-semibold">
+                  {rewardConfig?.applicableBranches === 'all' ? 'All Outlets & Branches' : branches.find(b => String(b.id) === rewardConfig?.applicableBranches)?.name || rewardConfig?.applicableBranches || 'All Outlets'}
+                </span>
               </div>
             </div>
             <div>
               <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-1">RUNTIME HORIZON</div>
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#D4A753]" />
-                <span className="text-[13px] font-bold text-[#1A1615]">Nov 1, 2024 – Nov 30, 2024</span>
-                <span className="text-[11px] font-medium text-[#9E9A93]">(30 Calendar Days)</span>
+                <span className="text-[13px] font-bold text-[#1A1615]">{rewardConfig?.startDate || 'TBD'} – {rewardConfig?.endDate || 'TBD'}</span>
+                <span className="text-[11px] font-medium text-[#9E9A93]"></span>
               </div>
             </div>
           </div>
 
-          <div className="bg-[#FDF8EB] border border-[#F3E5C8] rounded-xl p-4 flex items-center justify-between shadow-sm">
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5 w-1 h-8 bg-[#D4A753] rounded-full"></div>
-              <div>
-                <span className="text-[12px] font-bold text-[#1A1615] block mb-0.5">Priority Arbitration: Priority 1 (P1)</span>
-                <p className="text-[11px] font-medium text-[#6E6A66]">Supercedes seasonal discount codes and default tier stamp boosts during checkout conflict.</p>
-              </div>
-            </div>
-            <span className="px-3 py-1.5 bg-white border border-[#EFECE6] rounded-lg text-[10px] font-bold uppercase tracking-widest text-[#1A1615] shadow-sm">STRICT ARBITRATION</span>
-          </div>
+
         </div>
 
         {/* 02 Audience Summary */}
@@ -3460,40 +3464,11 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <span className="text-[10px] font-bold tracking-widest uppercase text-[#9E9A93]">DYNAMIC COHORT LOGIC FILTER</span>
             </div>
             <p className="text-[14px] font-medium text-[#1A1615] leading-relaxed">
-              "Targets <span className="text-[#D4A753] font-bold">Gold Reserve &amp; Obsidian VIP</span> patrons, ages 21–65, with average visit rating ≥ 4.5★ and birthday within 7 days of order date."
+              "Targets <span className="text-[#D4A753] font-bold">{selectedTiers.length > 0 ? selectedTiers.join(' & ') : 'All Customers'}</span> patrons."
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] p-4 rounded-xl shadow-sm flex flex-col justify-between">
-              <div className="text-[10px] font-bold tracking-widest uppercase text-[#9E9A93] mb-2 leading-tight">ENROLLED<br />SEGMENT</div>
-              <div>
-                <div className="text-[20px] font-bold text-[#1A1615] mb-1">2,840</div>
-                <div className="text-[9px] font-bold text-[#0D7A53]">+14% vs last cycle</div>
-              </div>
-            </div>
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] p-4 rounded-xl shadow-sm flex flex-col justify-between">
-              <div className="text-[10px] font-bold tracking-widest uppercase text-[#9E9A93] mb-2 leading-tight">ESTIMATED<br />REACH</div>
-              <div>
-                <div className="text-[20px] font-bold text-[#1A1615] mb-1">11.4%</div>
-                <div className="text-[9px] font-medium text-[#6E6A66]">of total register network</div>
-              </div>
-            </div>
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] p-4 rounded-xl shadow-sm flex flex-col justify-between">
-              <div className="text-[10px] font-bold tracking-widest uppercase text-[#9E9A93] mb-2 leading-tight">PATRON<br />PROFILE</div>
-              <div>
-                <div className="text-[18px] font-bold text-[#1A1615] mb-1">Mixed</div>
-                <div className="text-[9px] font-medium text-[#6E6A66]">New &amp; Returning Active</div>
-              </div>
-            </div>
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] p-4 rounded-xl shadow-sm flex flex-col justify-between">
-              <div className="text-[10px] font-bold tracking-widest uppercase text-[#9E9A93] mb-2 leading-tight">OPT-IN<br />COMPLIANCE</div>
-              <div>
-                <div className="text-[20px] font-bold text-[#0D7A53] mb-1">100%</div>
-                <div className="text-[9px] font-medium text-[#6E6A66]">Zero spam exclusions</div>
-              </div>
-            </div>
-          </div>
+
         </div>
 
         {/* 03 Conditions & Rules Summary */}
@@ -3513,45 +3488,45 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
           <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5 shadow-sm mb-4">
             <div className="flex items-center gap-3 mb-4">
-              <span className="px-2.5 py-1 bg-[#1A1615] text-white rounded text-[10px] font-bold tracking-widest uppercase shadow-sm">MATCH ALL (AND)</span>
+              <span className="px-2.5 py-1 bg-[#1A1615] text-white rounded text-[10px] font-bold tracking-widest uppercase shadow-sm">MATCH {ruleConfig?.matchType || 'ALL'} ({ruleConfig?.matchType === 'ANY' ? 'OR' : 'AND'})</span>
               <span className="text-[11px] font-medium text-[#6E6A66]">Parent root evaluation container</span>
             </div>
 
             <div className="space-y-4 md:space-y-2 pl-4 border-l-2 border-[#EFECE6]">
-              <div className="bg-white border border-[#EFECE6] rounded-lg p-3 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm relative before:content-[''] before:absolute before:-left-4 before:top-1/2 before:w-4 before:h-[2px] before:bg-[#EFECE6]">
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-mono font-bold text-[#1A1615]">
-                  <span className="text-[#D4A753] break-all">Customer.LifetimeSpend</span> <span className="text-[#6E6A66]">≥</span> <span>₹250.00</span>
-                  <span className="text-[#6E6A66] px-1 md:px-2 text-[10px] font-sans">AND</span>
-                  <span className="text-[#D4A753] break-all">Customer.LastVisit</span> <span className="text-[#6E6A66]">≤</span> <span className="whitespace-nowrap">14 days</span>
-                </div>
-                <div className="self-start md:self-auto">
-                  <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] rounded text-[9px] font-bold uppercase tracking-widest">VALIDATED</span>
-                </div>
-              </div>
-
-              <div className="bg-[#E6F4ED] border border-[#BCE3D1] rounded-lg p-3 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm relative before:content-[''] before:absolute before:-left-4 before:top-1/2 before:w-4 before:h-[2px] before:bg-[#EFECE6]">
-                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
-                  <span className="self-start md:self-auto px-2 py-0.5 bg-[#0D7A53] text-white rounded text-[9px] font-bold tracking-widest uppercase">BOGO TRIGGER</span>
-                  <div className="flex flex-wrap items-center gap-x-1 gap-y-1 text-[12px] font-mono font-bold text-[#1A1615]">
-                    <span className="text-[#0D7A53] break-all">Basket.ItemCount</span><span>("Single Origin Geisha 250g")</span> <span className="text-[#6E6A66]">≥</span> <span>2</span>
-                  </div>
-                </div>
-                <div className="self-start md:self-auto text-[10px] font-bold text-[#6E6A66] md:text-right leading-tight">
-                  Qty ≥ 2<br className="hidden md:block" />Required
-                </div>
-              </div>
-
-              <div className="bg-white border border-[#EFECE6] rounded-lg p-3 shadow-sm relative before:content-[''] before:absolute before:-left-4 before:top-1/2 before:w-4 before:h-[2px] before:bg-[#EFECE6]">
-                <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 mb-2">
-                  <span className="text-[10px] font-bold tracking-widest uppercase text-[#1A1615]">OR SUB-GROUP</span>
-                  <span className="text-[10px] font-medium text-[#9E9A93] italic">Any condition satisfies eligibility</span>
-                </div>
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-mono font-bold text-[#1A1615] pl-2 border-l-2 border-[#D4A753]">
-                  <span className="text-[#9E782F] font-sans text-[10px] whitespace-nowrap">Option A:</span> <span className="text-[#D4A753] break-all">Patron.Tier</span> <span className="text-[#6E6A66]">==</span> <span className="whitespace-nowrap">"Obsidian VIP"</span>
-                  <span className="text-[#6E6A66] px-1 md:px-3">||</span>
-                  <span className="text-[#9E782F] font-sans text-[10px] whitespace-nowrap">Option B:</span> <span className="text-[#D4A753] break-all">Patron.CurrentStampCycle</span> <span className="text-[#6E6A66]">≥</span> <span className="whitespace-nowrap">8 stamps</span>
-                </div>
-              </div>
+              {ruleConfig?.rules && ruleConfig.rules.length > 0 ? ruleConfig.rules.map((rule: any, i: number) => {
+                if (rule.type === 'condition') {
+                  return (
+                    <div key={rule.id} className="bg-white border border-[#EFECE6] rounded-lg p-3 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm relative before:content-[''] before:absolute before:-left-4 before:top-1/2 before:w-4 before:h-[2px] before:bg-[#EFECE6]">
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-mono font-bold text-[#1A1615]">
+                        <span className="text-[#D4A753] break-all">{rule.field}</span> <span className="text-[#6E6A66]">{rule.operator}</span> <span>{rule.value}</span>
+                      </div>
+                      <div className="self-start md:self-auto">
+                        <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] rounded text-[9px] font-bold uppercase tracking-widest">VALIDATED</span>
+                      </div>
+                    </div>
+                  );
+                } else if (rule.type === 'group') {
+                  return (
+                    <div key={rule.id} className="bg-white border border-[#EFECE6] rounded-lg p-3 shadow-sm relative before:content-[''] before:absolute before:-left-4 before:top-1/2 before:w-4 before:h-[2px] before:bg-[#EFECE6]">
+                      <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 mb-2">
+                        <span className="text-[10px] font-bold tracking-widest uppercase text-[#1A1615]">SUB-GROUP ({rule.matchType})</span>
+                        <span className="text-[10px] font-medium text-[#9E9A93] italic">Group evaluation</span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-mono font-bold text-[#1A1615] pl-2 border-l-2 border-[#D4A753]">
+                        {rule.rules.map((subRule: any, j: number) => (
+                          <React.Fragment key={subRule.id}>
+                            <span className="text-[#D4A753] break-all">{subRule.field}</span> <span className="text-[#6E6A66]">{subRule.operator}</span> <span>{subRule.value}</span>
+                            {j < rule.rules.length - 1 && <span className="text-[#6E6A66] px-1 md:px-3">{rule.matchType === 'ANY' ? '||' : '&&'}</span>}
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              }) : (
+                <div className="text-[12px] text-[#6E6A66] italic">No rules defined.</div>
+              )}
             </div>
           </div>
 
@@ -3585,16 +3560,12 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[11px] font-bold text-[#1A1615] uppercase tracking-widest">FREE ITEM (BOGO PERK)</span>
-                  <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] rounded text-[9px] font-bold tracking-widest uppercase border border-[#BCE3D1]">100% WAIVED</span>
+                  <span className="text-[11px] font-bold text-[#1A1615] uppercase tracking-widest">{rewardConfig?.rewardType ? rewardConfig.rewardType.replace('_', ' ') : 'FREE ITEM'}</span>
+                  <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] rounded text-[9px] font-bold tracking-widest uppercase border border-[#BCE3D1]">REWARD ENABLED</span>
                 </div>
-                <h4 className="text-[14px] font-bold text-[#1A1615]">1x Complimentary Single Origin Geisha (250g Whole Bean)</h4>
-                <p className="text-[11px] font-medium text-[#6E6A66] mt-0.5">₹0.00 patron co-pay at point of checkout.</p>
+                <h4 className="text-[14px] font-bold text-[#1A1615]">{rewardConfig?.freeItem || 'Reward Configuration Pending'}</h4>
+                <p className="text-[11px] font-medium text-[#6E6A66] mt-0.5">Calculated automatically during POS settlement.</p>
               </div>
-            </div>
-            <div className="text-right">
-              <div className="text-[9px] uppercase font-bold tracking-widest text-[#9E9A93] mb-1">WHOLESALE UNIT VALUE</div>
-              <div className="text-[16px] font-bold text-[#1A1615] leading-none">₹28.00 <span className="text-[11px] font-medium text-[#6E6A66]">retail</span></div>
             </div>
           </div>
 
@@ -3605,9 +3576,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 <span className="text-[10px] font-bold tracking-widest uppercase">VELOCITY GUARDRAILS</span>
               </div>
               <ul className="space-y-2 text-[11px] font-medium text-[#1A1615]">
-                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Strictly limited to 1 time redemption per loyalty profile.</li>
-                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Campaign hard velocity cap: <span className="font-bold">500 claims maximum</span>.</li>
-                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Hard financial ceiling: <span className="font-bold">₹3,500 incentive budget cap</span>.</li>
+                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Strictly limited to {rewardConfig?.maxRedemptions || 1} time redemption per loyalty profile.</li>
+                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Campaign hard velocity cap: <span className="font-bold">{rewardConfig?.totalBudgetCap || 500} claims maximum</span>.</li>
               </ul>
             </div>
 
@@ -3617,76 +3587,16 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 <span className="text-[10px] font-bold tracking-widest uppercase">EXPIRATION &amp; PUSH TRIGGERS</span>
               </div>
               <ul className="space-y-2 text-[11px] font-medium text-[#1A1615]">
-                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Valid for dynamic 14 days upon receiving trigger token.</li>
-                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Automated push alert via Apple/Google Wallet 48h prior to cutoff.</li>
-                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">WhatsApp concierge ping configured for Obsidian tier members.</li>
+                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Valid for {rewardConfig?.expiryType === 'Days' ? rewardConfig.expiryDays + ' days' : rewardConfig?.expiryDate || '14 days'} upon receiving trigger token.</li>
               </ul>
             </div>
           </div>
 
-          {/* Wallet Credit Cost Disclosure Box */}
-          <div className="mt-6 bg-[#FAF6EE] border border-[#EAE6E1] rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#D4A753]/20 flex items-center justify-center text-[#9E782F] shrink-0 font-bold">
-                <Wallet className="w-4 h-4" />
-              </div>
-              <div>
-                <div className="font-extrabold text-[#1A1615]">Campaign Launch Cost &amp; Commission Disclosure</div>
-                <div className="text-[#6E6A66] mt-0.5">
-                  Publishing this campaign costs <strong>50 credits</strong>. Each customer redemption will additionally cost <strong>5 credits</strong> from your wallet.
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-lg border border-[#EAE6E1] shrink-0">
-              <span className="text-[#6E6A66] font-medium">Wallet Balance:</span>
-              <span className={`font-extrabold ${wallet.balance < 50 ? 'text-red-600' : 'text-emerald-700'}`}>
-                {wallet.balance} credits
-              </span>
-            </div>
-          </div>
         </div>
       </div>
 
       <div className="lg:col-span-4 space-y-6">
-        {/* Right Sidebar 1: Deployment Forecast */}
-        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">EXECUTIVE PROJECTION</span>
-            <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] border border-[#BCE3D1] rounded text-[9px] font-bold tracking-widest uppercase">8.4x ROI</span>
-          </div>
-
-          <h3 className="text-[16px] font-bold text-[#1A1615] mb-6">Deployment Forecast</h3>
-
-          <div className="space-y-4 mb-6">
-            <div className="flex items-center justify-between border-b border-[#EFECE6] pb-3">
-              <span className="text-[12px] font-medium text-[#6E6A66]">Estimated Claims</span>
-              <span className="text-[13px] font-bold text-[#1A1615]">420 – 510 claims</span>
-            </div>
-            <div className="flex items-center justify-between border-b border-[#EFECE6] pb-3">
-              <span className="text-[12px] font-medium text-[#6E6A66]">Projected Net<br />GMV</span>
-              <span className="text-[16px] font-bold text-[#0D7A53]">+₹16,400.00</span>
-            </div>
-            <div className="flex items-center justify-between border-b border-[#EFECE6] pb-3">
-              <span className="text-[12px] font-medium text-[#6E6A66]">Incentive Budget<br />Allocated</span>
-              <div className="text-right">
-                <div className="text-[13px] font-bold text-[#1A1615]">₹1,950 / ₹3,500 cap</div>
-                <div className="text-[9px] font-medium text-[#9E9A93] mt-0.5">55.7% max financial exposure</div>
-              </div>
-            </div>
-            <div className="flex items-center justify-between pt-1">
-              <span className="text-[12px] font-medium text-[#6E6A66]">Projected Net<br />Margin</span>
-              <div className="text-right">
-                <span className="text-[16px] font-bold text-[#1A1615]">71.8%</span>
-                <span className="text-[11px] font-bold text-[#0D7A53] ml-1">(Target &gt;65%)</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3 flex items-center gap-2 shadow-sm">
-            <div className="w-2 h-2 rounded-full bg-[#0D7A53] animate-pulse shrink-0"></div>
-            <span className="text-[10px] font-bold text-[#6E6A66] leading-tight">Roastery Register Mesh: <span className="text-[#1A1615]">3 Outlets Synced</span> (14ms latency)</span>
-          </div>
-        </div>
+        {/* Right Sidebar 1 Removed (was mock Executive Projections) */}
 
         {/* Right Sidebar 2: Patron Experience */}
         <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 shadow-sm">
@@ -3713,123 +3623,26 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 <span className="text-[8px] font-semibold text-white/50 tracking-widest uppercase text-right leading-tight">RESERVE<br />PASS CARD</span>
               </div>
 
-              <div className="mt-8 mb-4">
-                <span className="inline-block px-2 py-0.5 border border-[#D4A753]/30 text-[#D4A753] rounded text-[8px] font-bold tracking-widest uppercase mb-2">EXCLUSIVE AUTUMN PERK</span>
-                <h4 className="text-[18px] font-black text-white leading-snug mb-1">BUY 2, GET 1 FREE</h4>
-                <p className="text-[10px] font-medium text-white/70 mb-4">Single Origin Geisha (Whole Bean 250g)</p>
+              <div className="mt-3 mb-4 flex justify-between items-start gap-2">
+                <div>
+                  <span className="inline-block px-2 py-0.5 border border-[#D4A753]/30 text-[#D4A753] rounded text-[8px] font-bold tracking-widest uppercase mb-2">{getCampaignTypeLabel(fullCampaignType).toUpperCase()}</span>
+                  <h4 className="text-[18px] font-black text-white leading-snug mb-1">{campaignName || 'NEW REWARD PERK'}</h4>
+                  <p className="text-[10px] font-medium text-white/70">{rewardConfig?.freeItem || (rewardConfig?.rewardType ? rewardConfig.rewardType.replace('_', ' ').toUpperCase() : 'Special Reward')}</p>
+                </div>
+                <div className="bg-white/10 border border-white/20 text-white/90 text-[8px] font-bold tracking-widest px-2 py-1 rounded uppercase mt-0.5 whitespace-nowrap">
+                  DEMO QR
+                </div>
               </div>
 
               {/* QR Code Area */}
               <div className="bg-white rounded-lg p-3 flex flex-col items-center justify-center">
-                <svg viewBox="0 0 120 120" className="w-20 h-20 mb-1.5">
-                  {/* QR Code Pattern */}
-                  <rect x="0" y="0" width="120" height="120" fill="white"/>
-                  {/* Top-left finder */}
-                  <rect x="4" y="4" width="28" height="28" fill="#1A1615"/>
-                  <rect x="8" y="8" width="20" height="20" fill="white"/>
-                  <rect x="12" y="12" width="12" height="12" fill="#1A1615"/>
-                  {/* Top-right finder */}
-                  <rect x="88" y="4" width="28" height="28" fill="#1A1615"/>
-                  <rect x="92" y="8" width="20" height="20" fill="white"/>
-                  <rect x="96" y="12" width="12" height="12" fill="#1A1615"/>
-                  {/* Bottom-left finder */}
-                  <rect x="4" y="88" width="28" height="28" fill="#1A1615"/>
-                  <rect x="8" y="92" width="20" height="20" fill="white"/>
-                  <rect x="12" y="96" width="12" height="12" fill="#1A1615"/>
-                  {/* Data modules row 1 */}
-                  <rect x="36" y="4" width="4" height="4" fill="#1A1615"/>
-                  <rect x="44" y="4" width="4" height="4" fill="#1A1615"/>
-                  <rect x="52" y="4" width="4" height="4" fill="#1A1615"/>
-                  <rect x="60" y="4" width="8" height="4" fill="#1A1615"/>
-                  <rect x="72" y="4" width="4" height="4" fill="#1A1615"/>
-                  <rect x="80" y="4" width="4" height="4" fill="#1A1615"/>
-                  {/* Data modules row 2 */}
-                  <rect x="36" y="12" width="4" height="4" fill="#1A1615"/>
-                  <rect x="48" y="12" width="8" height="4" fill="#1A1615"/>
-                  <rect x="64" y="12" width="4" height="4" fill="#1A1615"/>
-                  <rect x="76" y="12" width="4" height="4" fill="#1A1615"/>
-                  {/* Data modules rows */}
-                  <rect x="36" y="20" width="8" height="4" fill="#1A1615"/>
-                  <rect x="52" y="20" width="4" height="4" fill="#1A1615"/>
-                  <rect x="60" y="20" width="4" height="4" fill="#1A1615"/>
-                  <rect x="72" y="20" width="8" height="4" fill="#1A1615"/>
-                  {/* Middle area data */}
-                  <rect x="4" y="36" width="4" height="4" fill="#1A1615"/>
-                  <rect x="12" y="36" width="8" height="4" fill="#1A1615"/>
-                  <rect x="28" y="36" width="4" height="4" fill="#1A1615"/>
-                  <rect x="40" y="36" width="4" height="4" fill="#1A1615"/>
-                  <rect x="52" y="36" width="8" height="4" fill="#1A1615"/>
-                  <rect x="64" y="36" width="4" height="4" fill="#1A1615"/>
-                  <rect x="76" y="36" width="8" height="4" fill="#1A1615"/>
-                  <rect x="92" y="36" width="4" height="4" fill="#1A1615"/>
-                  <rect x="104" y="36" width="8" height="4" fill="#1A1615"/>
-                  {/* Timing pattern */}
-                  <rect x="4" y="44" width="4" height="4" fill="#1A1615"/>
-                  <rect x="16" y="44" width="4" height="4" fill="#1A1615"/>
-                  <rect x="24" y="44" width="4" height="4" fill="#1A1615"/>
-                  <rect x="36" y="44" width="4" height="4" fill="#1A1615"/>
-                  <rect x="48" y="44" width="4" height="4" fill="#1A1615"/>
-                  <rect x="56" y="44" width="4" height="4" fill="#1A1615"/>
-                  <rect x="68" y="44" width="4" height="4" fill="#1A1615"/>
-                  <rect x="80" y="44" width="4" height="4" fill="#1A1615"/>
-                  <rect x="88" y="44" width="4" height="4" fill="#1A1615"/>
-                  <rect x="100" y="44" width="4" height="4" fill="#1A1615"/>
-                  <rect x="112" y="44" width="4" height="4" fill="#1A1615"/>
-                  {/* More data */}
-                  <rect x="8" y="52" width="4" height="4" fill="#1A1615"/>
-                  <rect x="20" y="52" width="4" height="4" fill="#1A1615"/>
-                  <rect x="36" y="52" width="8" height="4" fill="#1A1615"/>
-                  <rect x="52" y="52" width="4" height="4" fill="#1A1615"/>
-                  <rect x="64" y="52" width="8" height="4" fill="#1A1615"/>
-                  <rect x="80" y="52" width="4" height="4" fill="#1A1615"/>
-                  <rect x="96" y="52" width="4" height="4" fill="#1A1615"/>
-                  <rect x="108" y="52" width="8" height="4" fill="#1A1615"/>
-                  {/* Lower data */}
-                  <rect x="4" y="60" width="4" height="4" fill="#1A1615"/>
-                  <rect x="16" y="60" width="8" height="4" fill="#1A1615"/>
-                  <rect x="32" y="60" width="4" height="4" fill="#1A1615"/>
-                  <rect x="44" y="60" width="4" height="4" fill="#1A1615"/>
-                  <rect x="56" y="60" width="8" height="4" fill="#1A1615"/>
-                  <rect x="72" y="60" width="4" height="4" fill="#1A1615"/>
-                  <rect x="84" y="60" width="4" height="4" fill="#1A1615"/>
-                  <rect x="100" y="60" width="4" height="4" fill="#1A1615"/>
-                  <rect x="112" y="60" width="4" height="4" fill="#1A1615"/>
-                  {/* Bottom data rows */}
-                  <rect x="40" y="72" width="8" height="4" fill="#1A1615"/>
-                  <rect x="56" y="72" width="4" height="4" fill="#1A1615"/>
-                  <rect x="68" y="72" width="4" height="4" fill="#1A1615"/>
-                  <rect x="84" y="72" width="8" height="4" fill="#1A1615"/>
-                  <rect x="100" y="72" width="4" height="4" fill="#1A1615"/>
-                  <rect x="36" y="80" width="4" height="4" fill="#1A1615"/>
-                  <rect x="48" y="80" width="8" height="4" fill="#1A1615"/>
-                  <rect x="64" y="80" width="4" height="4" fill="#1A1615"/>
-                  <rect x="76" y="80" width="4" height="4" fill="#1A1615"/>
-                  <rect x="92" y="80" width="8" height="4" fill="#1A1615"/>
-                  <rect x="108" y="80" width="4" height="4" fill="#1A1615"/>
-                  {/* Bottom right data */}
-                  <rect x="40" y="88" width="4" height="4" fill="#1A1615"/>
-                  <rect x="52" y="88" width="8" height="4" fill="#1A1615"/>
-                  <rect x="68" y="88" width="4" height="4" fill="#1A1615"/>
-                  <rect x="80" y="88" width="4" height="4" fill="#1A1615"/>
-                  <rect x="96" y="88" width="4" height="4" fill="#1A1615"/>
-                  <rect x="112" y="88" width="4" height="4" fill="#1A1615"/>
-                  <rect x="36" y="96" width="8" height="4" fill="#1A1615"/>
-                  <rect x="52" y="96" width="4" height="4" fill="#1A1615"/>
-                  <rect x="64" y="96" width="8" height="4" fill="#1A1615"/>
-                  <rect x="80" y="96" width="8" height="4" fill="#1A1615"/>
-                  <rect x="100" y="96" width="4" height="4" fill="#1A1615"/>
-                  <rect x="40" y="104" width="4" height="4" fill="#1A1615"/>
-                  <rect x="56" y="104" width="4" height="4" fill="#1A1615"/>
-                  <rect x="72" y="104" width="8" height="4" fill="#1A1615"/>
-                  <rect x="88" y="104" width="4" height="4" fill="#1A1615"/>
-                  <rect x="104" y="104" width="4" height="4" fill="#1A1615"/>
-                  <rect x="36" y="112" width="4" height="4" fill="#1A1615"/>
-                  <rect x="48" y="112" width="4" height="4" fill="#1A1615"/>
-                  <rect x="60" y="112" width="4" height="4" fill="#1A1615"/>
-                  <rect x="76" y="112" width="4" height="4" fill="#1A1615"/>
-                  <rect x="92" y="112" width="8" height="4" fill="#1A1615"/>
-                  <rect x="108" y="112" width="8" height="4" fill="#1A1615"/>
-                </svg>
+                <div className="relative">
+                  <img src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(JSON.stringify({
+                    name: campaignName || 'Untitled',
+                    type: fullCampaignType,
+                    reward: rewardConfig?.freeItem || rewardConfig?.rewardType || 'Pending'
+                  }))}`} alt="Demo QR Code" className="w-20 h-20 mb-1.5 object-contain" />
+                </div>
                 <div className="text-[6px] font-bold tracking-widest text-[#1A1615] uppercase mt-1 text-center leading-tight">
                   <span className="flex items-center justify-center gap-1"><Wifi className="w-2.5 h-2.5 rotate-90" /> HOLD NEAR COUNTER NFC OR</span>
                   SCAN QR CODE
@@ -3938,7 +3751,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               </button>
               {statusFilterDropdownOpen && (
                 <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#EAE6E1] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
-                  {['All Status', 'Active', 'Draft', 'Ended'].map((status) => (
+                  {['All Status', 'Active', 'Scheduled', 'Draft', 'Ended'].map((status) => (
                     <button
                       key={status}
                       type="button"
@@ -3998,6 +3811,14 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       {c.status === 'Active' ? (
                         <span className="px-2.5 py-0.5 bg-[#EBF7F0] border border-[#15803D]/20 text-[#15803D] rounded-full text-xs font-bold uppercase flex items-center w-max gap-1">
                           <span className="w-1.5 h-1.5 bg-[#15803D] rounded-full"></span> {c.status}
+                        </span>
+                      ) : c.status === 'Scheduled' ? (
+                        <span className="px-2.5 py-0.5 bg-[#FEF3C7] border border-[#D97706]/20 text-[#D97706] rounded-full text-xs font-bold uppercase flex items-center w-max gap-1">
+                          <span className="w-1.5 h-1.5 bg-[#D97706] rounded-full"></span> {c.status}
+                        </span>
+                      ) : c.status === 'Ended' ? (
+                        <span className="px-2.5 py-0.5 bg-[#FEE2E2] border border-[#DC2626]/20 text-[#DC2626] rounded-full text-xs font-bold uppercase flex items-center w-max gap-1">
+                          <span className="w-1.5 h-1.5 bg-[#DC2626] rounded-full"></span> {c.status}
                         </span>
                       ) : (
                         <span className="px-2.5 py-0.5 bg-[#FAF6EE] border border-[#E5D7BE] text-[#9E782F] rounded-full text-xs font-semibold uppercase flex items-center w-max gap-1">
@@ -4060,6 +3881,14 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       {c.status === 'Active' ? (
                         <span className="px-2 py-0.5 bg-[#E0F9ED] border border-[#BCE3D1] text-[#0D7A53] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
                           <span className="w-1.5 h-1.5 bg-[#0D7A53] rounded-full"></span> {c.status}
+                        </span>
+                      ) : c.status === 'Scheduled' ? (
+                        <span className="px-2 py-0.5 bg-[#FEF3C7] border border-[#FDE68A] text-[#D97706] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
+                          <span className="w-1.5 h-1.5 bg-[#D97706] rounded-full"></span> {c.status}
+                        </span>
+                      ) : c.status === 'Ended' ? (
+                        <span className="px-2 py-0.5 bg-[#FEE2E2] border border-[#FECACA] text-[#DC2626] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
+                          <span className="w-1.5 h-1.5 bg-[#DC2626] rounded-full"></span> {c.status}
                         </span>
                       ) : (
                         <span className="px-2 py-0.5 bg-[#EFECE6] text-[#6E6A66] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">

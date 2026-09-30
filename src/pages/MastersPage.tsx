@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Plus, Edit2, Trash2, Database, Search, X, ChevronDown, Check, Layers } from 'lucide-react';
+import { Plus, Edit2, Trash2, Database, Search, X, ChevronDown, Check, Layers, Package } from 'lucide-react';
 import type { AppDispatch, RootState } from '../store/store';
 import { 
   fetchRuleFields, fetchTierOptions, RuleField, TierOption,
   addRuleField, updateRuleField, deleteRuleField,
   addTierOption, updateTierOption, deleteTierOption
 } from '../store/slices/masterSlice';
+import { fetchRewardTypes, addRewardType, updateRewardType, deleteRewardType, RewardTypeOption } from '../store/slices/masterSlice';
 
 interface MastersPageProps {
-  defaultTab?: 'fields' | 'tiers';
+  defaultTab?: 'fields' | 'tiers' | 'rewards';
 }
 
 export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { ruleFields, tierOptions, isLoadingFields, isLoadingTiers } = useSelector((state: RootState) => state.master);
+  const { rewardTypes: rewards, isLoadingRewards: isLoadingRewardTypes } = useSelector((state: RootState) => state.master);
   
-  const [activeTab, setActiveTab] = useState<'fields' | 'tiers'>(defaultTab);
+  const [activeTab, setActiveTab] = useState<'fields' | 'tiers' | 'rewards'>(defaultTab);
 
   useEffect(() => {
     setActiveTab(defaultTab);
@@ -25,6 +27,7 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
   useEffect(() => {
     dispatch(fetchRuleFields());
     dispatch(fetchTierOptions());
+    dispatch(fetchRewardTypes());
   }, [dispatch]);
 
   // Modal states
@@ -35,10 +38,18 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
   const [editingTier, setEditingTier] = useState<TierOption | null>(null);
 
   // Delete Confirmation State
-  const [deleteConfirmation, setDeleteConfirmation] = useState<{ type: 'field' | 'tier', id: string, name: string } | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ type: 'field' | 'tier' | 'reward', id: string, name: string } | null>(null);
 
   const [hasSubmittedField, setHasSubmittedField] = useState(false);
   const [hasSubmittedTier, setHasSubmittedTier] = useState(false);
+  const [hasSubmittedRewardType, setHasSubmittedRewardType] = useState(false);
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   // Field Form State
   const [fieldKey, setFieldKey] = useState('');
@@ -82,8 +93,10 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
     const fieldData: RuleField = { key: actualKey, label: fieldLabel, type: fieldType, isActive: fieldIsActive };
     if (editingField) {
       dispatch(updateRuleField(fieldData));
+      showToast('Rule Field updated successfully!');
     } else {
       dispatch(addRuleField(fieldData));
+      showToast('Rule Field added successfully!');
     }
     setHasSubmittedField(false);
     setIsFieldModalOpen(false);
@@ -121,8 +134,10 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
     const tierData: TierOption = { value: actualValue, label: tierLabel, isActive: tierIsActive };
     if (editingTier) {
       dispatch(updateTierOption(tierData));
+      showToast('Tier Option updated successfully!');
     } else {
       dispatch(addTierOption(tierData));
+      showToast('Tier Option added successfully!');
     }
     setHasSubmittedTier(false);
     setIsTierModalOpen(false);
@@ -132,26 +147,80 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
     setDeleteConfirmation({ type: 'tier', id: tier.value, name: tier.label });
   };
 
+  const [isRewardTypeModalOpen, setIsRewardTypeModalOpen] = useState(false);
+  const [editingRewardType, setEditingRewardType] = useState<RewardTypeOption | null>(null);
+  const [rewardTypeTitle, setRewardTypeTitle] = useState('');
+  const [rewardTypeDesc, setRewardTypeDesc] = useState('');
+  const [rewardTypeIcon, setRewardTypeIcon] = useState('Gift');
+  const [rewardTypeIsActive, setRewardTypeIsActive] = useState(true);
+
+  const handleAddRewardType = () => {
+    setEditingRewardType(null);
+    setRewardTypeTitle('');
+    setRewardTypeDesc('');
+    setRewardTypeIcon('Gift');
+    setRewardTypeIsActive(true);
+    setHasSubmittedRewardType(false);
+    setIsRewardTypeModalOpen(true);
+  };
+
+  const handleEditRewardType = (reward: RewardTypeOption) => {
+    setEditingRewardType(reward);
+    setRewardTypeTitle(reward.title);
+    setRewardTypeDesc(reward.desc || '');
+    setRewardTypeIcon(reward.iconName || 'Gift');
+    setRewardTypeIsActive(reward.isActive !== false);
+    setHasSubmittedRewardType(false);
+    setIsRewardTypeModalOpen(true);
+  };
+
+  const handleSaveRewardType = () => {
+    setHasSubmittedRewardType(true);
+    if (!rewardTypeTitle.trim()) return;
+
+    const rewardData = {
+      id: editingRewardType ? editingRewardType.id : rewardTypeTitle.toLowerCase().replace(/\s+/g, '_'),
+      title: rewardTypeTitle.trim(),
+      desc: rewardTypeDesc.trim(),
+      iconName: rewardTypeIcon,
+      isActive: rewardTypeIsActive
+    };
+
+    if (editingRewardType) {
+      dispatch(updateRewardType(rewardData));
+      showToast('Reward Type updated successfully!');
+    } else {
+      dispatch(addRewardType(rewardData));
+      showToast('Reward Type added successfully!');
+    }
+    setHasSubmittedRewardType(false);
+    setIsRewardTypeModalOpen(false);
+  };
+
+  const handleDeleteRewardType = (reward: RewardTypeOption) => {
+    setDeleteConfirmation({ type: 'reward', id: reward.id, name: reward.title });
+  };
+
   return (
     <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6 flex flex-col h-full font-sans relative">
       {/* Header */}
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-2xl font-bold text-[#1A1615] flex items-center gap-2">
-            <Database className="w-6 h-6 text-[#D4A753]" />
-            {activeTab === 'fields' ? 'Rule Fields Master' : 'Tier Options Master'}
+            {activeTab === 'rewards' ? <Package className="w-6 h-6 text-[#D4A753]" /> : <Database className="w-6 h-6 text-[#D4A753]" />}
+            {activeTab === 'fields' ? 'Rule Fields Master' : activeTab === 'tiers' ? 'Tier Options Master' : 'Reward Types Master'}
           </h1>
           <p className="text-sm text-[#6E6A66] mt-1">
-            Manage {activeTab === 'fields' ? 'rule fields' : 'tier options'} for the platform.
+            Manage {activeTab === 'fields' ? 'rule fields' : activeTab === 'tiers' ? 'tier options' : 'rewards'} for the platform.
           </p>
         </div>
         <div className="flex gap-3">
           <button 
-            onClick={activeTab === 'fields' ? handleAddField : handleAddTier}
+            onClick={activeTab === 'fields' ? handleAddField : activeTab === 'tiers' ? handleAddTier : handleAddRewardType}
             className="flex items-center gap-2 px-4 py-2 bg-[#1A1615] text-white rounded-lg text-sm font-bold hover:bg-[#2A2422] transition-colors"
           >
             <Plus className="w-4 h-4" />
-            Add {activeTab === 'fields' ? 'Field' : 'Tier'}
+            Add {activeTab === 'fields' ? 'Field' : activeTab === 'tiers' ? 'Tier' : 'Reward Type'}
           </button>
         </div>
       </div>
@@ -210,7 +279,7 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
               )}
             </tbody>
           </table>
-        ) : (
+        ) : activeTab === 'tiers' ? (
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-[#FAF8F5] border-b border-[#EFECE6]">
@@ -256,8 +325,132 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
               )}
             </tbody>
           </table>
+        ) : (
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-[#FAF8F5] border-b border-[#EFECE6]">
+                <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider">Reward Type Name</th>
+                <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider">Status</th>
+                <th className="py-3 px-4 text-xs font-bold text-[#9E9A93] uppercase tracking-wider text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoadingRewardTypes ? (
+                <tr><td colSpan={3} className="py-8 text-center text-sm text-[#6E6A66]">Loading...</td></tr>
+              ) : rewards.length === 0 ? (
+                <tr>
+                  <td colSpan={3} className="py-12 text-center">
+                    <div className="flex flex-col items-center justify-center text-[#7C746C]">
+                      <Package className="w-10 h-10 mb-3 text-[#D4A753]/40" />
+                      <div className="text-sm font-bold text-[#1A1615]">No rewards found</div>
+                      <div className="text-xs mt-1">Add a new reward to get started.</div>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                rewards.map(reward => (
+                  <tr key={reward.id} className="border-b border-[#EFECE6] hover:bg-[#FAF8F5]">
+                    <td className="py-3 px-4 text-sm font-medium text-[#1A1615]">
+                      <div>{reward.title}</div>
+                      <div className="text-xs text-[#6E6A66]">{reward.desc}</div>
+                    </td>
+                    <td className="py-3 px-4">
+                      {reward.isActive !== false ? (
+                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold bg-[#E0F9ED] text-[#0D7A53]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Active
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold bg-[#F0F2F5] text-[#6E6A66]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#9E9A93]"></span> Inactive
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-3 px-4 flex items-center justify-end gap-2">
+                      <button onClick={() => handleEditRewardType(reward)} className="p-1.5 text-[#6E6A66] hover:bg-[#EFECE6] rounded-md transition-colors cursor-pointer"><Edit2 className="w-4 h-4" /></button>
+                      <button onClick={() => handleDeleteRewardType(reward)} className="p-1.5 text-[#6E6A66] hover:bg-red-50 hover:text-red-600 rounded-md transition-colors cursor-pointer"><Trash2 className="w-4 h-4" /></button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         )}
       </div>
+
+      {/* Reward Type Modal */}
+      {isRewardTypeModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative">
+            <button 
+              onClick={() => setIsRewardTypeModalOpen(false)} 
+              className="absolute top-4 right-4 p-1.5 text-[#9E9A93] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-xl font-bold text-[#1A1615] mb-4">
+              {editingRewardType ? 'Edit Reward Type' : 'Add New Reward Type'}
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#6E6A66] mb-1">Reward Type Name <span className="text-[#DC2626]">*</span></label>
+                <input 
+                  type="text" 
+                  value={rewardTypeTitle}
+                  onChange={e => setRewardTypeTitle(e.target.value)}
+                  className={`w-full border rounded-lg px-3 py-2 text-sm focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753] outline-none ${hasSubmittedRewardType && !rewardTypeTitle.trim() ? 'border-[#DC2626] bg-[#FEF2F2]' : 'border-[#EAE6E1]'}`} 
+                  placeholder="Enter reward name"
+                />
+                {hasSubmittedRewardType && !rewardTypeTitle.trim() && <p className="text-[#DC2626] text-[10px] font-bold mt-1">Name is required</p>}
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-[#6E6A66] mb-1">Description</label>
+                <textarea 
+                  value={rewardTypeDesc}
+                  onChange={e => setRewardTypeDesc(e.target.value)}
+                  className="w-full border border-[#EAE6E1] rounded-lg px-3 py-2 text-sm focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753] outline-none min-h-[80px]" 
+                  placeholder="Enter description (optional)"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-[#6E6A66] mb-1">Icon Selection</label>
+                <div className="relative">
+                  <select
+                    value={rewardTypeIcon}
+                    onChange={e => setRewardTypeIcon(e.target.value)}
+                    className="w-full border border-[#EAE6E1] rounded-lg pl-3 pr-10 py-2 text-sm appearance-none focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753] outline-none bg-white cursor-pointer"
+                  >
+                    <option value="Wallet">Wallet (Cashback)</option>
+                    <option value="Percent">Percent (Discount)</option>
+                    <option value="Star">Star (Points)</option>
+                    <option value="Gift">Gift (Free Item)</option>
+                    <option value="Package">Package</option>
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-[#9E9A93] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+              </div>
+              <label className="flex items-center gap-3 cursor-pointer p-3 border border-[#EAE6E1] rounded-lg hover:bg-[#FAF8F5] transition-colors mt-2">
+                <div className="relative flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    checked={rewardTypeIsActive}
+                    onChange={(e) => setRewardTypeIsActive(e.target.checked)}
+                    className="w-5 h-5 appearance-none border-2 border-[#D1CDC7] rounded-md checked:bg-[#D4A753] checked:border-[#D4A753] transition-colors cursor-pointer"
+                  />
+                  {rewardTypeIsActive && <Check className="w-3.5 h-3.5 text-white absolute pointer-events-none" />}
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-[#1A1615]">Active Reward Type</div>
+                  <div className="text-[11px] text-[#6E6A66]">Inactive rewards won't appear in the campaign builder.</div>
+                </div>
+              </label>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => { setHasSubmittedRewardType(false); setIsRewardTypeModalOpen(false); }} className="px-4 py-2 text-sm font-bold text-[#6E6A66] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer">Cancel</button>
+              <button onClick={handleSaveRewardType} className="px-4 py-2 text-sm font-bold text-white bg-[#D4A753] hover:bg-[#B68F45] rounded-lg transition-colors cursor-pointer">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Field Modal */}
       {isFieldModalOpen && (
@@ -389,7 +582,7 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
               <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
                 <Trash2 className="w-6 h-6 text-red-600" />
               </div>
-              <h2 className="text-xl font-bold text-[#1A1615] mb-2">Delete {deleteConfirmation.type === 'field' ? 'Rule Field' : 'Tier Option'}</h2>
+              <h2 className="text-xl font-bold text-[#1A1615] mb-2">Delete {deleteConfirmation.type === 'field' ? 'Rule Field' : deleteConfirmation.type === 'tier' ? 'Tier Option' : 'Reward Type'}</h2>
               <p className="text-sm text-[#6E6A66]">
                 Are you sure you want to delete <span className="font-bold text-[#1A1615]">{deleteConfirmation.name}</span>? This action cannot be undone.
               </p>
@@ -405,8 +598,13 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
                 onClick={() => {
                   if (deleteConfirmation.type === 'field') {
                     dispatch(deleteRuleField(deleteConfirmation.id));
-                  } else {
+                    showToast('Rule Field deleted successfully!');
+                  } else if (deleteConfirmation.type === 'tier') {
                     dispatch(deleteTierOption(deleteConfirmation.id));
+                    showToast('Tier Option deleted successfully!');
+                  } else {
+                    dispatch(deleteRewardType(deleteConfirmation.id));
+                    showToast('Reward Type deleted successfully!');
                   }
                   setDeleteConfirmation(null);
                 }}
@@ -416,6 +614,16 @@ export const MastersPage: React.FC<MastersPageProps> = ({ defaultTab = 'fields' 
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 bg-[#0D7A53] text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <Check className="w-5 h-5" />
+          <span className="font-semibold text-sm">{toastMessage}</span>
+          <button onClick={() => setToastMessage(null)} className="ml-2 hover:opacity-75 transition-opacity">
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
     </div>

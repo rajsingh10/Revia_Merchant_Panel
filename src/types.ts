@@ -149,6 +149,7 @@ export type NavRoute =
   | '/item-catalog'
   | '/masters/rule-fields'
   | '/masters/tier-options'
+  | '/masters/reward-types'
   | '/catalog'
   | '/orders'
   | '/invoices'
