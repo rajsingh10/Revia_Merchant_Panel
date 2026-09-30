@@ -145,8 +145,10 @@ interface CampaignRulesStepProps {
   campaignType: string;
   currency: string;
   onContinue: (config: any) => void;
+  onChange?: (config: any) => void;
   onBack: () => void;
   campaignName?: string;
+  initialRules?: any[];
 }
 
 type RuleCondition = {
@@ -219,7 +221,7 @@ const RuleDropdown = ({ value, options, onChange, placeholder, minWidth = '160px
   );
 };
 
-const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, currency, onContinue, onBack, campaignName }) => {
+const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, currency, onContinue, onChange, onBack, campaignName, initialRules }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { ruleFields, tierOptions } = useSelector((state: RootState) => state.master);
   const reduxBranches = useSelector((state: RootState) => state.branch.branches);
@@ -250,7 +252,7 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
   const [matchType, setMatchType] = useState<'ALL' | 'ANY'>('ALL');
   const [showErrors, setShowErrors] = useState<boolean>(false);
   const [selectedRuleIds, setSelectedRuleIds] = useState<string[]>([]);
-    const [rules, setRules] = useState<RuleNode[]>([
+  const [rules, setRules] = useState<RuleNode[]>(initialRules && initialRules.length > 0 ? initialRules : [
     {
       id: 'r1', type: 'condition', field: 'customer_lifetime', operator: '>=', value: ''
     }
@@ -320,6 +322,20 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
       })));
     }
   }, [reduxBranches]);
+
+  useEffect(() => {
+    if (onChange) {
+      onChange({ 
+        rules, 
+        matchType,
+        triggerEvent,
+        startDate,
+        endDate,
+        activeBranches: branches.filter(b => b.selected).map(b => b.name)
+      });
+    }
+  }, [rules, matchType, triggerEvent, startDate, endDate, branches, onChange]);
+
   const [isAddingLocation, setIsAddingLocation] = useState<boolean>(false);
   const [newLocationName, setNewLocationName] = useState<string>('');
 
@@ -504,7 +520,14 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
       setShowErrors(true);
       return;
     }
-    onContinue({ rules, matchType });
+    onContinue({ 
+      rules, 
+      matchType,
+      triggerEvent,
+      startDate,
+      endDate,
+      activeBranches: branches.filter(b => b.selected).map(b => b.name)
+    });
   };
 
   const renderCondition = (rule: RuleCondition, groupId?: string, idx?: number) => {
@@ -1035,18 +1058,20 @@ interface CampaignRewardStepProps {
   ruleConfig: any;
   currency: string;
   onContinue: (config: any) => void;
+  onChange?: (config: any) => void;
   onBack: () => void;
+  initialRewardConfig?: any;
 }
 
-const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, ruleConfig, currency, onContinue, onBack }) => {
+const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, ruleConfig, currency, onContinue, onChange, onBack, initialRewardConfig }) => {
   const currSymbol = currency.match(/\((.*?)\)/)?.[1] || '₹';
-  const [rewardType, setRewardType] = useState<string>('free_item');
-  const [cashbackAmount, setCashbackAmount] = useState<number>(10);
+  const [rewardType, setRewardType] = useState<string>(initialRewardConfig?.rewardType || 'free_item');
+  const [cashbackAmount, setCashbackAmount] = useState<number>(initialRewardConfig?.cashbackAmount || 10);
 
-  const [discountType, setDiscountType] = useState<'Fixed' | 'Percentage'>('Percentage');
-  const [discountValue, setDiscountValue] = useState<number>(15);
+  const [discountType, setDiscountType] = useState<'Fixed' | 'Percentage'>(initialRewardConfig?.discountType || 'Percentage');
+  const [discountValue, setDiscountValue] = useState<number>(initialRewardConfig?.discountValue || 15);
 
-  const [rewardPoints, setRewardPoints] = useState<number>(500);
+  const [rewardPoints, setRewardPoints] = useState<number>(initialRewardConfig?.rewardPoints || 500);
   const { rewardTypes } = useSelector((state: RootState) => state.master);
   
   const getIconComponent = (iconName: string) => {
@@ -1060,7 +1085,7 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
     }
   };
 
-  const [freeItem, setFreeItem] = useState<string>('');
+  const [freeItem, setFreeItem] = useState<string>(initialRewardConfig?.freeItem || '');
   const [freeItemDropdownOpen, setFreeItemDropdownOpen] = useState(false);
   const [showFreeItemNewInput, setShowFreeItemNewInput] = useState(false);
   const [freeItemNewName, setFreeItemNewName] = useState('');
@@ -1069,13 +1094,13 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
   const [localProducts, setLocalProducts] = useState<string[]>([]);
   const catalogProducts = [...storeProducts, ...localProducts];
 
-  const [maxRedemptions, setMaxRedemptions] = useState<number>(1);
-  const [totalBudgetCap, setTotalBudgetCap] = useState<number>(500);
-  const [coolingPeriodHours, setCoolingPeriodHours] = useState<number>(6);
+  const [maxRedemptions, setMaxRedemptions] = useState<number>(initialRewardConfig?.maxRedemptions || 1);
+  const [totalBudgetCap, setTotalBudgetCap] = useState<number>(initialRewardConfig?.totalBudgetCap || 500);
+  const [coolingPeriodHours, setCoolingPeriodHours] = useState<number>(initialRewardConfig?.coolingPeriodHours || 6);
   const [coolingPeriodDropdownOpen, setCoolingPeriodDropdownOpen] = useState(false);
   const coolingPeriodDropdownRef = useRef<HTMLDivElement>(null);
 
-  const [applicableBranches, setApplicableBranches] = useState<string>('all');
+  const [applicableBranches, setApplicableBranches] = useState<string>(initialRewardConfig?.applicableBranches || 'all');
   const [applicableBranchesDropdownOpen, setApplicableBranchesDropdownOpen] = useState(false);
   const applicableBranchesDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -1084,6 +1109,23 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
     { value: 'all', label: 'All Outlets & Branches' },
     ...branches.map(b => ({ value: String(b.id), label: b.name }))
   ];
+
+  useEffect(() => {
+    if (onChange) {
+      onChange({
+        rewardType,
+        cashbackAmount,
+        discountType,
+        discountValue,
+        rewardPoints,
+        freeItem,
+        maxRedemptions,
+        totalBudgetCap,
+        coolingPeriodHours,
+        applicableBranches
+      });
+    }
+  }, [rewardType, cashbackAmount, discountType, discountValue, rewardPoints, freeItem, maxRedemptions, totalBudgetCap, coolingPeriodHours, applicableBranches, onChange]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -1748,8 +1790,9 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       reward_type: resolvedRewardType,
       reward_value: rewardConfig?.rewardValue || rewardConfig?.discountValue || '50',
       is_active: !isDraft,
-      valid_from: startDate ? new Date(startDate).toISOString() : undefined,
-      valid_until: endDate ? new Date(endDate).toISOString() : undefined,
+      valid_from: (ruleConfig?.startDate || startDate) ? new Date(ruleConfig?.startDate || startDate).toISOString() : undefined,
+      valid_until: (ruleConfig?.endDate || endDate) ? new Date(ruleConfig?.endDate || endDate).toISOString() : undefined,
+      trigger_event: ruleConfig?.triggerEvent || 'qr_scan',
       
       // New fields to fully match frontend state
       priority_level: priorityLevel,
@@ -1760,6 +1803,27 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       total_budget_cap: 500, // Default since it's in child component
       cooling_period_hours: 6, // Default since it's in child component
       auto_revoke_on_refund: true, // Default since it's in child component
+
+      // Additional fields for audience filtering & advanced campaign settings
+      lifecycle_type: lifecycleType,
+      birthday_horizon_days: birthdayHorizon,
+      min_csat_score: 4.5, // Default/static CSAT score as per request
+      
+      direct_customer_name: directCustomerName,
+      direct_customer_mobile: directCustomerMobile,
+      direct_customer_bill_no: directCustomerBillNo,
+      direct_redemption_mode: directRedemptionMode,
+      
+      product_qr_quantity: productQrQuantity,
+      product_qr_redemption_mode: productQrRedemptionMode,
+      
+      redemption_limit_type: redemptionLimit,
+      expiration_window_type: expirationWindow,
+      expiry_date: rewardConfig?.expiryDate ? new Date(rewardConfig.expiryDate).toISOString() : '2026-12-31T00:00:00.000Z',
+      currency: currency.replace(' (?)', ''), // Clean up currency string
+      
+      match_type: ruleConfig?.matchType || matchType,
+      rules_config: ruleConfig?.rules || []
     };
 
     // Add optional fields only if they have values
@@ -1770,15 +1834,16 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       payload.max_age = maxAge;
     }
 
-    if (activeBranches.length > 0) {
-      // activeBranches stores names, look up the numeric ID from the branches list
-      const matchedBranch = branches.find((b: any) => b.name === activeBranches[0]);
-      payload.branch_id = matchedBranch?.id ? String(matchedBranch.id) : activeBranches[0];
+    const selectedBranches = ruleConfig?.activeBranches || activeBranches;
+    if (selectedBranches && selectedBranches.length > 0) {
+      // selectedBranches stores names, look up the numeric ID from the branches list
+      const matchedBranch = branches.find((b: any) => b.name === selectedBranches[0]);
+      payload.branch_id = matchedBranch?.id ? String(matchedBranch.id) : selectedBranches[0];
     }
     
     // We bind these to the new state variables added in the parent component
-    if (targetValue) {
-      payload.target_value = targetValue;
+    if (targetValue || minBillAmount) {
+      payload.target_value = targetValue || String(minBillAmount);
     }
     if (minBillAmount) {
       payload.min_bill_amount = String(minBillAmount);
@@ -2112,6 +2177,29 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       if ((currentCampaign as any).max_age !== undefined && (currentCampaign as any).max_age !== null) {
         setMaxAge(Number((currentCampaign as any).max_age));
       }
+
+      // Initialize ruleConfig so Step 3 loads existing rules
+      if ((currentCampaign as any).rules_config && Array.isArray((currentCampaign as any).rules_config)) {
+        setRuleConfig({
+          rules: (currentCampaign as any).rules_config,
+          matchType: (currentCampaign as any).match_type || 'ALL',
+          triggerEvent: (currentCampaign as any).trigger_event || 'qr_scan',
+          startDate: currentCampaign.valid_from ? formatDateTime(currentCampaign.valid_from) : '',
+          endDate: currentCampaign.valid_until ? formatDateTime(currentCampaign.valid_until) : '',
+        });
+      }
+
+      // Initialize rewardConfig so Step 4 loads existing rewards
+      setRewardConfig({
+        rewardType: currentCampaign.reward_type === 'percentage_discount' || currentCampaign.reward_type === 'fixed_discount' ? 'discount' : currentCampaign.reward_type === 'cashback' ? 'cashback' : 'free_item',
+        cashbackAmount: currentCampaign.reward_type === 'cashback' ? Number(currentCampaign.reward_value || 0) : 10,
+        discountType: currentCampaign.reward_type === 'fixed_discount' ? 'Fixed' : 'Percentage',
+        discountValue: currentCampaign.reward_type === 'percentage_discount' || currentCampaign.reward_type === 'fixed_discount' ? Number(currentCampaign.reward_value || 0) : 15,
+        freeItem: currentCampaign.target_item_name || '',
+        maxRedemptions: Number((currentCampaign as any).max_redemptions || 1),
+        totalBudgetCap: Number((currentCampaign as any).total_budget_cap || 500),
+        coolingPeriodHours: Number((currentCampaign as any).cooling_period_hours || 6),
+      });
     }
   }, [currentCampaign, viewMode, branches]);
 
@@ -3522,6 +3610,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       campaignType={fullCampaignType}
       campaignName={campaignName}
       currency={currency}
+      initialRules={ruleConfig?.rules}
+      onChange={(config) => setRuleConfig(config)}
       onContinue={(config) => {
         setRuleConfig(config);
         console.log('Step 3 Config:', config);
@@ -3536,6 +3626,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       campaignType={fullCampaignType}
       ruleConfig={ruleConfig}
       currency={currency}
+      initialRewardConfig={rewardConfig}
+      onChange={(config) => setRewardConfig(config)}
       onContinue={(config) => {
         setRewardConfig(config);
         console.log('Step 4 Config:', config);
