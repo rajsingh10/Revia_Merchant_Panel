@@ -106,6 +106,18 @@ export const deleteCampaign = createAsyncThunk(
   }
 );
 
+export const toggleCampaignStatus = createAsyncThunk(
+  'campaign/toggleStatus',
+  async ({ id, is_active }: { id: number | string; is_active: boolean }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.patch(`/merchant/campaigns/${id}/status`, { is_active });
+      return { id, is_active };
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to update campaign status');
+    }
+  }
+);
+
 const campaignSlice = createSlice({
   name: 'campaign',
   initialState,
@@ -200,6 +212,15 @@ const campaignSlice = createSlice({
       .addCase(deleteCampaign.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+      })
+      
+      // Toggle Status
+      .addCase(toggleCampaignStatus.fulfilled, (state, action) => {
+        const { id, is_active } = action.payload;
+        const existing = state.campaigns.find(c => String(c.id) === String(id));
+        if (existing) {
+          existing.is_active = is_active;
+        }
       });
   },
 });

@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useWallet } from '../context/WalletContext';
 import {
   Clock,
-  BookOpen,
   Wifi,
   Check,
   CheckCircle2,
@@ -58,12 +57,14 @@ import {
   Eye,
   Download,
   Image as ImageIcon,
-  Award
+  Award,
+  Power,
+  MoreVertical
 } from 'lucide-react';
 import { FormInput } from '../components/FormInput';
 import { AddItemModal } from '../components/AddItemModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCampaigns, setCurrentCampaign, createCampaign, updateCampaign, deleteCampaign } from '../store/slices/campaignSlice';
+import { fetchCampaigns, setCurrentCampaign, createCampaign, updateCampaign, deleteCampaign, toggleCampaignStatus } from '../store/slices/campaignSlice';
 import { fetchProducts } from '../store/slices/catalogSlice';
 import { fetchBranches } from '../store/slices/branchSlice';
 import type { AppDispatch, RootState } from '../store/store';
@@ -1679,6 +1680,18 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     setCampaignToDelete({ id, name });
   };
 
+  const handleToggleCampaignStatus = (id: number, currentStatus: string) => {
+    const is_active = (currentStatus === 'Draft' || currentStatus === 'Paused' || currentStatus === 'Inactive' || currentStatus === 'Deactive') ? true : false;
+    dispatch(toggleCampaignStatus({ id, is_active }))
+      .unwrap()
+      .then(() => {
+        showToast(`Campaign ${is_active ? 'activated' : 'deactivated'} successfully.`);
+      })
+      .catch(err => {
+        showToast(`Error: ${err}`);
+      });
+  };
+
   const confirmDeleteCampaign = () => {
     if (campaignToDelete) {
       dispatch(deleteCampaign(campaignToDelete.id))
@@ -1974,6 +1987,30 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const [typeFilterDropdownOpen, setTypeFilterDropdownOpen] = useState(false);
   const typeFilterDropdownRef = useRef<HTMLDivElement>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const [openActionMenuId, setOpenActionMenuId] = useState<number | string | null>(null);
+  const actionMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, typeFilter]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target as Node)) {
+        setOpenActionMenuId(null);
+      }
+    };
+    if (openActionMenuId !== null) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [openActionMenuId]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (statusFilterDropdownRef.current && !statusFilterDropdownRef.current.contains(event.target as Node)) {
@@ -2079,15 +2116,24 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   }, [currentCampaign, viewMode, branches]);
 
   const campaigns = apiCampaigns.length > 0 ? [...apiCampaigns].sort((a: any, b: any) => (b.id || 0) - (a.id || 0)).map(c => {
-    let finalStatus = c.is_active ? 'Active' : 'Draft';
-    if (finalStatus === 'Active') {
-      const now = new Date();
-      const start = c.valid_from ? new Date(c.valid_from) : null;
-      const end = c.valid_until ? new Date(c.valid_until) : null;
+    let finalStatus = 'Draft';
+    const now = new Date();
+    const start = c.valid_from ? new Date(c.valid_from) : null;
+    const end = c.valid_until ? new Date(c.valid_until) : null;
+
+    if (c.is_active) {
       if (start && now < start) {
         finalStatus = 'Scheduled';
       } else if (end && now > end) {
         finalStatus = 'Ended';
+      } else {
+        finalStatus = 'Active';
+      }
+    } else {
+      if (start && end) {
+        finalStatus = 'Paused';
+      } else {
+        finalStatus = 'Draft';
       }
     }
     return {
@@ -3817,6 +3863,9 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       (c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.reward.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
+    const totalPages = Math.ceil(filteredCampaigns.length / itemsPerPage);
+    const paginatedCampaigns = filteredCampaigns.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
     return (
     <div className="p-4 sm:p-6 space-y-6 font-sans text-[#1A1615]">
       <div className="max-w-[1400px] mx-auto space-y-6">
@@ -3927,7 +3976,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       </div>
                     </td>
                   </tr>
-                ) : filteredCampaigns.map(c => (
+                ) : paginatedCampaigns.map(c => (
                   <tr key={c.id} className="border-b border-[#EAE6E1] hover:bg-[#FAF8F5]/60 transition-colors">
                     <td className="py-4 px-5">
                       <div className="text-sm font-bold text-[#1A1615] mb-0.5">{c.name}</div>
@@ -3950,9 +3999,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                         <span className="px-2.5 py-0.5 bg-[#FEE2E2] border border-[#DC2626]/20 text-[#DC2626] rounded-full text-xs font-bold uppercase flex items-center w-max gap-1">
                           <span className="w-1.5 h-1.5 bg-[#DC2626] rounded-full"></span> {c.status}
                         </span>
-                      ) : (
+                      ) : c.status === 'Draft' ? (
                         <span className="px-2.5 py-0.5 bg-[#FAF6EE] border border-[#E5D7BE] text-[#9E782F] rounded-full text-xs font-semibold uppercase flex items-center w-max gap-1">
                           <span className="w-1.5 h-1.5 bg-[#9E782F] rounded-full"></span> {c.status}
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-0.5 bg-[#F3F4F6] border border-[#E5E7EB] text-[#4B5563] rounded-full text-xs font-semibold uppercase flex items-center w-max gap-1">
+                          <span className="w-1.5 h-1.5 bg-[#9CA3AF] rounded-full"></span> {c.status}
                         </span>
                       )}
                     </td>
@@ -3968,12 +4021,37 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                         <span className="text-xs font-bold text-[#1A1615] w-8">{c.progress}%</span>
                       </div>
                     </td>
-                    <td className="py-4 px-5 text-right space-x-2 flex justify-end">
-                      <button onClick={async () => { setQrModalCampaign(c); setQrModalImgUrl(null); const url = await fetchCampaignQr(c.id); setQrModalImgUrl(url); }} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="View QR"><Eye className="w-4 h-4" /></button>
-                      <button onClick={() => handleDownload(c)} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Download"><Download className="w-4 h-4" /></button>
-                      <button onClick={() => handleEditCampaign(c)} className="p-1.5 text-[#6E6A66] hover:text-[#D4A753] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Edit"><Edit2 className="w-4 h-4" /></button>
-                      <button onClick={() => handleDuplicateCampaign(c)} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Duplicate"><Copy className="w-4 h-4" /></button>
-                      <button onClick={() => handleDeleteCampaign(c.id, c.name)} className="p-1.5 text-[#6E6A66] hover:text-[#EF4444] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Delete"><Trash2 className="w-4 h-4" /></button>
+                    <td className="py-4 px-5 text-right relative">
+                      <button 
+                        onClick={() => setOpenActionMenuId(openActionMenuId === c.id ? null : c.id)}
+                        className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer"
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+                      
+                      {openActionMenuId === c.id && (
+                        <div ref={actionMenuRef} className="absolute right-8 top-12 w-40 bg-white border border-[#EAE6E1] rounded-xl shadow-lg z-50 overflow-hidden py-1">
+                          <button onClick={async () => { setOpenActionMenuId(null); setQrModalCampaign(c); setQrModalImgUrl(null); const url = await fetchCampaignQr(c.id); setQrModalImgUrl(url); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors flex items-center gap-2">
+                            <Eye className="w-3.5 h-3.5 text-[#6E6A66]" /> View QR
+                          </button>
+                          <button onClick={() => { setOpenActionMenuId(null); handleDownload(c); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors flex items-center gap-2">
+                            <Download className="w-3.5 h-3.5 text-[#6E6A66]" /> Download
+                          </button>
+                          <button onClick={() => { setOpenActionMenuId(null); handleToggleCampaignStatus(c.id, c.status); }} className={`w-full text-left px-4 py-2 text-xs font-semibold hover:bg-[#FAF8F5] transition-colors flex items-center gap-2 ${c.status === 'Active' || c.status === 'Scheduled' ? 'text-[#15803D]' : 'text-[#1A1615]'}`}>
+                            <Power className={`w-3.5 h-3.5 ${c.status === 'Active' || c.status === 'Scheduled' ? 'text-[#15803D]' : 'text-[#6E6A66]'}`} /> {(c.status === 'Draft' || c.status === 'Paused') ? 'Activate' : 'Deactivate'}
+                          </button>
+                          <button onClick={() => { setOpenActionMenuId(null); handleEditCampaign(c); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors flex items-center gap-2">
+                            <Edit2 className="w-3.5 h-3.5 text-[#D4A753]" /> Edit
+                          </button>
+                          <button onClick={() => { setOpenActionMenuId(null); handleDuplicateCampaign(c); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors flex items-center gap-2">
+                            <Copy className="w-3.5 h-3.5 text-[#6E6A66]" /> Duplicate
+                          </button>
+                          <div className="h-px bg-[#EAE6E1] my-1 mx-2"></div>
+                          <button onClick={() => { setOpenActionMenuId(null); handleDeleteCampaign(c.id, c.name); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#DC2626] hover:bg-[#FEE2E2] transition-colors flex items-center gap-2">
+                            <Trash2 className="w-3.5 h-3.5" /> Delete
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -3995,7 +4073,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                   </p>
                 </div>
               </div>
-            ) : filteredCampaigns.map((c) => {
+            ) : paginatedCampaigns.map((c) => {
               const isExpanded = expandedCampaignId === c.id;
 
               return (
@@ -4020,9 +4098,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                         <span className="px-2 py-0.5 bg-[#FEE2E2] border border-[#FECACA] text-[#DC2626] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
                           <span className="w-1.5 h-1.5 bg-[#DC2626] rounded-full"></span> {c.status}
                         </span>
-                      ) : (
+                      ) : c.status === 'Draft' ? (
                         <span className="px-2 py-0.5 bg-[#EFECE6] text-[#6E6A66] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
                           <span className="w-1.5 h-1.5 bg-[#9E9A93] rounded-full"></span> {c.status}
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 bg-[#F3F4F6] text-[#4B5563] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
+                          <span className="w-1.5 h-1.5 bg-[#9CA3AF] rounded-full"></span> {c.status}
                         </span>
                       )}
                     </div>
@@ -4070,6 +4152,9 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                         <button onClick={() => handleDownload(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
                           <Download className="w-3.5 h-3.5" /> DL
                         </button>
+                        <button onClick={() => handleToggleCampaignStatus(c.id, c.status)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                          <Power className={`w-3.5 h-3.5 ${c.status === 'Active' || c.status === 'Scheduled' ? 'text-[#15803D]' : 'text-[#6E6A66]'}`} /> {(c.status === 'Draft' || c.status === 'Paused') ? 'Activate' : 'Deact.'}
+                        </button>
                         <button onClick={() => handleEditCampaign(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
                           <Edit2 className="w-3.5 h-3.5" /> Edit
                         </button>
@@ -4086,6 +4171,42 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               );
             })}
           </div>
+          
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between pt-4 border-t border-[#EFECE6] mt-4">
+              <div className="text-xs font-medium text-[#6E6A66]">
+                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredCampaigns.length)} of {filteredCampaigns.length} campaigns
+              </div>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 text-xs font-bold border border-[#EAE6E1] rounded-lg disabled:opacity-50 hover:bg-[#FAF8F5] transition-colors"
+                >
+                  Prev
+                </button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }).map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold transition-colors ${currentPage === i + 1 ? 'bg-[#D4A753] text-white' : 'hover:bg-[#FAF8F5] text-[#1A1615]'}`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+                <button 
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 text-xs font-bold border border-[#EAE6E1] rounded-lg disabled:opacity-50 hover:bg-[#FAF8F5] transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -4214,31 +4335,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
             <p className="text-xs text-[#7C746C]">Audit parameters, preview the live guest pass token, and deploy the campaign across roastery registers.</p>
           </div>
         </div>
-
-        {/* <div className="flex flex-wrap items-center gap-3 shrink-0">
-          <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 flex items-center gap-3 shadow-2xs min-w-[160px]">
-            <div className="w-9 h-9 bg-white border border-[#EAE6E1] rounded-full flex items-center justify-center shrink-0 shadow-2xs relative">
-              <Users className="w-4 h-4 text-[#D4A753]" />
-              <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-[#FDF8EB] border border-[#F3E5C8] rounded-full flex items-center justify-center">
-                <Plus className="w-2.5 h-2.5 text-[#9E782F]" />
-              </div>
-            </div>
-            <div>
-              <div className="text-[9px] uppercase font-bold tracking-wider text-[#7C746C]">AUDIENCE BASE</div>
-              <div className="text-base font-bold text-[#1A1615] leading-tight">1,840</div>
-            </div>
-          </div>
-          <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 flex items-center gap-3 shadow-2xs min-w-[160px]">
-            <div className="w-9 h-9 bg-white border border-[#EAE6E1] rounded-full flex items-center justify-center shrink-0 shadow-2xs">
-              <TrendingUp className="w-4 h-4 text-[#15803D]" />
-            </div>
-            <div>
-              <div className="text-[9px] uppercase font-bold tracking-wider text-[#7C746C]">EST. LIFETIME GMV</div>
-              <div className="text-base font-bold text-[#15803D] leading-tight">+₹16,400</div>
-            </div>
-          </div>
-        </div> */}
-      </div>
+        </div>
         {/* Stepper Indicator */}
         <div className="md:hidden flex justify-between items-center mb-4 px-1">
           <div className="flex items-center gap-3">
@@ -4390,7 +4487,6 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
           </div>
         </div>
       )}
-
     </div>
   );
 };
