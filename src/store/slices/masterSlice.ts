@@ -22,13 +22,30 @@ export interface RewardTypeOption {
   isActive: boolean;
 }
 
+export interface AssetTypeOption {
+  id?: string | number;
+  name: string;
+  isActive?: boolean;
+  status?: boolean;
+}
+
+export interface PlacementTypeOption {
+  id?: string | number;
+  name: string;
+  status?: boolean;
+}
+
 interface MasterState {
   ruleFields: RuleField[];
   tierOptions: TierOption[];
   rewardTypes: RewardTypeOption[];
+  assetTypes: AssetTypeOption[];
+  placementTypes: PlacementTypeOption[];
   isLoadingFields: boolean;
   isLoadingTiers: boolean;
   isLoadingRewards: boolean;
+  isLoadingAssetTypes: boolean;
+  isLoadingPlacementTypes: boolean;
   error: string | null;
 }
 
@@ -36,9 +53,13 @@ const initialState: MasterState = {
   ruleFields: [],
   tierOptions: [],
   rewardTypes: [],
+  assetTypes: [],
+  placementTypes: [],
   isLoadingFields: false,
   isLoadingTiers: false,
   isLoadingRewards: false,
+  isLoadingAssetTypes: false,
+  isLoadingPlacementTypes: false,
   error: null,
 };
 
@@ -101,6 +122,21 @@ export const fetchRewardTypes = createAsyncThunk(
         { id: 'points', title: 'Reward Points', desc: 'Grant loyalty program bonus point boost', iconName: 'Star', isActive: true },
         { id: 'free_item', title: 'Free Item', desc: 'Give 100% complimentary product or Perk BOGO', iconName: 'Gift', isActive: true },
       ];
+    }
+  }
+);
+
+export const fetchAssetTypes = createAsyncThunk(
+  'master/fetchAssetTypes',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/merchant/masters/asset-types');
+      let items = response.data;
+      if (items?.data && !Array.isArray(items)) items = items.data;
+      if (items?.data && !Array.isArray(items)) items = items.data;
+      return Array.isArray(items) ? items : [];
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch asset types');
     }
   }
 );
@@ -216,6 +252,101 @@ export const deleteRewardType = createAsyncThunk(
   }
 );
 
+// --- Asset Types CRUD ---
+export const addAssetType = createAsyncThunk(
+  'master/addAssetType',
+  async (assetType: AssetTypeOption, { rejectWithValue, dispatch }) => {
+    try {
+      await apiClient.post('/merchant/masters/asset-types', assetType);
+      dispatch(fetchAssetTypes());
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to add asset type');
+    }
+  }
+);
+
+export const updateAssetType = createAsyncThunk(
+  'master/updateAssetType',
+  async (assetType: AssetTypeOption, { rejectWithValue, dispatch }) => {
+    try {
+      await apiClient.put(`/merchant/masters/asset-types/${assetType.id}`, assetType);
+      dispatch(fetchAssetTypes());
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to update asset type');
+    }
+  }
+);
+
+export const deleteAssetType = createAsyncThunk(
+  'master/deleteAssetType',
+  async (id: string | number, { rejectWithValue, dispatch }) => {
+    try {
+      await apiClient.delete(`/merchant/masters/asset-types/${id}`);
+      dispatch(fetchAssetTypes());
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to delete asset type');
+    }
+  }
+);
+
+// --- Placement Types CRUD ---
+export const fetchPlacementTypes = createAsyncThunk(
+  'master/fetchPlacementTypes',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/merchant/masters/placement-types');
+      const data = response.data;
+      if (data && data.data) {
+        if (Array.isArray(data.data.data)) {
+          return data.data.data;
+        }
+        if (Array.isArray(data.data)) {
+          return data.data;
+        }
+      }
+      return [];
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch placement types');
+    }
+  }
+);
+
+export const addPlacementType = createAsyncThunk(
+  'master/addPlacementType',
+  async (placementType: PlacementTypeOption, { rejectWithValue, dispatch }) => {
+    try {
+      await apiClient.post('/merchant/masters/placement-types', placementType);
+      dispatch(fetchPlacementTypes());
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to add placement type');
+    }
+  }
+);
+
+export const updatePlacementType = createAsyncThunk(
+  'master/updatePlacementType',
+  async (placementType: PlacementTypeOption, { rejectWithValue, dispatch }) => {
+    try {
+      await apiClient.put(`/merchant/masters/placement-types/${placementType.id}`, placementType);
+      dispatch(fetchPlacementTypes());
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to update placement type');
+    }
+  }
+);
+
+export const deletePlacementType = createAsyncThunk(
+  'master/deletePlacementType',
+  async (id: string | number, { rejectWithValue, dispatch }) => {
+    try {
+      await apiClient.delete(`/merchant/masters/placement-types/${id}`);
+      dispatch(fetchPlacementTypes());
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to delete placement type');
+    }
+  }
+);
+
 const masterSlice = createSlice({
   name: 'master',
   initialState,
@@ -263,6 +394,36 @@ const masterSlice = createSlice({
       })
       .addCase(fetchRewardTypes.rejected, (state, action) => {
         state.isLoadingRewards = false;
+        state.error = action.payload as string;
+      });
+
+    // Asset Types
+    builder
+      .addCase(fetchAssetTypes.pending, (state) => {
+        if (state.assetTypes.length === 0) state.isLoadingAssetTypes = true;
+        state.error = null;
+      })
+      .addCase(fetchAssetTypes.fulfilled, (state, action) => {
+        state.isLoadingAssetTypes = false;
+        state.assetTypes = Array.isArray(action.payload) ? action.payload : [];
+      })
+      .addCase(fetchAssetTypes.rejected, (state, action) => {
+        state.isLoadingAssetTypes = false;
+        state.error = action.payload as string;
+      });
+
+    // Placement Types
+    builder
+      .addCase(fetchPlacementTypes.pending, (state) => {
+        if (state.placementTypes.length === 0) state.isLoadingPlacementTypes = true;
+        state.error = null;
+      })
+      .addCase(fetchPlacementTypes.fulfilled, (state, action) => {
+        state.isLoadingPlacementTypes = false;
+        state.placementTypes = Array.isArray(action.payload) ? action.payload : [];
+      })
+      .addCase(fetchPlacementTypes.rejected, (state, action) => {
+        state.isLoadingPlacementTypes = false;
         state.error = action.payload as string;
       });
   },

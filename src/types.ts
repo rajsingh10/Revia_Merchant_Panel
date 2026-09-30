@@ -150,6 +150,8 @@ export type NavRoute =
   | '/masters/rule-fields'
   | '/masters/tier-options'
   | '/masters/reward-types'
+  | '/masters/asset-types'
+  | '/masters/placement-types'
   | '/catalog'
   | '/orders'
   | '/invoices'

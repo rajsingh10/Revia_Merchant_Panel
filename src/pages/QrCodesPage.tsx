@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../store/store';
-import { fetchQrCodes } from '../store/slices/qrCodeSlice';
+import { fetchQrCodes, createQrCode, fetchQrCodeDetails, fetchQrCodeHistory, updateQrCodeStatus } from '../store/slices/qrCodeSlice';
+import { fetchBranches } from '../store/slices/branchSlice';
+import { fetchAssetTypes, fetchPlacementTypes, addAssetType, addPlacementType, AssetTypeOption, PlacementTypeOption } from '../store/slices/masterSlice';
 import { useWallet } from '../context/WalletContext';
 import {
   Download,
@@ -21,15 +23,19 @@ import {
   Layers,
   Zap,
   Clock,
-  MapPin
+  MapPin,
+  X,
+  Check
 } from 'lucide-react';
 
 export const QrCodesPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { qrCodes, isLoading, error } = useSelector((state: RootState) => state.qrCode);
+  const { qrCodes, currentQrCode, currentHistory, isLoading, error } = useSelector((state: RootState) => state.qrCode);
+  const { branches } = useSelector((state: RootState) => state.branch);
+  const { assetTypes, placementTypes } = useSelector((state: RootState) => state.master);
   
   const { checkAndDeductCredit } = useWallet();
-  const [activeAsset, setActiveAsset] = useState<string>('');
+  const [activeAsset, setActiveAsset] = useState<string>('8');
   const [activeTab, setActiveTab] = useState<'front' | 'back'>('front');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -61,7 +67,19 @@ export const QrCodesPage: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchQrCodes());
+    dispatch(fetchBranches());
+    dispatch(fetchAssetTypes());
+    dispatch(fetchPlacementTypes());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (activeAsset) {
+      // The API expects the raw ID (e.g. '1', '2') not 'asset-xxx' if it's prefixed locally.
+      // But looking at the mapping, id: String(qr.identifier || qr.id). So activeAsset is the ID.
+      dispatch(fetchQrCodeDetails(activeAsset));
+      dispatch(fetchQrCodeHistory(activeAsset));
+    }
+  }, [activeAsset, dispatch]);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [createForm, setCreateForm] = useState({
@@ -71,7 +89,7 @@ export const QrCodesPage: React.FC = () => {
     locationPlacement: 'Table',
     materialFinish: '',
     destination: '',
-    qrNfcType: '',
+    qrNfcType: 'QR + NFC',
     patternDensity: '',
     errorCorrection: '',
     status: 'Active'
@@ -81,26 +99,88 @@ export const QrCodesPage: React.FC = () => {
 
   useEffect(() => {
     if (qrCodes && qrCodes.length > 0) {
-      const mapped = qrCodes.map((qr: any) => ({
-        id: String(qr.identifier || qr.id),
-        title: `${qr.branch?.name || 'Venue'} • ${qr.type === 'branch' ? 'Branch QR' : 'Table QR'} ${qr.table_number ? '#' + qr.table_number : ''}`,
+      const mapped = qrCodes.map((qr: any) => {
+        // Use standard ID mapping
+        const finalId = String(qr.id);
+        
+        const branchName = qr.branch?.name || 'Venue';
+        const fallbackName = qr.type === 'branch' ? 'Branch QR' : 'Table QR';
+        const tableStr = qr.table_number ? ` #${qr.table_number}` : '';
+        const titleName = qr.stand_name || (fallbackName + tableStr);
+
+        let materialName = 'Digital QR Code';
+        const foundAsset = assetTypes.find(t => String(t.id) === String(qr.asset_type_id));
+        if (foundAsset) {
+          materialName = foundAsset.name;
+        } else {
+          if (qr.asset_type_id === 100) materialName = 'Acrylic';
+          if (qr.asset_type_id === 101) materialName = 'Brass';
+          if (qr.asset_type_id === 102) materialName = 'NFC Puck';
+          if (qr.asset_type_id === 103) materialName = 'Sticker';
+        }
+
+        return {
+        id: finalId,
+        title: `${branchName} • ${titleName}`,
         status: qr.status === 'active' ? 'Active' : 'Inactive',
         inspecting: false,
         location: qr.branch?.address || 'Location',
-        material: 'Digital QR Code',
+        material: materialName,
         destination: 'Default Routing',
         scans: '0',
-        tag: 'QR Only',
+        tag: qr.qr_nfc_type || 'QR Only',
         raw: qr
-      }));
+        };
+      });
       setAssets(mapped);
-      if (mapped.length > 0 && (!activeAsset || !mapped.find(a => a.id === activeAsset))) {
+      // Only set to mapped[0].id if activeAsset is completely empty, 
+      // don't overwrite if it's our hardcoded UUID but not in the initial page list
+      if (mapped.length > 0 && !activeAsset) {
         setActiveAsset(mapped[0].id);
       }
     }
   }, [qrCodes]);
 
-  const handleCreateAsset = (e: React.FormEvent) => {
+  const [isAssetTypeModalOpen, setIsAssetTypeModalOpen] = useState(false);
+  const [assetTypeName, setAssetTypeName] = useState('');
+  const [assetTypeIsActive, setAssetTypeIsActive] = useState(true);
+  const [hasSubmittedAssetType, setHasSubmittedAssetType] = useState(false);
+
+  const handleSaveAssetType = () => {
+    setHasSubmittedAssetType(true);
+    if (!assetTypeName.trim()) return;
+
+    dispatch(addAssetType({
+      name: assetTypeName.trim(),
+      type: 'asset',
+      status: assetTypeIsActive
+    } as AssetTypeOption));
+    
+    showToast('Asset Type added successfully!');
+    setHasSubmittedAssetType(false);
+    setIsAssetTypeModalOpen(false);
+  };
+
+  const [isPlacementTypeModalOpen, setIsPlacementTypeModalOpen] = useState(false);
+  const [placementTypeName, setPlacementTypeName] = useState('');
+  const [placementTypeIsActive, setPlacementTypeIsActive] = useState(true);
+  const [hasSubmittedPlacementType, setHasSubmittedPlacementType] = useState(false);
+
+  const handleSavePlacementType = () => {
+    setHasSubmittedPlacementType(true);
+    if (!placementTypeName.trim()) return;
+
+    dispatch(addPlacementType({
+      name: placementTypeName.trim(),
+      status: placementTypeIsActive
+    } as PlacementTypeOption));
+    
+    showToast('Placement Type added successfully!');
+    setHasSubmittedPlacementType(false);
+    setIsPlacementTypeModalOpen(false);
+  };
+
+  const handleCreateAsset = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!createForm.standName || !createForm.venue) {
       showToast('Please fill all required fields');
@@ -110,42 +190,77 @@ export const QrCodesPage: React.FC = () => {
     const newId = `asset-${Math.floor(1000 + Math.random() * 9000)}`;
 
     // CREDIT CHECK GATING (10 credits per QR generation/stand)
-    const allowed = checkAndDeductCredit('qr_generation', 10, newId, `Generate Stand QR: ${createForm.standName}`);
-    if (!allowed) {
-      return; // Blocked due to insufficient wallet credits
+    // const allowed = checkAndDeductCredit('qr_generation', 10, newId, `Generate Stand QR: ${createForm.standName}`);
+    // if (!allowed) {
+    //   return; // Blocked due to insufficient wallet credits
+    // }
+
+    // Map asset type to ID
+    let assetTypeId = 100;
+    if (createForm.assetType) {
+      const parsed = Number(createForm.assetType);
+      if (!isNaN(parsed)) {
+        assetTypeId = parsed;
+      } else {
+        if (createForm.assetType === 'Brass') assetTypeId = 101;
+        if (createForm.assetType === 'NFC Puck') assetTypeId = 102;
+        if (createForm.assetType === 'Sticker') assetTypeId = 103;
+      }
     }
 
-    const newAsset = {
-      id: newId,
-      title: `${createForm.venue} • ${createForm.standName}`,
-      status: createForm.status,
-      inspecting: false,
-      location: createForm.locationPlacement,
-      material: createForm.materialFinish || createForm.assetType,
-      destination: createForm.destination || 'Default Routing',
-      scans: '0',
-      tag: createForm.qrNfcType || 'QR Only',
+    // Map placement to ID
+    let placementId = 20;
+    if (createForm.locationPlacement) {
+      const parsed = Number(createForm.locationPlacement);
+      if (!isNaN(parsed)) {
+        placementId = parsed;
+      } else {
+        if (createForm.locationPlacement === 'Counter') placementId = 21;
+        if (createForm.locationPlacement === 'Garden') placementId = 22;
+        if (createForm.locationPlacement === 'Window') placementId = 23;
+      }
+    }
+
+    const payload = {
+      stand_name: createForm.standName,
+      branch_id: Number(createForm.venue),
+      asset_type_id: assetTypeId,
+      placement_id: placementId,
+      qr_nfc_type: createForm.qrNfcType || 'QR + NFC',
+      status: createForm.status.toLowerCase()
     };
 
-    setAssets([newAsset, ...assets]);
-    setActiveAsset(newId);
-    setIsCreateModalOpen(false);
+    try {
+      await dispatch(createQrCode(payload)).unwrap();
+      setIsCreateModalOpen(false);
 
-    // Reset form
-    setCreateForm({
-      standName: '',
-      venue: '',
-      assetType: 'Acrylic',
-      locationPlacement: 'Table',
-      materialFinish: '',
-      destination: '',
-      qrNfcType: '',
-      patternDensity: '',
-      errorCorrection: '',
-      status: 'Active'
-    });
+      // Reset form
+      setCreateForm({
+        standName: '',
+        venue: '',
+        assetType: 'Acrylic',
+        locationPlacement: 'Table',
+        materialFinish: '',
+        destination: '',
+        qrNfcType: 'QR + NFC',
+        patternDensity: '',
+        errorCorrection: '',
+        status: 'Active'
+      });
 
-    showToast('New Dynamic Stand created successfully!');
+      showToast('New Dynamic Stand created successfully!');
+    } catch (err: any) {
+      showToast(err || 'Failed to create stand');
+    }
+  };
+
+  const handleUpdateStatus = async (id: string, newStatus: string) => {
+    try {
+      await dispatch(updateQrCodeStatus({ id, status: newStatus })).unwrap();
+      showToast(`Asset marked as ${newStatus}`);
+    } catch (err: any) {
+      showToast(err || 'Failed to update asset status');
+    }
   };
 
   const filteredAssets = assets.filter(a => {
@@ -396,8 +511,11 @@ export const QrCodesPage: React.FC = () => {
                                 <div className="fixed inset-0 z-[50]" onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); }} />
                                 <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-[#EFECE6] rounded-xl shadow-xl z-[60] overflow-hidden">
                                   <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); showToast('Viewing detailed analytics...'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5]">View Analytics</button>
-                                  <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); showToast('Asset temporarily paused.'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-[#B45309] hover:bg-[#FEF3C7]">Pause Asset</button>
-                                  <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); showToast('Asset permanently deactivated.'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-[#DC2626] hover:bg-[#FEE2E2]">Deactivate</button>
+                                  {asset.status.toLowerCase() === 'active' ? (
+                                    <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); handleUpdateStatus(asset.id, 'inactive'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-[#DC2626] hover:bg-[#FEE2E2]">Deactivate</button>
+                                  ) : (
+                                    <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); handleUpdateStatus(asset.id, 'active'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-[#0D7A53] hover:bg-[#E6F4ED]">Activate Asset</button>
+                                  )}
                                 </div>
                               </>
                             )}
@@ -687,35 +805,65 @@ export const QrCodesPage: React.FC = () => {
 
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Stand Name <span className="text-[#D4A753]">*</span></label>
-                  <input required type="text" value={createForm.standName} onChange={e => setCreateForm({ ...createForm, standName: e.target.value })} placeholder="e.g. Tabletop 01" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                  <input type="text" value={createForm.standName} onChange={e => setCreateForm({ ...createForm, standName: e.target.value })} placeholder="e.g. Tabletop 01" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Venue / Branch <span className="text-[#D4A753]">*</span></label>
-                  <input required type="text" value={createForm.venue} onChange={e => setCreateForm({ ...createForm, venue: e.target.value })} placeholder="e.g. Downtown Flagship" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                  <div className="relative">
+                    <select value={createForm.venue} onChange={e => setCreateForm({ ...createForm, venue: e.target.value })} className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] appearance-none cursor-pointer">
+                      <option value="" disabled>Select Venue / Branch</option>
+                      {branches && branches.map((b) => (
+                        <option key={b.id} value={b.id}>{b.name}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Asset Type</label>
+                    <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93] flex justify-between items-center">
+                      Asset Type
+                      <button type="button" onClick={() => setIsAssetTypeModalOpen(true)} className="text-[#D4A753] hover:text-[#C29543] normal-case tracking-normal">+ Add</button>
+                    </label>
                     <div className="relative">
                       <select value={createForm.assetType} onChange={e => setCreateForm({ ...createForm, assetType: e.target.value })} className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] cursor-pointer appearance-none">
-                        <option value="Acrylic">Acrylic</option>
-                        <option value="Brass">Brass</option>
-                        <option value="NFC Puck">NFC Puck</option>
-                        <option value="Sticker">Sticker</option>
+                        {assetTypes && assetTypes.length > 0 ? (
+                          assetTypes.map(t => (
+                            <option key={t.id} value={t.id}>{t.name}</option>
+                          ))
+                        ) : (
+                          <>
+                            <option value="100">Acrylic</option>
+                            <option value="101">Brass</option>
+                            <option value="102">NFC Puck</option>
+                            <option value="103">Sticker</option>
+                          </>
+                        )}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Location / Placement</label>
+                    <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93] flex justify-between items-center">
+                      Location / Placement
+                      <button type="button" onClick={() => setIsPlacementTypeModalOpen(true)} className="text-[#D4A753] hover:text-[#C29543] normal-case tracking-normal">+ Add</button>
+                    </label>
                     <div className="relative">
                       <select value={createForm.locationPlacement} onChange={e => setCreateForm({ ...createForm, locationPlacement: e.target.value })} className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] cursor-pointer appearance-none">
-                        <option value="Table">Table</option>
-                        <option value="Counter">Counter</option>
-                        <option value="Garden">Garden</option>
-                        <option value="Window">Window</option>
+                        {placementTypes && placementTypes.length > 0 ? (
+                          placementTypes.map(p => (
+                            <option key={p.id} value={p.id}>{p.name}</option>
+                          ))
+                        ) : (
+                          <>
+                            <option value="20">Table</option>
+                            <option value="21">Counter</option>
+                            <option value="22">Garden</option>
+                            <option value="23">Window</option>
+                          </>
+                        )}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
                     </div>
@@ -735,7 +883,14 @@ export const QrCodesPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">QR / NFC Type</label>
-                    <input type="text" value={createForm.qrNfcType} onChange={e => setCreateForm({ ...createForm, qrNfcType: e.target.value })} placeholder="e.g. NFC + QR" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                    <div className="relative">
+                      <select value={createForm.qrNfcType} onChange={e => setCreateForm({ ...createForm, qrNfcType: e.target.value })} className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] cursor-pointer appearance-none">
+                        <option value="QR + NFC">QR + NFC</option>
+                        <option value="QR Only">QR Only</option>
+                        <option value="NFC Only">NFC Only</option>
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
+                    </div>
                   </div>
 
                   {/* <div className="grid grid-cols-2 gap-4">
@@ -779,6 +934,107 @@ export const QrCodesPage: React.FC = () => {
                 className="flex-1 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 text-white rounded-lg text-[13px] font-bold shadow-sm transition-opacity cursor-pointer"
               >
                 Create Dynamic Stand
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Asset Type Modal */}
+      {isAssetTypeModalOpen && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative animate-in fade-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setIsAssetTypeModalOpen(false)} 
+              className="absolute top-4 right-4 p-1.5 text-[#9E9A93] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-xl font-bold text-[#1A1615] mb-4">
+              Add New Asset Type
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#6E6A66] mb-1">Asset Name <span className="text-[#DC2626]">*</span></label>
+                <input 
+                  type="text" 
+                  value={assetTypeName}
+                  onChange={e => setAssetTypeName(e.target.value)}
+                  className={`w-full border rounded-lg px-3 py-2 text-sm focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753] outline-none ${hasSubmittedAssetType && !assetTypeName.trim() ? 'border-[#DC2626] bg-[#FEF2F2]' : 'border-[#EAE6E1]'}`} 
+                  placeholder="Enter asset name"
+                />
+                {hasSubmittedAssetType && !assetTypeName.trim() && <p className="text-[#DC2626] text-[10px] font-bold mt-1">Name is required</p>}
+              </div>
+              <label className="flex items-center gap-3 cursor-pointer p-3 border border-[#EAE6E1] rounded-lg hover:bg-[#FAF8F5] transition-colors mt-2">
+                <div className="relative flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    checked={assetTypeIsActive}
+                    onChange={(e) => setAssetTypeIsActive(e.target.checked)}
+                    className="w-5 h-5 appearance-none border-2 border-[#D1CDC7] rounded-md checked:bg-[#D4A753] checked:border-[#D4A753] transition-colors cursor-pointer"
+                  />
+                  {assetTypeIsActive && <Check className="w-3.5 h-3.5 text-white absolute pointer-events-none" />}
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-[#1A1615]">Active Asset Type</div>
+                  <div className="text-[11px] text-[#6E6A66]">Inactive asset types won't appear as options for QR codes.</div>
+                </div>
+              </label>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => { setHasSubmittedAssetType(false); setIsAssetTypeModalOpen(false); }} className="px-4 py-2 text-sm font-bold text-[#6E6A66] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer">Cancel</button>
+              <button onClick={handleSaveAssetType} className="px-4 py-2 bg-[#D4A753] text-white text-sm font-bold rounded-lg hover:bg-[#C29543] transition-colors cursor-pointer shadow-sm">
+                Add Asset Type
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Placement Type Modal */}
+      {isPlacementTypeModalOpen && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative animate-in fade-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setIsPlacementTypeModalOpen(false)} 
+              className="absolute top-4 right-4 p-1.5 text-[#9E9A93] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-xl font-bold text-[#1A1615] mb-4">
+              Add New Placement Type
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#6E6A66] mb-1">Placement Name <span className="text-[#DC2626]">*</span></label>
+                <input 
+                  type="text" 
+                  value={placementTypeName}
+                  onChange={e => setPlacementTypeName(e.target.value)}
+                  className={`w-full border rounded-lg px-3 py-2 text-sm focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753] outline-none ${hasSubmittedPlacementType && !placementTypeName.trim() ? 'border-[#DC2626] bg-[#FEF2F2]' : 'border-[#EAE6E1]'}`} 
+                  placeholder="Enter placement name"
+                />
+                {hasSubmittedPlacementType && !placementTypeName.trim() && <p className="text-[#DC2626] text-[10px] font-bold mt-1">Name is required</p>}
+              </div>
+              <label className="flex items-center gap-3 cursor-pointer p-3 border border-[#EAE6E1] rounded-lg hover:bg-[#FAF8F5] transition-colors mt-2">
+                <div className="relative flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    checked={placementTypeIsActive}
+                    onChange={(e) => setPlacementTypeIsActive(e.target.checked)}
+                    className="w-5 h-5 appearance-none border-2 border-[#D1CDC7] rounded-md checked:bg-[#D4A753] checked:border-[#D4A753] transition-colors cursor-pointer"
+                  />
+                  {placementTypeIsActive && <Check className="w-3.5 h-3.5 text-white absolute pointer-events-none" />}
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-[#1A1615]">Active Placement Type</div>
+                  <div className="text-[11px] text-[#6E6A66]">Inactive placement types won't appear as options.</div>
+                </div>
+              </label>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => { setHasSubmittedPlacementType(false); setIsPlacementTypeModalOpen(false); }} className="px-4 py-2 text-sm font-bold text-[#6E6A66] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer">Cancel</button>
+              <button onClick={handleSavePlacementType} className="px-4 py-2 bg-[#D4A753] text-white text-sm font-bold rounded-lg hover:bg-[#C29543] transition-colors cursor-pointer shadow-sm">
+                Add Placement Type
               </button>
             </div>
           </div>
