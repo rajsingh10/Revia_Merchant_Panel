@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useWallet } from '../context/WalletContext';
 import {
   Clock,
@@ -64,7 +65,7 @@ import {
 import { FormInput } from '../components/FormInput';
 import { AddItemModal } from '../components/AddItemModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCampaigns, setCurrentCampaign, createCampaign, updateCampaign, deleteCampaign, toggleCampaignStatus } from '../store/slices/campaignSlice';
+import { fetchCampaigns, fetchCampaignById, setCurrentCampaign, createCampaign, updateCampaign, deleteCampaign, toggleCampaignStatus } from '../store/slices/campaignSlice';
 import { fetchProducts } from '../store/slices/catalogSlice';
 import { fetchBranches } from '../store/slices/branchSlice';
 import type { AppDispatch, RootState } from '../store/store';
@@ -149,6 +150,11 @@ interface CampaignRulesStepProps {
   onBack: () => void;
   campaignName?: string;
   initialRules?: any[];
+  initialStartDate?: string;
+  initialEndDate?: string;
+  initialTriggerEvent?: string;
+  initialActiveBranches?: string[];
+  initialMatchType?: 'ALL' | 'ANY';
 }
 
 type RuleCondition = {
@@ -221,7 +227,7 @@ const RuleDropdown = ({ value, options, onChange, placeholder, minWidth = '160px
   );
 };
 
-const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, currency, onContinue, onChange, onBack, campaignName, initialRules }) => {
+const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, currency, onContinue, onChange, onBack, campaignName, initialRules, initialStartDate, initialEndDate, initialTriggerEvent, initialActiveBranches, initialMatchType }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { ruleFields, tierOptions } = useSelector((state: RootState) => state.master);
   const reduxBranches = useSelector((state: RootState) => state.branch.branches);
@@ -249,7 +255,7 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
     : FIELDS;
 
   const currSymbol = currency.match(/\((.*?)\)/)?.[1] || '₹';
-  const [matchType, setMatchType] = useState<'ALL' | 'ANY'>('ALL');
+  const [matchType, setMatchType] = useState<'ALL' | 'ANY'>(initialMatchType || 'ALL');
   const [showErrors, setShowErrors] = useState<boolean>(false);
   const [selectedRuleIds, setSelectedRuleIds] = useState<string[]>([]);
   const [rules, setRules] = useState<RuleNode[]>(initialRules && initialRules.length > 0 ? initialRules : [
@@ -307,21 +313,22 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
   }, [rules, matchType]);
 
   // Delivery Timing & Branch Eligibility state
-  const [triggerEvent, setTriggerEvent] = useState<string>('qr_scan');
+  const [triggerEvent, setTriggerEvent] = useState<string>(initialTriggerEvent || 'qr_scan');
   // Calculate initial datetime strings for local timezone
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
+  const [startDate, setStartDate] = useState<string>(initialStartDate || '');
+  const [endDate, setEndDate] = useState<string>(initialEndDate || '');
   const [branches, setBranches] = useState<Array<{ id: string; name: string; selected: boolean }>>([]);
 
   useEffect(() => {
-    if (reduxBranches && reduxBranches.length > 0) {
+    if (reduxBranches && reduxBranches.length > 0 && branches.length === 0) {
       setBranches(reduxBranches.map(b => ({
         id: String(b.id),
         name: b.name,
-        selected: true // Default to true when fetched
+        selected: initialActiveBranches ? initialActiveBranches.includes(b.name) : true
       })));
     }
-  }, [reduxBranches]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reduxBranches, initialActiveBranches]);
 
   useEffect(() => {
     if (onChange) {
@@ -334,7 +341,8 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
         activeBranches: branches.filter(b => b.selected).map(b => b.name)
       });
     }
-  }, [rules, matchType, triggerEvent, startDate, endDate, branches, onChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rules, matchType, triggerEvent, startDate, endDate, branches]);
 
   const [isAddingLocation, setIsAddingLocation] = useState<boolean>(false);
   const [newLocationName, setNewLocationName] = useState<string>('');
@@ -1125,7 +1133,8 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
         applicableBranches
       });
     }
-  }, [rewardType, cashbackAmount, discountType, discountValue, rewardPoints, freeItem, maxRedemptions, totalBudgetCap, coolingPeriodHours, applicableBranches, onChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rewardType, cashbackAmount, discountType, discountValue, rewardPoints, freeItem, maxRedemptions, totalBudgetCap, coolingPeriodHours, applicableBranches]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -1644,6 +1653,7 @@ export interface CampaignBuilderPageProps {
 }
 
 export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initialViewMode = 'dashboard', onNavigate }) => {
+  const { id: routeCampaignId } = useParams();
   const { wallet, checkAndDeductCredit } = useWallet();
   const [currentStep, setCurrentStep] = useState<number>(1);
 
@@ -1712,9 +1722,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     dispatch(setCurrentCampaign(null)); // Clear for new campaign
     if (onNavigate) {
       onNavigate('/campaigns/new');
-    } else {
-      setViewMode('builder');
     }
+    setViewMode('builder');
     setCurrentStep(1);
   };
 
@@ -1788,7 +1797,12 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       type: resolvedType,
       customer_type: selectedTiers[0] || 'VIP',
       reward_type: resolvedRewardType,
-      reward_value: rewardConfig?.rewardValue || rewardConfig?.discountValue || '50',
+      reward_value: String(
+        resolvedRewardType === 'cashback' ? (rewardConfig?.cashbackAmount ?? rewardConfig?.freeItem ?? '50') :
+        resolvedRewardType === 'fixed_discount' || resolvedRewardType === 'percentage_discount' ? (rewardConfig?.discountValue ?? '50') :
+        resolvedRewardType === 'reward_points' ? (rewardConfig?.rewardPoints ?? '50') :
+        (rewardConfig?.rewardPoints ?? rewardConfig?.cashbackAmount ?? rewardConfig?.discountValue ?? rewardConfig?.freeItem ?? '50')
+      ),
       is_active: !isDraft,
       valid_from: (ruleConfig?.startDate || startDate) ? new Date(ruleConfig?.startDate || startDate).toISOString() : undefined,
       valid_until: (ruleConfig?.endDate || endDate) ? new Date(ruleConfig?.endDate || endDate).toISOString() : undefined,
@@ -1945,10 +1959,9 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       dispatch(setCurrentCampaign(c));
     }
     if (onNavigate) {
-      onNavigate('/campaigns/new');
-    } else {
-      setViewMode('builder');
+      onNavigate(`/campaigns/edit/${c.id}`);
     }
+    setViewMode('builder');
     setCurrentStep(1);
   };
 
@@ -1973,9 +1986,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     dispatch(setCurrentCampaign(null));
     if (onNavigate) {
       onNavigate('/campaigns');
-    } else {
-      setViewMode('dashboard');
     }
+    setViewMode('dashboard');
   };
 
   const [selectedCampaignType, setSelectedCampaignType] = useState<string>('Loyalty Boost');
@@ -2098,6 +2110,12 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const tierOptions = useSelector((state: RootState) => state.master.tierOptions);
 
   useEffect(() => {
+    if (routeCampaignId) {
+      dispatch(fetchCampaignById(routeCampaignId));
+    }
+  }, [routeCampaignId, dispatch]);
+
+  useEffect(() => {
     dispatch(fetchCampaigns(undefined));
     dispatch(fetchBranches());
     dispatch(fetchTierOptions());
@@ -2111,7 +2129,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       setCampaignName(currentCampaign.title || '');
       
       // Handle Date formats for datetime-local (YYYY-MM-DDThh:mm)
-      const formatDateTime = (isoStr: string) => isoStr ? isoStr.slice(0, 16) : '';
+      const formatDateTime = (isoStr: string) => {
+        if (!isoStr) return '';
+        const d = new Date(isoStr);
+        if (isNaN(d.getTime())) return '';
+        const tz = d.getTimezoneOffset() * 60000;
+        return (new Date(d.getTime() - tz)).toISOString().slice(0, 16);
+      };
       
       if (!currentCampaign.valid_from && currentCampaign.schedule_config?.start_time) {
         const today = new Date().toISOString().split('T')[0];
@@ -3611,6 +3635,11 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       campaignName={campaignName}
       currency={currency}
       initialRules={ruleConfig?.rules}
+      initialStartDate={startDate}
+      initialEndDate={endDate}
+      initialTriggerEvent={ruleConfig?.triggerEvent}
+      initialActiveBranches={ruleConfig?.activeBranches}
+      initialMatchType={ruleConfig?.matchType}
       onChange={(config) => setRuleConfig(config)}
       onContinue={(config) => {
         setRuleConfig(config);

@@ -177,7 +177,7 @@ export default function App() {
     }
   }, [currentRoute]);
 
-  const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/') || currentRoute.startsWith('/customerlist/detail') || currentRoute.startsWith('/c/');
+  const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/') || currentRoute.startsWith('/customerlist/detail') || currentRoute.startsWith('/c/') || currentRoute.startsWith('/campaigns/edit');
   
   const isMerchantPanelRoute = !(
     currentRoute === '/' ||
@@ -285,6 +285,7 @@ export default function App() {
                 <Route path="/transactions" element={<ProtectedRoute><TransactionsPage /></ProtectedRoute>} />
                 <Route path="/campaigns" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="dashboard" onNavigate={(route) => handleNavigate(route as NavRoute)} /></ProtectedRoute>} />
                 <Route path="/campaigns/new" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="builder" onNavigate={(route) => handleNavigate(route as NavRoute)} /></ProtectedRoute>} />
+                <Route path="/campaigns/edit/:id" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="builder" onNavigate={(route) => handleNavigate(route as NavRoute)} /></ProtectedRoute>} />
                 <Route path="/rewards" element={<ProtectedRoute><RewardsPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/rewards/new" element={<ProtectedRoute><CreateRewardPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/terminal" element={<ProtectedRoute><RedemptionTerminalPage /></ProtectedRoute>} />
