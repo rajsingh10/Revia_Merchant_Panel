@@ -46,10 +46,14 @@ export const requestLoginOtp = createAsyncThunk(
   'auth/requestLoginOtp',
   async (identifier: string, { rejectWithValue }) => {
     try {
+      // Commented out API for direct access without backend
+      /*
       const isEmail = identifier.includes('@');
       const payload = isEmail ? { email: identifier } : { phone: identifier };
       const response = await apiClient.post('auth/request-login-otp', payload);
       return response.data;
+      */
+      return { data: { otp: '123456' }, otp: '123456' };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to request login OTP');
     }
@@ -60,12 +64,31 @@ export const loginWithOtp = createAsyncThunk(
   'auth/loginWithOtp',
   async (data: { identifier: string; otp: string }, { rejectWithValue }) => {
     try {
+      // Commented out API for direct access without backend
+      /*
       const isEmail = data.identifier.includes('@');
       const payload = isEmail 
         ? { email: data.identifier, otp: data.otp } 
         : { phone: data.identifier, otp: data.otp };
       const response = await apiClient.post('auth/login-with-otp', payload);
       return response.data;
+      */
+      const mockUser = {
+        id: 1,
+        name: 'Merchant Admin',
+        phone: data.identifier,
+        email: data.identifier.includes('@') ? data.identifier : 'admin@revia.com',
+        role: 'merchant',
+        has_business: true,
+        admin_approved: true,
+        merchant_status: 'approved'
+      };
+      return {
+        data: {
+          token: 'mock-merchant-token-revia',
+          user: mockUser
+        }
+      };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to verify login OTP');
     }
@@ -76,10 +99,14 @@ export const requestRegisterOtp = createAsyncThunk(
   'auth/requestRegisterOtp',
   async (identifier: string, { rejectWithValue }) => {
     try {
+      // Commented out API for direct access without backend
+      /*
       const isEmail = identifier.includes('@');
       const payload = isEmail ? { email: identifier } : { phone: identifier };
       const response = await apiClient.post('auth/merchant/request-register-otp', payload);
       return response.data;
+      */
+      return { data: { otp: '123456' }, otp: '123456', success: true };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to request OTP');
     }
@@ -90,6 +117,8 @@ export const registerMerchant = createAsyncThunk(
   'auth/registerMerchant',
   async (data: { identifier: string; otp: string; name?: string }, { rejectWithValue }) => {
     try {
+      // Commented out API for direct access without backend
+      /*
       const isEmail = data.identifier.includes('@');
       const payload = {
         otp: data.otp,
@@ -98,6 +127,21 @@ export const registerMerchant = createAsyncThunk(
       };
       const response = await apiClient.post('auth/merchant/register', payload);
       return response.data;
+      */
+      const mockUser = {
+        id: 2,
+        name: data.name || 'Merchant Owner',
+        phone: data.identifier,
+        email: data.identifier.includes('@') ? data.identifier : 'owner@revia.com',
+        role: 'merchant',
+        has_business: false
+      };
+      return {
+        data: {
+          token: 'mock-merchant-register-token',
+          user: mockUser
+        }
+      };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to verify OTP');
     }

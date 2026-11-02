@@ -293,7 +293,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
                     setValidationError('');
                     setIsChecking(true);
                     try {
-                      await apiClient.post('auth/check', { identifier: phone });
+                      // Commented out API check for direct offline access
+                    // await apiClient.post('auth/check', { identifier: phone });
                       dispatch(requestLoginOtp(phone));
                     } catch (err: any) {
                       setValidationError(err.response?.data?.message || 'User check failed');
@@ -383,7 +384,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
                       dispatch(loginWithOtp({ identifier: phone, otp: enteredOtp }));
                     }
                   } else {
-                    // Password login could be dispatched here if implemented
+                    localStorage.setItem('token', 'mock-merchant-token');
+                    localStorage.setItem('user', JSON.stringify({ id: 1, name: 'Merchant Admin', phone, email: phone.includes('@') ? phone : 'admin@revia.com', role: 'merchant' }));
                     onLoginSuccess('merchant');
                   }
                 }}

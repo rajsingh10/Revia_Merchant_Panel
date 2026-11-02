@@ -43,8 +43,15 @@ export const fetchCountries = createAsyncThunk(
   'location/fetchCountries',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get('/countries');
-      return response.data;
+      // API commented out for direct access without backend
+      // const response = await apiClient.get('/countries');
+      // return response.data;
+      return [
+        { id: 1, name: 'India', code: 'IN', phone_code: '+91' },
+        { id: 2, name: 'United States', code: 'US', phone_code: '+1' },
+        { id: 3, name: 'United Arab Emirates', code: 'AE', phone_code: '+971' },
+        { id: 4, name: 'United Kingdom', code: 'GB', phone_code: '+44' }
+      ];
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch countries');
     }
@@ -55,8 +62,19 @@ export const fetchStates = createAsyncThunk(
   'location/fetchStates',
   async (countryId: string | number, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get(`/countries/${countryId}/states`);
-      return response.data;
+      // API commented out for direct access without backend
+      // const response = await apiClient.get(`/countries/${countryId}/states`);
+      // return response.data;
+      return [
+        { id: 101, name: 'Gujarat', country_id: 1 },
+        { id: 102, name: 'Maharashtra', country_id: 1 },
+        { id: 103, name: 'Delhi', country_id: 1 },
+        { id: 104, name: 'Karnataka', country_id: 1 },
+        { id: 105, name: 'Tamil Nadu', country_id: 1 },
+        { id: 201, name: 'California', country_id: 2 },
+        { id: 202, name: 'New York', country_id: 2 },
+        { id: 203, name: 'Texas', country_id: 2 }
+      ];
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch states');
     }
@@ -67,8 +85,16 @@ export const fetchCities = createAsyncThunk(
   'location/fetchCities',
   async (stateId: string | number, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get(`/states/${stateId}/cities`);
-      return response.data;
+      // API commented out for direct access without backend
+      // const response = await apiClient.get(`/states/${stateId}/cities`);
+      // return response.data;
+      return [
+        { id: 1001, name: 'Ahmedabad' },
+        { id: 1002, name: 'Surat' },
+        { id: 1003, name: 'Mumbai' },
+        { id: 1004, name: 'Bengaluru' },
+        { id: 1005, name: 'New Delhi' }
+      ];
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch cities');
     }

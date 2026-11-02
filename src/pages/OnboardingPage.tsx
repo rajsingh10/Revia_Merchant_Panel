@@ -36,7 +36,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
 
   // Mobile Verification State
   const dispatch = useDispatch<AppDispatch>();
-  const { mobileNumber, isOtpSent, isMobileVerified, isLoading, error } = useSelector((state: RootState) => state.auth);
+  const { mobileNumber, isOtpSent, isMobileVerified, isLoading, error, isAuthenticated } = useSelector((state: RootState) => state.auth);
   const [otp, setOtp] = useState('');
   const [verificationMethod, setVerificationMethod] = useState<'sms' | 'whatsapp'>('sms');
   const [validationError, setValidationError] = useState('');
@@ -74,24 +74,30 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   const [businessCategory, setBusinessCategory] = useState<number | ''>('');
   const [ownerName, setOwnerName] = useState('');
   
-  const [categories, setCategories] = useState<{ id: number, name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: number, name: string }[]>([
+    { id: 1, name: 'Restaurant & Café' },
+    { id: 2, name: 'Retail & Fashion' },
+    { id: 3, name: 'Salon, Spa & Wellness' },
+    { id: 4, name: 'Grocery & Supermarket' },
+    { id: 5, name: 'Electronics & Gadgets' },
+    { id: 6, name: 'Services & Entertainment' },
+  ]);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await apiClient.get('/business-categories');
-        const data = response.data?.data || response.data;
-        if (Array.isArray(data)) {
-          setCategories(data);
-        }
+        // Commented out API for direct offline access
+        // const response = await apiClient.get('/business-categories');
+        // const data = response.data?.data || response.data;
+        // if (Array.isArray(data)) setCategories(data);
       } catch (error) {
         console.error('Failed to fetch categories:', error);
       }
     };
-    if (isRegistered) {
+    if (isRegistered && isAuthenticated) {
       fetchCategories();
     }
-  }, [isRegistered]);
+  }, [isRegistered, isAuthenticated]);
 
   // Step 3 First Branch
   const [branchName, setBranchName] = useState('');
@@ -183,6 +189,17 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                 <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93] mb-1">SECURE AUTH GATEWAY</div>
                 <h3 className="text-xl font-bold tracking-tight text-[#1A1615]">Identity Verification</h3>
                 <p className="text-xs text-[#6E6A66] mt-1">Verify your phone or email to begin onboarding.</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    dispatch(registerMerchant({ identifier: mobileNumber || '9999999999', otp: '123456' }));
+                  }}
+                  className="text-[11px] font-bold text-[#B8860B] hover:underline cursor-pointer bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200"
+                >
+                  ⚡ Skip for now
+                </button>
               </div>
               <button 
                 onClick={onCancel}
@@ -308,6 +325,19 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                           className="w-12 h-12 text-center text-lg font-bold bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl focus:outline-hidden focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753] shadow-xs"
                         />
                       ))}
+                    </div>
+                    <div className="mb-4 p-2.5 bg-blue-50/70 border border-blue-200 rounded-lg flex items-center justify-between">
+                      <div>
+                        <p className="text-[9px] text-blue-700 font-bold uppercase tracking-wider">Test OTP (Demo Mode)</p>
+                        <p className="text-sm font-mono font-bold text-blue-900 tracking-widest">123456</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setOtp('123456')}
+                        className="text-[10px] bg-white border border-blue-200 text-blue-700 font-bold px-2 py-1 rounded hover:bg-blue-50 cursor-pointer"
+                      >
+                        Auto-Fill
+                      </button>
                     </div>
                     <div className="flex justify-between items-center mb-6">
                       <span className="text-[10px] text-[#9E9A93]">{mobileNumber.includes('@') ? mobileNumber : `Sent to +91 ${mobileNumber}`}</span>
