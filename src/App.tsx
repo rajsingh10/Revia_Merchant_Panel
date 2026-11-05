@@ -256,12 +256,14 @@ export default function App() {
         
         <div ref={mainContentRef} className="flex-1 flex flex-col min-w-0 h-screen overflow-y-scroll">
           <LowBalanceBanner />
-          <Header
-            currentRoute={currentRoute as NavRoute}
-            onOpenSearch={() => setIsSearchOpen(true)}
-            onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            onNavigate={handleNavigate as any}
-          />
+          {!currentRoute.startsWith('/campaigns') && (
+            <Header
+              currentRoute={currentRoute as NavRoute}
+              onOpenSearch={() => setIsSearchOpen(true)}
+              onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onNavigate={handleNavigate as any}
+            />
+          )}
           <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-0'} ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
             {!isValidRoute ? (
               <NotFoundPage onNavigate={(route) => handleNavigate(route as NavRoute)} />
@@ -283,7 +285,7 @@ export default function App() {
                 <Route path="/customerlist" element={<ProtectedRoute><CustomersPage customers={customers} onUpdateCustomer={(updated) => setCustomers((c) => c.map((cust) => (cust.id === updated.id ? updated : cust)))} onAddCustomer={(newCustomer) => setCustomers((c) => [newCustomer, ...c])} onViewCustomer={(id) => handleNavigate(`/customerlist/detail?id=${id}` as any)} /></ProtectedRoute>} />
                 <Route path="/customerlist/detail" element={<ProtectedRoute><CustomerDetailPage onNavigate={handleNavigate as any} customer={customers.find(c => { const searchParams = new URLSearchParams(window.location.search); return c.id === searchParams.get('id'); })} /></ProtectedRoute>} />
                 <Route path="/transactions" element={<ProtectedRoute><TransactionsPage /></ProtectedRoute>} />
-                <Route path="/campaigns" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="dashboard" onNavigate={(route) => handleNavigate(route as NavRoute)} /></ProtectedRoute>} />
+                <Route path="/campaigns" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="dashboard" onNavigate={(route) => handleNavigate(route as NavRoute)} onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)} /></ProtectedRoute>} />
                 <Route path="/campaigns/new" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="builder" onNavigate={(route) => handleNavigate(route as NavRoute)} /></ProtectedRoute>} />
                 <Route path="/campaigns/edit/:id" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="builder" onNavigate={(route) => handleNavigate(route as NavRoute)} /></ProtectedRoute>} />
                 <Route path="/rewards" element={<ProtectedRoute><RewardsPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />

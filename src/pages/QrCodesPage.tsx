@@ -25,7 +25,19 @@ import {
   Clock,
   MapPin,
   X,
-  Check
+  Check,
+  Calendar,
+  Sparkles,
+  ArrowRight,
+  ArrowLeft,
+  Users,
+  UserPlus,
+  Crown,
+  RotateCcw,
+  Printer,
+  Share2,
+  Store,
+  ChevronRight
 } from 'lucide-react';
 
 export const QrCodesPage: React.FC = () => {
@@ -53,6 +65,33 @@ export const QrCodesPage: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [selectedActionAsset, setSelectedActionAsset] = useState<any>(null);
+
+  // 5-Step QR Generator Wizard State (Images 4 & 5)
+  const [pageMode, setPageMode] = useState<'wizard' | 'library'>('wizard');
+  const [qrStep, setQrStep] = useState<number>(1);
+  const [selectedCampaignId, setSelectedCampaignId] = useState<string>('first-visit');
+  const [campaignSearch, setCampaignSearch] = useState<string>('');
+
+  // Step 2: Time Duration State (Image 5)
+  const [qrStartDate, setQrStartDate] = useState<string>('15 Sep 2025');
+  const [qrEndDate, setQrEndDate] = useState<string>('30 Sep 2025');
+  const [qrIsRecurring, setQrIsRecurring] = useState<boolean>(true);
+  const [qrRepeatFreq, setQrRepeatFreq] = useState<string>('Weekly');
+  const [qrRepeatDays, setQrRepeatDays] = useState<string[]>(['M']);
+  const [qrEndRecurrence, setQrEndRecurrence] = useState<'no_end' | 'occurrences' | 'end_date'>('no_end');
+  const [qrOccurrences, setQrOccurrences] = useState<number>(4);
+  const [qrRecurrenceEndDate, setQrRecurrenceEndDate] = useState<string>('30 Dec 2025');
+
+  // Step 3: Client Type
+  const [qrClientType, setQrClientType] = useState<string>('all');
+  const [qrChannels, setQrChannels] = useState<string[]>(['dine_in', 'counter']);
+
+  // Step 4: Location & Placement
+  const [qrBranch, setQrBranch] = useState<string>('Downtown Flagship Bistro');
+  const [qrPlacement, setQrPlacement] = useState<string>('table');
+  const [qrMaterial, setQrMaterial] = useState<string>('acrylic');
+  const [qrTableCount, setQrTableCount] = useState<number>(10);
+  const [previewTableIndex, setPreviewTableIndex] = useState<number>(1);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -310,6 +349,895 @@ export const QrCodesPage: React.FC = () => {
     </div>
   );
 
+  // -------------------------------------------------------------
+  // 5-STEP QR GENERATOR WIZARD (Matching Images 4 & 5)
+  // -------------------------------------------------------------
+  const qrCampaignsList = [
+    {
+      id: 'first-visit',
+      name: 'First Visit Special',
+      description: '20% OFF on your first visit',
+      status: 'Active',
+      image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=120&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'weekend-treat',
+      name: 'Weekend Treat',
+      description: '15% OFF on selected items',
+      status: 'Active',
+      image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=120&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'birthday-special',
+      name: 'Birthday Special',
+      description: 'Free dessert on your birthday',
+      status: 'Active',
+      image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=120&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'happy-hours',
+      name: 'Happy Hours',
+      description: '1+1 on selected drinks',
+      status: 'Paused',
+      image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=120&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'combo-offer',
+      name: 'Combo Offer',
+      description: 'Save more with combos',
+      status: 'Active',
+      image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=120&auto=format&fit=crop&q=80'
+    }
+  ];
+
+  const qrSteps = [
+    { id: 1, name: 'Campaign' },
+    { id: 2, name: 'Time duration' },
+    { id: 3, name: 'Client type' },
+    { id: 4, name: 'Location' },
+    { id: 5, name: 'Review Generate' }
+  ];
+
+  const filteredCampaigns = qrCampaignsList.filter(c =>
+    c.name.toLowerCase().includes(campaignSearch.toLowerCase()) ||
+    c.description.toLowerCase().includes(campaignSearch.toLowerCase())
+  );
+
+  const selectedCampaignObj = qrCampaignsList.find(c => c.id === selectedCampaignId) || qrCampaignsList[0];
+
+  const renderQrDesktopStepper = () => (
+    <div className="space-y-6">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
+        <span>&gt; Home</span>
+        <span className="text-gray-700 font-bold">Campaign &amp; Loyalty Management</span>
+      </div>
+
+      {/* Page Title & View Switcher */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-black text-[#1E1548] tracking-tight flex items-center gap-2">
+            Campaign &amp; Loyalty Management
+            <Sparkles className="w-5 h-5 text-[#E83E8C] fill-[#E83E8C]" />
+          </h1>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1 font-medium">
+            Create, monitor, and optimize your customer engagement programs.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setPageMode(pageMode === 'wizard' ? 'library' : 'wizard')}
+          className="flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1E1548] hover:bg-gray-50 shadow-2xs transition-colors cursor-pointer self-start sm:self-auto"
+        >
+          {pageMode === 'wizard' ? (
+            <>
+              <Layers className="w-3.5 h-3.5 text-[#5844A8]" />
+              View QR Stand Library
+            </>
+          ) : (
+            <>
+              <Plus className="w-3.5 h-3.5 text-[#5844A8]" />
+              Generate New QR Code
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* 5-Step Stepper */}
+      <div className="relative flex items-center justify-between max-w-3xl pt-2">
+        {qrSteps.map((st) => {
+          const isCompleted = qrStep > st.id;
+          const isCurrent = qrStep === st.id;
+
+          return (
+            <div key={st.id} className="flex flex-col items-center relative z-10">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${
+                  isCurrent
+                    ? 'bg-[#5844A8] text-white shadow-md ring-4 ring-purple-100'
+                    : isCompleted
+                    ? 'bg-[#5844A8] text-white'
+                    : 'bg-white border-2 border-gray-200 text-gray-400'
+                }`}
+              >
+                {isCompleted ? <Check className="w-4 h-4" /> : st.id}
+              </div>
+              <span className={`text-xs font-bold mt-2 whitespace-nowrap ${
+                isCurrent ? 'text-[#5844A8]' : 'text-gray-400'
+              }`}>
+                {st.name}
+              </span>
+            </div>
+          );
+        })}
+        {/* Connector Line */}
+        <div className="absolute top-6 left-6 right-6 h-0.5 bg-gray-200 -z-0"></div>
+      </div>
+    </div>
+  );
+
+  // STEP 1: SELECT CAMPAIGN (Image 4)
+  const renderQrStep1 = () => (
+    <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+      <div>
+        <h3 className="text-base font-bold text-[#1E1548]">Select Campaign</h3>
+        <p className="text-xs text-gray-400 font-medium mt-0.5">
+          Choose the campaign for which you want to generate QR codes.
+        </p>
+      </div>
+
+      {/* Search Input */}
+      <div className="relative">
+        <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+        <input
+          type="text"
+          placeholder="Search campaign..."
+          value={campaignSearch}
+          onChange={(e) => setCampaignSearch(e.target.value)}
+          className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-medium text-[#1E1548] placeholder:text-gray-400 focus:outline-none focus:border-[#5844A8]"
+        />
+      </div>
+
+      {/* Campaign List Cards */}
+      <div className="space-y-3">
+        {filteredCampaigns.map((camp) => {
+          const isSelected = selectedCampaignId === camp.id;
+          return (
+            <div
+              key={camp.id}
+              onClick={() => setSelectedCampaignId(camp.id)}
+              className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between bg-white ${
+                isSelected
+                  ? 'border-2 border-[#5844A8] shadow-sm'
+                  : 'border-gray-200/80 hover:border-gray-300'
+              }`}
+            >
+              <div className="flex items-center gap-3.5">
+                <img
+                  src={camp.image}
+                  alt={camp.name}
+                  className="w-11 h-11 rounded-xl object-cover"
+                />
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-[#1E1548]">{camp.name}</h4>
+                  <p className="text-[11px] text-gray-400 mt-0.5">{camp.description}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span
+                  className={`text-[10px] sm:text-[11px] font-semibold px-2.5 py-0.5 rounded-full flex items-center gap-1 ${
+                    camp.status === 'Active'
+                      ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                      : 'bg-amber-50 text-amber-600 border border-amber-200'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${camp.status === 'Active' ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                  {camp.status}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+        <button
+          type="button"
+          onClick={() => setPageMode('library')}
+          className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+        >
+          &larr; Back
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setQrStep(2)}
+          className="px-7 py-2.5 rounded-lg bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+        >
+          Next &rarr;
+        </button>
+      </div>
+    </div>
+  );
+
+  // STEP 2: TIME DURATION (Image 5)
+  const renderQrStep2 = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Card: Set Time Duration Form (lg:col-span-7) */}
+        <div className="lg:col-span-7 bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+          <div>
+            <h3 className="text-base font-bold text-[#1E1548]">Set Time Duration</h3>
+            <p className="text-xs text-gray-400 font-medium mt-0.5">
+              Choose when you want this QR code to be active.
+            </p>
+          </div>
+
+          {/* Start Date & End Date Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                Start Date <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <Calendar className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={qrStartDate}
+                  onChange={(e) => setQrStartDate(e.target.value)}
+                  placeholder="15 Sep 2025"
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                End Date <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <Calendar className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={qrEndDate}
+                  onChange={(e) => setQrEndDate(e.target.value)}
+                  placeholder="30 Sep 2025"
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Is this a recurring campaign toggle */}
+          <div className="pt-2 border-t border-gray-100">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-xs font-bold text-[#1E1548]">
+                Is this a recurring campaign? <span className="text-gray-400 font-normal">(Optional)</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setQrIsRecurring(v => !v)}
+                className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${
+                  qrIsRecurring ? 'bg-[#5844A8]' : 'bg-gray-200'
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-xs transition-transform ${
+                    qrIsRecurring ? 'translate-x-5' : 'translate-x-0.5'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Recurring Controls */}
+            {qrIsRecurring && (
+              <div className="space-y-4 pt-2">
+                {/* Repeat Frequency & Repeat On Days */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-400 mb-1">Repeat</label>
+                    <select
+                      value={qrRepeatFreq}
+                      onChange={(e) => setQrRepeatFreq(e.target.value)}
+                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                    >
+                      <option value="Daily">Daily</option>
+                      <option value="Weekly">Weekly</option>
+                      <option value="Monthly">Monthly</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-400 mb-1">Repeat on</label>
+                    <div className="flex items-center gap-1.5">
+                      {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => {
+                        const isDaySelected = qrRepeatDays.includes(day);
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => {
+                              setQrRepeatDays(prev =>
+                                prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
+                              );
+                            }}
+                            className={`w-7 h-7 rounded-full text-xs font-bold flex items-center justify-center transition-colors cursor-pointer ${
+                              isDaySelected
+                                ? 'bg-[#5844A8] text-white shadow-2xs'
+                                : 'bg-[#FAF8FF] border border-gray-200 text-gray-500 hover:border-gray-300'
+                            }`}
+                          >
+                            {day}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* End Recurrence Options */}
+                <div className="space-y-2 pt-2">
+                  <label className="block text-[11px] font-bold text-gray-400">End recurrence</label>
+
+                  {/* Option 1: No end date */}
+                  <div
+                    onClick={() => setQrEndRecurrence('no_end')}
+                    className="flex items-center gap-2.5 cursor-pointer text-xs font-bold text-[#1E1548]"
+                  >
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      qrEndRecurrence === 'no_end' ? 'border-[#5844A8]' : 'border-gray-300'
+                    }`}>
+                      {qrEndRecurrence === 'no_end' && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
+                    </div>
+                    <span>No end date</span>
+                  </div>
+
+                  {/* Option 2: End after X occurrences */}
+                  <div
+                    onClick={() => setQrEndRecurrence('occurrences')}
+                    className="flex items-center gap-2.5 cursor-pointer text-xs font-bold text-[#1E1548]"
+                  >
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      qrEndRecurrence === 'occurrences' ? 'border-[#5844A8]' : 'border-gray-300'
+                    }`}>
+                      {qrEndRecurrence === 'occurrences' && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
+                    </div>
+                    <span>End after</span>
+                    <input
+                      type="number"
+                      value={qrOccurrences}
+                      onChange={(e) => setQrOccurrences(Number(e.target.value))}
+                      className="w-14 px-2 py-1 bg-white border border-gray-200 rounded-lg text-xs font-bold text-center text-[#1E1548]"
+                    />
+                    <span>occurrences</span>
+                  </div>
+
+                  {/* Option 3: End on date */}
+                  <div
+                    onClick={() => setQrEndRecurrence('end_date')}
+                    className="flex items-center gap-2.5 cursor-pointer text-xs font-bold text-[#1E1548]"
+                  >
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      qrEndRecurrence === 'end_date' ? 'border-[#5844A8]' : 'border-gray-300'
+                    }`}>
+                      {qrEndRecurrence === 'end_date' && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
+                    </div>
+                    <span>End on</span>
+                    <div className="relative">
+                      <Calendar className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={qrRecurrenceEndDate}
+                        onChange={(e) => setQrRecurrenceEndDate(e.target.value)}
+                        className="pl-8 pr-3 py-1 bg-white border border-gray-200 rounded-lg text-xs font-bold text-[#1E1548]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Card: Calendar & Clock Illustration (lg:col-span-5) */}
+        <div className="lg:col-span-5 bg-white border border-purple-50 rounded-3xl p-6 lg:p-8 shadow-sm flex flex-col justify-between items-center text-center min-h-[460px]">
+          {/* Stylized Calendar Graphic */}
+          <div className="w-48 h-48 relative my-auto flex items-center justify-center">
+            {/* Calendar Base */}
+            <div className="w-40 h-44 bg-gradient-to-b from-[#FAF8FF] to-white rounded-3xl shadow-xl border-2 border-purple-100 p-3.5 flex flex-col justify-between relative overflow-hidden">
+              {/* Ring Binders */}
+              <div className="flex justify-around absolute -top-1.5 left-0 right-0 px-5">
+                <div className="w-2 h-4 bg-purple-400 rounded-full" />
+                <div className="w-2 h-4 bg-purple-400 rounded-full" />
+                <div className="w-2 h-4 bg-purple-400 rounded-full" />
+                <div className="w-2 h-4 bg-purple-400 rounded-full" />
+              </div>
+
+              {/* Day Grid Dots */}
+              <div className="mt-4 grid grid-cols-4 gap-2 opacity-80">
+                <div className="h-3 bg-purple-100 rounded-md" />
+                <div className="h-3 bg-purple-100 rounded-md" />
+                <div className="h-3 bg-[#5844A8] rounded-md shadow-xs" />
+                <div className="h-3 bg-purple-100 rounded-md" />
+                <div className="h-3 bg-[#5844A8] rounded-md shadow-xs" />
+                <div className="h-3 bg-purple-100 rounded-md" />
+                <div className="h-3 bg-purple-100 rounded-md" />
+                <div className="h-3 bg-purple-100 rounded-md" />
+              </div>
+              <div className="h-3.5 bg-purple-100/70 rounded-md" />
+            </div>
+
+            {/* Overlay Clock */}
+            <div className="absolute -bottom-1 -right-1 w-20 h-20 bg-white rounded-full shadow-2xl border-4 border-[#5844A8] flex items-center justify-center">
+              <Clock className="w-9 h-9 text-[#5844A8]" />
+            </div>
+          </div>
+
+          <div className="space-y-1.5 pt-4">
+            <h4 className="text-base font-bold text-[#1E1548]">Set a valid time period</h4>
+            <p className="text-xs text-gray-500 max-w-xs mx-auto leading-relaxed">
+              Your QR codes will be active only during this period. You can also set it to repeat automatically.
+            </p>
+          </div>
+
+          {/* Tip Callout */}
+          <div className="mt-5 bg-[#FAF8FF] border border-purple-100/80 rounded-2xl p-3 text-left flex items-start gap-2.5 w-full">
+            <div className="w-4 h-4 rounded-full bg-purple-100 text-[#5844A8] flex items-center justify-center shrink-0 mt-0.5">
+              <Info className="w-3 h-3" />
+            </div>
+            <p className="text-[11px] text-purple-900 font-medium leading-relaxed">
+              <span className="font-bold">Tip:</span> Use recurring campaigns for regular offers like Happy Hours or Weekly Specials.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+        <button
+          type="button"
+          onClick={() => setQrStep(1)}
+          className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+        >
+          &larr; Back
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setQrStep(3)}
+          className="px-7 py-2.5 rounded-lg bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+        >
+          Next &rarr;
+        </button>
+      </div>
+    </div>
+  );
+
+  // STEP 3: CLIENT TYPE
+  const renderQrStep3 = () => (
+    <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+      <div>
+        <h3 className="text-base font-bold text-[#1E1548]">Select Client Type</h3>
+        <p className="text-xs text-gray-400 font-medium mt-0.5">
+          Choose the eligible customer tier and channels for this QR stand.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {[
+          { id: 'all', title: 'All Customers', desc: 'Open to all scanning diners (Recommended)', icon: Users, color: 'text-[#7C3AED] bg-purple-50' },
+          { id: 'new', title: 'New Customers Only', desc: 'First-time unregistered guests only', icon: UserPlus, color: 'text-blue-600 bg-blue-50' },
+          { id: 'tier', title: 'Loyalty Tier Members', desc: 'Gold, VIP, & Platinum pass holders', icon: Crown, color: 'text-amber-600 bg-amber-50' },
+          { id: 'winback', title: 'Winback Guests', desc: 'Inactive for 30+ days without a visit', icon: RotateCcw, color: 'text-rose-600 bg-rose-50' }
+        ].map((ct) => {
+          const IconC = ct.icon;
+          const isSelected = qrClientType === ct.id;
+          return (
+            <div
+              key={ct.id}
+              onClick={() => setQrClientType(ct.id)}
+              className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start gap-3.5 ${
+                isSelected ? 'border-2 border-[#5844A8] bg-[#FAF8FF]/40 shadow-2xs' : 'border-gray-200 hover:border-gray-300 bg-white'
+              }`}
+            >
+              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${
+                isSelected ? 'border-[#5844A8]' : 'border-gray-300'
+              }`}>
+                {isSelected && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
+              </div>
+
+              <div className={`w-9 h-9 rounded-xl ${ct.color} flex items-center justify-center shrink-0`}>
+                <IconC className="w-4.5 h-4.5" />
+              </div>
+
+              <div>
+                <h4 className="text-xs font-bold text-[#1E1548]">{ct.title}</h4>
+                <p className="text-[11px] text-gray-400 mt-0.5">{ct.desc}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Channel selection */}
+      <div className="pt-2 border-t border-gray-100">
+        <label className="block text-xs font-bold text-[#1E1548] mb-2">Applicable Ordering Channels</label>
+        <div className="flex flex-wrap items-center gap-3">
+          {[
+            { id: 'dine_in', label: 'Dine-in (Table Service)' },
+            { id: 'counter', label: 'Takeaway / Counter' },
+            { id: 'delivery', label: 'Online / Package Insert' }
+          ].map(ch => {
+            const isChecked = qrChannels.includes(ch.id);
+            return (
+              <button
+                key={ch.id}
+                type="button"
+                onClick={() => {
+                  setQrChannels(prev =>
+                    prev.includes(ch.id) ? prev.filter(c => c !== ch.id) : [...prev, ch.id]
+                  );
+                }}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer flex items-center gap-2 ${
+                  isChecked
+                    ? 'border-[#5844A8] bg-purple-50 text-[#5844A8]'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${
+                  isChecked ? 'bg-[#5844A8] border-[#5844A8] text-white' : 'border-gray-300 bg-white'
+                }`}>
+                  {isChecked && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                </div>
+                {ch.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+        <button
+          type="button"
+          onClick={() => setQrStep(2)}
+          className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+        >
+          &larr; Back
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setQrStep(4)}
+          className="px-7 py-2.5 rounded-lg bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+        >
+          Next &rarr;
+        </button>
+      </div>
+    </div>
+  );
+
+  // STEP 4: LOCATION & PLACEMENT
+  const renderQrStep4 = () => (
+    <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+      <div>
+        <h3 className="text-base font-bold text-[#1E1548]">Select Location &amp; Placement</h3>
+        <p className="text-xs text-gray-400 font-medium mt-0.5">
+          Specify venue branch, table stands, and material style.
+        </p>
+      </div>
+
+      {/* Branch selector */}
+      <div>
+        <label className="block text-xs font-bold text-[#1E1548] mb-1.5">Branch / Venue Outlet *</label>
+        <select
+          value={qrBranch}
+          onChange={(e) => setQrBranch(e.target.value)}
+          className="w-full max-w-md bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+        >
+          <option value="Downtown Flagship Bistro">Downtown Flagship Bistro</option>
+          <option value="Northside Garden Cafe">Northside Garden Cafe</option>
+          <option value="West End Express">West End Express</option>
+          <option value="All Branches">All Branches</option>
+        </select>
+      </div>
+
+      {/* Placement Type */}
+      <div>
+        <label className="block text-xs font-bold text-[#1E1548] mb-2">Placement Stand Type *</label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { id: 'table', title: 'Table Stands', desc: 'Numbered stands per table', icon: Store },
+            { id: 'counter', title: 'Billing Counter', desc: 'Single point of payment display', icon: Zap },
+            { id: 'window', title: 'Entrance Standee', desc: 'Large walk-in promo poster', icon: MapPin },
+            { id: 'digital', title: 'Digital Screen', desc: 'TV display / tablet menu', icon: Smartphone }
+          ].map(p => {
+            const IconP = p.icon;
+            const isSelected = qrPlacement === p.id;
+            return (
+              <div
+                key={p.id}
+                onClick={() => setQrPlacement(p.id)}
+                className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+                  isSelected ? 'border-2 border-[#5844A8] bg-[#FAF8FF]/40 shadow-2xs' : 'border-gray-200 bg-white hover:border-gray-300'
+                }`}
+              >
+                <div className="w-8 h-8 rounded-xl bg-purple-50 text-[#5844A8] flex items-center justify-center mb-3">
+                  <IconP className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[#1E1548]">{p.title}</div>
+                  <div className="text-[10px] text-gray-400 mt-0.5">{p.desc}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Stand Material & Table Count */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+        <div>
+          <label className="block text-xs font-bold text-[#1E1548] mb-1.5">Stand Material Finish</label>
+          <select
+            value={qrMaterial}
+            onChange={(e) => setQrMaterial(e.target.value)}
+            className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+          >
+            <option value="acrylic">Clear Acrylic Stand</option>
+            <option value="brass">Brushed Metal / Brass Tent</option>
+            <option value="nfc">NFC Puck (Tap &amp; Scan)</option>
+            <option value="sticker">Vinyl Table Sticker Decal</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-xs font-bold text-[#1E1548] mb-1.5">Number of Tables / Stands</label>
+          <div className="flex items-center border border-gray-200 rounded-xl w-fit overflow-hidden bg-white shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setQrTableCount(c => Math.max(1, c - 1))}
+              className="px-3.5 py-2 text-gray-500 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
+            >
+              <Minus className="w-3.5 h-3.5" />
+            </button>
+            <span className="w-12 text-center text-xs font-bold text-[#1E1548]">{qrTableCount} Stands</span>
+            <button
+              type="button"
+              onClick={() => setQrTableCount(c => c + 1)}
+              className="px-3.5 py-2 text-gray-500 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+        <button
+          type="button"
+          onClick={() => setQrStep(3)}
+          className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+        >
+          &larr; Back
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setQrStep(5)}
+          className="px-7 py-2.5 rounded-lg bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+        >
+          Next &rarr;
+        </button>
+      </div>
+    </div>
+  );
+
+  // STEP 5: REVIEW GENERATE
+  const renderQrStep5 = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Summary and Export Actions (lg:col-span-7) */}
+        <div className="lg:col-span-7 bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+          <div>
+            <h3 className="text-base font-bold text-[#1E1548]">Review &amp; Generate QR Codes</h3>
+            <p className="text-xs text-gray-400 font-medium mt-0.5">
+              Verify your setup and generate production-ready physical QR stands.
+            </p>
+          </div>
+
+          {/* 4 Summary Boxes */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="p-4 rounded-2xl bg-[#FAF8FF] border border-purple-100/70 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-gray-400">Campaign</span>
+              <div className="text-xs font-bold text-[#1E1548]">{selectedCampaignObj.name}</div>
+              <div className="text-[11px] text-gray-500">{selectedCampaignObj.description}</div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-[#FAF8FF] border border-purple-100/70 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-gray-400">Validity &amp; Schedule</span>
+              <div className="text-xs font-bold text-[#1E1548]">{qrStartDate} — {qrEndDate}</div>
+              <div className="text-[11px] text-[#5844A8] font-semibold">{qrIsRecurring ? `${qrRepeatFreq} Recurring (${qrRepeatDays.join(', ')})` : 'One-time period'}</div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-[#FAF8FF] border border-purple-100/70 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-gray-400">Client Type</span>
+              <div className="text-xs font-bold text-[#1E1548]">
+                {qrClientType === 'all' ? 'All Customers' : qrClientType === 'new' ? 'New Customers' : 'Loyalty Members'}
+              </div>
+              <div className="text-[11px] text-gray-500">{qrChannels.join(', ')}</div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-[#FAF8FF] border border-purple-100/70 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-gray-400">Location &amp; Placement</span>
+              <div className="text-xs font-bold text-[#1E1548]">{qrBranch}</div>
+              <div className="text-[11px] text-gray-500">
+                {qrTableCount} {qrPlacement === 'table' ? 'Table Stands' : 'Stands'} ({qrMaterial})
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="space-y-3 pt-2">
+            <button
+              type="button"
+              onClick={() => showToast(`QR Stand #${previewTableIndex} downloaded as high-res PNG!`)}
+              className="w-full py-3 bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-[#5844A8]/20 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Download className="w-4 h-4" /> Download Table #{previewTableIndex} QR PNG (300 DPI)
+            </button>
+
+            <button
+              type="button"
+              onClick={() => showToast(`Generating print-ready PDF pack for ${qrTableCount} stands...`)}
+              className="w-full py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-[#1E1548] text-xs font-bold rounded-xl transition-colors shadow-2xs flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Printer className="w-4 h-4 text-gray-500" /> Print Complete Standee PDF Pack ({qrTableCount} Stands)
+            </button>
+          </div>
+        </div>
+
+        {/* Right Column: Physical Acrylic Standee Mockup (lg:col-span-5) */}
+        <div className="lg:col-span-5 bg-gradient-to-br from-[#FAF8FF] to-purple-50/50 rounded-3xl p-6 lg:p-8 border border-purple-100 shadow-sm flex flex-col items-center">
+          <div className="text-xs font-bold text-[#1E1548] mb-1">Standee Preview</div>
+          <p className="text-[11px] text-gray-400 mb-4">Table #{previewTableIndex} of {qrTableCount}</p>
+
+          {/* Acrylic Stand Graphic Frame */}
+          <div className="w-[240px] bg-white rounded-2xl shadow-xl border-4 border-gray-100 p-4 text-center space-y-3 relative overflow-hidden">
+            {/* Top Header */}
+            <div className="bg-[#5844A8] -mx-4 -mt-4 py-2 text-white">
+              <span className="text-[9px] uppercase tracking-wider font-extrabold">SCAN TO AVAIL</span>
+              <div className="text-xs font-black">{selectedCampaignObj.name}</div>
+            </div>
+
+            {/* QR Code SVG */}
+            <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-2xs inline-block">
+              <svg viewBox="0 0 100 100" className="w-36 h-36">
+                {/* QR Finder Patterns */}
+                <rect x="5" y="5" width="28" height="28" fill="#1E1548" rx="4" />
+                <rect x="10" y="10" width="18" height="18" fill="white" rx="2" />
+                <rect x="14" y="14" width="10" height="10" fill="#5844A8" rx="1.5" />
+
+                <rect x="67" y="5" width="28" height="28" fill="#1E1548" rx="4" />
+                <rect x="72" y="10" width="18" height="18" fill="white" rx="2" />
+                <rect x="76" y="14" width="10" height="10" fill="#5844A8" rx="1.5" />
+
+                <rect x="5" y="67" width="28" height="28" fill="#1E1548" rx="4" />
+                <rect x="10" y="72" width="18" height="18" fill="white" rx="2" />
+                <rect x="14" y="76" width="10" height="10" fill="#5844A8" rx="1.5" />
+
+                {/* Grid Dots */}
+                <rect x="38" y="10" width="5" height="5" fill="#1E1548" />
+                <rect x="48" y="10" width="5" height="5" fill="#1E1548" />
+                <rect x="58" y="10" width="5" height="5" fill="#1E1548" />
+                <rect x="38" y="20" width="5" height="5" fill="#1E1548" />
+                <rect x="48" y="25" width="5" height="5" fill="#5844A8" />
+                <rect x="10" y="38" width="5" height="5" fill="#1E1548" />
+                <rect x="20" y="48" width="5" height="5" fill="#1E1548" />
+                <rect x="38" y="48" width="5" height="5" fill="#5844A8" />
+                <rect x="58" y="48" width="5" height="5" fill="#1E1548" />
+                <rect x="78" y="38" width="5" height="5" fill="#1E1548" />
+                <rect x="88" y="48" width="5" height="5" fill="#1E1548" />
+                <rect x="38" y="68" width="5" height="5" fill="#1E1548" />
+                <rect x="48" y="78" width="5" height="5" fill="#1E1548" />
+                <rect x="58" y="68" width="5" height="5" fill="#5844A8" />
+                <rect x="68" y="78" width="5" height="5" fill="#1E1548" />
+                <rect x="78" y="88" width="5" height="5" fill="#1E1548" />
+                <rect x="88" y="78" width="5" height="5" fill="#1E1548" />
+
+                {/* Center Logo */}
+                <circle cx="50" cy="50" r="10" fill="#5844A8" />
+                <text x="50" y="54" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold">R</text>
+              </svg>
+            </div>
+
+            {/* Table Number Badge */}
+            <div className="bg-purple-50 text-[#5844A8] border border-purple-200/60 rounded-lg py-1 px-3 inline-block">
+              <span className="text-xs font-black">TABLE #{previewTableIndex}</span>
+            </div>
+
+            <div className="text-[9.5px] text-gray-400">
+              Tap phone or scan with camera
+            </div>
+          </div>
+
+          {/* Table Stand Selector */}
+          <div className="flex items-center gap-2 mt-4">
+            <button
+              type="button"
+              disabled={previewTableIndex <= 1}
+              onClick={() => setPreviewTableIndex(i => Math.max(1, i - 1))}
+              className="px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-xs font-bold disabled:opacity-40 cursor-pointer"
+            >
+              &larr; Prev
+            </button>
+            <span className="text-xs font-bold text-[#1E1548]">Table {previewTableIndex} of {qrTableCount}</span>
+            <button
+              type="button"
+              disabled={previewTableIndex >= qrTableCount}
+              onClick={() => setPreviewTableIndex(i => Math.min(qrTableCount, i + 1))}
+              className="px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-xs font-bold disabled:opacity-40 cursor-pointer"
+            >
+              Next &rarr;
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+        <button
+          type="button"
+          onClick={() => setQrStep(4)}
+          className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+        >
+          &larr; Back
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            showToast(`${qrTableCount} QR Stands generated and saved to library!`);
+            setPageMode('library');
+          }}
+          className="px-8 py-2.5 rounded-lg bg-[#10B981] hover:bg-[#059669] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-emerald-500/20 flex items-center gap-1.5"
+        >
+          <CheckCircle2 className="w-4 h-4" /> Finish &amp; View in Library
+        </button>
+      </div>
+    </div>
+  );
+
+  // -------------------------------------------------------------
+  // MAIN RENDER CONTROLLER
+  // -------------------------------------------------------------
+  if (pageMode === 'wizard') {
+    return (
+      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+        {feedbackToast && (
+          <div className="fixed bottom-6 right-6 z-50 bg-[#1A1615] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-semibold border border-[#3D3732] animate-in slide-in-from-bottom-5 fade-in">
+            <CheckCircle2 className="w-5 h-5 text-[#15803D]" />
+            <span>{feedbackToast}</span>
+          </div>
+        )}
+
+        <div className="max-w-[1200px] mx-auto space-y-6">
+          {renderQrDesktopStepper()}
+
+          {qrStep === 1 && renderQrStep1()}
+          {qrStep === 2 && renderQrStep2()}
+          {qrStep === 3 && renderQrStep3()}
+          {qrStep === 4 && renderQrStep4()}
+          {qrStep === 5 && renderQrStep5()}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="p-4 lg:p-6 bg-[#FAF8F5] min-h-[calc(100vh-4rem)] space-y-6 max-w-[1600px] mx-auto w-full">
@@ -328,14 +1256,6 @@ export const QrCodesPage: React.FC = () => {
               <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">
                 QR Codes &amp; Physical Asset Hub
               </h1>
-              <div className="hidden sm:flex items-center gap-2">
-                {/* <span className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold bg-[#E6F4ED] text-[#0D7A53] rounded border border-[#BCE3D1] tracking-wider uppercase">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> DYNAMIC ROUTING FABRIC
-                </span> */}
-                {/* <span className="px-2.5 py-1 text-[10px] font-bold bg-white text-[#1A1615] rounded border border-[#EFECE6] tracking-wider uppercase">
-                  18 ACTIVE ASSETS
-                </span> */}
-              </div>
             </div>
             <p className="text-sm text-[#6E6A66] max-w-3xl">
               Manage contactless tabletop stands, counter acrylics, digital pass enrollment codes, and multi-venue scan routing with instantaneous cloud redirect dispatch.
@@ -343,15 +1263,16 @@ export const QrCodesPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={() => setPageMode('wizard')}
+              className="flex items-center gap-2 px-4 py-2 text-[13px] font-bold text-white bg-[#5844A8] hover:bg-[#47368E] rounded-lg transition-all shadow-xs cursor-pointer"
+            >
+              <Plus className="w-4 h-4 text-white" />
+              Generate QR Code (Wizard)
+            </button>
             <button className="flex items-center gap-2 px-4 py-2 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-xs cursor-pointer">
               <Download className="w-4 h-4" />
               Download Print PDF Pack
-            </button>
-            <button
-              onClick={() => setIsCreateModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 text-[13px] font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-lg hover:opacity-95 transition-all shadow-xs cursor-pointer">
-              <Plus className="w-4 h-4 text-white" />
-              Create Dynamic Stand
             </button>
           </div>
         </div>
