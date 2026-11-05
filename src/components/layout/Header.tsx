@@ -137,8 +137,15 @@ export const Header: React.FC<HeaderProps> = ({
         return { category: 'Loyalty Engine', page: 'Loyalty Program Rules' };
       case '/qr-codes':
         return { category: 'Hardware & Beacons', page: 'Dynamic QR Codes' };
+      case '/customerlist/detail':
+        return {
+          category: 'CRM & Audience',
+          parentPage: 'Customers',
+          parentRoute: '/customerlist' as NavRoute,
+          page: 'Customer Details'
+        };
       case '/customerlist':
-        return { category: 'CRM & Audience', page: 'Customer Directory' };
+        return { category: 'CRM & Audience', page: 'Customers' };
       case '/transactions':
         return { category: 'POS Ledger', page: 'Transactions' };
       case '/campaigns':
@@ -203,6 +210,17 @@ export const Header: React.FC<HeaderProps> = ({
             Home
           </span>
           <span className="text-[#A8A29E]">&gt;</span>
+          {breadcrumbs.parentPage && (
+            <>
+              <span
+                className="hover:text-[#1A1615] cursor-pointer transition-colors"
+                onClick={() => breadcrumbs.parentRoute && onNavigate(breadcrumbs.parentRoute)}
+              >
+                {breadcrumbs.parentPage}
+              </span>
+              <span className="text-[#A8A29E]">&gt;</span>
+            </>
+          )}
           <span className="text-[#1A1615] font-semibold">
             {breadcrumbs.page}
           </span>
