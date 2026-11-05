@@ -49,9 +49,10 @@ export const onboardMerchant = createAsyncThunk(
       };
       console.log('Sending payload to onboard:', payload);
       // Important to send token if required, but assuming apiClient handles it or it relies on cookies/sessions from auth.
-      const response = await apiClient.post('merchant/business/onboard', payload);
-      console.log('Onboard response:', response);
-      return response.data;
+      // Commented out API for direct offline access
+      // const response = await apiClient.post('merchant/business/onboard', payload);
+      // return response.data;
+      return { success: true, message: 'Onboarded successfully' };
     } catch (error: any) {
       console.error('Onboard error:', error);
       const data = error.response?.data;

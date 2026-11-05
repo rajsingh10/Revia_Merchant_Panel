@@ -31,8 +31,9 @@ export const requestCustomerOtp = createAsyncThunk(
       const isEmail = payload.identifier.includes('@');
       const data = isEmail ? { email: payload.identifier } : { mobile_number: payload.identifier };
       
-      const response = await apiClient.post('/customer/auth/request-otp', data);
-      return response.data;
+      // Commented out API for direct offline access
+      // const response = await apiClient.post('/customer/auth/request-otp', data);
+      return { data: { otp: '123456' }, success: true };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to request OTP');
     }
@@ -48,13 +49,11 @@ export const verifyCustomerOtp = createAsyncThunk(
         ? { email: payload.identifier, otp: payload.otp }
         : { mobile_number: payload.identifier, otp: payload.otp };
 
-      const response = await apiClient.post('/customer/auth/verify-otp', data);
-      const token = response.data?.data?.token || response.data?.token;
-      
-      if (token) {
-        localStorage.setItem('customer_token', token);
-      }
-      return response.data;
+      // Commented out API for direct offline access
+      // const response = await apiClient.post('/customer/auth/verify-otp', data);
+      const token = 'mock-customer-token';
+      localStorage.setItem('customer_token', token);
+      return { data: { token }, token, success: true };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to verify OTP');
     }
@@ -76,8 +75,9 @@ export const saveCustomerProfile = createAsyncThunk(
         }
       };
 
-      const response = await apiClient.post('/customer/profile', payload, config);
-      return response.data;
+      // Commented out API for direct offline access
+      // const response = await apiClient.post('/customer/profile', payload, config);
+      return { success: true, message: 'Customer profile saved successfully' };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to save profile');
     }

@@ -43,9 +43,18 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
 
   useEffect(() => {
     if (step === 2) {
-      dispatch(fetchStates(101)); // Default to India for now
+      dispatch(fetchCountries());
     }
   }, [step, dispatch]);
+
+  useEffect(() => {
+    if (step === 2 && countries.length > 0 && countryText === 'India' && states.length === 0) {
+      const india = countries.find(c => c.name === 'India');
+      if (india) {
+        dispatch(fetchStates(india.id));
+      }
+    }
+  }, [step, countries.length, dispatch]);
 
   const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const countryName = e.target.value;

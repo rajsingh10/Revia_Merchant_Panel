@@ -183,7 +183,7 @@ export const Header: React.FC<HeaderProps> = ({
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-[#EAE6E1] px-4 lg:px-6 py-2.5 flex items-center gap-4 lg:gap-6">
+    <header className="sticky top-0 z-[60] bg-white border-b border-[#EAE6E1] px-4 lg:px-6 py-2.5 flex items-center gap-4 lg:gap-6">
       {/* Left: Mobile hamburger & Clean Breadcrumbs */}
       <div className="flex items-center gap-3">
         <button
@@ -219,9 +219,9 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="relative" ref={walletDropdownRef}>
           <button
             onClick={() => { setWalletOpen(!walletOpen); setNotificationsOpen(false); setRedeemOpen(false); }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#D9A94E]/40 bg-[#FAF8F5] hover:bg-[#FDF8EB] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#EDE9FE] bg-[#FAF8F5] hover:bg-[#FAF5FF] transition-colors cursor-pointer"
           >
-            <Wallet className="w-3.5 h-3.5 text-[#D9A94E]" />
+            <Wallet className="w-3.5 h-3.5 text-[#7C3AED]" />
             <span className="text-xs font-bold text-[#3D3732]">{usableBalance.toLocaleString()} <span className="font-normal text-[#8C827A]">CR</span></span>
           </button>
 
@@ -230,7 +230,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="p-4 border-b border-[#EAE6E1] bg-gradient-to-r from-[#FAF8F5] to-white">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2 text-xs font-bold text-[#1A1615]">
-                    <Wallet className="w-4 h-4 text-[#D9A94E]" />
+                    <Wallet className="w-4 h-4 text-[#7C3AED]" />
                     Merchant Wallet
                   </div>
                   <button onClick={() => setWalletOpen(false)} className="text-[#9E9A93] hover:text-[#1A1615] cursor-pointer">
@@ -278,7 +278,7 @@ export const Header: React.FC<HeaderProps> = ({
                     setWalletOpen(false);
                     onNavigate('/billing');
                   }}
-                  className="w-full text-center text-[11px] font-semibold text-[#A37837] hover:underline cursor-pointer"
+                  className="w-full text-center text-[11px] font-semibold text-[#2D124D] hover:underline cursor-pointer"
                 >
                   Manage Wallet &amp; Buy Credits →
                 </button>
@@ -296,7 +296,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Gift className="w-4 h-4 text-[#5C554E]" />
             {pendingCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[#D9A94E] text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[#2D124D] text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white">
                 {pendingCount}
               </span>
             )}
@@ -307,7 +307,7 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Header */}
               <div className="flex items-center justify-between px-4 py-3 border-b border-[#EAE6E1] bg-gradient-to-r from-[#FAF8F5] to-white">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#D9A94E] to-[#A37837] flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#8B5CF6] to-[#2D124D] flex items-center justify-center">
                     <Gift className="w-3.5 h-3.5 text-white" />
                   </div>
                   <div>
@@ -352,7 +352,7 @@ export const Header: React.FC<HeaderProps> = ({
                           </span>
                         </div>
                         <div className="text-[10px] text-[#7C746C] mt-0.5 flex items-center gap-1">
-                          <Tag className="w-2.5 h-2.5 text-[#A37837]" />
+                          <Tag className="w-2.5 h-2.5 text-[#2D124D]" />
                           {request.campaignName}
                         </div>
                       </div>
@@ -361,7 +361,7 @@ export const Header: React.FC<HeaderProps> = ({
                     {/* Reward Detail */}
                     <div className="mt-2 flex items-center justify-between bg-white/80 rounded-lg px-2.5 py-1.5 border border-[#EAE6E1]/60">
                       <div className="flex items-center gap-1.5">
-                        <Sparkles className="w-3 h-3 text-[#D9A94E]" />
+                        <Sparkles className="w-3 h-3 text-[#7C3AED]" />
                         <span className="text-[10px] font-semibold text-[#3D3732]">{request.rewardTitle}</span>
                       </div>
                       <span className="text-[9px] text-[#8C827A] bg-[#FAF8F5] px-1.5 py-0.5 rounded-md font-medium">
@@ -378,7 +378,7 @@ export const Header: React.FC<HeaderProps> = ({
                       <div className="flex items-center gap-2 mt-2.5">
                         <button
                           onClick={() => handleAccept(request.id)}
-                          className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#D9A94E] to-[#A37837] text-white text-[10px] font-bold hover:shadow-md hover:brightness-110 transition-all cursor-pointer"
+                          className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#8B5CF6] to-[#2D124D] text-white text-[10px] font-bold hover:shadow-md hover:brightness-110 transition-all cursor-pointer"
                         >
                           <Check className="w-3 h-3" />
                           Accept
@@ -422,7 +422,7 @@ export const Header: React.FC<HeaderProps> = ({
                     setRedeemOpen(false);
                     onNavigate('/rewards');
                   }}
-                  className="w-full text-center text-[11px] font-semibold text-[#A37837] hover:underline cursor-pointer"
+                  className="w-full text-center text-[11px] font-semibold text-[#2D124D] hover:underline cursor-pointer"
                 >
                   View All Rewards & History →
                 </button>
@@ -446,7 +446,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="absolute right-0 sm:right-0 mt-2 w-[290px] sm:w-80 bg-white border border-[#EAE6E1] rounded-xl shadow-xl z-50 p-3 animate-in fade-in zoom-in-95 duration-150">
               <div className="flex items-center justify-between pb-2 border-b border-[#EAE6E1]">
                 <div className="text-xs font-bold text-[#1A1615] flex items-center gap-1.5">
-                  <Bell className="w-3.5 h-3.5 text-[#A37837]" /> Notifications (3 active)
+                  <Bell className="w-3.5 h-3.5 text-[#2D124D]" /> Notifications (3 active)
                 </div>
                 <button
                   onClick={() => setNotificationsOpen(false)}
@@ -489,7 +489,7 @@ export const Header: React.FC<HeaderProps> = ({
                   setNotificationsOpen(false);
                   onNavigate('/notifications');
                 }}
-                className="w-full mt-1 text-center py-1.5 text-[11px] font-semibold text-[#A37837] hover:underline cursor-pointer"
+                className="w-full mt-1 text-center py-1.5 text-[11px] font-semibold text-[#2D124D] hover:underline cursor-pointer"
               >
                 View all Notifications →
               </button>

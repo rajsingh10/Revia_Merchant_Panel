@@ -49,7 +49,7 @@ export const AddCreditModal: React.FC = () => {
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-[#EAE6E1] flex items-center justify-between bg-[#FAF8F5] shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-r from-[#D4A753] to-[#9E782F] flex items-center justify-center text-white shadow-xs shrink-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-r from-[#2D124D] to-[#4A154B] flex items-center justify-center text-white shadow-xs shrink-0">
               <WalletIcon className="w-5 h-5" />
             </div>
             <div>
@@ -98,12 +98,12 @@ export const AddCreditModal: React.FC = () => {
                     onClick={() => handleSelectPreset(amount)}
                     className={`px-3 py-2.5 rounded-xl border text-[13px] sm:text-[14px] font-bold transition-all cursor-pointer flex items-center justify-between ${
                       isSelected
-                        ? 'border-[#D4A753] bg-[#FAF6EE] text-[#9E782F] shadow-xs'
+                        ? 'border-[#8B5CF6] bg-[#FAF5FF] text-[#2D124D] shadow-xs'
                         : 'border-[#EAE6E1] bg-white text-[#1A1615] hover:bg-[#FAF8F5]'
                     }`}
                   >
                     <span>+{amount.toLocaleString()} credits</span>
-                    {isSelected && <Check className="w-4 h-4 text-[#D4A753]" />}
+                    {isSelected && <Check className="w-4 h-4 text-[#7C3AED]" />}
                   </button>
                 );
               })}
@@ -119,7 +119,7 @@ export const AddCreditModal: React.FC = () => {
               placeholder="e.g. 2500"
               value={customAmount}
               onChange={(e) => handleCustomChange(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-[#EAE6E1] rounded-xl text-[13px] font-bold text-[#1A1615] outline-none focus:border-[#D4A753] transition-colors"
+              className="w-full px-3 py-2 bg-white border border-[#EAE6E1] rounded-xl text-[13px] font-bold text-[#1A1615] outline-none focus:border-[#2D124D] transition-colors"
             />
           </div>
 
@@ -128,7 +128,7 @@ export const AddCreditModal: React.FC = () => {
             <label className="block text-[11px] sm:text-[12px] font-bold text-[#4A433D] uppercase tracking-wider mb-1.5">
               Payment Gateway
             </label>
-            <div className="flex items-center gap-3 p-3 sm:p-3.5 rounded-xl border-2 border-[#D4A753] bg-[#FAF6EE] cursor-default">
+            <div className="flex items-center gap-3 p-3 sm:p-3.5 rounded-xl border-2 border-[#8B5CF6] bg-[#FAF5FF] cursor-default">
               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-[#072654] flex items-center justify-center shrink-0">
                 <svg viewBox="0 0 24 24" className="w-5 h-5 sm:w-6 sm:h-6" fill="none">
                   <path d="M6 8L10 4L14 12L18 4" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -138,7 +138,7 @@ export const AddCreditModal: React.FC = () => {
               <div className="flex-1 min-w-0">
                 <div className="text-[13px] sm:text-[14px] font-extrabold text-[#1A1615] flex items-center gap-1.5">
                   Razorpay
-                  <Check className="w-3.5 h-3.5 text-[#D4A753]" />
+                  <Check className="w-3.5 h-3.5 text-[#7C3AED]" />
                 </div>
                 <div className="text-[10px] sm:text-[11px] text-[#6E6A66]">
                   UPI · Cards · Net Banking · Wallets
@@ -156,7 +156,7 @@ export const AddCreditModal: React.FC = () => {
             <button
               type="submit"
               disabled={finalAmount <= 0 || isProcessing}
-              className="w-full py-3 px-4 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:from-[#C29541] hover:to-[#8C6826] text-white rounded-xl font-bold text-[14px] shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full py-3 px-4 bg-gradient-to-r from-[#2D124D] to-[#4A154B] hover:bg-[#3E1A68] text-white rounded-xl font-bold text-[14px] shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {isProcessing ? (
                 <span>Processing Payment...</span>
