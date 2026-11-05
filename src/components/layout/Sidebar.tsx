@@ -16,7 +16,8 @@ import {
   Package,
   X,
   ChevronDown,
-  Database
+  Database,
+  Heart
 } from 'lucide-react';
 import { NavRoute } from '../../types';
 
@@ -34,6 +35,7 @@ interface NavItem {
   name: string;
   route: NavRoute;
   icon: React.ComponentType<{ className?: string }>;
+  badge?: number | string;
 }
 
 interface NavGroup {
@@ -65,9 +67,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Branches', route: '/branches', icon: Store },
         { name: 'Customers', route: '/customerlist', icon: Users },
         { name: 'Campaigns', route: '/campaigns', icon: Megaphone },
-        { name: 'Staff & RBAC', route: '/staff', icon: ShieldCheck },
+        { name: 'Staff & Employees', route: '/staff', icon: Users },
         { name: 'Loyalty Program', route: '/loyalty', icon: Gift },
         { name: 'QR Codes', route: '/qr-codes', icon: QrCode },
+        { name: 'Approvals', route: '/approvals', icon: Heart, badge: 2 },
         { name: 'Item Catalog', route: '/item-catalog', icon: Package },
       ],
     },
@@ -174,9 +177,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           : 'bg-transparent text-[#4A433D] hover:bg-[#FAF5FF] hover:text-[#2D124D] font-medium'
                           }`}
                       >
-                        <div className="flex items-center gap-2.5 min-w-0 flex-nowrap">
-                          <Icon className={`w-4 h-4 shrink-0 transition-colors ${isActive ? 'text-white' : 'text-[#6E6A66] group-hover:text-[#2D124D]'}`} />
-                          <span className="whitespace-nowrap tracking-tight font-sans">{item.name}</span>
+                        <div className="flex items-center justify-between w-full min-w-0">
+                          <div className="flex items-center gap-2.5 min-w-0 flex-nowrap">
+                            <Icon className={`w-4 h-4 shrink-0 transition-colors ${isActive ? 'text-white' : 'text-[#6E6A66] group-hover:text-[#2D124D]'}`} />
+                            <span className="whitespace-nowrap tracking-tight font-sans">{item.name}</span>
+                          </div>
+                          {item.badge !== undefined && (
+                            <span className={`px-2 py-0.5 text-[10px] font-black rounded-full transition-colors ${
+                              isActive ? 'bg-white/20 text-white' : 'bg-[#5844A8] text-white'
+                            }`}>
+                              {item.badge}
+                            </span>
+                          )}
                         </div>
                       </button>
                     );

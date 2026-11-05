@@ -60,7 +60,29 @@ import {
   Image as ImageIcon,
   Award,
   Power,
-  MoreVertical
+  MoreVertical,
+  Megaphone,
+  UserCheck,
+  Share2,
+  MapPin,
+  Search,
+  Menu,
+  Utensils,
+  ShoppingBag,
+  CreditCard,
+  Car,
+  Cake,
+  Sun,
+  Minus,
+  User,
+  Crown,
+  Pause,
+  Coins,
+  History,
+  RotateCcw,
+  LayoutGrid,
+  ChevronLeft,
+  Monitor
 } from 'lucide-react';
 import { FormInput } from '../components/FormInput';
 import { AddItemModal } from '../components/AddItemModal';
@@ -1650,9 +1672,10 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
 export interface CampaignBuilderPageProps {
   initialViewMode?: 'dashboard' | 'builder';
   onNavigate?: (route: string) => void;
+  onToggleMobileMenu?: () => void;
 }
 
-export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initialViewMode = 'dashboard', onNavigate }) => {
+export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initialViewMode = 'dashboard', onNavigate, onToggleMobileMenu }) => {
   const { id: routeCampaignId } = useParams();
   const { wallet, checkAndDeductCredit } = useWallet();
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -1725,6 +1748,10 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     }
     setViewMode('builder');
     setCurrentStep(1);
+    setIsConfiguringCondition(false);
+    setSelectedConditionType('visit');
+    setIsConfiguringReward(false);
+    setSelectedRewardType('cashback');
   };
 
   const handleDeleteCampaign = (id: number, name: string) => {
@@ -1998,7 +2025,155 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
   // Step 1 – Basics state
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-  const [campaignName, setCampaignName] = useState('');
+  const [campaignName, setCampaignName] = useState('Summer Special');
+  const [creationFlow, setCreationFlow] = useState<'choose_type' | 'multiple_list' | 'wizard'>('choose_type');
+  const [creationType, setCreationType] = useState<'single' | 'multiple'>('single');
+  const [isConfiguringCondition, setIsConfiguringCondition] = useState<boolean>(false);
+  const [selectedLoyaltyTier, setSelectedLoyaltyTier] = useState<string>('all');
+  const [campaignStatusSelection, setCampaignStatusSelection] = useState<'draft' | 'active'>('draft');
+  const [visitBasedVisits, setVisitBasedVisits] = useState<number>(3);
+  const [visitBasedMinBill, setVisitBasedMinBill] = useState<number>(500);
+  const [visitBasedValidityType, setVisitBasedValidityType] = useState<'specific_period' | 'no_limit'>('specific_period');
+  const [visitBasedStartDate, setVisitBasedStartDate] = useState<string>('15 Sep 2025');
+  const [visitBasedEndDate, setVisitBasedEndDate] = useState<string>('30 Sep 2025');
+  const [visitBasedBranchScope, setVisitBasedBranchScope] = useState<'all' | 'selected'>('all');
+  const [audienceSubStep, setAudienceSubStep] = useState<'choose_audience' | 'order_types' | 'demographics'>('choose_audience');
+  const [demographicAgeRange, setDemographicAgeRange] = useState<[number, number]>([18, 60]);
+  const [demographicGender, setDemographicGender] = useState<'All' | 'Male' | 'Female'>('All');
+  const [demographicTotalSpend, setDemographicTotalSpend] = useState<number>(50000);
+  const [demographicTotalVisits, setDemographicTotalVisits] = useState<number>(50);
+
+  const [selectedConditionType, setSelectedConditionType] = useState<'visit' | 'billing' | 'stamps' | 'item' | 'happy_hours' | 'birthday' | 'combo' | null>(null);
+  const [visitQualifyingCount, setVisitQualifyingCount] = useState<number>(1);
+  const [visitMinBillAmount, setVisitMinBillAmount] = useState<string>('0');
+  const [visitApplyTo, setVisitApplyTo] = useState<'per_bill' | 'total_spent'>('per_bill');
+  const [visitOfferAvailability, setVisitOfferAvailability] = useState<'same_day' | 'month_end'>('same_day');
+
+  const [billingTargetAmount, setBillingTargetAmount] = useState<number>(500);
+  const [billingFrequency, setBillingFrequency] = useState<string>('Monthly');
+  const [billingFrequencyDropdownOpen, setBillingFrequencyDropdownOpen] = useState<boolean>(false);
+  const [billingAllowEarlyRedemption, setBillingAllowEarlyRedemption] = useState<'yes' | 'no'>('yes');
+  const [billingWhenToGiveOffer, setBillingWhenToGiveOffer] = useState<'same_order' | 'next_visit'>('same_order');
+
+  // Condition 2: Stamps State
+  const [stampQualifyingItem, setStampQualifyingItem] = useState<string>('Any item');
+  const [stampTargetCount, setStampTargetCount] = useState<number>(5);
+  const [stampValidityPeriod, setStampValidityPeriod] = useState<string>('Monthly');
+
+  // Condition 3: Item Based State
+  const [itemBasedTab, setItemBasedTab] = useState<'specific_items' | 'category'>('specific_items');
+  const [itemBasedSearch, setItemBasedSearch] = useState<string>('');
+  const [itemBasedCategoryFilter, setItemBasedCategoryFilter] = useState<string>('All Categories');
+  const [itemBasedBranchFilter, setItemBasedBranchFilter] = useState<string>('All Branches');
+  const [itemBasedSelectedCategoryPill, setItemBasedSelectedCategoryPill] = useState<string>('All items');
+  const [itemBasedSelectedIds, setItemBasedSelectedIds] = useState<string[]>(['2391', '2340']);
+
+  // Condition 4: Happy Hours State
+  const [happyHoursStartTime, setHappyHoursStartTime] = useState<string>('10:00 AM');
+  const [happyHoursEndTime, setHappyHoursEndTime] = useState<string>('04:00 PM');
+  const [happyHoursSelectedDays, setHappyHoursSelectedDays] = useState<string[]>(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
+  const [happyHoursRecurring, setHappyHoursRecurring] = useState<boolean>(true);
+
+  // Condition 5: Birthday / Anniversary State
+  const [birthdayOccasionType, setBirthdayOccasionType] = useState<'birthday' | 'anniversary'>('birthday');
+  const [birthdayDaySpan, setBirthdayDaySpan] = useState<number>(3);
+  const [birthdayQuickSpan, setBirthdayQuickSpan] = useState<string>('± 3 Days');
+  const [desktopRewardValue, setDesktopRewardValue] = useState<string>('20%');
+  const [desktopMaxDiscount, setDesktopMaxDiscount] = useState<number>(500);
+  const [desktopTemplate, setDesktopTemplate] = useState<string>('classic');
+
+  // Desktop Step 4: Rewards State (matching Figma screenshots)
+  const [isConfiguringReward, setIsConfiguringReward] = useState<boolean>(false);
+  const [selectedRewardType, setSelectedRewardType] = useState<string>('cashback');
+
+  // Cashback (Screenshot 2)
+  const [cashbackType, setCashbackType] = useState<'percentage' | 'fixed'>('percentage');
+  const [cashbackPercentage, setCashbackPercentage] = useState<string>('10');
+  const [cashbackFixedAmount, setCashbackFixedAmount] = useState<string>('50');
+  const [cashbackCurrency, setCashbackCurrency] = useState<string>('INR (₹)');
+  const [cashbackMaxCapping, setCashbackMaxCapping] = useState<string>('200');
+  const [cashbackApplicableOn, setCashbackApplicableOn] = useState<string>('all_items');
+
+  // Reward Points (Screenshot 3)
+  const [rewardPointsType, setRewardPointsType] = useState<'percentage' | 'fixed'>('percentage');
+  const [rewardPointsPercentage, setRewardPointsPercentage] = useState<string>('10');
+  const [rewardPointsFixedAmount, setRewardPointsFixedAmount] = useState<string>('50');
+  const [rewardPointsValue, setRewardPointsValue] = useState<string>('1');
+  const [rewardPointsCurrency, setRewardPointsCurrency] = useState<string>('INR (₹)');
+  const [rewardPointsMaxPoints, setRewardPointsMaxPoints] = useState<string>('100');
+  const [rewardPointsApplicableOn, setRewardPointsApplicableOn] = useState<string>('all_items');
+
+  // Free Item (Screenshot 4)
+  const [freeItemQuantity, setFreeItemQuantity] = useState<number>(1);
+  const [freeItemSearch, setFreeItemSearch] = useState<string>('');
+  const [freeItemSelectedItem, setFreeItemSelectedItem] = useState<string>('Margherita Pizza');
+
+  // Discount
+  const [discountRewardType, setDiscountRewardType] = useState<'percentage' | 'fixed'>('percentage');
+  const [discountRewardPercentage, setDiscountRewardPercentage] = useState<string>('10');
+  const [discountRewardFixedAmount, setDiscountRewardFixedAmount] = useState<string>('50');
+  const [discountRewardMaxCapping, setDiscountRewardMaxCapping] = useState<string>('200');
+  const [discountRewardApplicableOn, setDiscountRewardApplicableOn] = useState<string>('all_items');
+
+  // Nominal Priced Item
+  const [nominalPrice, setNominalPrice] = useState<string>('19');
+  const [nominalQuantity, setNominalQuantity] = useState<number>(1);
+  const [nominalSelectedItem, setNominalSelectedItem] = useState<string>('Margherita Pizza');
+  const [nominalSearch, setNominalSearch] = useState<string>('');
+
+  // Combo Offers
+  const [comboBundleName, setComboBundleName] = useState<string>('Special Combo Bundle');
+  const [comboPrice, setComboPrice] = useState<string>('399');
+  const [comboSelectedItems, setComboSelectedItems] = useState<string[]>(['Margherita Pizza', 'Cold Coffee']);
+  const [comboSearch, setComboSearch] = useState<string>('');
+
+  // Buy X Get Y Free / BOGO (Screenshot 5)
+  const [bogoBuyQty, setBogoBuyQty] = useState<number>(1);
+  const [bogoGetQty, setBogoGetQty] = useState<number>(1);
+  const [bogoSearch, setBogoSearch] = useState<string>('');
+  const [bogoCategory, setBogoCategory] = useState<string>('All');
+  const [bogoSelectedItems, setBogoSelectedItems] = useState<string[]>(['Margherita Pizza', 'Farmhouse Pizza']);
+  const [bogoRule, setBogoRule] = useState<'same_item' | 'any_item_same_price'>('same_item');
+
+  // Step 5: Customize Banner State (Image 2)
+  const [bannerTab, setBannerTab] = useState<'content' | 'design' | 'layout'>('content');
+  const [bannerOfferTitle, setBannerOfferTitle] = useState('Buy 1 Get 1 Free');
+  const [bannerSubtext, setBannerSubtext] = useState('On all pizzas');
+  const [bannerSpecialTag, setBannerSpecialTag] = useState('Special Offer');
+  const [bannerShowValidity, setBannerShowValidity] = useState(true);
+  const [bannerValidityDate, setBannerValidityDate] = useState('31 Dec 2025');
+  const [bannerShowLocation, setBannerShowLocation] = useState(true);
+  const [bannerLocationText, setBannerLocationText] = useState('Available at all branches');
+  const [bannerDescription, setBannerDescription] = useState('Enjoy 1+1 on all pizzas. Treat yourself and a friend to your favourite pizza!');
+  const [campaignDescription, setCampaignDescription] = useState('Get 20% off on all main course items. Valid for dine-in and takeaway.');
+  const [timeActiveType, setTimeActiveType] = useState<'entire_day' | 'specific_time'>('entire_day');
+  const [specificStartTime, setSpecificStartTime] = useState('10:00 AM');
+  const [specificEndTime, setSpecificEndTime] = useState('10:00 PM');
+  const [audienceTargetType, setAudienceTargetType] = useState<'all' | 'new' | 'existing'>('all');
+  const [availableOrderType, setAvailableOrderType] = useState<'dine_in' | 'takeaway' | 'delivery' | 'all'>('dine_in');
+
+  const [multipleCampaignsList, setMultipleCampaignsList] = useState([
+    {
+      id: 1,
+      name: 'Summer Cashback',
+      status: 'Active',
+      type: 'Cashback',
+      description: '10% cashback on all beverages',
+      startDate: '15 Sep 2025',
+      endDate: '30 Sep 2025',
+      icon: 'credit_card'
+    },
+    {
+      id: 2,
+      name: 'Lunch Discount',
+      status: 'Scheduled',
+      type: 'Discount',
+      description: '20% off on main course',
+      startDate: '01 Oct 2025',
+      endDate: '15 Oct 2025',
+      icon: 'discount'
+    }
+  ]);
   const [minBillAmount, setMinBillAmount] = useState<number>(1000);
   const [targetValue, setTargetValue] = useState<string>('');
   const [topLevelType, setTopLevelType] = useState<'new_customer' | 'existing_customer' | 'direct_customer' | 'product_qr' | ''>('');
@@ -2064,6 +2239,10 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const [typeFilterDropdownOpen, setTypeFilterDropdownOpen] = useState(false);
   const typeFilterDropdownRef = useRef<HTMLDivElement>(null);
 
+  const [selectedCampaignIds, setSelectedCampaignIds] = useState<number[]>([]);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -2096,6 +2275,9 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       if (typeFilterDropdownRef.current && !typeFilterDropdownRef.current.contains(event.target as Node)) {
         setTypeFilterDropdownOpen(false);
       }
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setProfileMenuOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -2104,6 +2286,11 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const [expandedCampaignId, setExpandedCampaignId] = useState<number | null>(null);
 
   const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.auth);
+  const displayName = user?.business?.name || user?.name || 'Emma Rostova';
+  const displayRole = user?.role || 'General Manager';
+  const displayAvatar = user?.business?.logo_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80';
+  const displayEmail = user?.business?.contact_email || user?.email || 'emma.rostova@revia.app';
   const apiCampaigns = useSelector((state: RootState) => state.campaign.campaigns);
   const currentCampaign = useSelector((state: RootState) => state.campaign.currentCampaign);
   const branches = useSelector((state: RootState) => state.branch.branches);
@@ -2227,7 +2414,44 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     }
   }, [currentCampaign, viewMode, branches]);
 
-  const campaigns = apiCampaigns.length > 0 ? [...apiCampaigns].sort((a: any, b: any) => (b.id || 0) - (a.id || 0)).map(c => {
+  const fallbackMockCampaigns = [
+    {
+      id: 1,
+      name: 'Autumn Reserve Tasting',
+      description: 'Free Cake in Your Order',
+      type: 'welcome',
+      typeLabel: 'Welcome Campaign',
+      status: 'Active',
+      target: 'VIP',
+      validity: 'Nov 1, 2024 – Nov 30, 2024',
+      startDate: 'Nov 1, 2024',
+      endDate: 'Nov 30, 2024',
+      condition: 'Minimum Bill: ₹500',
+      offer: 'Free Cake',
+      expiryDate: 'Nov 30, 2024',
+      progress: 85,
+      reward: 'Free Cake'
+    },
+    {
+      id: 2,
+      name: 'Weekday Coffee Rewards',
+      description: 'Get 1 Free Coffee',
+      type: 'item',
+      typeLabel: 'Item Based Offer',
+      status: 'Draft',
+      target: 'ALL CUSTOMERS',
+      validity: 'Nov 1, 2024 – Nov 30, 2024',
+      startDate: 'Nov 1, 2024',
+      endDate: 'Nov 30, 2024',
+      condition: 'Qualifying: 5 Coffee purchases',
+      offer: '1 Free Coffee',
+      expiryDate: 'Nov 30, 2024',
+      progress: 0,
+      reward: 'Free Coffee'
+    }
+  ];
+
+  const campaigns = apiCampaigns.length > 0 ? [...apiCampaigns].sort((a: any, b: any) => (b.id || 0) - (a.id || 0)).map((c, idx) => {
     let finalStatus = 'Draft';
     const now = new Date();
     const start = c.valid_from ? new Date(c.valid_from) : null;
@@ -2248,18 +2472,65 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
         finalStatus = 'Draft';
       }
     }
+
+    const typeLabel = c.type === 'welcome' ? 'Welcome Offer'
+      : c.type === 'visit' ? 'Visit Offer'
+      : c.type === 'billing_one_time' ? 'Billing Offer'
+      : c.type === 'stamp' ? 'Stamp Card'
+      : (c.type || 'Welcome Offer');
+
+    const offerLabel = c.reward_type === 'cashback'
+      ? `₹${c.reward_value || 50} Cashback`
+      : c.reward_type === 'percentage_discount'
+      ? `${c.reward_value || 10}% Off`
+      : c.reward_type === 'fixed_discount'
+      ? `₹${c.reward_value || 50} Off`
+      : 'Buy 1 Get 1';
+
+    const conditionLabel = c.min_bill_amount
+      ? `Billing Based : Min ₹${c.min_bill_amount}`
+      : c.target_value
+      ? `Visits Based : Min ${c.target_value}`
+      : 'Billing Based : Min ₹200';
+
+    const branchList = branches && branches.length > 0
+      ? branches.slice(0, 3).map((b: any, bIdx: number) => ({
+          name: `Branches${bIdx + 1}`,
+          location: b.name || 'West End',
+          scan: '420',
+          redeem: '168',
+          sales: '₹16,900'
+        }))
+      : [
+          { name: 'Branches1', location: 'West End', scan: '420', redeem: '168', sales: '₹16,900' },
+          { name: 'Branches2', location: 'West End', scan: '420', redeem: '168', sales: '₹16,900' },
+          { name: 'Branches3', location: 'West End', scan: '420', redeem: '168', sales: '₹16,900' }
+        ];
+
     return {
       id: c.id,
-      name: c.title || 'Untitled Campaign',
-      type: c.type || 'Unknown Type',
+      name: c.title || 'Welcome Coffee',
+      description: c.description || 'First-time visitor beverage incentive',
+      type: c.type || 'welcome',
+      typeLabel: typeLabel,
       status: finalStatus,
       target: c.customer_type || 'All Customers',
-      startDate: c.valid_from ? new Date(c.valid_from).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A',
-      endDate: c.valid_until ? new Date(c.valid_until).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A',
-      progress: (c as any).performance || 0,
-      reward: c.reward_type || 'Reward'
+      validity: `${c.valid_from ? new Date(c.valid_from).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '1 Nov 2024'} – ${c.valid_until ? new Date(c.valid_until).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '30 Nov 2024'}`,
+      startDate: c.valid_from ? new Date(c.valid_from).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '1 Nov 2024',
+      endDate: c.valid_until ? new Date(c.valid_until).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '30 Nov 2024',
+      condition: conditionLabel,
+      offer: offerLabel,
+      expiryDate: c.valid_until ? new Date(c.valid_until).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '30 Nov 2024',
+      scannedCount: (c as any).scan_count ? `${(c as any).scan_count.toLocaleString()} Scans` : '1,420 Scans',
+      redeemCount: (c as any).redeem_count ? (c as any).redeem_count.toLocaleString() : '1,420',
+      salesCount: (c as any).sales_count ? (c as any).sales_count.toLocaleString() : '17,420',
+      progress: (c as any).performance || 80,
+      reward: c.reward_type || 'Reward',
+      isTopPerformer: idx === 0 || finalStatus === 'Active',
+      imageUrl: (c as any).image_url || 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=300&auto=format&fit=crop&q=80',
+      branches: branchList
     };
-  }) : [];
+  }) : fallbackMockCampaigns;
 
   React.useEffect(() => {
     campaigns.forEach(c => {
@@ -2399,11 +2670,12 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   ];
 
   const steps = [
-    { id: 1, name: 'Basics' },
-    { id: 2, name: 'Audience' },
-    { id: 3, name: 'Conditions & Rules' },
-    { id: 4, name: 'Reward Def' },
-    { id: 5, name: 'Review & Publish' },
+    { id: 1, name: 'Basic Details' },
+    { id: 2, name: 'Audience Type' },
+    { id: 3, name: 'Conditions' },
+    { id: 4, name: 'Rewards' },
+    { id: 5, name: 'Template' },
+    { id: 6, name: 'Review & Launch' },
   ];
 
   // Derived full campaign type key for Step 3 routing
@@ -3980,414 +4252,4489 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
   const renderDashboard = () => {
     const filteredCampaigns = campaigns.filter(c =>
-      (statusFilter === 'All' || statusFilter === 'All Status' || c.status === statusFilter) &&
-      (c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.reward.toLowerCase().includes(searchQuery.toLowerCase()))
+      (statusFilter === 'All' || statusFilter === 'All Status' || c.status.toLowerCase() === statusFilter.toLowerCase()) &&
+      (c.name.toLowerCase().includes(searchQuery.toLowerCase()) || (c.reward && c.reward.toLowerCase().includes(searchQuery.toLowerCase())))
     );
 
     const totalPages = Math.ceil(filteredCampaigns.length / itemsPerPage);
     const paginatedCampaigns = filteredCampaigns.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     return (
-    <div className="p-4 sm:p-6 space-y-6 font-sans text-[#1A1615]">
-      <div className="max-w-[1400px] mx-auto space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Campaign &amp; Loyalty Management</h1>
-            <p className="text-xs sm:text-sm text-[#7C746C] mt-1">Create, monitor, and optimize your customer engagement programs.</p>
+      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+        <div className="max-w-[1500px] mx-auto space-y-6">
+          
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
+            <span>Home</span>
+            <span>&gt;</span>
+            <span className="text-gray-700 font-bold">Campaign &amp; Loyalty Management</span>
           </div>
-          <button onClick={handleOpenBuilder} className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-4 py-2 text-[13px] font-bold flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer whitespace-nowrap self-start sm:self-auto">
-            <Plus className="w-4 h-4 text-white" /> Create New Campaign
-          </button>
-        </div>
 
-        {/* Filters & Search */}
-        <div className="bg-white border border-[#EAE6E1] rounded-xl p-4 shadow-2xs flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-[#9E9A93]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+          {/* Page Header */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-black text-[#1E1548] tracking-tight flex items-center gap-2">
+                Campaign &amp; Loyalty Management
+                <Sparkles className="w-5 h-5 text-[#E83E8C] fill-[#E83E8C]" />
+              </h1>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1 font-medium">
+                Create, monitor, and optimize your customer engagement programs.
+              </p>
             </div>
-            <input
-              type="text"
-              placeholder="Search campaigns by name or reward..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="block w-full pl-10 pr-3 py-2.5 border border-[#EAE6E1] rounded-lg bg-[#FAF8F5] text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#D4A753] focus:border-[#D4A753]"
-            />
-          </div>
-          <div className="grid grid-cols-2 md:flex md:items-center gap-3 w-full md:w-auto">
-            <div ref={typeFilterDropdownRef} className="relative w-full md:w-[140px]">
+
+            <div className="flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => setTypeFilterDropdownOpen(!typeFilterDropdownOpen)}
-                className="w-full flex items-center justify-between border border-[#EAE6E1] rounded-lg bg-[#FAF8F5] py-2.5 px-3 text-xs sm:text-sm font-semibold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
+                onClick={() => onNavigate && onNavigate('/approvals')}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-purple-200 text-[#7C3AED] text-xs font-bold shadow-sm hover:bg-purple-50 transition cursor-pointer"
               >
-                <span className="truncate">{typeFilter}</span>
-                <ChevronDown className={`w-4 h-4 shrink-0 text-[#9E9A93] transition-transform ${typeFilterDropdownOpen ? 'rotate-180' : ''}`} />
+                <Sparkles className="w-4 h-4 text-[#7C3AED]" />
+                Approve Campaign &gt;
               </button>
-              {typeFilterDropdownOpen && (
-                <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#EAE6E1] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
-                  {['All Types', 'Visit Type', 'Billing Type', 'Stamp Type'].map((type) => (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => { setTypeFilter(type); setTypeFilterDropdownOpen(false); }}
-                      className={`w-full cursor-pointer px-3 py-2 text-left text-xs sm:text-sm hover:bg-[#F5F1EA] ${typeFilter === type ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
-                    >
-                      {type}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
 
-            <div ref={statusFilterDropdownRef} className="relative w-full md:w-[140px]">
               <button
                 type="button"
-                onClick={() => setStatusFilterDropdownOpen(!statusFilterDropdownOpen)}
-                className="w-full flex items-center justify-between border border-[#EAE6E1] rounded-lg bg-[#FAF8F5] py-2.5 px-3 text-xs sm:text-sm font-semibold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
+                onClick={handleOpenBuilder}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold shadow-md shadow-[#5844A8]/20 transition cursor-pointer"
               >
-                <span className="truncate">{statusFilter}</span>
-                <ChevronDown className={`w-4 h-4 shrink-0 text-[#9E9A93] transition-transform ${statusFilterDropdownOpen ? 'rotate-180' : ''}`} />
+                + Create New Campaign
               </button>
-              {statusFilterDropdownOpen && (
-                <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#EAE6E1] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
-                  {['All Status', 'Active', 'Scheduled', 'Draft', 'Ended'].map((status) => (
-                    <button
-                      key={status}
-                      type="button"
-                      onClick={() => { setStatusFilter(status); setStatusFilterDropdownOpen(false); }}
-                      className={`w-full cursor-pointer px-3 py-2 text-left text-xs sm:text-sm hover:bg-[#F5F1EA] ${statusFilter === status ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
-                    >
-                      {status}
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
-        </div>
 
-        {/* Campaign List */}
-        <div className="bg-white border border-[#EAE6E1] rounded-xl shadow-2xs overflow-hidden">
-          {/* Desktop Table */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[800px]">
-              <thead>
-                <tr className="bg-[#FAF8F5] border-b border-[#EAE6E1]">
-                  <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C]">Campaign Info</th>
-                  <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C]">Type &amp; Target</th>
-                  <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C]">Status</th>
-                  <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C]">Timeline</th>
-                  <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C]">Performance</th>
-                  <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C] text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredCampaigns.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="py-12 text-center border-b border-[#EAE6E1]">
-                      <div className="flex flex-col items-center justify-center">
-                        <div className="w-12 h-12 bg-[#F3EDE6] rounded-full flex items-center justify-center mb-3">
-                          <Gift className="w-6 h-6 text-[#9E9A93]" />
-                        </div>
-                        <h3 className="text-[13px] font-bold text-[#1A1615] mb-1">No campaigns found</h3>
-                        <p className="text-xs text-[#7C746C] max-w-sm mx-auto">
-                          {searchQuery || statusFilter !== 'All' ? "Try adjusting your filters or search query to find what you're looking for." : "You haven't created any campaigns yet. Click 'Create New Campaign' to get started!"}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : paginatedCampaigns.map(c => (
-                  <tr key={c.id} className="border-b border-[#EAE6E1] hover:bg-[#FAF8F5]/60 transition-colors">
-                    <td className="py-4 px-5">
-                      <div className="text-sm font-bold text-[#1A1615] mb-0.5">{c.name}</div>
-                      <div className="text-xs font-medium text-[#7C746C] flex items-center gap-1.5"><Gift className="w-3.5 h-3.5 text-[#D4A753]" /> {c.reward}</div>
-                    </td>
-                    <td className="py-4 px-5">
-                      <div className="text-sm font-semibold text-[#1A1615] mb-0.5">{c.type}</div>
-                      <div className="text-[11px] font-bold text-[#9E782F] uppercase tracking-wider bg-[#FDF8EB] border border-[#F3E5C8] inline-block px-2 py-0.5 rounded">{c.target}</div>
-                    </td>
-                    <td className="py-4 px-5">
-                      {c.status === 'Active' ? (
-                        <span className="px-2.5 py-0.5 bg-[#EBF7F0] border border-[#15803D]/20 text-[#15803D] rounded-full text-xs font-bold uppercase flex items-center w-max gap-1">
-                          <span className="w-1.5 h-1.5 bg-[#15803D] rounded-full"></span> {c.status}
-                        </span>
-                      ) : c.status === 'Scheduled' ? (
-                        <span className="px-2.5 py-0.5 bg-[#FEF3C7] border border-[#D97706]/20 text-[#D97706] rounded-full text-xs font-bold uppercase flex items-center w-max gap-1">
-                          <span className="w-1.5 h-1.5 bg-[#D97706] rounded-full"></span> {c.status}
-                        </span>
-                      ) : c.status === 'Ended' ? (
-                        <span className="px-2.5 py-0.5 bg-[#FEE2E2] border border-[#DC2626]/20 text-[#DC2626] rounded-full text-xs font-bold uppercase flex items-center w-max gap-1">
-                          <span className="w-1.5 h-1.5 bg-[#DC2626] rounded-full"></span> {c.status}
-                        </span>
-                      ) : c.status === 'Draft' ? (
-                        <span className="px-2.5 py-0.5 bg-[#FAF6EE] border border-[#E5D7BE] text-[#9E782F] rounded-full text-xs font-semibold uppercase flex items-center w-max gap-1">
-                          <span className="w-1.5 h-1.5 bg-[#9E782F] rounded-full"></span> {c.status}
-                        </span>
-                      ) : (
-                        <span className="px-2.5 py-0.5 bg-[#F3F4F6] border border-[#E5E7EB] text-[#4B5563] rounded-full text-xs font-semibold uppercase flex items-center w-max gap-1">
-                          <span className="w-1.5 h-1.5 bg-[#9CA3AF] rounded-full"></span> {c.status}
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-4 px-5">
-                      <div className="text-xs font-semibold text-[#1A1615]">{c.startDate}</div>
-                      <div className="text-[11px] text-[#7C746C]">{c.endDate}</div>
-                    </td>
-                    <td className="py-4 px-5">
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <div className="h-1.5 flex-1 bg-[#FAF8F5] border border-[#EAE6E1] rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-full" style={{ width: `${c.progress}%` }}></div>
-                        </div>
-                        <span className="text-xs font-bold text-[#1A1615] w-8">{c.progress}%</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-5 text-right relative">
-                      <button 
-                        onClick={() => setOpenActionMenuId(openActionMenuId === c.id ? null : c.id)}
-                        className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer"
-                      >
-                        <MoreVertical className="w-4 h-4" />
-                      </button>
-                      
-                      {openActionMenuId === c.id && (
-                        <div ref={actionMenuRef} className="absolute right-8 top-12 w-40 bg-white border border-[#EAE6E1] rounded-xl shadow-lg z-50 overflow-hidden py-1">
-                          <button onClick={async () => { setOpenActionMenuId(null); setQrModalCampaign(c); setQrModalImgUrl(null); const url = await fetchCampaignQr(c.id); setQrModalImgUrl(url); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors flex items-center gap-2">
-                            <Eye className="w-3.5 h-3.5 text-[#6E6A66]" /> View QR
-                          </button>
-                          <button onClick={() => { setOpenActionMenuId(null); handleDownload(c); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors flex items-center gap-2">
-                            <Download className="w-3.5 h-3.5 text-[#6E6A66]" /> Download
-                          </button>
-                          <button onClick={() => { setOpenActionMenuId(null); handleToggleCampaignStatus(c.id, c.status); }} className={`w-full text-left px-4 py-2 text-xs font-semibold hover:bg-[#FAF8F5] transition-colors flex items-center gap-2 ${c.status === 'Active' || c.status === 'Scheduled' ? 'text-[#15803D]' : 'text-[#1A1615]'}`}>
-                            <Power className={`w-3.5 h-3.5 ${c.status === 'Active' || c.status === 'Scheduled' ? 'text-[#15803D]' : 'text-[#6E6A66]'}`} /> {(c.status === 'Draft' || c.status === 'Paused') ? 'Activate' : 'Deactivate'}
-                          </button>
-                          <button onClick={() => { setOpenActionMenuId(null); handleEditCampaign(c); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors flex items-center gap-2">
-                            <Edit2 className="w-3.5 h-3.5 text-[#D4A753]" /> Edit
-                          </button>
-                          <button onClick={() => { setOpenActionMenuId(null); handleDuplicateCampaign(c); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors flex items-center gap-2">
-                            <Copy className="w-3.5 h-3.5 text-[#6E6A66]" /> Duplicate
-                          </button>
-                          <div className="h-px bg-[#EAE6E1] my-1 mx-2"></div>
-                          <button onClick={() => { setOpenActionMenuId(null); handleDeleteCampaign(c.id, c.name); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#DC2626] hover:bg-[#FEE2E2] transition-colors flex items-center gap-2">
-                            <Trash2 className="w-3.5 h-3.5" /> Delete
-                          </button>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile Accordion List */}
-          <div className="md:hidden flex flex-col">
-            {filteredCampaigns.length === 0 ? (
-              <div className="py-12 px-4 text-center bg-white">
-                <div className="flex flex-col items-center justify-center">
-                  <div className="w-12 h-12 bg-[#F3EDE6] rounded-full flex items-center justify-center mb-3">
-                    <Gift className="w-6 h-6 text-[#9E9A93]" />
+          {/* 4 Metric Cards with Sparklines */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Card 1: Total Campaigns */}
+            <div className="bg-white rounded-3xl p-5 border border-purple-50 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between relative overflow-hidden">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#FCE7F3] flex items-center justify-center text-[#E11D48] flex-shrink-0">
+                    <Megaphone className="w-5 h-5" />
                   </div>
-                  <h3 className="text-[13px] font-bold text-[#1A1615] mb-1">No campaigns found</h3>
-                  <p className="text-xs text-[#7C746C]">
-                    {searchQuery || statusFilter !== 'All' ? "Try adjusting your filters." : "Create your first campaign!"}
+                  <div>
+                    <span className="text-xs font-bold text-gray-500">Total<br />Campaigns</span>
+                    <div className="text-2xl font-black text-[#1E1548] mt-1">24</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-[11px] font-bold text-[#10B981] bg-[#ECFDF5] px-2 py-0.5 rounded-full">
+                    + 12%
+                  </span>
+                  <div className="text-[9px] text-gray-400 mt-1">vs last month</div>
+                </div>
+              </div>
+
+              {/* Sparkline SVG */}
+              <div className="mt-4 h-6 w-full">
+                <svg className="w-full h-full overflow-visible" viewBox="0 0 100 20" preserveAspectRatio="none">
+                  <path
+                    d="M 0,15 Q 25,5 50,15 T 100,8"
+                    fill="none"
+                    stroke="#F43F5E"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            {/* Card 2: Active Campaigns */}
+            <div className="bg-white rounded-3xl p-5 border border-purple-50 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between relative overflow-hidden">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#EDE9FE] flex items-center justify-center text-[#7C3AED] flex-shrink-0">
+                    <UserCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-gray-500">Active<br />Campaigns</span>
+                    <div className="text-2xl font-black text-[#1E1548] mt-1">18</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-[11px] font-bold text-[#10B981] bg-[#ECFDF5] px-2 py-0.5 rounded-full">
+                    + 8%
+                  </span>
+                  <div className="text-[9px] text-gray-400 mt-1">vs last month</div>
+                </div>
+              </div>
+
+              {/* Sparkline SVG */}
+              <div className="mt-4 h-6 w-full">
+                <svg className="w-full h-full overflow-visible" viewBox="0 0 100 20" preserveAspectRatio="none">
+                  <path
+                    d="M 0,16 Q 30,12 60,18 T 100,10"
+                    fill="none"
+                    stroke="#7C3AED"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            {/* Card 3: Total Redemptions */}
+            <div className="bg-white rounded-3xl p-5 border border-purple-50 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between relative overflow-hidden">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#FFE4E6] flex items-center justify-center text-[#E11D48] flex-shrink-0">
+                    <Gift className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-gray-500">Total<br />Redemptions</span>
+                    <div className="text-2xl font-black text-[#1E1548] mt-1">12,480</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-[11px] font-bold text-[#10B981] bg-[#ECFDF5] px-2 py-0.5 rounded-full">
+                    + 24%
+                  </span>
+                  <div className="text-[9px] text-gray-400 mt-1">vs last month</div>
+                </div>
+              </div>
+
+              {/* Sparkline SVG */}
+              <div className="mt-4 h-6 w-full">
+                <svg className="w-full h-full overflow-visible" viewBox="0 0 100 20" preserveAspectRatio="none">
+                  <path
+                    d="M 0,14 Q 35,18 70,10 T 100,12"
+                    fill="none"
+                    stroke="#E11D48"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            {/* Card 4: Total Rewards Given */}
+            <div className="bg-white rounded-3xl p-5 border border-purple-50 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between relative overflow-hidden">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-[#D97706] flex-shrink-0">
+                    <Coins className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-gray-500">Total Rewards<br />Given</span>
+                    <div className="text-2xl font-black text-[#1E1548] mt-1">8,500</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-[11px] font-bold text-[#10B981] bg-[#ECFDF5] px-2 py-0.5 rounded-full">
+                    + 18%
+                  </span>
+                  <div className="text-[9px] text-gray-400 mt-1">vs last month</div>
+                </div>
+              </div>
+
+              {/* Sparkline SVG */}
+              <div className="mt-4 h-6 w-full">
+                <svg className="w-full h-full overflow-visible" viewBox="0 0 100 20" preserveAspectRatio="none">
+                  <path
+                    d="M 0,18 Q 30,10 65,15 T 100,8"
+                    fill="none"
+                    stroke="#D97706"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          {/* Campaign Table Card */}
+          <div className="bg-white rounded-3xl border border-purple-50 shadow-sm p-6 space-y-5">
+            {/* Search & Filters Row */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="relative w-full md:w-96">
+                <Search className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search campaigns by name or reward..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-[#FAF8FF] border border-gray-200/80 rounded-full pl-10 pr-4 py-2.5 text-xs text-[#1A1615] focus:outline-none focus:border-[#5844A8]"
+                />
+              </div>
+
+              <div className="flex items-center gap-3 flex-wrap">
+                {/* All Types */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setTypeFilterDropdownOpen(!typeFilterDropdownOpen)}
+                    className="px-4 py-2 rounded-full border border-gray-200 bg-white text-xs font-semibold text-gray-700 hover:bg-gray-50 flex items-center gap-2 cursor-pointer shadow-sm"
+                  >
+                    <span>{typeFilter}</span>
+                    <span className="text-gray-400 text-[10px]">⁄</span>
+                  </button>
+                  {typeFilterDropdownOpen && (
+                    <div className="absolute left-0 mt-1.5 w-40 bg-white rounded-xl shadow-lg border border-gray-100 py-1.5 z-40">
+                      {['All Types', 'Welcome Campaign', 'Item Based Offer', 'Stamps', 'Billing Offer'].map((t) => (
+                        <button
+                          key={t}
+                          onClick={() => {
+                            setTypeFilter(t);
+                            setTypeFilterDropdownOpen(false);
+                          }}
+                          className="w-full text-left px-3.5 py-1.5 text-xs text-gray-700 hover:bg-purple-50 hover:text-[#5844A8] font-medium"
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* All Status */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setStatusFilterDropdownOpen(!statusFilterDropdownOpen)}
+                    className="px-4 py-2 rounded-full border border-gray-200 bg-white text-xs font-semibold text-gray-700 hover:bg-gray-50 flex items-center gap-2 cursor-pointer shadow-sm"
+                  >
+                    <span>{statusFilter}</span>
+                    <span className="text-gray-400 text-[10px]">⁄</span>
+                  </button>
+                  {statusFilterDropdownOpen && (
+                    <div className="absolute left-0 mt-1.5 w-36 bg-white rounded-xl shadow-lg border border-gray-100 py-1.5 z-40">
+                      {['All Status', 'Active', 'Draft', 'Scheduled', 'Ended'].map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => {
+                            setStatusFilter(s);
+                            setStatusFilterDropdownOpen(false);
+                          }}
+                          className="w-full text-left px-3.5 py-1.5 text-xs text-gray-700 hover:bg-purple-50 hover:text-[#5844A8] font-medium"
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Select Date */}
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-full border border-gray-200 bg-white text-xs font-semibold text-gray-700 hover:bg-gray-50 flex items-center gap-2 cursor-pointer shadow-sm"
+                >
+                  <Calendar className="w-3.5 h-3.5 text-gray-500" />
+                  <span>Select Date</span>
+                  <span className="text-gray-400 text-[10px]">⁄</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Campaign Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-gray-100 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                    <th className="py-3 px-4">CAMPAIGN INFO</th>
+                    <th className="py-3 px-4">TYPE &amp; TARGET</th>
+                    <th className="py-3 px-4">STATUS</th>
+                    <th className="py-3 px-4">TIMELINE</th>
+                    <th className="py-3 px-4 text-right">ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {paginatedCampaigns.map((camp) => {
+                    const isActive = camp.status === 'Active';
+                    return (
+                      <tr key={camp.id} className="hover:bg-purple-50/20 transition group">
+                        {/* Info */}
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center flex-shrink-0">
+                              {camp.type === 'welcome' ? <Gift className="w-5 h-5" /> : <Utensils className="w-5 h-5 text-blue-500" />}
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-[#1E1548]">{camp.name}</div>
+                              <div className="text-[11px] text-gray-400">{camp.description}</div>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Type & Target */}
+                        <td className="py-4 px-4">
+                          <div>
+                            <div className="text-xs font-semibold text-[#1E1548]">{camp.typeLabel || 'Welcome Campaign'}</div>
+                            {camp.target === 'VIP' ? (
+                              <span className="inline-block text-[9px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full mt-0.5">
+                                VIP
+                              </span>
+                            ) : (
+                              <div className="text-[10px] text-gray-400 uppercase font-semibold">{camp.target || 'ALL CUSTOMERS'}</div>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Status */}
+                        <td className="py-4 px-4">
+                          <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full ${
+                            isActive ? 'bg-[#DCFCE7] text-[#15803D]' : 'bg-[#FEF3C7] text-[#D97706]'
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-[#15803D]' : 'bg-[#D97706]'}`}></span>
+                            {camp.status}
+                          </span>
+                        </td>
+
+                        {/* Timeline */}
+                        <td className="py-4 px-4">
+                          <div className="text-xs font-semibold text-[#1E1548]">{camp.startDate || 'Nov 1, 2024'}</div>
+                          <div className="text-[10px] text-gray-400">{camp.endDate || 'Nov 30, 2024'}</div>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="py-4 px-4 text-right">
+                          <div className="flex items-center justify-end gap-2 text-gray-400">
+                            {isActive && (
+                              <button
+                                type="button"
+                                title="Pause Campaign"
+                                onClick={() => handleToggleCampaignStatus(camp.id, camp.status)}
+                                className="p-1.5 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition cursor-pointer"
+                              >
+                                <Pause className="w-4 h-4" />
+                              </button>
+                            )}
+
+                            <button
+                              type="button"
+                              title="Preview"
+                              onClick={() => {
+                                setQrModalCampaign(camp);
+                              }}
+                              className="p-1.5 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition cursor-pointer"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+
+                            <button
+                              type="button"
+                              title="Campaign report"
+                              className="p-1.5 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition cursor-pointer"
+                            >
+                              <BarChart3 className="w-4 h-4" />
+                            </button>
+
+                            <button
+                              type="button"
+                              title="Edit"
+                              onClick={() => handleEditCampaign(camp)}
+                              className="p-1.5 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition cursor-pointer"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination Footer */}
+            <div className="flex items-center justify-between pt-4 border-t border-gray-100 text-xs text-gray-500 font-medium">
+              <div>Showing 1-{paginatedCampaigns.length} of {campaigns.length} campaigns</div>
+
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 cursor-pointer"
+                >
+                  &lt;
+                </button>
+                {[1, 2, 3, 4, 5].slice(0, Math.max(1, totalPages || 1)).map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setCurrentPage(p)}
+                    className={`w-8 h-8 rounded-lg font-bold flex items-center justify-center cursor-pointer ${
+                      currentPage === p
+                        ? 'bg-[#2D1954] text-white shadow-sm'
+                        : 'border border-gray-200 hover:bg-gray-50 text-gray-700'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(Math.min(totalPages || 1, currentPage + 1))}
+                  className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 cursor-pointer"
+                >
+                  &gt;
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    );
+  };
+
+  {/* =========================================================================
+      DESKTOP WIZARD COMPONENTS (Exact copy from Figma Screenshots 2, 3, 4, 5)
+     ========================================================================= */}
+
+  const renderDesktopStepper = () => {
+    return (
+      <div className="space-y-6">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
+          <span>&gt; Home</span>
+          <span className="text-gray-700 font-bold">Campaign &amp; Loyalty Management</span>
+        </div>
+
+        {/* Page Title */}
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-black text-[#1E1548] tracking-tight flex items-center gap-2">
+            Campaign &amp; Loyalty Management
+            <Sparkles className="w-5 h-5 text-[#E83E8C] fill-[#E83E8C]" />
+          </h1>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1 font-medium">
+            Create, monitor, and optimize your customer engagement programs.
+          </p>
+        </div>
+
+        {/* Horizontal Desktop 6-Step Stepper */}
+        <div className="relative flex items-center justify-between max-w-4xl pt-2">
+          {steps.map((st) => {
+            const isCompleted = currentStep > st.id;
+            const isCurrent = currentStep === st.id;
+
+            return (
+              <div key={st.id} className="flex flex-col items-center relative z-10">
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${
+                    isCurrent
+                      ? 'bg-[#5844A8] text-white shadow-md ring-4 ring-purple-100'
+                      : isCompleted
+                      ? 'bg-[#5844A8] text-white'
+                      : 'bg-white border-2 border-gray-200 text-gray-400'
+                  }`}
+                >
+                  {st.id}
+                </div>
+                <span className={`text-xs font-bold mt-2 whitespace-nowrap ${
+                  isCurrent ? 'text-[#5844A8]' : 'text-gray-400'
+                }`}>
+                  {st.name}
+                </span>
+              </div>
+            );
+          })}
+          {/* Connector track line */}
+          <div className="absolute top-6 left-6 right-6 h-0.5 bg-gray-200 -z-0"></div>
+        </div>
+      </div>
+    );
+  };
+
+  {/* Desktop Step 1: Basic Details (Image 2) */}
+  const renderDesktopStep1 = () => {
+    return (
+      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+        <div className="max-w-[1200px] mx-auto space-y-6">
+          {renderDesktopStepper()}
+
+          {/* Card 1: Basic Details */}
+          <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-purple-50 text-[#7C3AED] flex items-center justify-center">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-[#1E1548]">Basic Details</h3>
+                <p className="text-xs text-gray-400 font-medium">Add the essential information for your campaign.</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {/* Campaign name */}
+              <div>
+                <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                  Campaign name <span className="text-rose-500">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={campaignName}
+                    onChange={(e) => setCampaignName(e.target.value)}
+                    placeholder="Enter campaign name (e.g. Summer Special)"
+                    maxLength={100}
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-4 py-3 text-xs text-[#1A1615] placeholder-gray-400 focus:outline-none focus:border-[#5844A8] shadow-sm font-medium pr-16"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+                    {campaignName.length}/100
+                  </span>
+                </div>
+              </div>
+
+              {/* Short description */}
+              <div>
+                <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                  Short description <span className="text-rose-500">*</span>
+                </label>
+                <div className="relative">
+                  <textarea
+                    rows={4}
+                    value={campaignDescription}
+                    onChange={(e) => setCampaignDescription(e.target.value)}
+                    placeholder="Add a short description that will be visible to customers."
+                    maxLength={200}
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-4 py-3 text-xs text-[#1A1615] placeholder-gray-400 focus:outline-none focus:border-[#5844A8] shadow-sm font-medium resize-none pb-6"
+                  />
+                  <span className="absolute right-4 bottom-3 text-xs text-gray-400">
+                    {campaignDescription.length}/200
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom 2 Columns: Campaign Validity & Campaign Status */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Left: Campaign Validity */}
+            <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-purple-50 text-[#7C3AED] flex items-center justify-center">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#1E1548]">Campaign Validity</h3>
+                  <p className="text-xs text-gray-400 font-medium">Set the start and end dates for your campaign.</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-[#1E1548] mb-1">Start date *</label>
+                  <div className="relative">
+                    <Calendar className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="text"
+                      defaultValue="15 Sep 2025"
+                      className="w-full bg-white border border-gray-200 rounded-2xl pl-9 pr-3 py-2.5 text-xs font-semibold text-[#1A1615]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-[#1E1548] mb-1">End date *</label>
+                  <div className="relative">
+                    <Calendar className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="text"
+                      defaultValue="30 Sep 2025"
+                      className="w-full bg-white border border-gray-200 rounded-2xl pl-9 pr-3 py-2.5 text-xs font-semibold text-[#1A1615]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* When will this campaign be applicable? */}
+              <div className="pt-2 space-y-2">
+                <span className="block text-xs font-bold text-[#1E1548]">
+                  When will this campaign be applicable? <span className="text-rose-500">*</span>
+                </span>
+                <div className="flex items-center gap-6">
+                  <label className="flex items-center gap-2 text-xs font-semibold text-[#1A1615] cursor-pointer">
+                    <input
+                      type="radio"
+                      name="applicable_type"
+                      checked={timeActiveType === 'entire_day'}
+                      onChange={() => setTimeActiveType('entire_day')}
+                      className="w-4 h-4 text-[#5844A8] focus:ring-[#5844A8]"
+                    />
+                    Entire day
+                  </label>
+
+                  <label className="flex items-center gap-2 text-xs font-semibold text-[#1A1615] cursor-pointer">
+                    <input
+                      type="radio"
+                      name="applicable_type"
+                      checked={timeActiveType === 'specific_time'}
+                      onChange={() => setTimeActiveType('specific_time')}
+                      className="w-4 h-4 text-[#5844A8] focus:ring-[#5844A8]"
+                    />
+                    Specific time
+                  </label>
+                </div>
+
+                {timeActiveType === 'specific_time' && (
+                  <div className="flex items-center gap-2 pt-2">
+                    <input
+                      type="text"
+                      value={specificStartTime}
+                      onChange={(e) => setSpecificStartTime(e.target.value)}
+                      className="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold"
+                    />
+                    <span className="text-gray-400">-</span>
+                    <input
+                      type="text"
+                      value={specificEndTime}
+                      onChange={(e) => setSpecificEndTime(e.target.value)}
+                      className="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right: Campaign Status */}
+            <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-purple-50 text-[#7C3AED] flex items-center justify-center">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#1E1548]">Campaign Status</h3>
+                  <p className="text-xs text-gray-400 font-medium">Choose the initial status for this campaign.</p>
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                {/* Draft Option */}
+                <div
+                  onClick={() => setCampaignStatusSelection('draft')}
+                  className={`p-4 rounded-2xl border-2 transition cursor-pointer flex items-center gap-3.5 ${
+                    campaignStatusSelection === 'draft'
+                      ? 'border-[#5844A8] bg-[#FAF8FF]'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                    campaignStatusSelection === 'draft' ? 'border-[#5844A8]' : 'border-gray-300'
+                  }`}>
+                    {campaignStatusSelection === 'draft' && <Check className="w-3.5 h-3.5 text-[#5844A8] stroke-[3]" />}
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-[#1E1548]">Draft</h4>
+                    <p className="text-[11px] text-gray-400">Save and edit later</p>
+                  </div>
+                </div>
+
+                {/* Active Option */}
+                <div
+                  onClick={() => setCampaignStatusSelection('active')}
+                  className={`p-4 rounded-2xl border-2 transition cursor-pointer flex items-center gap-3.5 ${
+                    campaignStatusSelection === 'active'
+                      ? 'border-[#5844A8] bg-[#FAF8FF]'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                    campaignStatusSelection === 'active' ? 'border-[#5844A8]' : 'border-gray-300'
+                  }`}>
+                    {campaignStatusSelection === 'active' && <Check className="w-3.5 h-3.5 text-[#5844A8] stroke-[3]" />}
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-[#1E1548]">Active</h4>
+                    <p className="text-[11px] text-gray-400">Campaign will go live as per schedule</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sticky Bottom Actions */}
+          <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+            <button
+              type="button"
+              onClick={() => setViewMode('dashboard')}
+              className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+            >
+              Cancel
+            </button>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setViewMode('dashboard')}
+                className="px-6 py-2.5 rounded-full border border-gray-200 bg-white text-xs font-bold text-[#1E1548] hover:bg-gray-50 transition cursor-pointer shadow-sm flex items-center gap-2"
+              >
+                💾 Save as Draft
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentStep(2)}
+                className="px-7 py-2.5 rounded-full bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+              >
+                Next &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  {/* Desktop Step 2: Audience Type (Image 3) */}
+  const renderDesktopStep2 = () => {
+    return (
+      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+        <div className="max-w-[1200px] mx-auto space-y-6">
+          {renderDesktopStepper()}
+
+          {/* Audience Card */}
+          <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-purple-50 text-[#7C3AED] flex items-center justify-center">
+                <Users className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-[#1E1548]">Audience</h3>
+                <p className="text-xs text-gray-400 font-medium">Choose the customers you want to target for this campaign.</p>
+              </div>
+            </div>
+
+            {/* Campaign Type (3 Cards) */}
+            <div className="space-y-2">
+              <span className="block text-xs font-bold text-[#1E1548]">Campaign Type</span>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* 1. All Customers */}
+                <div
+                  onClick={() => setAudienceTargetType('all')}
+                  className={`p-5 rounded-2xl border-2 transition cursor-pointer relative ${
+                    audienceTargetType === 'all'
+                      ? 'border-[#5844A8] bg-[#FAF8FF]'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                  }`}
+                >
+                  <div className="absolute top-4 right-4">
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                      audienceTargetType === 'all' ? 'bg-[#5844A8] text-white' : 'border border-gray-300'
+                    }`}>
+                      {audienceTargetType === 'all' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 rounded-2xl bg-purple-50 text-[#7C3AED] flex items-center justify-center mb-3">
+                    <Gift className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-xs font-bold text-[#1E1548]">All Customers</h4>
+                  <p className="text-[11px] text-gray-400 mt-1">Target your entire customer base</p>
+                </div>
+
+                {/* 2. New Customers */}
+                <div
+                  onClick={() => setAudienceTargetType('new')}
+                  className={`p-5 rounded-2xl border-2 transition cursor-pointer relative ${
+                    audienceTargetType === 'new'
+                      ? 'border-[#5844A8] bg-[#FAF8FF]'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                  }`}
+                >
+                  <div className="absolute top-4 right-4">
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                      audienceTargetType === 'new' ? 'bg-[#5844A8] text-white' : 'border border-gray-300'
+                    }`}>
+                      {audienceTargetType === 'new' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center mb-3">
+                    <UserPlus className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-xs font-bold text-[#1E1548]">New Customers</h4>
+                  <p className="text-[11px] text-gray-400 mt-1">Customers who haven't purchased yet</p>
+                </div>
+
+                {/* 3. Existing Customer */}
+                <div
+                  onClick={() => setAudienceTargetType('existing')}
+                  className={`p-5 rounded-2xl border-2 transition cursor-pointer relative ${
+                    audienceTargetType === 'existing'
+                      ? 'border-[#5844A8] bg-[#FAF8FF]'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                  }`}
+                >
+                  <div className="absolute top-4 right-4">
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                      audienceTargetType === 'existing' ? 'bg-[#5844A8] text-white' : 'border border-gray-300'
+                    }`}>
+                      {audienceTargetType === 'existing' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mb-3">
+                    <Star className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-xs font-bold text-[#1E1548]">Existing Customer</h4>
+                  <p className="text-[11px] text-gray-400 mt-1">First-time customers after joining</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Loyalty Tier */}
+            <div className="space-y-2 pt-2">
+              <span className="block text-xs font-bold text-[#1E1548]">Loyalty Tier</span>
+              <div className="flex items-center gap-3 overflow-x-auto pb-1">
+                {[
+                  { key: 'all', label: 'All Tiers' },
+                  { key: 'vip', label: 'VIP' },
+                  { key: 'vvip', label: 'VVIP' },
+                  { key: 'gold', label: 'Gold' },
+                  { key: 'silver', label: 'Silver' },
+                  { key: 'bronze', label: 'Bronze' }
+                ].map((tier) => (
+                  <button
+                    key={tier.key}
+                    type="button"
+                    onClick={() => setSelectedLoyaltyTier(tier.key)}
+                    className={`px-4 py-2 rounded-2xl border text-xs font-bold flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
+                      selectedLoyaltyTier === tier.key
+                        ? 'border-[#5844A8] bg-[#F5F3FF] text-[#5844A8] shadow-sm'
+                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                    }`}
+                  >
+                    <Crown className="w-3.5 h-3.5 text-amber-500" />
+                    <span>{tier.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Advanced Filters (Optional) Card */}
+            <div className="bg-[#FAF8FF] rounded-3xl p-6 border border-purple-100/70 space-y-5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <SlidersHorizontal className="w-4 h-4 text-[#5844A8]" />
+                  <div>
+                    <h4 className="text-xs font-bold text-[#1E1548]">Advanced Filters (Optional)</h4>
+                    <p className="text-[11px] text-gray-400">Refine your audience using the filters below.</p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDemographicAgeRange([18, 60]);
+                    setDemographicGender('All');
+                    setDemographicTotalSpend(50000);
+                    setDemographicTotalVisits(50);
+                  }}
+                  className="text-xs font-bold text-gray-400 hover:text-gray-700 flex items-center gap-1 cursor-pointer"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" /> Clear All
+                </button>
+              </div>
+
+              {/* 2x2 Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Age Range */}
+                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                    <span className="text-xs font-bold text-[#1E1548]">Age Range</span>
+                  </div>
+
+                  <div className="relative py-2">
+                    <div className="w-full h-1.5 bg-gray-200 rounded-full relative">
+                      <div className="absolute left-[15%] right-[10%] h-full bg-[#5844A8] rounded-full"></div>
+                      <div className="absolute left-[15%] top-1/2 -translate-y-1/2 w-4 h-4 bg-[#5844A8] rounded-full shadow-md border-2 border-white"></div>
+                      <div className="absolute right-[10%] top-1/2 -translate-y-1/2 w-4 h-4 bg-[#5844A8] rounded-full shadow-md border-2 border-white"></div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs font-bold text-[#1E1548]">
+                    <span>18</span>
+                    <span className="text-gray-400">60+</span>
+                  </div>
+                </div>
+
+                {/* Gender */}
+                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-gray-400" />
+                    <span className="text-xs font-bold text-[#1E1548]">Gender</span>
+                  </div>
+
+                  <div className="bg-[#FAF8FF] p-1 rounded-xl flex items-center gap-1">
+                    {(['All', 'Male', 'Female'] as const).map((g) => (
+                      <button
+                        key={g}
+                        type="button"
+                        onClick={() => setDemographicGender(g)}
+                        className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition cursor-pointer text-center ${
+                          demographicGender === g
+                            ? 'bg-[#5844A8] text-white shadow-sm'
+                            : 'text-gray-600 hover:text-black'
+                        }`}
+                      >
+                        {g}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Total Spend */}
+                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-gray-400">💳</span>
+                    <span className="text-xs font-bold text-[#1E1548]">Total Spend (₹)</span>
+                  </div>
+
+                  <div className="relative py-2">
+                    <div className="w-full h-1.5 bg-gray-200 rounded-full relative">
+                      <div className="absolute left-0 right-[25%] h-full bg-[#5844A8] rounded-full"></div>
+                      <div className="absolute right-[25%] top-1/2 -translate-y-1/2 w-4 h-4 bg-[#5844A8] rounded-full shadow-md border-2 border-white"></div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs font-bold text-[#1E1548]">
+                    <span>0</span>
+                    <span className="text-gray-400">50,000+</span>
+                  </div>
+                </div>
+
+                {/* Total Visits */}
+                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-3">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="w-3.5 h-3.5 text-gray-400" />
+                    <span className="text-xs font-bold text-[#1E1548]">Total Visits</span>
+                  </div>
+
+                  <div className="relative py-2">
+                    <div className="w-full h-1.5 bg-gray-200 rounded-full relative">
+                      <div className="absolute left-0 right-[35%] h-full bg-[#5844A8] rounded-full"></div>
+                      <div className="absolute right-[35%] top-1/2 -translate-y-1/2 w-4 h-4 bg-[#5844A8] rounded-full shadow-md border-2 border-white"></div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs font-bold text-[#1E1548]">
+                    <span>0</span>
+                    <span className="text-gray-400">50+</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sticky Bottom Actions */}
+          <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+            <button
+              type="button"
+              onClick={() => setCurrentStep(1)}
+              className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+            >
+              Cancel
+            </button>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setViewMode('dashboard')}
+                className="px-6 py-2.5 rounded-full border border-gray-200 bg-white text-xs font-bold text-[#1E1548] hover:bg-gray-50 transition cursor-pointer shadow-sm flex items-center gap-2"
+              >
+                💾 Save as Draft
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentStep(3);
+                  setIsConfiguringCondition(false);
+                }}
+                className="px-7 py-2.5 rounded-full bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+              >
+                Next &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  {/* Desktop Step 3: Conditions List (Image 4) */}
+  const renderDesktopStep3List = () => {
+    const desktopConditions = [
+      {
+        id: 'visit',
+        title: 'Visit Based',
+        description: 'Set the number of visits and minimum bill amount required to qualify.',
+        icon: Store,
+        iconBg: 'bg-rose-50',
+        iconColor: 'text-rose-500'
+      },
+      {
+        id: 'billing',
+        title: 'Billing Based',
+        description: 'Set target spend and frequency within a selected time period.',
+        icon: CreditCard,
+        iconBg: 'bg-purple-50',
+        iconColor: 'text-[#7C3AED]'
+      },
+      {
+        id: 'stamps',
+        title: 'Stamps',
+        description: 'Set number of item purchases to qualify.',
+        icon: Star,
+        iconBg: 'bg-blue-50',
+        iconColor: 'text-blue-500'
+      },
+      {
+        id: 'item',
+        title: 'Item Based Offers',
+        description: 'Apply offer to specific items or categories.',
+        icon: Box,
+        iconBg: 'bg-purple-50',
+        iconColor: 'text-[#9333EA]'
+      },
+      {
+        id: 'happy_hours',
+        title: 'Happy Hours',
+        description: 'Run the campaign during specific time and days.',
+        icon: Clock,
+        iconBg: 'bg-orange-50',
+        iconColor: 'text-orange-500'
+      },
+      {
+        id: 'birthday',
+        title: 'Birthday / Anniversary Offers',
+        description: 'Enable special offers for customer birthdays or anniversaries.',
+        icon: Cake,
+        iconBg: 'bg-pink-50',
+        iconColor: 'text-pink-500'
+      }
+    ];
+
+    return (
+      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+        <div className="max-w-[1200px] mx-auto space-y-6">
+          {renderDesktopStepper()}
+
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-xl font-black text-[#1E1548]">Conditions</h2>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Choose when and how customers can avail this campaign. Select only one condition.
+              </p>
+            </div>
+
+            {/* 6 Condition Cards */}
+            <div className="space-y-3">
+              {desktopConditions.map((cond) => {
+                const IconComponent = cond.icon;
+                const isSelected = selectedConditionType === cond.id;
+                return (
+                  <div
+                    key={cond.id}
+                    onClick={() => setSelectedConditionType(cond.id as any)}
+                    className={`p-5 rounded-2xl border-2 transition cursor-pointer flex items-center gap-4 bg-white ${
+                      isSelected
+                        ? 'border-[#5844A8] shadow-sm'
+                        : 'border-gray-200/80 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                      isSelected ? 'border-[#5844A8]' : 'border-gray-300'
+                    }`}>
+                      {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-[#5844A8]"></div>}
+                    </div>
+
+                    <div className={`w-10 h-10 rounded-2xl ${cond.iconBg} ${cond.iconColor} flex items-center justify-center flex-shrink-0`}>
+                      <IconComponent className="w-5 h-5" />
+                    </div>
+
+                    <div>
+                      <h4 className="text-sm font-bold text-[#1E1548]">{cond.title}</h4>
+                      <p className="text-xs text-gray-400 mt-0.5">{cond.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Sticky Bottom Actions */}
+          <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+            <button
+              type="button"
+              onClick={() => setCurrentStep(2)}
+              className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+            >
+              Previous
+            </button>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setViewMode('dashboard')}
+                className="px-6 py-2.5 rounded-full border border-gray-200 bg-white text-xs font-bold text-[#1E1548] hover:bg-gray-50 transition cursor-pointer shadow-sm flex items-center gap-2"
+              >
+                💾 Save as Draft
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsConfiguringCondition(true)}
+                className="px-7 py-2.5 rounded-full bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+              >
+                Next &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  {/* Desktop Step 3 Detail: Visit Based Configuration (Image 5) */}
+  const renderDesktopStep3Detail = () => {
+    return (
+      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+        <div className="max-w-[1200px] mx-auto space-y-6">
+          {renderDesktopStepper()}
+
+          {/* Back link */}
+          <button
+            type="button"
+            onClick={() => setIsConfiguringCondition(false)}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1E1548] hover:text-[#5844A8] cursor-pointer"
+          >
+            &lt; Back to Conditions
+          </button>
+
+          {/* Main Card */}
+          <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-purple-50 text-[#7C3AED] flex items-center justify-center">
+                <Box className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-[#1E1548]">Visit Based</h3>
+                <p className="text-xs text-gray-400 font-medium">
+                  Set the number of visits and minimum bill amount required to qualify for this offer.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {/* Number of Visits */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-[#1E1548]">
+                  Number of Visits <span className="text-rose-500">*</span>
+                </label>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                    <button
+                      type="button"
+                      onClick={() => setVisitBasedVisits(Math.max(1, visitBasedVisits - 1))}
+                      className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-50 border-r border-gray-200 cursor-pointer"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="w-14 text-center text-xs font-black text-[#1E1548]">
+                      {visitBasedVisits}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setVisitBasedVisits(visitBasedVisits + 1)}
+                      className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-50 border-l border-gray-200 cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <span className="text-xs text-gray-400 font-medium">
+                    Customer needs to visit this many times to avail the offer.
+                  </span>
+                </div>
+              </div>
+
+              {/* Minimum Bill Amount (per visit) */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-[#1E1548]">
+                  Minimum Bill Amount (per visit) <span className="text-rose-500">*</span>
+                </label>
+                <div className="flex items-center border border-gray-200 rounded-2xl overflow-hidden max-w-sm bg-white shadow-sm">
+                  <div className="flex items-center gap-1 px-3 py-2.5 bg-gray-50 border-r border-gray-200 text-xs font-bold text-gray-600">
+                    <span>INR (₹)</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                  </div>
+                  <input
+                    type="number"
+                    value={visitBasedMinBill}
+                    onChange={(e) => setVisitBasedMinBill(Number(e.target.value) || 0)}
+                    className="flex-1 px-4 py-2.5 text-xs font-black text-[#1E1548] focus:outline-none"
+                  />
+                </div>
+                <p className="text-[11px] text-gray-400">
+                  Each visit should have a minimum bill amount of ₹{visitBasedMinBill} to be counted.
+                </p>
+              </div>
+
+              {/* Visit Validity Period */}
+              <div className="space-y-3">
+                <label className="block text-xs font-bold text-[#1E1548]">
+                  Visit Validity Period <span className="text-rose-500">*</span>
+                </label>
+                <div className="flex items-center gap-6">
+                  <label className="flex items-center gap-2 text-xs font-semibold text-[#1E1548] cursor-pointer">
+                    <input
+                      type="radio"
+                      name="validity_period_type"
+                      checked={visitBasedValidityType === 'specific_period'}
+                      onChange={() => setVisitBasedValidityType('specific_period')}
+                      className="w-4 h-4 text-[#5844A8] focus:ring-[#5844A8]"
+                    />
+                    Within a specific time period
+                  </label>
+
+                  <label className="flex items-center gap-2 text-xs font-semibold text-[#1E1548] cursor-pointer">
+                    <input
+                      type="radio"
+                      name="validity_period_type"
+                      checked={visitBasedValidityType === 'no_limit'}
+                      onChange={() => setVisitBasedValidityType('no_limit')}
+                      className="w-4 h-4 text-[#5844A8] focus:ring-[#5844A8]"
+                    />
+                    No time limit
+                  </label>
+                </div>
+
+                {visitBasedValidityType === 'specific_period' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg pt-1">
+                    <div>
+                      <span className="block text-[11px] text-gray-400 font-semibold mb-1">Start Date</span>
+                      <div className="relative">
+                        <Calendar className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <input
+                          type="text"
+                          value={visitBasedStartDate}
+                          onChange={(e) => setVisitBasedStartDate(e.target.value)}
+                          className="w-full bg-white border border-gray-200 rounded-2xl pl-9 pr-3 py-2.5 text-xs font-semibold text-[#1A1615]"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <span className="block text-[11px] text-gray-400 font-semibold mb-1">End Date</span>
+                      <div className="relative">
+                        <Calendar className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <input
+                          type="text"
+                          value={visitBasedEndDate}
+                          onChange={(e) => setVisitBasedEndDate(e.target.value)}
+                          className="w-full bg-white border border-gray-200 rounded-2xl pl-9 pr-3 py-2.5 text-xs font-semibold text-[#1A1615]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Consider Visits from */}
+              <div className="space-y-2 pt-2">
+                <span className="block text-xs font-bold text-[#1E1548]">Consider Visits from</span>
+                <div className="flex items-center gap-6">
+                  <label className="flex items-center gap-2 text-xs font-semibold text-[#1E1548] cursor-pointer">
+                    <input
+                      type="radio"
+                      name="branch_scope"
+                      checked={visitBasedBranchScope === 'all'}
+                      onChange={() => setVisitBasedBranchScope('all')}
+                      className="w-4 h-4 text-[#5844A8] focus:ring-[#5844A8]"
+                    />
+                    All branches
+                  </label>
+
+                  <label className="flex items-center gap-2 text-xs font-semibold text-[#1E1548] cursor-pointer">
+                    <input
+                      type="radio"
+                      name="branch_scope"
+                      checked={visitBasedBranchScope === 'selected'}
+                      onChange={() => setVisitBasedBranchScope('selected')}
+                      className="w-4 h-4 text-[#5844A8] focus:ring-[#5844A8]"
+                    />
+                    Selected branches only
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sticky Bottom Actions */}
+          <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+            <button
+              type="button"
+              onClick={() => setIsConfiguringCondition(false)}
+              className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+            >
+              Previous
+            </button>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setViewMode('dashboard')}
+                className="px-6 py-2.5 rounded-full border border-gray-200 bg-white text-xs font-bold text-[#1E1548] hover:bg-gray-50 transition cursor-pointer shadow-sm flex items-center gap-2"
+              >
+                💾 Save as Draft
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentStep(4)}
+                className="px-7 py-2.5 rounded-full bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+              >
+                Next &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  {/* Desktop Step 3 Detail: Billing Based Rule (Image 1) */}
+  const renderDesktopBillingDetail = () => {
+    const quickAmounts = [250, 500, 1000, 2500, 5000];
+    const quickFrequencies = ['Weekly', 'Monthly', 'Quarterly', 'Per Campaign'];
+
+    return (
+      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+        <div className="max-w-[1200px] mx-auto space-y-6">
+          {renderDesktopStepper()}
+
+          {/* Back link */}
+          <button
+            type="button"
+            onClick={() => setIsConfiguringCondition(false)}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1E1548] hover:text-[#5844A8] cursor-pointer"
+          >
+            &lt; Back to Conditions
+          </button>
+
+          {/* Main Card */}
+          <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-[#F6EEFD] text-[#7C3AED] flex items-center justify-center">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-[#1E1548]">Billing</h3>
+                <p className="text-xs text-gray-400 font-medium">
+                  Set the target amount and frequency for customer eligibility in this campaign.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {/* Target Amount */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-xs font-bold text-[#1E1548]">Target Amount</span>
+                    <span className="ml-2 bg-[#FFF0F2] text-[#E11D48] text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      Required
+                    </span>
+                  </div>
+                </div>
+                <p className="text-[11px] text-gray-400 font-medium">
+                  Set the minimum bill amount a customer needs to spend.
+                </p>
+
+                {/* Input box */}
+                <div className="flex items-center justify-between bg-[#FBF9FE] border border-gray-200 rounded-2xl px-4 py-3 shadow-inner max-w-2xl">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base font-black text-[#1E1548]">₹</span>
+                    <input
+                      type="number"
+                      value={billingTargetAmount}
+                      onChange={(e) => setBillingTargetAmount(Number(e.target.value) || 0)}
+                      className="bg-transparent text-base font-black text-[#1E1548] focus:outline-none w-32"
+                    />
+                  </div>
+                  <div className="flex items-center gap-1 text-xs font-semibold text-gray-500 cursor-pointer">
+                    <span>INR (₹)</span>
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  </div>
+                </div>
+
+                {/* Quick Pills */}
+                <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                  {quickAmounts.map((amt) => {
+                    const isSelected = billingTargetAmount === amt;
+                    return (
+                      <button
+                        key={amt}
+                        type="button"
+                        onClick={() => setBillingTargetAmount(amt)}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                          isSelected
+                            ? 'border-2 border-[#5844A8] bg-white text-[#5844A8] shadow-sm'
+                            : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                        }`}
+                      >
+                        ₹{amt.toLocaleString()}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Frequency (Optional) */}
+              <div className="space-y-2 pt-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#1E1548]">Frequency (Optional)</span>
+                  <span className="text-[11px] text-gray-400 font-medium flex items-center gap-1">
+                    Rolling Period <Info className="w-3 h-3 text-gray-400" />
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-400 font-medium">
+                  Set how often the customer needs to meet this condition.
+                </p>
+
+                {/* Dropdown */}
+                <div className="relative max-w-2xl">
+                  <div
+                    onClick={() => setBillingFrequencyDropdownOpen(!billingFrequencyDropdownOpen)}
+                    className="flex items-center justify-between bg-white border border-gray-200 rounded-2xl px-4 py-3 cursor-pointer shadow-sm"
+                  >
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#1E1548]">
+                      <Calendar className="w-4 h-4 text-gray-400" />
+                      <span>{billingFrequency}</span>
+                    </div>
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  </div>
+
+                  {billingFrequencyDropdownOpen && (
+                    <div className="absolute z-20 left-0 right-0 mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden py-1">
+                      {quickFrequencies.map((f) => (
+                        <div
+                          key={f}
+                          onClick={() => {
+                            setBillingFrequency(f);
+                            setBillingFrequencyDropdownOpen(false);
+                          }}
+                          className="px-4 py-2.5 text-xs font-semibold hover:bg-purple-50 text-gray-700 cursor-pointer"
+                        >
+                          {f}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Quick Pills */}
+                <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                  {quickFrequencies.map((freq) => {
+                    const isSelected = billingFrequency === freq;
+                    return (
+                      <button
+                        key={freq}
+                        type="button"
+                        onClick={() => setBillingFrequency(freq)}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                          isSelected
+                            ? 'border-2 border-[#5844A8] bg-white text-[#5844A8] shadow-sm'
+                            : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                        }`}
+                      >
+                        {freq}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Rule Preview */}
+              <div className="bg-[#F7F2FD] border border-purple-100 rounded-2xl p-4 flex items-center gap-3">
+                <div className="w-7 h-7 rounded-full bg-[#5844A8] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                  <Info className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-[#1E1548] mr-2">Rule Preview</span>
+                  <span className="text-xs text-gray-600 font-medium">
+                    Customer will be eligible after spending ₹{billingTargetAmount} in a {billingFrequency.toLowerCase().replace('ly', '')}.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sticky Bottom Actions */}
+          <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+            <button
+              type="button"
+              onClick={() => setIsConfiguringCondition(false)}
+              className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+            >
+              Cancel
+            </button>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setViewMode('dashboard')}
+                className="px-6 py-2.5 rounded-full border border-gray-200 bg-white text-xs font-bold text-[#1E1548] hover:bg-gray-50 transition cursor-pointer shadow-sm flex items-center gap-2"
+              >
+                💾 Save as Draft
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentStep(4)}
+                className="px-7 py-2.5 rounded-full bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+              >
+                Next &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  {/* Desktop Step 3 Detail: Stamps Rule (Image 2) */}
+  const renderDesktopStampsDetail = () => {
+    return (
+      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+        <div className="max-w-[1200px] mx-auto space-y-6">
+          {renderDesktopStepper()}
+
+          {/* Back link */}
+          <button
+            type="button"
+            onClick={() => setIsConfiguringCondition(false)}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1E1548] hover:text-[#5844A8] cursor-pointer"
+          >
+            &lt; Back to Conditions
+          </button>
+
+          {/* Main Card */}
+          <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-[#FFF9EB] text-[#F59E0B] flex items-center justify-center">
+                <Star className="w-5 h-5 fill-[#F59E0B]" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-[#1E1548]">Stamps</h3>
+                <p className="text-xs text-gray-400 font-medium">
+                  Set the qualifying item and number of stamps required to unlock this promotion.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {/* Qualifying item(s) */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-[#1E1548]">Qualifying item(s)</label>
+                <div className="flex items-center justify-between bg-[#F8F5FE] border border-purple-100 rounded-2xl px-4 py-3 shadow-inner cursor-pointer max-w-2xl">
+                  <div className="flex items-center gap-2.5 text-xs font-bold text-[#1E1548]">
+                    <Box className="w-4 h-4 text-[#5844A8]" />
+                    <span>{stampQualifyingItem}</span>
+                  </div>
+                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                </div>
+                <p className="text-[11px] text-gray-400 font-medium">
+                  Applies to all catalog menu items or customized categories.
+                </p>
+              </div>
+
+              {/* No. of stamps */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#1E1548]">No. of stamps</span>
+                  <span className="text-xs font-bold text-[#5844A8]">Target: {stampTargetCount} stamps</span>
+                </div>
+
+                <div className="bg-[#F8F5FE] border border-purple-100 rounded-2xl p-3 flex items-center justify-between max-w-2xl">
+                  <button
+                    type="button"
+                    onClick={() => setStampTargetCount(Math.max(1, stampTargetCount - 1))}
+                    className="w-10 h-10 rounded-full bg-white text-gray-600 hover:bg-gray-100 flex items-center justify-center shadow-sm cursor-pointer"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <div className="text-center">
+                    <div className="text-2xl font-black text-[#1E1548]">{stampTargetCount}</div>
+                    <div className="text-[11px] text-gray-400 font-medium">visits / purchases</div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setStampTargetCount(stampTargetCount + 1)}
+                    className="w-10 h-10 rounded-full bg-white text-gray-600 hover:bg-gray-100 flex items-center justify-center shadow-sm cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Customer Pass Preview */}
+              <div className="space-y-2 pt-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#1E1548]">Customer Pass Preview</span>
+                  <span className="text-xs font-bold text-rose-500">Merchant Pulse Card</span>
+                </div>
+
+                <div className="grid grid-cols-5 gap-3 max-w-2xl">
+                  {Array.from({ length: 4 }).map((_, idx) => (
+                    <div
+                      key={idx}
+                      className="h-16 rounded-2xl bg-[#5844A8] text-white flex items-center justify-center shadow-sm"
+                    >
+                      <Check className="w-5 h-5 stroke-[3]" />
+                    </div>
+                  ))}
+                  <div className="h-16 rounded-2xl bg-[#FFF0F3] border border-pink-200 text-[#E11D48] flex items-center justify-center shadow-sm">
+                    <Gift className="w-5 h-5" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Rule Preview */}
+              <div className="bg-[#F7F2FD] border border-purple-100 rounded-2xl p-4 flex items-center gap-3">
+                <div className="w-7 h-7 rounded-full bg-[#5844A8] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                  <Info className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-[#1E1548] mr-2">Rule Preview</span>
+                  <span className="text-xs text-gray-600 font-medium">
+                    Customer needs to collect {stampTargetCount} stamps (on {stampQualifyingItem.toLowerCase()}) to be eligible for this campaign.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sticky Bottom Actions */}
+          <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+            <button
+              type="button"
+              onClick={() => setIsConfiguringCondition(false)}
+              className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+            >
+              Cancel
+            </button>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setViewMode('dashboard')}
+                className="px-6 py-2.5 rounded-full border border-gray-200 bg-white text-xs font-bold text-[#1E1548] hover:bg-gray-50 transition cursor-pointer shadow-sm flex items-center gap-2"
+              >
+                💾 Save as Draft
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentStep(4)}
+                className="px-7 py-2.5 rounded-full bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+              >
+                Next &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  {/* Desktop Step 3 Detail: Item Based Offers Rule (Image 3) */}
+  const renderDesktopItemBasedDetail = () => {
+    const categoryPills = [
+      'All items',
+      'Food & Beverages',
+      'Snacks',
+      'Desserts',
+      'Beverages',
+      'Combos',
+      'Merchandise',
+      'Others'
+    ];
+
+    const mockItems = [
+      {
+        id: '2391',
+        name: 'Margherita Pizza',
+        desc: '#2391 • Wood-fired Italian Pizza',
+        category: 'Food & Beverages',
+        catColor: 'bg-pink-50 text-pink-600 border-pink-100',
+        price: '₹299',
+        stock: 'In Stock',
+        img: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=100&auto=format&fit=crop&q=80'
+      },
+      {
+        id: '2340',
+        name: 'Paneer Alfredo',
+        desc: '#2340 • Rich Pasta, Pan sauce',
+        category: 'Main Course',
+        catColor: 'bg-purple-50 text-purple-600 border-purple-100',
+        price: '₹349',
+        stock: 'In Stock',
+        img: 'https://images.unsplash.com/photo-1621996346565-e3d5d628169e?w=100&auto=format&fit=crop&q=80'
+      },
+      {
+        id: '1876',
+        name: 'Caesar Salad',
+        desc: '#1876 • Crisp Romaine & Caesar Dressing',
+        category: 'Salad',
+        catColor: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+        price: '₹249',
+        stock: 'In Stock',
+        img: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=100&auto=format&fit=crop&q=80'
+      }
+    ];
+
+    const toggleItem = (id: string) => {
+      setItemBasedSelectedIds(prev =>
+        prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+      );
+    };
+
+    return (
+      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+        <div className="max-w-[1200px] mx-auto space-y-6">
+          {renderDesktopStepper()}
+
+          {/* Back link */}
+          <button
+            type="button"
+            onClick={() => setIsConfiguringCondition(false)}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1E1548] hover:text-[#5844A8] cursor-pointer"
+          >
+            &lt; Back to Conditions
+          </button>
+
+          {/* Main Card */}
+          <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-[#F6EEFD] text-[#9333EA] flex items-center justify-center">
+                <Box className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-[#1E1548]">Item Based Offers</h3>
+                <p className="text-xs text-gray-400 font-medium">
+                  Apply offers to specific items or categories.
+                </p>
+              </div>
+            </div>
+
+            {/* Segmented control & Add button */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+              <div className="inline-flex bg-[#F3EFFB] p-1 rounded-2xl self-start">
+                <button
+                  type="button"
+                  onClick={() => setItemBasedTab('specific_items')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    itemBasedTab === 'specific_items'
+                      ? 'bg-[#5844A8] text-white shadow-sm'
+                      : 'text-gray-600 hover:text-black'
+                  }`}
+                >
+                  Specific Items
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setItemBasedTab('category')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    itemBasedTab === 'category'
+                      ? 'bg-[#5844A8] text-white shadow-sm'
+                      : 'text-gray-600 hover:text-black'
+                  }`}
+                >
+                  Category
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsAddCatalogItemModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-purple-200 text-[#7C3AED] hover:bg-purple-50 text-xs font-bold transition cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Add Custom Item
+              </button>
+            </div>
+
+            {/* Filters Row */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Search for items (name, code or SKU)..."
+                  value={itemBasedSearch}
+                  onChange={(e) => setItemBasedSearch(e.target.value)}
+                  className="w-full bg-white border border-gray-200 rounded-2xl pl-9 pr-3 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-none focus:border-[#5844A8]"
+                />
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-2xl text-xs font-bold text-gray-600 cursor-pointer">
+                  <span>All Categories</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-2xl text-xs font-bold text-gray-600 cursor-pointer">
+                  <span>All Branches</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                </div>
+              </div>
+            </div>
+
+            {/* Category Pills */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+              {categoryPills.map((pill) => {
+                const isSelected = itemBasedSelectedCategoryPill === pill;
+                return (
+                  <button
+                    key={pill}
+                    type="button"
+                    onClick={() => setItemBasedSelectedCategoryPill(pill)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
+                      isSelected
+                        ? 'bg-[#5844A8] text-white shadow-sm'
+                        : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    {pill}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Selection Toolbar */}
+            <div className="flex items-center justify-between text-xs font-bold text-[#1E1548] pt-2 border-t border-purple-100/60">
+              <span>{itemBasedSelectedIds.length} items selected</span>
+              <label className="flex items-center gap-2 text-xs font-medium text-gray-500 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={itemBasedSelectedIds.length === mockItems.length}
+                  onChange={() => {
+                    if (itemBasedSelectedIds.length === mockItems.length) {
+                      setItemBasedSelectedIds([]);
+                    } else {
+                      setItemBasedSelectedIds(mockItems.map(m => m.id));
+                    }
+                  }}
+                  className="w-4 h-4 rounded text-[#5844A8] focus:ring-[#5844A8]"
+                />
+                Select All
+              </label>
+            </div>
+
+            {/* Table of Items */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                    <th className="py-2.5 px-3 w-10"></th>
+                    <th className="py-2.5 px-3">Item &#8645;</th>
+                    <th className="py-2.5 px-3">Category</th>
+                    <th className="py-2.5 px-3">Price</th>
+                    <th className="py-2.5 px-3">Availability</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {mockItems.map((item) => {
+                    const isChecked = itemBasedSelectedIds.includes(item.id);
+                    return (
+                      <tr key={item.id} className="hover:bg-purple-50/30 transition">
+                        <td className="py-3 px-3">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => toggleItem(item.id)}
+                            className="w-4 h-4 rounded text-[#5844A8] focus:ring-[#5844A8] cursor-pointer"
+                          />
+                        </td>
+                        <td className="py-3 px-3">
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={item.img}
+                              alt={item.name}
+                              className="w-10 h-10 rounded-xl object-cover flex-shrink-0"
+                            />
+                            <div>
+                              <div className="text-xs font-bold text-[#1E1548]">{item.name}</div>
+                              <div className="text-[11px] text-gray-400 font-medium">{item.desc}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-3 px-3">
+                          <span className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border ${item.catColor}`}>
+                            {item.category}
+                          </span>
+                        </td>
+                        <td className="py-3 px-3 text-xs font-bold text-[#1E1548]">
+                          {item.price}
+                        </td>
+                        <td className="py-3 px-3">
+                          <span className="text-xs font-bold text-emerald-600">
+                            {item.stock}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination Footer */}
+            <div className="flex items-center justify-between pt-4 border-t border-purple-100/60 text-xs">
+              <span className="text-gray-400 font-medium">Showing 3 of 24 items</span>
+              <div className="flex items-center gap-1.5 font-bold">
+                <button type="button" className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100">
+                  &lt;
+                </button>
+                <button type="button" className="w-7 h-7 rounded-lg bg-[#5844A8] text-white flex items-center justify-center">
+                  1
+                </button>
+                <button type="button" className="w-7 h-7 rounded-lg text-gray-600 hover:bg-gray-100 flex items-center justify-center">
+                  2
+                </button>
+                <button type="button" className="w-7 h-7 rounded-lg text-gray-600 hover:bg-gray-100 flex items-center justify-center">
+                  3
+                </button>
+                <button type="button" className="w-7 h-7 rounded-lg text-gray-600 hover:bg-gray-100 flex items-center justify-center">
+                  4
+                </button>
+                <button type="button" className="w-7 h-7 rounded-lg text-gray-600 hover:bg-gray-100 flex items-center justify-center">
+                  5
+                </button>
+                <button type="button" className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100">
+                  &gt;
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Sticky Bottom Actions */}
+          <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+            <button
+              type="button"
+              onClick={() => setIsConfiguringCondition(false)}
+              className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+            >
+              Back
+            </button>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setViewMode('dashboard')}
+                className="px-6 py-2.5 rounded-full border border-gray-200 bg-white text-xs font-bold text-[#1E1548] hover:bg-gray-50 transition cursor-pointer shadow-sm flex items-center gap-2"
+              >
+                💾 Save as Draft
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentStep(4)}
+                className="px-7 py-2.5 rounded-full bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+              >
+                Next &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  {/* Desktop Step 3 Detail: Happy Hours Rule (Image 4) */}
+  const renderDesktopHappyHoursDetail = () => {
+    const allDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+    const toggleDay = (d: string) => {
+      setHappyHoursSelectedDays(prev =>
+        prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d]
+      );
+    };
+
+    return (
+      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+        <div className="max-w-[1200px] mx-auto space-y-6">
+          {renderDesktopStepper()}
+
+          {/* Back link */}
+          <button
+            type="button"
+            onClick={() => setIsConfiguringCondition(false)}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1E1548] hover:text-[#5844A8] cursor-pointer"
+          >
+            &lt; Back to Conditions
+          </button>
+
+          {/* Main Card */}
+          <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-[#1E1548]">Happy Hours</h3>
+                <p className="text-xs text-gray-400 font-medium">
+                  Set the time, day and duration window to trigger exclusive tier pricing.
+                </p>
+              </div>
+            </div>
+
+            {/* Large Strategy Hero Banner */}
+            <div className="rounded-3xl overflow-hidden relative bg-gradient-to-r from-[#EDE8F9] via-[#F6EEFD] to-white border border-purple-100 flex flex-col md:flex-row items-center justify-between p-6 lg:p-8">
+              <div className="space-y-2 z-10 max-w-md">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 backdrop-blur-sm text-[11px] font-bold text-[#5844A8] border border-purple-200/60 shadow-xs">
+                  🍸 Peak Traffic Strategy
+                </span>
+                <h2 className="text-2xl font-black text-[#1E1548]">Afternoon Boost</h2>
+                <p className="text-xs font-semibold text-gray-500">Drive 3.4x weekday footfall</p>
+              </div>
+
+              <div className="mt-4 md:mt-0 flex-shrink-0">
+                <img
+                  src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=500&auto=format&fit=crop&q=80"
+                  alt="Happy Hours"
+                  className="w-56 h-28 object-cover rounded-2xl shadow-sm"
+                />
+              </div>
+            </div>
+
+            {/* 2-Column Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+              {/* Left Column: Time range */}
+              <div className="border border-purple-100 rounded-3xl p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-purple-600" />
+                    <span className="text-xs font-bold text-[#1E1548]">Time range</span>
+                  </div>
+                  <span className="bg-purple-50 text-[#5844A8] text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    Standard Slot
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-400 font-medium">
+                  Set the start and end time for this offer.
+                </p>
+
+                <div className="grid grid-cols-2 gap-3 items-center">
+                  <div>
+                    <span className="block text-[10px] text-gray-400 font-bold mb-1">Starts from</span>
+                    <div className="flex items-center justify-between bg-white border border-gray-200 rounded-2xl px-3 py-2 text-xs font-bold text-[#1E1548]">
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-gray-400" />
+                        <span>{happyHoursStartTime}</span>
+                      </div>
+                      <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="block text-[10px] text-gray-400 font-bold mb-1">Valid until</span>
+                    <div className="flex items-center justify-between bg-white border border-gray-200 rounded-2xl px-3 py-2 text-xs font-bold text-[#1E1548]">
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-gray-400" />
+                        <span>{happyHoursEndTime}</span>
+                      </div>
+                      <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-[#F8F5FE] rounded-2xl px-4 py-2.5 text-xs font-bold text-[#1E1548] flex items-center gap-2">
+                  <Hourglass className="w-3.5 h-3.5 text-[#5844A8]" />
+                  <span>Active window: 6 hours / day</span>
+                </div>
+              </div>
+
+              {/* Right Column: Days */}
+              <div className="border border-purple-100 rounded-3xl p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-purple-600" />
+                    <span className="text-xs font-bold text-[#1E1548]">Days</span>
+                  </div>
+                  <span className="bg-rose-50 text-rose-500 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    Weekdays ({happyHoursSelectedDays.length})
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-400 font-medium">
+                  Choose the days when this offer will be active.
+                </p>
+
+                {/* 7 Day Circle Buttons */}
+                <div className="flex items-center justify-between gap-1.5 pt-1">
+                  {allDays.map((d) => {
+                    const isSelected = happyHoursSelectedDays.includes(d);
+                    return (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => toggleDay(d)}
+                        className={`w-9 h-9 rounded-full text-xs font-bold flex items-center justify-center transition cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#5844A8] text-white shadow-sm'
+                            : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                        }`}
+                      >
+                        {d}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Recurring Checkbox */}
+                <label className="flex items-center gap-2 text-xs font-semibold text-[#1E1548] cursor-pointer pt-1">
+                  <input
+                    type="checkbox"
+                    checked={happyHoursRecurring}
+                    onChange={(e) => setHappyHoursRecurring(e.target.checked)}
+                    className="w-4 h-4 rounded text-[#5844A8] focus:ring-[#5844A8]"
+                  />
+                  <span>Recurring on {happyHoursSelectedDays.length} days every week</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Rule Preview */}
+            <div className="bg-[#F7F2FD] border border-purple-100 rounded-2xl p-4 flex items-center gap-3">
+              <div className="w-7 h-7 rounded-full bg-[#5844A8] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                <Info className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-xs font-bold text-[#1E1548] mr-2">Rule Preview</span>
+                <span className="text-xs text-gray-600 font-medium">
+                  This offer will be valid from {happyHoursStartTime} to {happyHoursEndTime}, {happyHoursSelectedDays.join(', ')}.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Sticky Bottom Actions */}
+          <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+            <button
+              type="button"
+              onClick={() => setIsConfiguringCondition(false)}
+              className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+            >
+              Back
+            </button>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setViewMode('dashboard')}
+                className="px-6 py-2.5 rounded-full border border-gray-200 bg-white text-xs font-bold text-[#1E1548] hover:bg-gray-50 transition cursor-pointer shadow-sm flex items-center gap-2"
+              >
+                💾 Save as Draft
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentStep(4)}
+                className="px-7 py-2.5 rounded-full bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+              >
+                Next &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  {/* Desktop Step 3 Detail: Birthday / Anniversary Rule (Image 5) */}
+  const renderDesktopBirthdayDetail = () => {
+    const quickDayPills = ['Exact Day', '± 3 Days', '± 7 Days', '± 14 Days'];
+
+    return (
+      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+        <div className="max-w-[1200px] mx-auto space-y-6">
+          {renderDesktopStepper()}
+
+          {/* Back link */}
+          <button
+            type="button"
+            onClick={() => setIsConfiguringCondition(false)}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1E1548] hover:text-[#5844A8] cursor-pointer"
+          >
+            &lt; Back to Conditions
+          </button>
+
+          {/* Main Card */}
+          <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6 relative overflow-hidden">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-pink-50 text-pink-500 flex items-center justify-center">
+                  <Cake className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#1E1548]">Birthday / Anniversary</h3>
+                  <p className="text-xs text-gray-400 font-medium">
+                    Set the special day based rule for automated surprise perks.
                   </p>
                 </div>
               </div>
-            ) : paginatedCampaigns.map((c) => {
-              const isExpanded = expandedCampaignId === c.id;
 
-              return (
-                <div key={c.id} className="border-b border-[#EFECE6] last:border-b-0 overflow-hidden">
-                  <button
-                    onClick={() => setExpandedCampaignId(isExpanded ? null : c.id)}
-                    className="w-full flex items-center justify-between p-4 bg-white hover:bg-[#FAF8F5] transition-colors text-left"
-                  >
+              {/* Cute Cake Illustration Icon */}
+              <div className="hidden sm:flex items-center gap-2 text-2xl">
+                🎂 🎁
+              </div>
+            </div>
+
+            {/* Segmented Occasion Toggle */}
+            <div className="inline-flex bg-[#F3EFFB] p-1 rounded-2xl">
+              <button
+                type="button"
+                onClick={() => setBirthdayOccasionType('birthday')}
+                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                  birthdayOccasionType === 'birthday'
+                    ? 'bg-[#5844A8] text-white shadow-sm'
+                    : 'text-gray-600 hover:text-black'
+                }`}
+              >
+                <span>🎂</span>
+                <span>Birthday</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setBirthdayOccasionType('anniversary')}
+                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                  birthdayOccasionType === 'anniversary'
+                    ? 'bg-[#5844A8] text-white shadow-sm'
+                    : 'text-gray-600 hover:text-black'
+                }`}
+              >
+                <span>❤️</span>
+                <span>Anniversary</span>
+              </button>
+            </div>
+
+            {/* Days before / after Config Card */}
+            <div className="border border-purple-100 rounded-3xl p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-purple-600" />
+                  <span className="text-xs font-bold text-[#1E1548]">Days before / after</span>
+                </div>
+                <span className="bg-[#FFF0F2] text-[#E11D48] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                  Flexible Window <Info className="w-3 h-3 text-rose-400" />
+                </span>
+              </div>
+              <p className="text-[11px] text-gray-400 font-medium">
+                Set the day range when customers will be eligible for this offer.
+              </p>
+
+              {/* Stepper */}
+              <div className="bg-[#F8F5FE] border border-purple-100 rounded-2xl p-3 flex items-center justify-between max-w-sm">
+                <button
+                  type="button"
+                  onClick={() => setBirthdayDaySpan(Math.max(0, birthdayDaySpan - 1))}
+                  className="w-10 h-10 rounded-full bg-white text-gray-600 hover:bg-gray-100 flex items-center justify-center shadow-sm cursor-pointer"
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+                <div className="text-center">
+                  <div className="text-2xl font-black text-[#1E1548]">{birthdayDaySpan}</div>
+                  <div className="text-[11px] text-gray-400 font-medium">± {birthdayDaySpan} days span</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setBirthdayDaySpan(birthdayDaySpan + 1)}
+                  className="w-10 h-10 rounded-full bg-white text-gray-600 hover:bg-gray-100 flex items-center justify-center shadow-sm cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Quick Pills */}
+              <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                {quickDayPills.map((pill) => {
+                  const isSelected = birthdayQuickSpan === pill;
+                  return (
+                    <button
+                      key={pill}
+                      type="button"
+                      onClick={() => {
+                        setBirthdayQuickSpan(pill);
+                        if (pill === 'Exact Day') setBirthdayDaySpan(0);
+                        if (pill === '± 3 Days') setBirthdayDaySpan(3);
+                        if (pill === '± 7 Days') setBirthdayDaySpan(7);
+                        if (pill === '± 14 Days') setBirthdayDaySpan(14);
+                      }}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                        isSelected
+                          ? 'bg-[#5844A8] text-white shadow-sm'
+                          : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      {pill}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Info text note */}
+              <div className="flex items-start gap-2 pt-2 text-xs text-purple-800">
+                <Info className="w-4 h-4 text-[#5844A8] flex-shrink-0 mt-0.5" />
+                <span>
+                  Offer will be automatically claimable {birthdayDaySpan} days prior, on the member's {birthdayOccasionType}, and {birthdayDaySpan} days following the date.
+                </span>
+              </div>
+            </div>
+
+            {/* Preview Card */}
+            <div className="bg-[#F6F2FD] border border-purple-100/60 rounded-2xl p-4 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-2xl bg-white text-[#5844A8] flex items-center justify-center shadow-sm flex-shrink-0">
+                <Calendar className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="text-xs font-bold text-[#1E1548]">
+                  This offer will be valid for ± {birthdayDaySpan} days, for all registered members on their {birthdayOccasionType}.
+                </div>
+                <div className="text-[11px] text-gray-500 mt-0.5">
+                  Example: If the {birthdayOccasionType} is on 15 Sep, the offer will be valid from 12 Sep to 18 Sep.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sticky Bottom Actions */}
+          <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+            <button
+              type="button"
+              onClick={() => setIsConfiguringCondition(false)}
+              className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+            >
+              Previous
+            </button>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setViewMode('dashboard')}
+                className="px-6 py-2.5 rounded-full border border-gray-200 bg-white text-xs font-bold text-[#1E1548] hover:bg-gray-50 transition cursor-pointer shadow-sm flex items-center gap-2"
+              >
+                💾 Save as Draft
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentStep(4)}
+                className="px-7 py-2.5 rounded-full bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+              >
+                Next &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  {/* Desktop Step 4: Rewards (Matching Figma Screenshots 1, 2, 3, 4, 5) */}
+  const renderDesktopStep4Rewards = () => {
+    const desktopMenuItems = [
+      {
+        id: 'margherita-pizza',
+        name: 'Margherita Pizza',
+        category: 'Pizza',
+        price: 299,
+        badge: 'High conversion item',
+        badgeClass: 'bg-purple-50 text-purple-600 border border-purple-100',
+        variant: 'Regular',
+        image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=120&auto=format&fit=crop&q=80',
+        emoji: '🍕'
+      },
+      {
+        id: 'farmhouse-pizza',
+        name: 'Farmhouse Pizza',
+        category: 'Pizza',
+        price: 349,
+        variant: 'Regular',
+        image: 'https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=120&auto=format&fit=crop&q=80',
+        emoji: '🍕'
+      },
+      {
+        id: 'paneer-tikka-pizza',
+        name: 'Paneer Tikka Pizza',
+        category: 'Pizza',
+        price: 299,
+        variant: 'Regular',
+        image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=120&auto=format&fit=crop&q=80',
+        emoji: '🍕'
+      },
+      {
+        id: 'pasta-alfredo',
+        name: 'Pasta Alfredo',
+        category: 'Pasta',
+        price: 349,
+        variant: 'Regular',
+        image: 'https://images.unsplash.com/photo-1621996346565-e3d5d6281691?w=120&auto=format&fit=crop&q=80',
+        emoji: '🍝'
+      },
+      {
+        id: 'caesar-salad',
+        name: 'Caesar Salad',
+        category: 'Salad',
+        price: 249,
+        variant: 'Regular',
+        image: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=120&auto=format&fit=crop&q=80',
+        emoji: '🥗'
+      },
+      {
+        id: 'cold-coffee',
+        name: 'Cold Coffee',
+        category: 'Beverage',
+        price: 149,
+        variant: 'Regular',
+        image: 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=120&auto=format&fit=crop&q=80',
+        emoji: '☕'
+      },
+      {
+        id: 'veggie-burger',
+        name: 'Veggie Burger',
+        category: 'Burger',
+        price: 249,
+        variant: 'Regular',
+        image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=120&auto=format&fit=crop&q=80',
+        emoji: '🍔'
+      },
+      {
+        id: 'chicken-burger',
+        name: 'Chicken Burger',
+        category: 'Burger',
+        price: 299,
+        variant: 'Regular',
+        image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=120&auto=format&fit=crop&q=80',
+        emoji: '🍔'
+      }
+    ];
+
+    const rewardTypesList = [
+      {
+        id: 'cashback',
+        title: 'Cashback',
+        badge: 'High Retention',
+        badgeClass: 'bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6]',
+        desc: 'Get a % or fixed amount back on eligible orders.',
+        icon: CreditCard,
+        iconBg: 'bg-[#F3E8FF]',
+        iconColor: 'text-[#7C3AED]'
+      },
+      {
+        id: 'reward_points',
+        title: 'Reward Points',
+        badge: 'Tiered',
+        badgeClass: 'bg-[#F3E8FF] text-[#7C3AED] border border-purple-200/50',
+        desc: 'Earn points on every purchase. Redeem for future orders.',
+        icon: Star,
+        iconBg: 'bg-[#FEF3C7]',
+        iconColor: 'text-amber-500'
+      },
+      {
+        id: 'free_item',
+        title: 'Free Item',
+        badge: 'Basket Booster',
+        badgeClass: 'bg-[#FCE7F3] text-[#DB2777] border border-pink-200/50',
+        desc: 'Offer complimentary item from your menu.',
+        icon: Gift,
+        iconBg: 'bg-[#FCE7F3]',
+        iconColor: 'text-pink-500'
+      },
+      {
+        id: 'discount',
+        title: 'Discount',
+        badge: 'Most Popular',
+        badgeClass: 'bg-[#FFE4E6] text-[#E11D48] border border-rose-200/50',
+        desc: 'Get a % or fixed amount discount on eligible orders.',
+        icon: Percent,
+        iconBg: 'bg-[#F3E8FF]',
+        iconColor: 'text-[#7C3AED]'
+      },
+      {
+        id: 'nominal_item',
+        title: 'Nominal Priced Item',
+        badge: 'Add-on',
+        badgeClass: 'bg-[#CCFBF1] text-[#0D9488] border border-teal-200/50',
+        desc: 'Offer selected items at an irresistible low price like ₹19.',
+        icon: Coins,
+        iconBg: 'bg-[#CCFBF1]',
+        iconColor: 'text-[#0D9488]'
+      },
+      {
+        id: 'combo',
+        title: 'Combo Offers',
+        badge: 'Bundle',
+        badgeClass: 'bg-[#FFEDD5] text-[#EA580C] border border-orange-200/50',
+        desc: 'Curate or offer fixed & custom item bundles.',
+        icon: Package,
+        iconBg: 'bg-[#FFEDD5]',
+        iconColor: 'text-orange-500'
+      },
+      {
+        id: 'bogo',
+        title: 'Buy X Get Y Free',
+        badge: 'BOGO',
+        badgeClass: 'bg-[#F3E8FF] text-[#7C3AED] border border-purple-200/50',
+        desc: 'Give complimentary item on purchasing qualifying quantity.',
+        icon: ShoppingBag,
+        iconBg: 'bg-[#F3E8FF]',
+        iconColor: 'text-[#7C3AED]'
+      }
+    ];
+
+    // Filtered items for BOGO and Free Item
+    const filteredFreeItems = desktopMenuItems.filter(item =>
+      item.name.toLowerCase().includes(freeItemSearch.toLowerCase())
+    );
+
+    const filteredBogoItems = desktopMenuItems.filter(item => {
+      const matchSearch = item.name.toLowerCase().includes(bogoSearch.toLowerCase());
+      const matchCategory = bogoCategory === 'All' || item.category === bogoCategory;
+      return matchSearch && matchCategory;
+    });
+
+    // VIEW A: List of 7 Reward Cards (Image 1)
+    if (!isConfiguringReward) {
+      return (
+        <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+          <div className="max-w-[1200px] mx-auto space-y-6">
+            {renderDesktopStepper()}
+
+            <div className="space-y-4">
+              <div>
+                <h2 className="text-xl font-black text-[#1E1548]">Rewards &amp; Offer</h2>
+                <p className="text-xs text-gray-500 mt-0.5 font-medium">
+                  Define the reward you want to offer when the selected condition is met.
+                </p>
+              </div>
+
+              {/* 7 Reward Cards Stack */}
+              <div className="space-y-3">
+                {rewardTypesList.map((item) => {
+                  const IconComponent = item.icon;
+                  const isSelected = selectedRewardType === item.id;
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={() => {
+                        setSelectedRewardType(item.id);
+                        setRewardSelection(item.title);
+                      }}
+                      onDoubleClick={() => {
+                        setSelectedRewardType(item.id);
+                        setRewardSelection(item.title);
+                        setIsConfiguringReward(true);
+                      }}
+                      className={`p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between bg-white ${
+                        isSelected
+                          ? 'border-2 border-[#5844A8] shadow-sm'
+                          : 'border-gray-200/80 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                          isSelected ? 'border-[#5844A8]' : 'border-gray-300'
+                        }`}>
+                          {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-[#5844A8]" />}
+                        </div>
+
+                        <div className={`w-10 h-10 rounded-xl ${item.iconBg} ${item.iconColor} flex items-center justify-center flex-shrink-0`}>
+                          <IconComponent className="w-5 h-5" />
+                        </div>
+
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="text-sm font-bold text-[#1E1548]">{item.title}</h4>
+                            <span className={`text-[10px] sm:text-[11px] font-semibold px-2 sm:px-2.5 py-0.5 rounded-full ${item.badgeClass}`}>
+                              {item.badge}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-400 mt-0.5 truncate">{item.desc}</p>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedRewardType(item.id);
+                          setRewardSelection(item.title);
+                          setIsConfiguringReward(true);
+                        }}
+                        className="p-1 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
+                        title="Configure reward"
+                      >
+                        <ChevronRight className="w-5 h-5 text-gray-400 hover:text-[#5844A8] flex-shrink-0" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Bottom Bar for List View */}
+            <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+              <button
+                type="button"
+                onClick={() => setCurrentStep(3)}
+                className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+              >
+                Back
+              </button>
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleSubmitCampaign(true)}
+                  className="px-5 py-2.5 rounded-lg border border-gray-200 bg-white text-xs font-bold text-[#1E1548] hover:bg-gray-50 transition cursor-pointer shadow-2xs flex items-center gap-1.5"
+                >
+                  <FileText className="w-3.5 h-3.5 text-gray-500" />
+                  Save as Draft
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsConfiguringReward(true)}
+                  className="px-6 py-2.5 rounded-lg bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+                >
+                  Next &rarr;
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // VIEW B: Detailed Configuration Screens (Images 2, 3, 4, 5)
+    return (
+      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+        <div className="max-w-[1200px] mx-auto space-y-6">
+          {renderDesktopStepper()}
+
+          {/* Back link */}
+          <button
+            type="button"
+            onClick={() => setIsConfiguringReward(false)}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1E1548] hover:text-[#5844A8] cursor-pointer"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" /> Back to Rewards type
+          </button>
+
+          {/* MAIN CARD CONTAINER */}
+          <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+
+            {/* DETAIL 1: CASHBACK (Image 2) */}
+            {selectedRewardType === 'cashback' && (
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-purple-100/70 text-[#7C3AED] flex items-center justify-center flex-shrink-0">
+                    <CreditCard className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-bold text-[#1E1548]">Cashback</h3>
+                      <span className="bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+                        High Retention
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 font-medium mt-0.5">
+                      Get a % or fixed amount back on eligible orders.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Type of cashback */}
+                <div>
+                  <label className="block text-xs font-bold text-[#1E1548] mb-2">Type of cashback</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div
+                      onClick={() => setCashbackType('percentage')}
+                      className={`p-3.5 sm:p-4 rounded-xl border transition-all cursor-pointer flex items-center gap-3 ${
+                        cashbackType === 'percentage'
+                          ? 'border-2 border-[#5844A8] bg-white shadow-2xs'
+                          : 'border-gray-200 hover:border-gray-300 bg-white'
+                      }`}
+                    >
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                        cashbackType === 'percentage' ? 'border-[#5844A8]' : 'border-gray-300'
+                      }`}>
+                        {cashbackType === 'percentage' && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
+                      </div>
+                      <div className="w-7 h-7 rounded-lg bg-purple-100 text-[#7C3AED] font-bold text-xs flex items-center justify-center flex-shrink-0">
+                        %
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-[#1E1548]">Percentage</div>
+                        <div className="text-[11px] text-gray-400">e.g. 10% of bill</div>
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => setCashbackType('fixed')}
+                      className={`p-3.5 sm:p-4 rounded-xl border transition-all cursor-pointer flex items-center gap-3 ${
+                        cashbackType === 'fixed'
+                          ? 'border-2 border-[#5844A8] bg-white shadow-2xs'
+                          : 'border-gray-200 hover:border-gray-300 bg-white'
+                      }`}
+                    >
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                        cashbackType === 'fixed' ? 'border-[#5844A8]' : 'border-gray-300'
+                      }`}>
+                        {cashbackType === 'fixed' && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
+                      </div>
+                      <div className="w-7 h-7 rounded-lg bg-gray-100 text-gray-600 font-bold text-xs flex items-center justify-center flex-shrink-0">
+                        ₹
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-[#1E1548]">Fixed amount</div>
+                        <div className="text-[11px] text-gray-400">e.g. ₹50 cashback</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Enter percentage or fixed amount */}
+                {cashbackType === 'percentage' ? (
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Enter percentage <span className="text-rose-500">*</span>
+                    </label>
+                    <div className="relative max-w-xl">
+                      <input
+                        type="number"
+                        value={cashbackPercentage}
+                        onChange={(e) => setCashbackPercentage(e.target.value)}
+                        className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                        placeholder="10"
+                      />
+                      <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">
+                        %
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Enter fixed cashback amount <span className="text-rose-500">*</span>
+                    </label>
+                    <div className="relative max-w-xl">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">
+                        ₹
+                      </span>
+                      <input
+                        type="number"
+                        value={cashbackFixedAmount}
+                        onChange={(e) => setCashbackFixedAmount(e.target.value)}
+                        className="w-full bg-white border border-gray-200 rounded-xl pl-8 pr-3.5 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                        placeholder="50"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Max cashback amount Capping (optional) */}
+                <div className="bg-[#FAF8FF]/60 p-4 rounded-2xl border border-purple-50/70 space-y-2">
+                  <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                    Max cashback amount Capping (optional)
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Max cashback Amount
+                    </label>
+                    <div className="flex items-center gap-2 max-w-sm">
+                      <select
+                        value={cashbackCurrency}
+                        onChange={(e) => setCashbackCurrency(e.target.value)}
+                        className="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                      >
+                        <option value="INR (₹)">INR (₹)</option>
+                        <option value="USD ($)">USD ($)</option>
+                      </select>
+                      <input
+                        type="number"
+                        value={cashbackMaxCapping}
+                        onChange={(e) => setCashbackMaxCapping(e.target.value)}
+                        placeholder="200"
+                        className="flex-1 bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                      />
+                    </div>
+                    <p className="text-[11px] text-gray-400 mt-1">e.g. 10%, upto ₹100</p>
+                  </div>
+                </div>
+
+                {/* Select applicable on */}
+                <div>
+                  <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                    Select applicable on <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="flex items-center justify-between p-3.5 bg-white border border-gray-200 rounded-xl hover:border-gray-300 transition-colors cursor-pointer max-w-xl">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-purple-50 text-[#7C3AED] flex items-center justify-center">
+                        <LayoutGrid className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-[#1E1548]">All items</div>
+                        <div className="text-[11px] text-gray-400">Entire menu catalog included</div>
+                      </div>
+                    </div>
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* DETAIL 2: REWARD POINTS (Image 3) */}
+            {selectedRewardType === 'reward_points' && (
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-amber-100/70 text-amber-500 flex items-center justify-center flex-shrink-0">
+                    <Star className="w-5 h-5 fill-amber-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-[#1E1548]">Reward Points</h3>
+                    <p className="text-xs text-gray-400 font-medium mt-0.5">
+                      Earn points on every purchase. Redeem for future orders.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Points Type */}
+                <div>
+                  <label className="block text-xs font-bold text-[#1E1548] mb-2">Points Type</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div
+                      onClick={() => setRewardPointsType('percentage')}
+                      className={`p-3.5 sm:p-4 rounded-xl border transition-all cursor-pointer flex items-center gap-3 ${
+                        rewardPointsType === 'percentage'
+                          ? 'border-2 border-[#5844A8] bg-white shadow-2xs'
+                          : 'border-gray-200 hover:border-gray-300 bg-white'
+                      }`}
+                    >
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                        rewardPointsType === 'percentage' ? 'border-[#5844A8]' : 'border-gray-300'
+                      }`}>
+                        {rewardPointsType === 'percentage' && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
+                      </div>
+                      <div className="w-7 h-7 rounded-lg bg-purple-100 text-[#7C3AED] font-bold text-xs flex items-center justify-center flex-shrink-0">
+                        %
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-[#1E1548]">Percentage</div>
+                        <div className="text-[11px] text-gray-400">e.g. 10% of bill</div>
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => setRewardPointsType('fixed')}
+                      className={`p-3.5 sm:p-4 rounded-xl border transition-all cursor-pointer flex items-center gap-3 ${
+                        rewardPointsType === 'fixed'
+                          ? 'border-2 border-[#5844A8] bg-white shadow-2xs'
+                          : 'border-gray-200 hover:border-gray-300 bg-white'
+                      }`}
+                    >
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                        rewardPointsType === 'fixed' ? 'border-[#5844A8]' : 'border-gray-300'
+                      }`}>
+                        {rewardPointsType === 'fixed' && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
+                      </div>
+                      <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 font-bold text-xs flex items-center justify-center flex-shrink-0">
+                        <Coins className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-[#1E1548]">Fixed amount</div>
+                        <div className="text-[11px] text-gray-400">e.g. 50 points flat</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Two Column Row: Percentage / Points + Points Value */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Enter percentage or fixed points */}
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      {rewardPointsType === 'percentage' ? 'Enter percentage' : 'Enter points'} <span className="text-rose-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={rewardPointsType === 'percentage' ? rewardPointsPercentage : rewardPointsFixedAmount}
+                        onChange={(e) =>
+                          rewardPointsType === 'percentage'
+                            ? setRewardPointsPercentage(e.target.value)
+                            : setRewardPointsFixedAmount(e.target.value)
+                        }
+                        className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                        placeholder={rewardPointsType === 'percentage' ? '10' : '50'}
+                      />
+                      {rewardPointsType === 'percentage' && (
+                        <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">
+                          %
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Points value */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="block text-xs font-bold text-[#1E1548]">
+                        Points value <span className="text-rose-500">*</span>
+                      </label>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-pink-50 text-pink-500 border border-pink-100">
+                        1 Point = ₹1
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        value={rewardPointsValue}
+                        onChange={(e) => setRewardPointsValue(e.target.value)}
+                        placeholder="1"
+                        className="flex-1 bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                      />
+                      <select
+                        value={rewardPointsCurrency}
+                        onChange={(e) => setRewardPointsCurrency(e.target.value)}
+                        className="bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                      >
+                        <option value="INR (₹)">INR (₹)</option>
+                        <option value="USD ($)">USD ($)</option>
+                      </select>
+                    </div>
+                    <p className="text-[11px] text-[#7C3AED] font-medium flex items-center gap-1 mt-1">
+                      <Info className="w-3.5 h-3.5 shrink-0" /> e.g. 5% = 1 point per ₹20 spent
+                    </p>
+                  </div>
+                </div>
+
+                {/* Max points per order */}
+                <div>
+                  <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                    Max points per order
+                  </label>
+                  <div className="relative max-w-md">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">
+                      ₹
+                    </span>
+                    <input
+                      type="number"
+                      value={rewardPointsMaxPoints}
+                      onChange={(e) => setRewardPointsMaxPoints(e.target.value)}
+                      placeholder="100"
+                      className="w-full bg-white border border-gray-200 rounded-xl pl-8 pr-10 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                    />
+                    <Clock className="w-4 h-4 text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
+                  </div>
+                  <p className="text-[11px] text-gray-400 mt-1">e.g. 10%, upto 100 points</p>
+                </div>
+
+                {/* Select applicable on */}
+                <div>
+                  <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                    Select applicable on <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="flex items-center justify-between p-3.5 bg-white border border-gray-200 rounded-xl hover:border-gray-300 transition-colors cursor-pointer max-w-xl">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-purple-50 text-[#7C3AED] flex items-center justify-center">
+                        <LayoutGrid className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-[#1E1548]">All items</div>
+                        <div className="text-[11px] text-gray-400">Entire menu catalog included</div>
+                      </div>
+                    </div>
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* DETAIL 3: FREE ITEM (Image 4) */}
+            {selectedRewardType === 'free_item' && (
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-pink-100/70 text-pink-500 flex items-center justify-center flex-shrink-0">
+                    <Gift className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-[#1E1548]">Free Item</h3>
+                    <p className="text-xs text-gray-400 font-medium mt-0.5">
+                      Offer complimentary item from your menu.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Quantity */}
+                <div>
+                  <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                    Quantity <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="flex items-center border border-gray-200 rounded-xl w-fit overflow-hidden bg-white shadow-2xs">
+                    <button
+                      type="button"
+                      onClick={() => setFreeItemQuantity(q => Math.max(1, q - 1))}
+                      className="px-3.5 py-2 text-gray-500 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
+                    >
+                      <Minus className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="w-10 text-center text-xs font-bold text-[#1E1548]">{freeItemQuantity}</span>
+                    <button
+                      type="button"
+                      onClick={() => setFreeItemQuantity(q => q + 1)}
+                      className="px-3.5 py-2 text-gray-500 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Search menu items */}
+                <div className="relative">
+                  <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Search menu items..."
+                    value={freeItemSearch}
+                    onChange={(e) => setFreeItemSearch(e.target.value)}
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-medium text-[#1E1548] placeholder:text-gray-400 focus:outline-none focus:border-[#5844A8]"
+                  />
+                </div>
+
+                {/* Menu items radio list */}
+                <div className="space-y-2.5 max-h-[320px] overflow-y-auto pr-1">
+                  {filteredFreeItems.map((item) => {
+                    const isSelected = freeItemSelectedItem === item.name;
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => setFreeItemSelectedItem(item.name)}
+                        className={`p-3 sm:p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
+                          isSelected
+                            ? 'border-2 border-[#5844A8] bg-white shadow-2xs'
+                            : 'border-gray-200 hover:border-gray-300 bg-white'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                            isSelected ? 'border-[#5844A8]' : 'border-gray-300'
+                          }`}>
+                            {isSelected && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
+                          </div>
+
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-10 h-10 rounded-xl object-cover flex-shrink-0"
+                          />
+
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-xs font-bold text-[#1E1548]">{item.name}</span>
+                              {item.badge && (
+                                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${item.badgeClass || 'bg-purple-50 text-purple-600'}`}>
+                                  {item.badge}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="text-right flex-shrink-0 pl-2">
+                          <span className="text-xs font-bold text-[#1E1548]">₹ {item.price}</span>
+                          <span className="text-[10px] text-gray-400 ml-1">Regular</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* DETAIL 4: DISCOUNT */}
+            {selectedRewardType === 'discount' && (
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-purple-100/70 text-[#7C3AED] flex items-center justify-center flex-shrink-0">
+                    <Percent className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-bold text-[#1E1548]">Discount</h3>
+                      <span className="bg-[#FFE4E6] text-[#E11D48] border border-rose-200/50 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+                        Most Popular
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 font-medium mt-0.5">
+                      Get a % or fixed amount discount on eligible orders.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Type of discount */}
+                <div>
+                  <label className="block text-xs font-bold text-[#1E1548] mb-2">Type of discount</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div
+                      onClick={() => setDiscountRewardType('percentage')}
+                      className={`p-3.5 sm:p-4 rounded-xl border transition-all cursor-pointer flex items-center gap-3 ${
+                        discountRewardType === 'percentage'
+                          ? 'border-2 border-[#5844A8] bg-white shadow-2xs'
+                          : 'border-gray-200 hover:border-gray-300 bg-white'
+                      }`}
+                    >
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                        discountRewardType === 'percentage' ? 'border-[#5844A8]' : 'border-gray-300'
+                      }`}>
+                        {discountRewardType === 'percentage' && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
+                      </div>
+                      <div className="w-7 h-7 rounded-lg bg-purple-100 text-[#7C3AED] font-bold text-xs flex items-center justify-center flex-shrink-0">
+                        %
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-[#1E1548]">Percentage</div>
+                        <div className="text-[11px] text-gray-400">e.g. 15% of bill</div>
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => setDiscountRewardType('fixed')}
+                      className={`p-3.5 sm:p-4 rounded-xl border transition-all cursor-pointer flex items-center gap-3 ${
+                        discountRewardType === 'fixed'
+                          ? 'border-2 border-[#5844A8] bg-white shadow-2xs'
+                          : 'border-gray-200 hover:border-gray-300 bg-white'
+                      }`}
+                    >
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                        discountRewardType === 'fixed' ? 'border-[#5844A8]' : 'border-gray-300'
+                      }`}>
+                        {discountRewardType === 'fixed' && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
+                      </div>
+                      <div className="w-7 h-7 rounded-lg bg-gray-100 text-gray-600 font-bold text-xs flex items-center justify-center flex-shrink-0">
+                        ₹
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-[#1E1548]">Fixed amount</div>
+                        <div className="text-[11px] text-gray-400">e.g. ₹100 flat discount</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Enter value */}
+                <div>
+                  <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                    {discountRewardType === 'percentage' ? 'Enter discount percentage' : 'Enter discount amount'} <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative max-w-xl">
+                    {discountRewardType === 'fixed' && (
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">
+                        ₹
+                      </span>
+                    )}
+                    <input
+                      type="number"
+                      value={discountRewardType === 'percentage' ? discountRewardPercentage : discountRewardFixedAmount}
+                      onChange={(e) =>
+                        discountRewardType === 'percentage'
+                          ? setDiscountRewardPercentage(e.target.value)
+                          : setDiscountRewardFixedAmount(e.target.value)
+                      }
+                      className={`w-full bg-white border border-gray-200 rounded-xl ${
+                        discountRewardType === 'fixed' ? 'pl-8' : 'pl-3.5'
+                      } pr-8 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]`}
+                      placeholder={discountRewardType === 'percentage' ? '15' : '100'}
+                    />
+                    {discountRewardType === 'percentage' && (
+                      <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">
+                        %
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Max discount capping */}
+                <div className="bg-[#FAF8FF]/60 p-4 rounded-2xl border border-purple-50/70 space-y-2">
+                  <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                    Max discount Amount Capping (optional)
+                  </label>
+                  <div className="relative max-w-sm">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">
+                      ₹
+                    </span>
+                    <input
+                      type="number"
+                      value={discountRewardMaxCapping}
+                      onChange={(e) => setDiscountRewardMaxCapping(e.target.value)}
+                      placeholder="200"
+                      className="w-full bg-white border border-gray-200 rounded-xl pl-8 pr-3.5 py-2 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                    />
+                  </div>
+                  <p className="text-[11px] text-gray-400 mt-1">e.g. 15%, upto ₹200</p>
+                </div>
+
+                {/* Select applicable on */}
+                <div>
+                  <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                    Select applicable on <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="flex items-center justify-between p-3.5 bg-white border border-gray-200 rounded-xl hover:border-gray-300 transition-colors cursor-pointer max-w-xl">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-purple-50 text-[#7C3AED] flex items-center justify-center">
+                        <LayoutGrid className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-[#1E1548]">All items</div>
+                        <div className="text-[11px] text-gray-400">Entire menu catalog included</div>
+                      </div>
+                    </div>
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* DETAIL 5: NOMINAL PRICED ITEM (Exact match to Image 1) */}
+            {selectedRewardType === 'nominal_item' && (
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-teal-100/70 text-teal-600 flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg font-black">₹</span>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-bold text-[#1E1548]">Nominal Priced Item</h3>
+                      <span className="bg-[#CCFBF1] text-[#0D9488] border border-teal-200/50 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                        ADD-ON
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 font-medium mt-0.5">
+                      Offer selected items at an irresistible low price like ₹19.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 2-Column Responsive Layout */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  {/* Left Column: Select Items & Set Revised Price (lg:col-span-8) */}
+                  <div className="lg:col-span-8 space-y-4">
                     <div>
-                      <div className="text-sm font-bold text-[#1A1615] mb-1">{c.name}</div>
-                      <div className="text-xs font-medium text-[#6E6A66] flex items-center gap-1.5 mb-2"><Gift className="w-3.5 h-3.5" /> {c.reward}</div>
-
-                      {c.status === 'Active' ? (
-                        <span className="px-2 py-0.5 bg-[#E0F9ED] border border-[#BCE3D1] text-[#0D7A53] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
-                          <span className="w-1.5 h-1.5 bg-[#0D7A53] rounded-full"></span> {c.status}
-                        </span>
-                      ) : c.status === 'Scheduled' ? (
-                        <span className="px-2 py-0.5 bg-[#FEF3C7] border border-[#FDE68A] text-[#D97706] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
-                          <span className="w-1.5 h-1.5 bg-[#D97706] rounded-full"></span> {c.status}
-                        </span>
-                      ) : c.status === 'Ended' ? (
-                        <span className="px-2 py-0.5 bg-[#FEE2E2] border border-[#FECACA] text-[#DC2626] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
-                          <span className="w-1.5 h-1.5 bg-[#DC2626] rounded-full"></span> {c.status}
-                        </span>
-                      ) : c.status === 'Draft' ? (
-                        <span className="px-2 py-0.5 bg-[#EFECE6] text-[#6E6A66] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
-                          <span className="w-1.5 h-1.5 bg-[#9E9A93] rounded-full"></span> {c.status}
-                        </span>
-                      ) : (
-                        <span className="px-2 py-0.5 bg-[#F3F4F6] text-[#4B5563] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
-                          <span className="w-1.5 h-1.5 bg-[#9CA3AF] rounded-full"></span> {c.status}
-                        </span>
-                      )}
+                      <h4 className="text-xs font-bold text-[#1E1548]">Select Item(s) &amp; Set Revised Price</h4>
+                      <p className="text-[11px] text-gray-400 mt-0.5">
+                        Original rates shown with configurable revised offer pricing for selected items.
+                      </p>
                     </div>
-                    <div className="shrink-0 ml-3">
-                      {isExpanded ? (
-                        <ChevronDown className="w-5 h-5 text-[#8C827A]" />
-                      ) : (
-                        <ChevronRight className="w-5 h-5 text-[#8C827A]" />
-                      )}
-                    </div>
-                  </button>
 
-                  {isExpanded && (
-                    <div className="p-4 bg-[#FAF8F5] border-t border-[#EFECE6] space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1 block">Type</span>
-                          <div className="text-xs font-semibold text-[#1A1615]">{c.type}</div>
+                    {/* Search & Category Filter */}
+                    <div className="flex items-center gap-2">
+                      <div className="relative flex-1">
+                        <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                        <input
+                          type="text"
+                          placeholder="Search menu items..."
+                          value={nominalSearch}
+                          onChange={(e) => setNominalSearch(e.target.value)}
+                          className="w-full pl-9 pr-3.5 py-2 bg-white border border-gray-200 rounded-xl text-xs font-medium text-[#1E1548] placeholder:text-gray-400 focus:outline-none focus:border-[#5844A8]"
+                        />
+                      </div>
+                      <select
+                        aria-label="Filter menu items by category"
+                        className="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                      >
+                        <option value="All Categories">All Categories</option>
+                        <option value="Pizza">Pizza</option>
+                        <option value="Pasta">Pasta</option>
+                        <option value="Salad">Salad</option>
+                        <option value="Beverage">Beverage</option>
+                      </select>
+                    </div>
+
+                    {/* Items List Rows matching Image 1 */}
+                    <div className="space-y-3">
+                      {[
+                        {
+                          id: 'margherita-pizza',
+                          name: 'Margherita Pizza',
+                          subtitle: 'Best seller',
+                          originalPrice: 299,
+                          image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=120&auto=format&fit=crop&q=80'
+                        },
+                        {
+                          id: 'pasta-alfredo',
+                          name: 'Pasta Alfredo',
+                          subtitle: 'Signature cream sauce',
+                          originalPrice: 399,
+                          image: 'https://images.unsplash.com/photo-1621996346565-e3d5d6281691?w=120&auto=format&fit=crop&q=80'
+                        },
+                        {
+                          id: 'caesar-salad',
+                          name: 'Caesar Salad',
+                          subtitle: 'Parmesan & Croutons',
+                          originalPrice: 399,
+                          image: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=120&auto=format&fit=crop&q=80'
+                        },
+                        {
+                          id: 'cold-coffee',
+                          name: 'Cold coffee',
+                          subtitle: 'Parmesan & Croutons',
+                          originalPrice: 399,
+                          image: 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=120&auto=format&fit=crop&q=80'
+                        }
+                      ].filter(it => it.name.toLowerCase().includes(nominalSearch.toLowerCase())).map((item) => {
+                        const isChecked = nominalSelectedItem === item.name;
+                        const currentRevised = nominalPrice || '49';
+                        const discountAmt = Math.max(0, item.originalPrice - Number(currentRevised));
+                        const discountPct = Math.round((discountAmt / item.originalPrice) * 100);
+
+                        return (
+                          <div
+                            key={item.id}
+                            className={`p-3.5 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white ${
+                              isChecked ? 'border-2 border-[#5844A8] shadow-2xs' : 'border-gray-200'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <button
+                                type="button"
+                                onClick={() => setNominalSelectedItem(isChecked ? '' : item.name)}
+                                className={`w-4 h-4 rounded border flex items-center justify-center transition-colors cursor-pointer ${
+                                  isChecked ? 'bg-[#5844A8] border-[#5844A8] text-white' : 'border-gray-300 bg-white'
+                                }`}
+                              >
+                                {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
+                              </button>
+
+                              <img src={item.image} alt={item.name} className="w-10 h-10 rounded-xl object-cover" />
+
+                              <div>
+                                <div className="text-xs font-bold text-[#1E1548]">{item.name}</div>
+                                <div className="text-[11px] text-rose-500 font-semibold">• {item.subtitle}</div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-4 self-end sm:self-center">
+                              <div className="text-right">
+                                <div className="text-[10px] text-gray-400">Original rate</div>
+                                <div className="text-xs font-bold text-[#1E1548]">₹ {item.originalPrice}</div>
+                              </div>
+
+                              {isChecked ? (
+                                <div className="flex items-center gap-2 bg-[#FFF1F2] border border-pink-100 rounded-xl p-1.5 pl-3">
+                                  <div>
+                                    <div className="text-[10px] font-bold text-rose-500">Revised offer price</div>
+                                    <div className="text-[10px] text-rose-400 font-medium">
+                                      ₹{discountAmt} discount — {discountPct}% OFF
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center bg-white border border-gray-200 rounded-lg px-2 py-1">
+                                    <span className="text-xs text-gray-400 font-bold mr-1">₹</span>
+                                    <input
+                                      type="number"
+                                      value={nominalPrice}
+                                      onChange={(e) => setNominalPrice(e.target.value)}
+                                      className="w-12 text-xs font-bold text-[#1E1548] focus:outline-none"
+                                    />
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => showToast(`Revised price ₹${nominalPrice} applied to ${item.name}`)}
+                                    className="px-2.5 py-1 bg-[#5844A8] text-white text-[11px] font-bold rounded-lg hover:bg-[#47368E] cursor-pointer"
+                                  >
+                                    Apply
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => setNominalSelectedItem(item.name)}
+                                  className="text-[11px] text-purple-600 hover:underline cursor-pointer"
+                                >
+                                  customize revised offer rate &rarr; Set revised price
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Right Column: Item Preview & Guidelines (lg:col-span-4) */}
+                  <div className="lg:col-span-4 space-y-4">
+                    {/* Item Preview Card */}
+                    <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-2xs space-y-3">
+                      <div className="text-xs font-bold text-[#1E1548]">Item Preview</div>
+                      <div className="border border-purple-50 rounded-xl p-3 bg-[#FAF8FF]/60 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=120&auto=format&fit=crop&q=80"
+                            alt="Margherita Pizza"
+                            className="w-10 h-10 rounded-xl object-cover"
+                          />
+                          <div>
+                            <div className="text-xs font-bold text-[#1E1548]">{nominalSelectedItem || 'Margherita Pizza'}</div>
+                            <div className="text-[10px] text-rose-500 font-semibold">• Best seller</div>
+                          </div>
                         </div>
-                        <div>
-                          <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1 block">Target</span>
-                          <div className="text-[10px] font-bold text-[#9E782F] uppercase tracking-wider bg-[#FDF8EB] border border-[#F3E5C8] inline-block px-1.5 py-0.5 rounded">{c.target}</div>
+                        <div className="text-right">
+                          <div className="text-[10px] text-gray-400">Original rate</div>
+                          <div className="text-xs font-bold text-gray-500 line-through">₹ 299</div>
                         </div>
+                      </div>
+
+                      <div className="bg-[#FFF1F2] border border-pink-100 rounded-xl p-3 flex items-center justify-between">
                         <div>
-                          <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1 block">Start Date</span>
-                          <div className="text-xs font-semibold text-[#1A1615]">{c.startDate}</div>
+                          <div className="text-[11px] font-bold text-rose-600">Revised offer price</div>
+                          <div className="text-[10px] text-rose-400 font-medium">
+                            ₹{Math.max(0, 299 - Number(nominalPrice || 49))} discount — {Math.round((Math.max(0, 299 - Number(nominalPrice || 49)) / 299) * 100)}% OFF
+                          </div>
                         </div>
-                        <div>
-                          <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1 block">End Date</span>
-                          <div className="text-[10px] font-semibold text-[#6E6A66]">{c.endDate}</div>
+                        <div className="text-lg font-black text-[#1E1548]">
+                          ₹ {nominalPrice || '49'}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Nominal Pricing Guidelines */}
+                    <div className="bg-[#FAF8FF] border border-purple-100/70 rounded-2xl p-4 space-y-2.5">
+                      <div className="flex items-center gap-2 text-xs font-bold text-[#5844A8]">
+                        <Info className="w-4 h-4" />
+                        <span>Nominal Pricing Guidelines</span>
+                      </div>
+                      <ul className="text-[11px] text-gray-500 space-y-1.5 pl-1 leading-relaxed">
+                        <li>• Set a low, attractive price to increase engagement.</li>
+                        <li>• Applicable only on selected items.</li>
+                        <li>• Customer will get the item at the revised price during campaign period.</li>
+                        <li>• You can set different revised prices for different items.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* DETAIL 6: COMBO OFFERS */}
+            {selectedRewardType === 'combo' && (
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-orange-100/70 text-orange-600 flex items-center justify-center flex-shrink-0">
+                    <Package className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-bold text-[#1E1548]">Combo Offers</h3>
+                      <span className="bg-[#FFEDD5] text-[#EA580C] border border-orange-200/50 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+                        Bundle
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 font-medium mt-0.5">
+                      Curate or offer fixed &amp; custom item bundles.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Bundle Name <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={comboBundleName}
+                      onChange={(e) => setComboBundleName(e.target.value)}
+                      placeholder="e.g. Pizza & Cold Drink Combo"
+                      className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Special Combo Price <span className="text-rose-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">
+                        ₹
+                      </span>
+                      <input
+                        type="number"
+                        value={comboPrice}
+                        onChange={(e) => setComboPrice(e.target.value)}
+                        placeholder="399"
+                        className="w-full bg-white border border-gray-200 rounded-xl pl-8 pr-3.5 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bundle items selector */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-[#1E1548]">
+                      Select items to include in bundle ({comboSelectedItems.length} selected)
+                    </label>
+                  </div>
+                  <div className="space-y-2 max-h-[260px] overflow-y-auto pr-1">
+                    {desktopMenuItems.map((item) => {
+                      const isChecked = comboSelectedItems.includes(item.name);
+                      return (
+                        <div
+                          key={item.id}
+                          onClick={() => {
+                            setComboSelectedItems(prev =>
+                              prev.includes(item.name) ? prev.filter(n => n !== item.name) : [...prev, item.name]
+                            );
+                          }}
+                          className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+                            isChecked ? 'border-purple-200 bg-purple-50/20' : 'border-gray-200 hover:border-gray-300 bg-white'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                              isChecked ? 'bg-[#5844A8] border-[#5844A8] text-white' : 'border-gray-300 bg-white'
+                            }`}>
+                              {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
+                            </div>
+                            <img src={item.image} alt={item.name} className="w-8 h-8 rounded-lg object-cover" />
+                            <span className="text-xs font-bold text-[#1E1548]">{item.name}</span>
+                          </div>
+                          <span className="text-xs font-bold text-gray-600">₹ {item.price}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* DETAIL 7: BUY X GET Y FREE (BOGO) (Image 5) */}
+            {selectedRewardType === 'bogo' && (
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-purple-100/70 text-[#7C3AED] flex items-center justify-center flex-shrink-0">
+                    <ShoppingBag className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-bold text-[#1E1548]">Buy X Get Y Free</h3>
+                      <span className="bg-[#F3E8FF] text-[#7C3AED] border border-purple-200/50 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+                        BOGO
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 font-medium mt-0.5">
+                      Give complimentary item on purchasing qualifying quantity.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 2-Column Responsive Layout */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  {/* Left Column: Quantities + Select Items */}
+                  <div className="lg:col-span-7 space-y-5">
+                    {/* Buy quantity & Get free */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                          Buy quantity <span className="text-rose-500">*</span>
+                        </label>
+                        <div className="flex items-center border border-gray-200 rounded-xl w-fit overflow-hidden bg-white shadow-2xs">
+                          <button
+                            type="button"
+                            onClick={() => setBogoBuyQty(q => Math.max(1, q - 1))}
+                            className="px-3.5 py-2 text-gray-500 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
+                          >
+                            <Minus className="w-3.5 h-3.5" />
+                          </button>
+                          <span className="w-10 text-center text-xs font-bold text-[#1E1548]">{bogoBuyQty}</span>
+                          <button
+                            type="button"
+                            onClick={() => setBogoBuyQty(q => q + 1)}
+                            className="px-3.5 py-2 text-gray-500 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
                         </div>
                       </div>
 
                       <div>
-                        <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-2 block">Performance ({c.progress}%)</span>
-                        <div className="h-1.5 w-full bg-[#EFECE6] rounded-full overflow-hidden">
-                          <div className="h-full bg-[#D4A753] rounded-full" style={{ width: `${c.progress}%` }}></div>
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <label className="block text-xs font-bold text-[#1E1548]">
+                            Get free <span className="text-rose-500">*</span>
+                          </label>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-50 text-pink-500 border border-pink-100">
+                            100% OFF
+                          </span>
+                        </div>
+                        <div className="flex items-center border border-gray-200 rounded-xl w-fit overflow-hidden bg-white shadow-2xs">
+                          <button
+                            type="button"
+                            onClick={() => setBogoGetQty(q => Math.max(1, q - 1))}
+                            className="px-3.5 py-2 text-gray-500 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
+                          >
+                            <Minus className="w-3.5 h-3.5" />
+                          </button>
+                          <span className="w-10 text-center text-xs font-bold text-[#1E1548]">{bogoGetQty}</span>
+                          <button
+                            type="button"
+                            onClick={() => setBogoGetQty(q => q + 1)}
+                            className="px-3.5 py-2 text-gray-500 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Select items section */}
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-xs font-bold text-[#1E1548]">
+                          Select items <span className="text-rose-500">*</span>
+                        </label>
+                        <p className="text-[11px] text-gray-400 mt-0.5">
+                          Choose the items that qualify for this offer.
+                        </p>
+                      </div>
+
+                      {/* Search + Category Dropdown */}
+                      <div className="flex items-center gap-2">
+                        <div className="relative flex-1">
+                          <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                          <input
+                            type="text"
+                            placeholder="Search menu items..."
+                            value={bogoSearch}
+                            onChange={(e) => setBogoSearch(e.target.value)}
+                            className="w-full pl-9 pr-3.5 py-2 bg-white border border-gray-200 rounded-xl text-xs font-medium text-[#1E1548] placeholder:text-gray-400 focus:outline-none focus:border-[#5844A8]"
+                          />
+                        </div>
+                        <select
+                          value={bogoCategory}
+                          onChange={(e) => setBogoCategory(e.target.value)}
+                          className="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                        >
+                          <option value="All">All</option>
+                          <option value="Pizza">Pizza</option>
+                          <option value="Burger">Burger</option>
+                          <option value="Pasta">Pasta</option>
+                        </select>
+                      </div>
+
+                      {/* Items Checklist */}
+                      <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
+                        {filteredBogoItems.map((item) => {
+                          const isChecked = bogoSelectedItems.includes(item.name);
+                          return (
+                            <div
+                              key={item.id}
+                              onClick={() => {
+                                setBogoSelectedItems(prev =>
+                                  prev.includes(item.name) ? prev.filter(n => n !== item.name) : [...prev, item.name]
+                                );
+                              }}
+                              className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+                                isChecked ? 'border-purple-200 bg-purple-50/20' : 'border-gray-200 hover:border-gray-300 bg-white'
+                              }`}
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                                  isChecked ? 'bg-[#5844A8] border-[#5844A8] text-white' : 'border-gray-300 bg-white'
+                                }`}>
+                                  {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
+                                </div>
+                                <img src={item.image} alt={item.name} className="w-8 h-8 rounded-lg object-cover" />
+                                <span className="text-xs font-bold text-[#1E1548]">{item.name}</span>
+                              </div>
+                              <span className="text-xs font-bold text-gray-600">₹ {item.price}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Free Item Rule */}
+                  <div className="lg:col-span-5 space-y-4">
+                    <div>
+                      <label className="block text-xs font-bold text-[#1E1548]">
+                        Free item rule <span className="text-rose-500">*</span>
+                      </label>
+                      <p className="text-[11px] text-gray-400 mt-0.5">
+                        Who should the customer get for free?
+                      </p>
+                    </div>
+
+                    {/* Rule Cards */}
+                    <div className="space-y-3">
+                      {/* Option 1: Same item */}
+                      <div
+                        onClick={() => setBogoRule('same_item')}
+                        className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+                          bogoRule === 'same_item'
+                            ? 'border-2 border-[#5844A8] bg-white shadow-2xs'
+                            : 'border-gray-200 hover:border-gray-300 bg-white'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                            bogoRule === 'same_item' ? 'border-[#5844A8]' : 'border-gray-300'
+                          }`}>
+                            {bogoRule === 'same_item' && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-xs font-bold text-[#1E1548]">Same item</h4>
+                            <p className="text-[11px] text-gray-400 mt-0.5">Get the same item free as purchased.</p>
+
+                            {/* Visual Diagram Box */}
+                            <div className="mt-3 p-3 bg-[#FAF8FF] rounded-xl border border-purple-50 text-center">
+                              <div className="flex items-center justify-center gap-2 text-base">
+                                <span>🍕</span>
+                                <span className="text-xs text-gray-400">&rarr;</span>
+                                <span>🍕</span>
+                              </div>
+                              <div className="text-[11px] font-bold text-[#1E1548] mt-1">Buy 1 = Get 1</div>
+                            </div>
+                          </div>
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#EFECE6]">
-                        <button onClick={async () => { setQrModalCampaign(c); setQrModalImgUrl(null); const url = await fetchCampaignQr(c.id); setQrModalImgUrl(url); }} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
-                          <Eye className="w-3.5 h-3.5" /> View
-                        </button>
-                        <button onClick={() => handleDownload(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
-                          <Download className="w-3.5 h-3.5" /> DL
-                        </button>
-                        <button onClick={() => handleToggleCampaignStatus(c.id, c.status)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
-                          <Power className={`w-3.5 h-3.5 ${c.status === 'Active' || c.status === 'Scheduled' ? 'text-[#15803D]' : 'text-[#6E6A66]'}`} /> {(c.status === 'Draft' || c.status === 'Paused') ? 'Activate' : 'Deact.'}
-                        </button>
-                        <button onClick={() => handleEditCampaign(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
-                          <Edit2 className="w-3.5 h-3.5" /> Edit
-                        </button>
-                        <button onClick={() => handleDuplicateCampaign(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
-                          <Copy className="w-3.5 h-3.5" /> Dup
-                        </button>
-                        <button onClick={() => handleDeleteCampaign(c.id, c.name)} className="flex-1 min-w-[30%] py-2 bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] font-semibold text-xs rounded-lg hover:bg-[#FCA5A5] transition-colors flex justify-center items-center gap-1.5">
-                          <Trash2 className="w-3.5 h-3.5" /> Del
-                        </button>
+                      {/* Option 2: Any item at the same price */}
+                      <div
+                        onClick={() => setBogoRule('any_item_same_price')}
+                        className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+                          bogoRule === 'any_item_same_price'
+                            ? 'border-2 border-[#5844A8] bg-white shadow-2xs'
+                            : 'border-gray-200 hover:border-gray-300 bg-white'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                            bogoRule === 'any_item_same_price' ? 'border-[#5844A8]' : 'border-gray-300'
+                          }`}>
+                            {bogoRule === 'any_item_same_price' && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-xs font-bold text-[#1E1548]">Any item at the same price</h4>
+                            <p className="text-[11px] text-gray-400 mt-0.5">Customer can choose another item of the same or lower price.</p>
+
+                            {/* Visual Diagram Box */}
+                            <div className="mt-3 p-3 bg-[#FAF8FF] rounded-xl border border-purple-50 text-center">
+                              <div className="flex items-center justify-center gap-2 text-base">
+                                <span>🍔</span>
+                                <span className="text-xs text-gray-400">&rarr;</span>
+                                <span>🍕</span>
+                              </div>
+                              <div className="text-[11px] font-bold text-[#1E1548] mt-1">Buy ₹299 = Get ₹299</div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  )}
+
+                    {/* Info Callout */}
+                    <div className="bg-purple-50/50 border border-purple-100 rounded-xl p-3 flex items-start gap-2.5">
+                      <div className="w-4 h-4 rounded-full bg-purple-100 text-[#7C3AED] flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Info className="w-3 h-3" />
+                      </div>
+                      <p className="text-[11px] text-purple-900 leading-relaxed font-medium">
+                        The free item must have the same price as the qualifying item purchased.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              );
-            })}
+              </div>
+            )}
+
           </div>
-          
-          {/* Pagination Controls */}
-          {filteredCampaigns.length > 0 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 sm:px-5 py-4 border-t border-[#EAE6E1] bg-[#FAF8F5]">
-              <div className="text-xs font-medium text-[#6E6A66] text-center sm:text-left">
-                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredCampaigns.length)} of {filteredCampaigns.length} campaigns
-              </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <button 
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  className="px-3 py-1.5 text-xs font-bold border border-[#EAE6E1] rounded-lg disabled:opacity-50 hover:bg-[#FAF8F5] transition-colors"
-                >
-                  Prev
-                </button>
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: totalPages }).map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setCurrentPage(i + 1)}
-                      className={`w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold transition-colors ${currentPage === i + 1 ? 'bg-[#D4A753] text-white' : 'hover:bg-[#FAF8F5] text-[#1A1615]'}`}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
-                </div>
-                <button 
-                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-1.5 text-xs font-bold border border-[#EAE6E1] rounded-lg disabled:opacity-50 hover:bg-[#FAF8F5] transition-colors"
-                >
-                  Next
-                </button>
-              </div>
+
+          {/* Sticky Bottom Actions */}
+          <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+            <button
+              type="button"
+              onClick={() => setIsConfiguringReward(false)}
+              className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+            >
+              Back
+            </button>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => handleSubmitCampaign(true)}
+                className="px-5 py-2.5 rounded-lg border border-gray-200 bg-white text-xs font-bold text-[#1E1548] hover:bg-gray-50 transition cursor-pointer shadow-2xs flex items-center gap-1.5"
+              >
+                <FileText className="w-3.5 h-3.5 text-gray-500" />
+                Save as Draft
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  // Synchronize reward state values into desktopRewardValue for step 6 & payload
+                  if (selectedRewardType === 'cashback') {
+                    setDesktopRewardValue(cashbackType === 'percentage' ? `${cashbackPercentage}%` : `₹${cashbackFixedAmount}`);
+                  } else if (selectedRewardType === 'reward_points') {
+                    setDesktopRewardValue(rewardPointsType === 'percentage' ? `${rewardPointsPercentage}%` : `${rewardPointsFixedAmount} pts`);
+                  } else if (selectedRewardType === 'free_item') {
+                    setDesktopRewardValue(`${freeItemQuantity}x ${freeItemSelectedItem}`);
+                  } else if (selectedRewardType === 'discount') {
+                    setDesktopRewardValue(discountRewardType === 'percentage' ? `${discountRewardPercentage}%` : `₹${discountRewardFixedAmount}`);
+                  } else if (selectedRewardType === 'nominal_item') {
+                    setDesktopRewardValue(`₹${nominalPrice} ${nominalSelectedItem}`);
+                  } else if (selectedRewardType === 'combo') {
+                    setDesktopRewardValue(`₹${comboPrice} ${comboBundleName}`);
+                  } else if (selectedRewardType === 'bogo') {
+                    setDesktopRewardValue(`Buy ${bogoBuyQty} Get ${bogoGetQty} Free`);
+                  }
+                  setCurrentStep(5);
+                }}
+                className="px-6 py-2.5 rounded-lg bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+              >
+                Next &rarr;
+              </button>
             </div>
-          )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  {/* Reusable High-Fidelity Mobile Preview Mockup for Step 5 & Step 6 */}
+  const renderMobilePhonePreviewMockup = () => (
+    <div className="w-[300px] sm:w-[320px] bg-black rounded-[46px] p-3 shadow-2xl border-4 border-gray-800 mx-auto relative select-none">
+      {/* Dynamic Island */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 w-24 h-4 bg-black rounded-full z-20 flex items-center justify-end px-2">
+        <div className="w-2.5 h-2.5 rounded-full bg-[#111] border border-gray-700" />
+      </div>
+
+      {/* Phone Screen */}
+      <div className="bg-[#FAF8FF] rounded-[38px] overflow-hidden text-[#1E1548] font-sans pb-4">
+        {/* Status Bar */}
+        <div className="flex items-center justify-between px-6 pt-3 pb-2 text-[11px] font-bold text-gray-800">
+          <span>9:41</span>
+          <div className="flex items-center gap-1.5">
+            <Wifi className="w-3 h-3 text-gray-800" />
+            <div className="w-4 h-2 rounded border border-gray-700 flex items-center p-0.5"><div className="w-2.5 h-1 bg-gray-800 rounded-2xs" /></div>
+          </div>
+        </div>
+
+        {/* Banner Graphic Card */}
+        <div className="p-3">
+          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-pink-100 via-rose-50 to-purple-100 p-4 border border-rose-100 shadow-xs min-h-[145px] flex flex-col justify-between">
+            <div>
+              {bannerSpecialTag && (
+                <span className="inline-block bg-[#E11D48] text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-1.5 shadow-2xs">
+                  {bannerSpecialTag}
+                </span>
+              )}
+              <h3 className="text-base font-black text-[#1E1548] leading-tight">
+                {bannerOfferTitle || 'Buy 1 Get 1 Free'}
+              </h3>
+              <p className="text-[11px] font-semibold text-rose-600 mt-0.5">
+                {bannerSubtext || 'On all pizzas'}
+              </p>
+            </div>
+
+            {/* Food illustration on right */}
+            <img
+              src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=200&auto=format&fit=crop&q=80"
+              alt="Offer Item"
+              className="absolute -right-3 -bottom-3 w-28 h-28 object-contain drop-shadow-md rounded-full pointer-events-none"
+            />
+
+            {/* Validity & Location Pills */}
+            <div className="flex flex-wrap items-center gap-1.5 mt-3 relative z-10">
+              {bannerShowValidity && (
+                <span className="inline-flex items-center gap-1 bg-white/85 backdrop-blur-xs border border-white/60 text-[9px] font-bold text-gray-700 px-2 py-0.5 rounded-md">
+                  <Calendar className="w-2.5 h-2.5 text-gray-500" />
+                  Valid till {bannerValidityDate}
+                </span>
+              )}
+              {bannerShowLocation && (
+                <span className="inline-flex items-center gap-1 bg-white/85 backdrop-blur-xs border border-white/60 text-[9px] font-bold text-gray-700 px-2 py-0.5 rounded-md">
+                  <MapPin className="w-2.5 h-2.5 text-gray-500" />
+                  {bannerLocationText}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Offer Details */}
+        <div className="px-3.5 space-y-3">
+          <div className="bg-white rounded-xl p-3 border border-purple-50 shadow-2xs">
+            <h4 className="text-[11px] font-bold text-[#1E1548]">Offer Details</h4>
+            <p className="text-[10px] text-gray-500 mt-1 leading-relaxed">
+              {bannerDescription || 'Enjoy 1+1 on all pizzas. Treat yourself and a friend to your favourite pizza!'}
+            </p>
+          </div>
+
+          {/* Terms & Conditions */}
+          <div className="bg-white rounded-xl p-3 border border-purple-50 shadow-2xs">
+            <h4 className="text-[11px] font-bold text-[#1E1548]">Terms &amp; Conditions</h4>
+            <ul className="text-[9.5px] text-gray-500 mt-1.5 space-y-1">
+              <li className="flex items-center gap-1.5">• Valid on all pizza variants.</li>
+              <li className="flex items-center gap-1.5">• Lowest priced item will be free.</li>
+              <li className="flex items-center gap-1.5">• Cannot be clubbed with other offers.</li>
+              <li className="flex items-center gap-1.5">• Valid at all outlets.</li>
+              <li className="flex items-center gap-1.5">• Valid till {bannerValidityDate}.</li>
+            </ul>
+          </div>
+
+          {/* Redeem Button */}
+          <button
+            type="button"
+            className="w-full py-2.5 bg-gradient-to-r from-[#5844A8] to-[#47368E] text-white text-xs font-bold rounded-xl shadow-md shadow-purple-900/20 text-center"
+          >
+            Redeem Offer
+          </button>
         </div>
       </div>
     </div>
   );
+
+  {/* Desktop Step 5: Templates / Customize Banner (Image 2) */}
+  const renderDesktopStep5Templates = () => {
+    return (
+      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+        <div className="max-w-[1200px] mx-auto space-y-6">
+          {renderDesktopStepper()}
+
+          <div>
+            <h2 className="text-xl font-black text-[#1E1548]">Review and Publish</h2>
+            <p className="text-xs text-gray-500 mt-0.5 font-medium">
+              Review all the details of your campaign before publishing. You can make changes if needed.
+            </p>
+          </div>
+
+          {/* 2-Column Layout matching Image 2 */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Left Column: Customize Banner Form (lg:col-span-7) */}
+            <div className="lg:col-span-7 bg-white rounded-3xl p-6 lg:p-7 border border-purple-50 shadow-sm space-y-5">
+              <div>
+                <h3 className="text-base font-bold text-[#1E1548]">Customize Banner</h3>
+                <p className="text-xs text-gray-400 font-medium mt-0.5">
+                  Add content and design your banner for this offer.
+                </p>
+              </div>
+
+              {/* Segmented Tabs: Content, Design, Layout */}
+              <div className="flex items-center bg-[#FAF8FF] p-1 rounded-xl border border-purple-50/70 w-fit">
+                {(['content', 'design', 'layout'] as const).map(tab => (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setBannerTab(tab)}
+                    className={`px-5 py-1.5 rounded-lg text-xs font-bold capitalize transition-all cursor-pointer ${
+                      bannerTab === tab
+                        ? 'bg-[#5844A8] text-white shadow-xs'
+                        : 'text-gray-500 hover:text-[#1E1548]'
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              {/* Banner Image Dropzone */}
+              <div>
+                <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                  Banner Image <span className="text-rose-500">*</span>
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Upload Box */}
+                  <div className="border-2 border-dashed border-purple-200/80 rounded-2xl p-5 flex flex-col items-center justify-center text-center bg-[#FAF8FF]/40 hover:bg-[#FAF8FF] transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-purple-100 text-[#7C3AED] flex items-center justify-center mb-2">
+                      <ImageIcon className="w-5 h-5" />
+                    </div>
+                    <div className="text-xs font-bold text-[#1E1548]">Upload Banner Image</div>
+                    <div className="text-[10px] text-gray-400 mt-0.5 mb-3">JPG, PNG (max 2MB)</div>
+                    <button
+                      type="button"
+                      onClick={() => showToast('Image uploader opened')}
+                      className="px-4 py-1.5 bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold rounded-lg cursor-pointer transition-colors shadow-2xs"
+                    >
+                      Upload Image
+                    </button>
+                  </div>
+
+                  {/* Recommended Size Specs */}
+                  <div className="bg-[#FAF8FF] border border-purple-100/70 rounded-2xl p-4 flex flex-col justify-between">
+                    <div>
+                      <div className="text-xs font-bold text-[#1E1548] mb-1.5">Recommended Size</div>
+                      <div className="text-xs font-bold text-[#5844A8]">1200 × 400 px (3:1 ratio)</div>
+                      <ul className="text-[10px] text-gray-500 mt-2 space-y-0.5">
+                        <li>• JPG, PNG (max 2MB)</li>
+                        <li>• Keep text in safe area</li>
+                        <li>• Use high-quality images</li>
+                      </ul>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => showToast('Browse templates modal')}
+                      className="mt-3 flex items-center gap-1.5 text-xs font-bold text-[#5844A8] hover:underline cursor-pointer"
+                    >
+                      <LayoutGrid className="w-3.5 h-3.5" /> Browse Templates
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Form Inputs */}
+              <div className="space-y-4 pt-1">
+                {/* Offer Title */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-bold text-[#1E1548]">
+                      Offer Title <span className="text-rose-500">*</span>
+                    </label>
+                    <span className="text-[10px] text-gray-400">{bannerOfferTitle.length}/40</span>
+                  </div>
+                  <input
+                    type="text"
+                    maxLength={40}
+                    value={bannerOfferTitle}
+                    onChange={(e) => setBannerOfferTitle(e.target.value)}
+                    placeholder="e.g. Buy 1 Get 1 Free"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                  />
+                </div>
+
+                {/* Subtext */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-bold text-[#1E1548]">
+                      Subtext <span className="text-rose-500">*</span>
+                    </label>
+                    <span className="text-[10px] text-gray-400">{bannerSubtext.length}/60</span>
+                  </div>
+                  <input
+                    type="text"
+                    maxLength={60}
+                    value={bannerSubtext}
+                    onChange={(e) => setBannerSubtext(e.target.value)}
+                    placeholder="e.g. On all pizzas"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                  />
+                </div>
+
+                {/* Special Tag */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-bold text-[#1E1548]">
+                      Special Tag (Optional)
+                    </label>
+                    <span className="text-[10px] text-gray-400">{bannerSpecialTag.length}/20</span>
+                  </div>
+                  <input
+                    type="text"
+                    maxLength={20}
+                    value={bannerSpecialTag}
+                    onChange={(e) => setBannerSpecialTag(e.target.value)}
+                    placeholder="e.g. Special Offer"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                  />
+                </div>
+
+                {/* Show Validity Date */}
+                <div className="pt-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold text-[#1E1548]">Show Validity Date</span>
+                    <button
+                      type="button"
+                      onClick={() => setBannerShowValidity(v => !v)}
+                      className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${
+                        bannerShowValidity ? 'bg-[#5844A8]' : 'bg-gray-200'
+                      }`}
+                    >
+                      <span
+                        className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-xs transition-transform ${
+                          bannerShowValidity ? 'translate-x-5' : 'translate-x-0.5'
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  {bannerShowValidity && (
+                    <div className="relative">
+                      <label className="block text-[11px] font-bold text-gray-400 mb-1">Validity Till *</label>
+                      <input
+                        type="text"
+                        value={bannerValidityDate}
+                        onChange={(e) => setBannerValidityDate(e.target.value)}
+                        placeholder="31 Dec 2025"
+                        className="w-full bg-white border border-gray-200 rounded-xl pl-3.5 pr-10 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                      />
+                      <Calendar className="w-4 h-4 text-gray-400 absolute right-3.5 top-[28px]" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Show Location */}
+                <div className="pt-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold text-[#1E1548]">Show Location</span>
+                    <button
+                      type="button"
+                      onClick={() => setBannerShowLocation(v => !v)}
+                      className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${
+                        bannerShowLocation ? 'bg-[#5844A8]' : 'bg-gray-200'
+                      }`}
+                    >
+                      <span
+                        className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-xs transition-transform ${
+                          bannerShowLocation ? 'translate-x-5' : 'translate-x-0.5'
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  {bannerShowLocation && (
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[11px] font-bold text-gray-400">Location Text *</label>
+                        <span className="text-[10px] text-gray-400">{bannerLocationText.length}/60</span>
+                      </div>
+                      <input
+                        type="text"
+                        maxLength={60}
+                        value={bannerLocationText}
+                        onChange={(e) => setBannerLocationText(e.target.value)}
+                        placeholder="Available at all branches"
+                        className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Mobile Preview (lg:col-span-5) */}
+            <div className="lg:col-span-5 space-y-4">
+              <div className="flex items-center justify-between px-1">
+                <div>
+                  <h3 className="text-sm font-bold text-[#1E1548]">Mobile Preview</h3>
+                  <p className="text-[11px] text-gray-400">This is how your campaign will look to customers.</p>
+                </div>
+                <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-1">
+                  <button type="button" aria-label="Desktop preview" className="p-1 text-gray-400 hover:text-black">
+                    <Monitor className="w-3.5 h-3.5" />
+                  </button>
+                  <button type="button" aria-label="Mobile preview" className="p-1 text-[#5844A8] bg-purple-50 rounded">
+                    <Smartphone className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {renderMobilePhonePreviewMockup()}
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+            <button
+              type="button"
+              onClick={() => setCurrentStep(4)}
+              className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+            >
+              Back
+            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => handleSubmitCampaign(true)}
+                className="px-5 py-2.5 rounded-lg border border-gray-200 bg-white text-xs font-bold text-[#1E1548] hover:bg-gray-50 transition cursor-pointer shadow-2xs flex items-center gap-1.5"
+              >
+                <FileText className="w-3.5 h-3.5 text-gray-500" />
+                Save as Draft
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentStep(6)}
+                className="px-6 py-2.5 rounded-lg bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+              >
+                Next &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
-  if (viewMode === 'dashboard') {
+  {/* Desktop Step 6: Review & Launch (Image 3) */}
+  const renderDesktopStep6Review = () => {
     return (
-      <>
-        {renderDashboard()}
-        
-        {/* Delete Confirmation Modal for Dashboard */}
-        {campaignToDelete && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 relative text-center">
-              <div className="w-12 h-12 bg-[#FEE2E2] text-[#DC2626] rounded-full flex items-center justify-center mx-auto mb-4">
-                <Trash2 className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-bold text-[#1A1615] mb-2">Delete Campaign</h3>
-              <p className="text-sm text-[#6E6A66] mb-6">
-                Are you sure you want to permanently delete the campaign <span className="font-bold text-[#1A1615]">"{campaignToDelete.name}"</span>? This action cannot be undone.
-              </p>
-              <div className="flex items-center gap-3">
-                <button onClick={() => setCampaignToDelete(null)} className="flex-1 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] rounded-lg text-sm font-bold shadow-sm hover:bg-[#EAE6E1] transition-colors cursor-pointer">
-                  Cancel
-                </button>
-                <button onClick={confirmDeleteCampaign} className="flex-1 py-2.5 bg-[#DC2626] text-white rounded-lg text-sm font-bold shadow-sm hover:bg-[#B91C1C] transition-colors cursor-pointer">
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+        <div className="max-w-[1200px] mx-auto space-y-6">
+          {renderDesktopStepper()}
 
-      {/* QR Code Modal */}
-        {qrModalCampaign && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 relative flex flex-col items-center text-center">
-              <button onClick={() => setQrModalCampaign(null)} className="absolute top-4 right-4 text-[#9E9A93] hover:text-[#1A1615] bg-[#FAF8F5] p-2 rounded-full transition-colors cursor-pointer">
-                <X className="w-4 h-4" />
-              </button>
-              <QrCode className="w-12 h-12 text-[#D4A753] mb-4" />
-              <h3 className="text-lg font-bold text-[#1A1615] mb-2">{qrModalCampaign.name}</h3>
-              <p className="text-xs text-[#7C746C] mb-6">Scan this QR code to join the campaign.</p>
-              <div className="w-48 h-48 bg-white border-2 border-[#EFECE6] rounded-xl flex items-center justify-center mb-6 shadow-sm overflow-hidden">
-                {qrModalImgUrl ? (
-                  <img fetchPriority="high" loading="eager" src={qrModalImgUrl} alt="QR Code" className="w-full h-full object-contain p-2" />
-                ) : (
-                  <div className="w-8 h-8 border-2 border-[#A37837] border-t-transparent rounded-full animate-spin"></div>
-                )}
+          <div>
+            <h2 className="text-xl font-black text-[#1E1548]">Review and Publish</h2>
+            <p className="text-xs text-gray-500 mt-0.5 font-medium">
+              Review all the details of your campaign before publishing. You can make changes if needed.
+            </p>
+          </div>
+
+          {/* 2-Column Layout matching Image 3 */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Left Column: 4 Summary Cards 2x2 Grid (lg:col-span-7) */}
+            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Card 1: Campaign Details */}
+              <div className="bg-white rounded-3xl p-5 border border-purple-50 shadow-sm space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-purple-50 text-[#7C3AED] flex items-center justify-center">
+                      <FileText className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-xs font-bold text-[#1E1548]">Campaign Details</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(1)}
+                    className="text-[11px] font-bold text-purple-600 hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Edit2 className="w-3 h-3" /> Edit
+                  </button>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <img
+                    src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=120&auto=format&fit=crop&q=80"
+                    alt="Campaign"
+                    className="w-12 h-12 rounded-xl object-cover shrink-0"
+                  />
+                  <div>
+                    <div className="text-[10px] text-gray-400">Campaign Name</div>
+                    <div className="text-xs font-bold text-[#1E1548] leading-tight mt-0.5">
+                      {campaignName || 'Buy 1 Get 1 Free - Pizzas'}
+                    </div>
+                    <div className="text-[10px] text-gray-400 mt-2">Description</div>
+                    <div className="text-[11px] text-gray-600 line-clamp-2 mt-0.5">
+                      {bannerDescription || 'Enjoy 1+1 on all pizzas. Treat yourself and a friend to your favourite pizza!'}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <button onClick={() => handleDownload(qrModalCampaign)} className="w-full py-3 bg-[#1A1615] text-white rounded-lg text-sm font-bold shadow-md hover:bg-black transition-colors cursor-pointer flex items-center justify-center gap-2">
-                <Download className="w-4 h-4" /> Download QR Code
+
+              {/* Card 2: Audience */}
+              <div className="bg-white rounded-3xl p-5 border border-purple-50 shadow-sm space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-purple-50 text-[#7C3AED] flex items-center justify-center">
+                      <Users className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-xs font-bold text-[#1E1548]">Audience</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(2)}
+                    className="text-[11px] font-bold text-purple-600 hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Edit2 className="w-3 h-3" /> Edit
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-[11px]">
+                  <div>
+                    <span className="text-[10px] text-gray-400 block">Target Audience</span>
+                    <span className="font-bold text-[#1E1548]">
+                      {audienceTargetType === 'all' ? 'All Customers' : 'Loyalty Tiers'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-400 block">Location</span>
+                    <span className="font-bold text-[#1E1548]">All Outlets</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-400 block">Age Range</span>
+                    <span className="font-bold text-[#1E1548]">All Ages</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-400 block">Visit Frequency</span>
+                    <span className="font-bold text-[#1E1548]">First-time &amp; Returning</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 3: Conditions */}
+              <div className="bg-white rounded-3xl p-5 border border-purple-50 shadow-sm space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-purple-50 text-[#7C3AED] flex items-center justify-center">
+                      <Calendar className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-xs font-bold text-[#1E1548]">Conditions</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(3)}
+                    className="text-[11px] font-bold text-purple-600 hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Edit2 className="w-3 h-3" /> Edit
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-[11px]">
+                  <div>
+                    <span className="text-[10px] text-gray-400 block">Minimum Purchase</span>
+                    <span className="font-bold text-[#1E1548]">₹ 499</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-400 block">Applicable At</span>
+                    <span className="font-bold text-[#1E1548]">All Outlets</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-400 block">Valid From</span>
+                    <span className="font-bold text-[#1E1548]">{startDate || '12 Sep 2025'}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-400 block">Offer Type</span>
+                    <span className="font-bold text-[#1E1548]">Special Offer</span>
+                  </div>
+                  <div className="col-span-2">
+                    <span className="text-[10px] text-gray-400 block">Valid To</span>
+                    <span className="font-bold text-[#1E1548]">{endDate || '30 Sep 2025'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 4: Rewards */}
+              <div className="bg-white rounded-3xl p-5 border border-purple-50 shadow-sm space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-purple-50 text-[#7C3AED] flex items-center justify-center">
+                      <Gift className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-xs font-bold text-[#1E1548]">Rewards</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(4)}
+                    className="text-[11px] font-bold text-purple-600 hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Edit2 className="w-3 h-3" /> Edit
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-[11px]">
+                  <div>
+                    <span className="text-[10px] text-gray-400 block">Reward Type</span>
+                    <span className="font-bold text-[#1E1548]">
+                      {selectedRewardType === 'bogo' ? 'Buy 1 Get 1 Free' :
+                       selectedRewardType === 'cashback' ? 'Cashback' :
+                       selectedRewardType === 'reward_points' ? 'Reward Points' :
+                       selectedRewardType === 'free_item' ? 'Free Item' :
+                       selectedRewardType === 'nominal_item' ? 'Nominal Priced Item' : 'Discount'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-400 block">Reward Limit</span>
+                    <span className="font-bold text-[#1E1548]">1 per customer</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-400 block">Reward Value</span>
+                    <span className="font-bold text-[#1E1548]">
+                      {desktopRewardValue || 'Free item (2nd pizza)'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-400 block">Show Progress</span>
+                    <span className="font-bold text-[#10B981]">Enabled</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Mobile Preview (lg:col-span-5) */}
+            <div className="lg:col-span-5 space-y-4">
+              <div className="flex items-center justify-between px-1">
+                <div>
+                  <h3 className="text-sm font-bold text-[#1E1548]">Mobile Preview</h3>
+                  <p className="text-[11px] text-gray-400">This is how your campaign will look to customers.</p>
+                </div>
+                <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-1">
+                  <button type="button" aria-label="Desktop preview" className="p-1 text-gray-400 hover:text-black">
+                    <Monitor className="w-3.5 h-3.5" />
+                  </button>
+                  <button type="button" aria-label="Mobile preview" className="p-1 text-[#5844A8] bg-purple-50 rounded">
+                    <Smartphone className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {renderMobilePhonePreviewMockup()}
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+            <button
+              type="button"
+              onClick={() => setCurrentStep(5)}
+              className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+            >
+              Back
+            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => handleSubmitCampaign(true)}
+                className="px-5 py-2.5 rounded-lg border border-gray-200 bg-white text-xs font-bold text-[#1E1548] hover:bg-gray-50 transition cursor-pointer shadow-2xs flex items-center gap-1.5"
+              >
+                <FileText className="w-3.5 h-3.5 text-gray-500" />
+                Save as Draft
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  handleSubmitCampaign(false);
+                  setViewMode('dashboard');
+                }}
+                className="px-8 py-2.5 rounded-lg bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+              >
+                Publish Campaign &rarr;
               </button>
             </div>
           </div>
-        )}
-      </>
+        </div>
+      </div>
     );
+  };
+
+  // 1. Dashboard View (default)
+  if (viewMode === 'dashboard') {
+    return renderDashboard();
   }
+
+  // 2. Builder Mode View: Renders the Figma desktop creation screens
+  if (viewMode === 'builder') {
+    if (currentStep === 1) {
+      return renderDesktopStep1();
+    }
+    if (currentStep === 2) {
+      return renderDesktopStep2();
+    }
+    if (currentStep === 3) {
+      if (isConfiguringCondition) {
+        if (selectedConditionType === 'visit') return renderDesktopStep3Detail();
+        if (selectedConditionType === 'billing') return renderDesktopBillingDetail();
+        if (selectedConditionType === 'stamps') return renderDesktopStampsDetail();
+        if (selectedConditionType === 'item') return renderDesktopItemBasedDetail();
+        if (selectedConditionType === 'happy_hours') return renderDesktopHappyHoursDetail();
+        if (selectedConditionType === 'birthday') return renderDesktopBirthdayDetail();
+        return renderDesktopStep3Detail();
+      }
+      return renderDesktopStep3List();
+    }
+    if (currentStep === 4) {
+      return renderDesktopStep4Rewards();
+    }
+    if (currentStep === 5) {
+      return renderDesktopStep5Templates();
+    }
+    if (currentStep === 6) {
+      return renderDesktopStep6Review();
+    }
+  }
+
+  // 3. Fallback: Always render the modern desktop dashboard so old roastery view is never rendered
+  return renderDashboard();
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] flex flex-col font-sans text-[#1A1615] relative">

@@ -146,6 +146,7 @@ export type NavRoute =
   | '/staff'
   | '/loyalty'
   | '/qr-codes'
+  | '/approvals'
   | '/item-catalog'
   | '/masters/rule-fields'
   | '/masters/tier-options'

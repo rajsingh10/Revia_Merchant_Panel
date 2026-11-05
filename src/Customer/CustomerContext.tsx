@@ -63,7 +63,7 @@ export const CustomerProvider: React.FC<{ children: ReactNode }> = ({ children }
       isExistingMember,
       hasJoinedLoyalty,
       setHasJoinedLoyalty,
-      cartItems,
+      cartItems,  
       addItem,
       updateQuantity,
       subtotal,
