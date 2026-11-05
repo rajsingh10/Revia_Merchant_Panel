@@ -85,7 +85,7 @@ export const NotEnoughCreditModal: React.FC = () => {
             <button
               type="button"
               onClick={handleOpenTopUp}
-              className="px-4 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:from-[#C29541] hover:to-[#8C6826] text-white rounded-xl text-[12px] sm:text-[13px] font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-r from-[#2D124D] to-[#4A154B] hover:bg-[#3E1A68] text-white rounded-xl text-[12px] sm:text-[13px] font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               Add Credit & Continue

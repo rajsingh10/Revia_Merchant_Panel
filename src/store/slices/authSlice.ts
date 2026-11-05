@@ -190,7 +190,7 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isMobileVerified = true;
         
-        const payloadData = action.payload?.data || action.payload;
+        const payloadData: any = (action.payload as any)?.data || action.payload;
         
         if (payloadData?.token) {
           state.token = payloadData.token;
@@ -230,7 +230,7 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isMobileVerified = true;
         
-        const payloadData = action.payload?.data || action.payload;
+        const payloadData: any = (action.payload as any)?.data || action.payload;
         
         if (payloadData?.token) {
           state.token = payloadData.token;

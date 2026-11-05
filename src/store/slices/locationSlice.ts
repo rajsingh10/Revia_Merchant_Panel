@@ -121,7 +121,7 @@ const locationSlice = createSlice({
       })
       .addCase(fetchCountries.fulfilled, (state, action) => {
         state.isCountriesLoading = false;
-        state.countries = Array.isArray(action.payload?.data) ? action.payload.data : (Array.isArray(action.payload) ? action.payload : []);
+        state.countries = Array.isArray((action.payload as any)?.data) ? (action.payload as any).data : (Array.isArray(action.payload) ? action.payload : []);
       })
       .addCase(fetchCountries.rejected, (state, action) => {
         state.isCountriesLoading = false;
@@ -134,8 +134,8 @@ const locationSlice = createSlice({
       })
       .addCase(fetchStates.fulfilled, (state, action) => {
         state.isStatesLoading = false;
-        // Depending on response shape, it might be action.payload.data or action.payload
-        state.states = Array.isArray(action.payload?.data) ? action.payload.data : (Array.isArray(action.payload) ? action.payload : []);
+        // Depending on response shape, it might be (action.payload as any).data or action.payload
+        state.states = Array.isArray((action.payload as any)?.data) ? (action.payload as any).data : (Array.isArray(action.payload) ? action.payload : []);
       })
       .addCase(fetchStates.rejected, (state, action) => {
         state.isStatesLoading = false;
@@ -148,7 +148,7 @@ const locationSlice = createSlice({
       })
       .addCase(fetchCities.fulfilled, (state, action) => {
         state.isCitiesLoading = false;
-        state.cities = Array.isArray(action.payload?.data) ? action.payload.data : (Array.isArray(action.payload) ? action.payload : []);
+        state.cities = Array.isArray((action.payload as any)?.data) ? (action.payload as any).data : (Array.isArray(action.payload) ? action.payload : []);
       })
       .addCase(fetchCities.rejected, (state, action) => {
         state.isCitiesLoading = false;
