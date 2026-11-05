@@ -37,6 +37,7 @@ import { AnalyticsPage } from './pages/AnalyticsPage';
 import { AuditLogPage } from './pages/AuditLogPage';
 import { StaffPage } from './pages/StaffPage';
 import { QrCodesPage } from './pages/QrCodesPage';
+import { ApprovalsPage } from './pages/ApprovalsPage';
 import { ItemCatalogPage } from './pages/ItemCatalogPage';
 import { MastersPage } from './pages/MastersPage';
 import { OrderQueuePage } from './pages/OrderQueuePage';
@@ -61,7 +62,7 @@ import { NotEnoughCreditModal } from './components/wallet/NotEnoughCreditModal';
 
 const VALID_ROUTES = [
   '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
-  '/loyalty', '/qr-codes', '/item-catalog', '/masters/rule-fields', '/masters/tier-options', '/masters/reward-types', '/masters/asset-types', '/masters/placement-types', '/catalog', '/orders', '/invoices',
+  '/loyalty', '/qr-codes', '/approvals', '/item-catalog', '/masters/rule-fields', '/masters/tier-options', '/masters/reward-types', '/masters/asset-types', '/masters/placement-types', '/catalog', '/orders', '/invoices',
   '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
   '/terminal', '/rewards', '/rewards/new', '/analytics', '/billing', '/notifications',
   '/settings/audit', '/settings/branding', '/login', '/onboarding',
@@ -275,6 +276,7 @@ export default function App() {
                 <Route path="/staff" element={<ProtectedRoute><StaffPage /></ProtectedRoute>} />
                 <Route path="/loyalty" element={<ProtectedRoute><LoyaltyPage /></ProtectedRoute>} />
                 <Route path="/qr-codes" element={<ProtectedRoute><QrCodesPage /></ProtectedRoute>} />
+                <Route path="/approvals" element={<ProtectedRoute><ApprovalsPage /></ProtectedRoute>} />
                 <Route path="/item-catalog" element={<ProtectedRoute><ItemCatalogPage /></ProtectedRoute>} />
                 <Route path="/masters/rule-fields" element={<ProtectedRoute><MastersPage defaultTab="fields" /></ProtectedRoute>} />
                 <Route path="/masters/tier-options" element={<ProtectedRoute><MastersPage defaultTab="tiers" /></ProtectedRoute>} />

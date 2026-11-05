@@ -37,7 +37,13 @@ import {
   Printer,
   Share2,
   Store,
-  ChevronRight
+  ChevronRight,
+  Minus,
+  User,
+  Phone,
+  Tag,
+  Percent,
+  Utensils
 } from 'lucide-react';
 
 export const QrCodesPage: React.FC = () => {
@@ -82,15 +88,18 @@ export const QrCodesPage: React.FC = () => {
   const [qrOccurrences, setQrOccurrences] = useState<number>(4);
   const [qrRecurrenceEndDate, setQrRecurrenceEndDate] = useState<string>('30 Dec 2025');
 
-  // Step 3: Client Type
-  const [qrClientType, setQrClientType] = useState<string>('all');
-  const [qrChannels, setQrChannels] = useState<string[]>(['dine_in', 'counter']);
+  // Step 3: Client Type (Image 1)
+  const [qrClientScope, setQrClientScope] = useState<'single' | 'multiple'>('single');
+  const [qrClientName, setQrClientName] = useState<string>('Main Branch - Connaught Place');
+  const [qrClientPhone, setQrClientPhone] = useState<string>('98765 43210');
 
-  // Step 4: Location & Placement
-  const [qrBranch, setQrBranch] = useState<string>('Downtown Flagship Bistro');
-  const [qrPlacement, setQrPlacement] = useState<string>('table');
-  const [qrMaterial, setQrMaterial] = useState<string>('acrylic');
-  const [qrTableCount, setQrTableCount] = useState<number>(10);
+  // Step 4: Location & Placement (Image 2)
+  const [qrLocationType, setQrLocationType] = useState<'counter' | 'table' | 'both'>('both');
+  const [qrBranchLocation, setQrBranchLocation] = useState<string>('Main Branch - Connaught Place Café');
+  const [qrCounterCount, setQrCounterCount] = useState<number>(3);
+  const [qrCounterPrefix, setQrCounterPrefix] = useState<string>('CP-CAF-COUNTER');
+  const [qrTableCount, setQrTableCount] = useState<number>(5);
+  const [qrTablePrefix, setQrTablePrefix] = useState<string>('CP-CAF-TABLE');
   const [previewTableIndex, setPreviewTableIndex] = useState<number>(1);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -816,86 +825,169 @@ export const QrCodesPage: React.FC = () => {
     </div>
   );
 
-  // STEP 3: CLIENT TYPE
+  // STEP 3: SELECT CLIENT TYPE (Image 1)
   const renderQrStep3 = () => (
-    <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
-      <div>
-        <h3 className="text-base font-bold text-[#1E1548]">Select Client Type</h3>
-        <p className="text-xs text-gray-400 font-medium mt-0.5">
-          Choose the eligible customer tier and channels for this QR stand.
-        </p>
-      </div>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Form (lg:col-span-7) */}
+        <div className="lg:col-span-7 bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+          <div>
+            <h3 className="text-base font-bold text-[#1E1548]">Select Client Type</h3>
+            <p className="text-xs text-gray-400 font-medium mt-0.5">
+              Choose whether this QR code will be for a single client or multiple clients.
+            </p>
+          </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {[
-          { id: 'all', title: 'All Customers', desc: 'Open to all scanning diners (Recommended)', icon: Users, color: 'text-[#7C3AED] bg-purple-50' },
-          { id: 'new', title: 'New Customers Only', desc: 'First-time unregistered guests only', icon: UserPlus, color: 'text-blue-600 bg-blue-50' },
-          { id: 'tier', title: 'Loyalty Tier Members', desc: 'Gold, VIP, & Platinum pass holders', icon: Crown, color: 'text-amber-600 bg-amber-50' },
-          { id: 'winback', title: 'Winback Guests', desc: 'Inactive for 30+ days without a visit', icon: RotateCcw, color: 'text-rose-600 bg-rose-50' }
-        ].map((ct) => {
-          const IconC = ct.icon;
-          const isSelected = qrClientType === ct.id;
-          return (
+          <div className="space-y-4">
+            {/* Option 1: Single Client */}
             <div
-              key={ct.id}
-              onClick={() => setQrClientType(ct.id)}
-              className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start gap-3.5 ${
-                isSelected ? 'border-2 border-[#5844A8] bg-[#FAF8FF]/40 shadow-2xs' : 'border-gray-200 hover:border-gray-300 bg-white'
+              onClick={() => setQrClientScope('single')}
+              className={`p-5 rounded-2xl border transition-all cursor-pointer space-y-4 ${
+                qrClientScope === 'single'
+                  ? 'border-2 border-[#5844A8] bg-[#FAF8FF]/40 shadow-2xs'
+                  : 'border-gray-200 hover:border-gray-300 bg-white'
               }`}
             >
-              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${
-                isSelected ? 'border-[#5844A8]' : 'border-gray-300'
-              }`}>
-                {isSelected && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center shrink-0 mt-0.5">
+                    <User className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-[#1E1548]">Single Client</h4>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Generate a QR code for one specific client or location.
+                    </p>
+                  </div>
+                </div>
+
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${
+                  qrClientScope === 'single' ? 'border-[#5844A8]' : 'border-gray-300'
+                }`}>
+                  {qrClientScope === 'single' && <div className="w-2.5 h-2.5 rounded-full bg-[#5844A8]" />}
+                </div>
               </div>
 
-              <div className={`w-9 h-9 rounded-xl ${ct.color} flex items-center justify-center shrink-0`}>
-                <IconC className="w-4.5 h-4.5" />
+              {/* Sub-fields for Single Client */}
+              {qrClientScope === 'single' && (
+                <div className="space-y-3.5 pt-2 border-t border-purple-100/60 animate-in fade-in">
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Client Name <span className="text-rose-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <Store className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={qrClientName}
+                        onChange={(e) => setQrClientName(e.target.value)}
+                        placeholder="e.g. Main Branch - Connaught Place"
+                        className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Client Phone <span className="text-gray-400 font-normal">(Optional)</span>
+                    </label>
+                    <div className="relative">
+                      <Phone className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={qrClientPhone}
+                        onChange={(e) => setQrClientPhone(e.target.value)}
+                        placeholder="e.g. 98765 43210"
+                        className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Option 2: Multiple Clients */}
+            <div
+              onClick={() => setQrClientScope('multiple')}
+              className={`p-5 rounded-2xl border transition-all cursor-pointer space-y-3.5 ${
+                qrClientScope === 'multiple'
+                  ? 'border-2 border-[#5844A8] bg-[#FAF8FF]/40 shadow-2xs'
+                  : 'border-gray-200 hover:border-gray-300 bg-white'
+              }`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                    <Users className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-[#1E1548]">Multiple Clients</h4>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Generate QR codes for multiple clients based on selected location (e.g. all tables).
+                    </p>
+                  </div>
+                </div>
+
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${
+                  qrClientScope === 'multiple' ? 'border-[#5844A8]' : 'border-gray-300'
+                }`}>
+                  {qrClientScope === 'multiple' && <div className="w-2.5 h-2.5 rounded-full bg-[#5844A8]" />}
+                </div>
               </div>
 
-              <div>
-                <h4 className="text-xs font-bold text-[#1E1548]">{ct.title}</h4>
-                <p className="text-[11px] text-gray-400 mt-0.5">{ct.desc}</p>
+              {/* Callout box inside Multiple Clients */}
+              <div className="bg-[#FAF8FF] border border-purple-100 rounded-xl p-3 flex items-start gap-2.5 text-xs text-purple-900 font-medium">
+                <Info className="w-4 h-4 text-[#5844A8] shrink-0 mt-0.5" />
+                <span>You can select multiple branches or tables in the next step.</span>
               </div>
             </div>
-          );
-        })}
-      </div>
+          </div>
+        </div>
 
-      {/* Channel selection */}
-      <div className="pt-2 border-t border-gray-100">
-        <label className="block text-xs font-bold text-[#1E1548] mb-2">Applicable Ordering Channels</label>
-        <div className="flex flex-wrap items-center gap-3">
-          {[
-            { id: 'dine_in', label: 'Dine-in (Table Service)' },
-            { id: 'counter', label: 'Takeaway / Counter' },
-            { id: 'delivery', label: 'Online / Package Insert' }
-          ].map(ch => {
-            const isChecked = qrChannels.includes(ch.id);
-            return (
-              <button
-                key={ch.id}
-                type="button"
-                onClick={() => {
-                  setQrChannels(prev =>
-                    prev.includes(ch.id) ? prev.filter(c => c !== ch.id) : [...prev, ch.id]
-                  );
-                }}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer flex items-center gap-2 ${
-                  isChecked
-                    ? 'border-[#5844A8] bg-purple-50 text-[#5844A8]'
-                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                }`}
-              >
-                <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${
-                  isChecked ? 'bg-[#5844A8] border-[#5844A8] text-white' : 'border-gray-300 bg-white'
-                }`}>
-                  {isChecked && <Check className="w-2.5 h-2.5 stroke-[3]" />}
-                </div>
-                {ch.label}
-              </button>
-            );
-          })}
+        {/* Right Column: Illustration & Tip (lg:col-span-5) */}
+        <div className="lg:col-span-5 bg-white border border-purple-50 rounded-3xl p-6 lg:p-8 shadow-sm flex flex-col justify-between items-center text-center min-h-[460px]">
+          {/* Stacked Cards Illustration with Plus button */}
+          <div className="relative my-auto w-56 h-48 flex items-center justify-center">
+            {/* Card 1 (Back) */}
+            <div className="absolute top-2 w-48 h-24 bg-purple-50/80 rounded-2xl border border-purple-100 shadow-sm transform -rotate-3 p-3 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-purple-200/80 flex items-center justify-center text-[#5844A8]">
+                <User className="w-4 h-4" />
+              </div>
+              <div className="space-y-1.5 flex-1">
+                <div className="w-24 h-2.5 bg-purple-200/70 rounded-full" />
+                <div className="w-16 h-2 bg-purple-100 rounded-full" />
+              </div>
+            </div>
+
+            {/* Card 2 (Front) */}
+            <div className="absolute top-10 w-48 h-24 bg-white rounded-2xl border-2 border-purple-100 shadow-lg p-3 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-[#5844A8] flex items-center justify-center text-white">
+                <User className="w-4 h-4" />
+              </div>
+              <div className="space-y-1.5 flex-1">
+                <div className="w-24 h-2.5 bg-gray-200 rounded-full" />
+                <div className="w-16 h-2 bg-gray-100 rounded-full" />
+              </div>
+            </div>
+
+            {/* Floating Plus Badge */}
+            <div className="absolute -bottom-1 -right-1 w-11 h-11 rounded-full bg-[#5844A8] text-white shadow-xl flex items-center justify-center ring-4 ring-white">
+              <Plus className="w-6 h-6 stroke-[2.5]" />
+            </div>
+          </div>
+
+          {/* Tip Callout */}
+          <div className="w-full bg-[#FAF8FF] border border-purple-100 rounded-2xl p-4 text-left flex items-start gap-3 mt-4">
+            <div className="w-5 h-5 rounded-full bg-purple-100 text-[#5844A8] flex items-center justify-center shrink-0 mt-0.5">
+              <Info className="w-3.5 h-3.5" />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-[#1E1548]">Tip</span>
+              <p className="text-[11px] text-gray-500 font-medium leading-relaxed mt-0.5">
+                For a single client, you can assign a custom name and phone number for easy identification.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -920,297 +1012,498 @@ export const QrCodesPage: React.FC = () => {
     </div>
   );
 
-  // STEP 4: LOCATION & PLACEMENT
-  const renderQrStep4 = () => (
-    <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
-      <div>
-        <h3 className="text-base font-bold text-[#1E1548]">Select Location &amp; Placement</h3>
-        <p className="text-xs text-gray-400 font-medium mt-0.5">
-          Specify venue branch, table stands, and material style.
-        </p>
-      </div>
+  // STEP 4: SELECT LOCATION (Image 2)
+  const renderQrStep4 = () => {
+    const effectiveCounters = qrLocationType === 'table' ? 0 : qrCounterCount;
+    const effectiveTables = qrLocationType === 'counter' ? 0 : qrTableCount;
+    const totalQrCodes = effectiveCounters + effectiveTables;
 
-      {/* Branch selector */}
-      <div>
-        <label className="block text-xs font-bold text-[#1E1548] mb-1.5">Branch / Venue Outlet *</label>
-        <select
-          value={qrBranch}
-          onChange={(e) => setQrBranch(e.target.value)}
-          className="w-full max-w-md bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
-        >
-          <option value="Downtown Flagship Bistro">Downtown Flagship Bistro</option>
-          <option value="Northside Garden Cafe">Northside Garden Cafe</option>
-          <option value="West End Express">West End Express</option>
-          <option value="All Branches">All Branches</option>
-        </select>
-      </div>
+    return (
+      <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+        <div>
+          <h3 className="text-base font-bold text-[#1E1548]">Select Location</h3>
+          <p className="text-xs text-gray-400 font-medium mt-0.5">
+            Choose where you want to generate the QR codes.
+          </p>
+        </div>
 
-      {/* Placement Type */}
-      <div>
-        <label className="block text-xs font-bold text-[#1E1548] mb-2">Placement Stand Type *</label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        {/* 3 Placement Options: Counter / Table / Both */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { id: 'table', title: 'Table Stands', desc: 'Numbered stands per table', icon: Store },
-            { id: 'counter', title: 'Billing Counter', desc: 'Single point of payment display', icon: Zap },
-            { id: 'window', title: 'Entrance Standee', desc: 'Large walk-in promo poster', icon: MapPin },
-            { id: 'digital', title: 'Digital Screen', desc: 'TV display / tablet menu', icon: Smartphone }
-          ].map(p => {
-            const IconP = p.icon;
-            const isSelected = qrPlacement === p.id;
+            { id: 'counter', title: 'Counter', desc: 'e.g. Reception, Billing, Bar', icon: Store },
+            { id: 'table', title: 'Table', desc: 'e.g. T1, T2, T3...', icon: Utensils },
+            { id: 'both', title: 'Both', desc: 'Counters + Tables', icon: Layers }
+          ].map((loc) => {
+            const IconL = loc.icon;
+            const isSelected = qrLocationType === loc.id;
             return (
               <div
-                key={p.id}
-                onClick={() => setQrPlacement(p.id)}
-                className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
-                  isSelected ? 'border-2 border-[#5844A8] bg-[#FAF8FF]/40 shadow-2xs' : 'border-gray-200 bg-white hover:border-gray-300'
+                key={loc.id}
+                onClick={() => setQrLocationType(loc.id as any)}
+                className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between ${
+                  isSelected
+                    ? 'border-2 border-[#5844A8] bg-[#FAF8FF]/40 shadow-2xs'
+                    : 'border-gray-200 hover:border-gray-300 bg-white'
                 }`}
               >
-                <div className="w-8 h-8 rounded-xl bg-purple-50 text-[#5844A8] flex items-center justify-center mb-3">
-                  <IconP className="w-4 h-4" />
+                <div className="space-y-2">
+                  <div className="w-8 h-8 rounded-xl bg-purple-50 text-[#5844A8] flex items-center justify-center">
+                    <IconL className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-[#1E1548]">{loc.title}</h4>
+                    <p className="text-[11px] text-gray-400 mt-0.5">{loc.desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-xs font-bold text-[#1E1548]">{p.title}</div>
-                  <div className="text-[10px] text-gray-400 mt-0.5">{p.desc}</div>
+
+                <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${
+                  isSelected ? 'border-[#5844A8]' : 'border-gray-300'
+                }`}>
+                  {isSelected && <div className="w-2 h-2 rounded-full bg-[#5844A8]" />}
                 </div>
               </div>
             );
           })}
         </div>
-      </div>
 
-      {/* Stand Material & Table Count */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+        {/* Branch / Location Dropdown */}
         <div>
-          <label className="block text-xs font-bold text-[#1E1548] mb-1.5">Stand Material Finish</label>
-          <select
-            value={qrMaterial}
-            onChange={(e) => setQrMaterial(e.target.value)}
-            className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+          <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+            Branch / Location <span className="text-rose-500">*</span>
+          </label>
+          <div className="relative">
+            <MapPin className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <select
+              value={qrBranchLocation}
+              onChange={(e) => setQrBranchLocation(e.target.value)}
+              className="w-full pl-9 pr-9 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1E1548] appearance-none focus:outline-none focus:border-[#5844A8] cursor-pointer"
+            >
+              <option value="Main Branch - Connaught Place Café">Main Branch - Connaught Place Café</option>
+              <option value="CP - Bakery">CP - Bakery</option>
+              <option value="Downtown Flagship">Downtown Flagship</option>
+              <option value="Northside Mall">Northside Mall</option>
+            </select>
+            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
+        </div>
+
+        {/* Setting Cards: Counter Settings & Table Settings */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Counter Settings */}
+          <div className={`p-5 rounded-2xl border transition-all space-y-4 ${
+            qrLocationType === 'counter' || qrLocationType === 'both'
+              ? 'border-gray-200 bg-white'
+              : 'border-gray-100 bg-gray-50/60 opacity-50 pointer-events-none'
+          }`}>
+            <div className="flex items-center gap-2">
+              <Store className="w-4 h-4 text-[#5844A8]" />
+              <h4 className="text-xs font-bold text-[#1E1548]">Counter Settings</h4>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                Number of counters <span className="text-rose-500">*</span>
+              </label>
+              <div className="flex items-center border border-gray-200 rounded-xl w-full justify-between px-3 py-1.5 bg-white">
+                <button
+                  type="button"
+                  onClick={() => setQrCounterCount(c => Math.max(1, c - 1))}
+                  className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-black cursor-pointer font-bold text-sm"
+                >
+                  -
+                </button>
+                <span className="text-xs font-bold text-[#1E1548]">{qrCounterCount}</span>
+                <button
+                  type="button"
+                  onClick={() => setQrCounterCount(c => c + 1)}
+                  className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-black cursor-pointer font-bold text-sm"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                Counter name prefix <span className="text-gray-400 font-normal">(optional)</span>
+              </label>
+              <input
+                type="text"
+                value={qrCounterPrefix}
+                onChange={(e) => setQrCounterPrefix(e.target.value)}
+                placeholder="CP-CAF-COUNTER"
+                className="w-full px-3.5 py-2 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+              />
+              <p className="text-[10.5px] text-gray-400 mt-1">
+                This prefix will be added to each counter QR code.
+              </p>
+            </div>
+          </div>
+
+          {/* Table Settings */}
+          <div className={`p-5 rounded-2xl border transition-all space-y-4 ${
+            qrLocationType === 'table' || qrLocationType === 'both'
+              ? 'border-gray-200 bg-white'
+              : 'border-gray-100 bg-gray-50/60 opacity-50 pointer-events-none'
+          }`}>
+            <div className="flex items-center gap-2">
+              <Utensils className="w-4 h-4 text-[#5844A8]" />
+              <h4 className="text-xs font-bold text-[#1E1548]">Table Settings</h4>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                Number of tables <span className="text-rose-500">*</span>
+              </label>
+              <div className="flex items-center border border-gray-200 rounded-xl w-full justify-between px-3 py-1.5 bg-white">
+                <button
+                  type="button"
+                  onClick={() => setQrTableCount(c => Math.max(1, c - 1))}
+                  className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-black cursor-pointer font-bold text-sm"
+                >
+                  -
+                </button>
+                <span className="text-xs font-bold text-[#1E1548]">{qrTableCount}</span>
+                <button
+                  type="button"
+                  onClick={() => setQrTableCount(c => c + 1)}
+                  className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-black cursor-pointer font-bold text-sm"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                Table name prefix <span className="text-gray-400 font-normal">(optional)</span>
+              </label>
+              <input
+                type="text"
+                value={qrTablePrefix}
+                onChange={(e) => setQrTablePrefix(e.target.value)}
+                placeholder="CP-CAF-TABLE"
+                className="w-full px-3.5 py-2 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+              />
+              <p className="text-[10.5px] text-gray-400 mt-1">
+                This prefix will be added to each table QR code.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Total QR Codes to be generated summary bar */}
+        <div>
+          <label className="block text-xs font-bold text-[#1E1548] mb-2">Total QR Codes to be generated</label>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2 px-4 py-2.5 bg-[#FAF8FF] border border-purple-100 rounded-xl">
+              <Store className="w-4 h-4 text-purple-600" />
+              <span className="text-xs font-bold text-[#1E1548]">{effectiveCounters}</span>
+              <span className="text-xs text-gray-500 font-medium">Counter QR Codes</span>
+            </div>
+
+            <span className="text-gray-400 font-bold text-sm">+</span>
+
+            <div className="flex items-center gap-2 px-4 py-2.5 bg-[#FAF8FF] border border-purple-100 rounded-xl">
+              <Utensils className="w-4 h-4 text-purple-600" />
+              <span className="text-xs font-bold text-[#1E1548]">{effectiveTables}</span>
+              <span className="text-xs text-gray-500 font-medium">Table QR Codes</span>
+            </div>
+
+            <span className="text-gray-400 font-bold text-sm">=</span>
+
+            <div className="flex items-center gap-2 px-4 py-2.5 bg-purple-50 border border-purple-200 rounded-xl">
+              <QrCode className="w-4 h-4 text-[#5844A8]" />
+              <span className="text-xs font-black text-[#5844A8]">{totalQrCodes}</span>
+              <span className="text-xs font-bold text-[#5844A8]">Total QR Codes</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+          <button
+            type="button"
+            onClick={() => setQrStep(3)}
+            className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
           >
-            <option value="acrylic">Clear Acrylic Stand</option>
-            <option value="brass">Brushed Metal / Brass Tent</option>
-            <option value="nfc">NFC Puck (Tap &amp; Scan)</option>
-            <option value="sticker">Vinyl Table Sticker Decal</option>
-          </select>
-        </div>
+            &larr; Back
+          </button>
 
-        <div>
-          <label className="block text-xs font-bold text-[#1E1548] mb-1.5">Number of Tables / Stands</label>
-          <div className="flex items-center border border-gray-200 rounded-xl w-fit overflow-hidden bg-white shadow-2xs">
-            <button
-              type="button"
-              onClick={() => setQrTableCount(c => Math.max(1, c - 1))}
-              className="px-3.5 py-2 text-gray-500 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
-            >
-              <Minus className="w-3.5 h-3.5" />
-            </button>
-            <span className="w-12 text-center text-xs font-bold text-[#1E1548]">{qrTableCount} Stands</span>
-            <button
-              type="button"
-              onClick={() => setQrTableCount(c => c + 1)}
-              className="px-3.5 py-2 text-gray-500 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
-            >
-              <Plus className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setQrStep(5)}
+            className="px-7 py-2.5 rounded-lg bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+          >
+            Next &rarr;
+          </button>
         </div>
       </div>
+    );
+  };
 
-      {/* Bottom Bar */}
-      <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
-        <button
-          type="button"
-          onClick={() => setQrStep(3)}
-          className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
-        >
-          &larr; Back
-        </button>
+  // STEP 5: REVIEW GENERATE (Image 3)
+  const renderQrStep5 = () => {
+    const effectiveCounters = qrLocationType === 'table' ? 0 : qrCounterCount;
+    const effectiveTables = qrLocationType === 'counter' ? 0 : qrTableCount;
+    const totalQrCodes = effectiveCounters + effectiveTables;
 
-        <button
-          type="button"
-          onClick={() => setQrStep(5)}
-          className="px-7 py-2.5 rounded-lg bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
-        >
-          Next &rarr;
-        </button>
-      </div>
-    </div>
-  );
-
-  // STEP 5: REVIEW GENERATE
-  const renderQrStep5 = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: Summary and Export Actions (lg:col-span-7) */}
-        <div className="lg:col-span-7 bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
-          <div>
-            <h3 className="text-base font-bold text-[#1E1548]">Review &amp; Generate QR Codes</h3>
-            <p className="text-xs text-gray-400 font-medium mt-0.5">
-              Verify your setup and generate production-ready physical QR stands.
-            </p>
-          </div>
-
-          {/* 4 Summary Boxes */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 rounded-2xl bg-[#FAF8FF] border border-purple-100/70 space-y-1">
-              <span className="text-[10px] uppercase font-bold text-gray-400">Campaign</span>
-              <div className="text-xs font-bold text-[#1E1548]">{selectedCampaignObj.name}</div>
-              <div className="text-[11px] text-gray-500">{selectedCampaignObj.description}</div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-[#FAF8FF] border border-purple-100/70 space-y-1">
-              <span className="text-[10px] uppercase font-bold text-gray-400">Validity &amp; Schedule</span>
-              <div className="text-xs font-bold text-[#1E1548]">{qrStartDate} — {qrEndDate}</div>
-              <div className="text-[11px] text-[#5844A8] font-semibold">{qrIsRecurring ? `${qrRepeatFreq} Recurring (${qrRepeatDays.join(', ')})` : 'One-time period'}</div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-[#FAF8FF] border border-purple-100/70 space-y-1">
-              <span className="text-[10px] uppercase font-bold text-gray-400">Client Type</span>
-              <div className="text-xs font-bold text-[#1E1548]">
-                {qrClientType === 'all' ? 'All Customers' : qrClientType === 'new' ? 'New Customers' : 'Loyalty Members'}
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Column: Review Campaign Details (lg:col-span-7) */}
+          <div className="lg:col-span-7 bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-[#1E1548]">Review Campaign Details</h3>
+                <p className="text-xs text-gray-400 font-medium mt-0.5">
+                  Please review the details below before generating the QR codes.
+                </p>
               </div>
-              <div className="text-[11px] text-gray-500">{qrChannels.join(', ')}</div>
+
+              <button
+                type="button"
+                onClick={() => setQrStep(1)}
+                className="flex items-center gap-1.5 px-3 py-1.5 border border-purple-200 text-[#5844A8] hover:bg-purple-50 rounded-xl text-xs font-bold transition cursor-pointer shadow-2xs"
+              >
+                <Edit2 className="w-3.5 h-3.5" />
+                <span>Edit Details</span>
+              </button>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#FAF8FF] border border-purple-100/70 space-y-1">
-              <span className="text-[10px] uppercase font-bold text-gray-400">Location &amp; Placement</span>
-              <div className="text-xs font-bold text-[#1E1548]">{qrBranch}</div>
-              <div className="text-[11px] text-gray-500">
-                {qrTableCount} {qrPlacement === 'table' ? 'Table Stands' : 'Stands'} ({qrMaterial})
+            {/* Structured Card Items */}
+            <div className="space-y-3 pt-2">
+              {/* Row 1: Campaign */}
+              <div className="p-3.5 bg-[#FAF8FF]/70 rounded-2xl border border-purple-100/60 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center">
+                    <Calendar className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-gray-400">Campaign</span>
+                    <div className="text-xs font-bold text-[#1E1548]">{selectedCampaignObj.name}</div>
+                    <div className="text-[11px] text-gray-500">{selectedCampaignObj.description}</div>
+                  </div>
+                </div>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                  Active
+                </span>
+              </div>
+
+              {/* Row 2: Time Duration */}
+              <div className="p-3.5 bg-[#FAF8FF]/70 rounded-2xl border border-purple-100/60 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-purple-100 text-[#5844A8] flex items-center justify-center">
+                  <Clock className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-gray-400">Time Duration</span>
+                  <div className="text-xs font-bold text-[#1E1548]">{qrStartDate} - {qrEndDate}</div>
+                  <div className="text-[11px] text-gray-500">Recurring: {qrIsRecurring ? qrRepeatFreq : 'No'}</div>
+                </div>
+              </div>
+
+              {/* Row 3: Client Type */}
+              <div className="p-3.5 bg-[#FAF8FF]/70 rounded-2xl border border-purple-100/60 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                  <Users className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-gray-400">Client Type</span>
+                  <div className="text-xs font-bold text-[#1E1548]">
+                    {qrClientScope === 'single' ? `Single Client (${qrClientName})` : qrLocationType === 'both' ? 'Both' : qrLocationType === 'counter' ? 'Counter' : 'Table'}
+                  </div>
+                  <div className="text-[11px] text-gray-500">Counters ({effectiveCounters}) + Tables ({effectiveTables})</div>
+                </div>
+              </div>
+
+              {/* Row 4: Location */}
+              <div className="p-3.5 bg-[#FAF8FF]/70 rounded-2xl border border-purple-100/60 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-purple-100 text-[#5844A8] flex items-center justify-center">
+                  <MapPin className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-gray-400">Location</span>
+                  <div className="text-xs font-bold text-[#1E1548]">{qrBranchLocation}</div>
+                </div>
+              </div>
+
+              {/* Row 5: Counter Settings */}
+              {effectiveCounters > 0 && (
+                <div className="p-3.5 bg-[#FAF8FF]/70 rounded-2xl border border-purple-100/60 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center">
+                    <Store className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-gray-400">Counter Settings</span>
+                    <div className="text-xs font-bold text-[#1E1548]">{effectiveCounters} Counters</div>
+                    <div className="text-[11px] text-gray-500">
+                      Prefix: {qrCounterPrefix} | Names: Main, Billing, Takeaway
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Row 6: Table Settings */}
+              {effectiveTables > 0 && (
+                <div className="p-3.5 bg-[#FAF8FF]/70 rounded-2xl border border-purple-100/60 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                    <Utensils className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-gray-400">Table Settings</span>
+                    <div className="text-xs font-bold text-[#1E1548]">{effectiveTables} Tables</div>
+                    <div className="text-[11px] text-gray-500">
+                      Prefix: {qrTablePrefix} | Names: Table 1-{effectiveTables}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Row 7: Total QR Codes */}
+              <div className="p-3.5 bg-purple-50/70 rounded-2xl border border-purple-200/80 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-[#5844A8] text-white flex items-center justify-center">
+                  <QrCode className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-[#5844A8]">Total QR Codes</span>
+                  <div className="text-xs font-black text-[#5844A8]">{totalQrCodes} QR Codes</div>
+                  <div className="text-[11px] text-purple-700">{effectiveCounters} for counters + {effectiveTables} for tables</div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="space-y-3 pt-2">
-            <button
-              type="button"
-              onClick={() => showToast(`QR Stand #${previewTableIndex} downloaded as high-res PNG!`)}
-              className="w-full py-3 bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-[#5844A8]/20 flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Download className="w-4 h-4" /> Download Table #{previewTableIndex} QR PNG (300 DPI)
-            </button>
+          {/* Right Column: QR Code Preview (lg:col-span-5) */}
+          <div className="lg:col-span-5 bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-5">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-bold text-[#1E1548]">
+                <QrCode className="w-4 h-4 text-[#5844A8]" />
+                <span>QR Code Preview</span>
+              </div>
+              <p className="text-[11px] text-gray-400 font-medium mt-0.5">
+                This is how your QR code will look to customers.
+              </p>
+            </div>
 
-            <button
-              type="button"
-              onClick={() => showToast(`Generating print-ready PDF pack for ${qrTableCount} stands...`)}
-              className="w-full py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-[#1E1548] text-xs font-bold rounded-xl transition-colors shadow-2xs flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Printer className="w-4 h-4 text-gray-500" /> Print Complete Standee PDF Pack ({qrTableCount} Stands)
-            </button>
+            {/* Frame Box with Corner Scan Brackets */}
+            <div className="p-6 bg-gradient-to-b from-[#FAF8FF] to-white rounded-2xl border border-purple-100 text-center relative overflow-hidden space-y-4">
+              {/* Corner Brackets */}
+              <div className="relative inline-block p-4">
+                {/* Top-Left Bracket */}
+                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-rose-400 rounded-tl-sm" />
+                {/* Top-Right Bracket */}
+                <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-rose-400 rounded-tr-sm" />
+                {/* Bottom-Left Bracket */}
+                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-rose-400 rounded-bl-sm" />
+                {/* Bottom-Right Bracket */}
+                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-rose-400 rounded-br-sm" />
+
+                {/* SVG QR Code */}
+                <svg viewBox="0 0 100 100" className="w-36 h-36 mx-auto">
+                  <rect x="5" y="5" width="28" height="28" fill="#1E1548" rx="4" />
+                  <rect x="10" y="10" width="18" height="18" fill="white" rx="2" />
+                  <rect x="14" y="14" width="10" height="10" fill="#5844A8" rx="1.5" />
+
+                  <rect x="67" y="5" width="28" height="28" fill="#1E1548" rx="4" />
+                  <rect x="72" y="10" width="18" height="18" fill="white" rx="2" />
+                  <rect x="76" y="14" width="10" height="10" fill="#5844A8" rx="1.5" />
+
+                  <rect x="5" y="67" width="28" height="28" fill="#1E1548" rx="4" />
+                  <rect x="10" y="72" width="18" height="18" fill="white" rx="2" />
+                  <rect x="14" y="76" width="10" height="10" fill="#5844A8" rx="1.5" />
+
+                  <rect x="38" y="10" width="5" height="5" fill="#1E1548" />
+                  <rect x="48" y="10" width="5" height="5" fill="#1E1548" />
+                  <rect x="58" y="10" width="5" height="5" fill="#1E1548" />
+                  <rect x="38" y="20" width="5" height="5" fill="#1E1548" />
+                  <rect x="48" y="25" width="5" height="5" fill="#5844A8" />
+                  <rect x="10" y="38" width="5" height="5" fill="#1E1548" />
+                  <rect x="20" y="48" width="5" height="5" fill="#1E1548" />
+                  <rect x="38" y="48" width="5" height="5" fill="#5844A8" />
+                  <rect x="58" y="48" width="5" height="5" fill="#1E1548" />
+                  <rect x="78" y="38" width="5" height="5" fill="#1E1548" />
+                  <rect x="88" y="48" width="5" height="5" fill="#1E1548" />
+                  <rect x="38" y="68" width="5" height="5" fill="#1E1548" />
+                  <rect x="48" y="78" width="5" height="5" fill="#1E1548" />
+                  <rect x="58" y="68" width="5" height="5" fill="#5844A8" />
+                  <rect x="68" y="78" width="5" height="5" fill="#1E1548" />
+                  <rect x="78" y="88" width="5" height="5" fill="#1E1548" />
+                  <rect x="88" y="78" width="5" height="5" fill="#1E1548" />
+
+                  <circle cx="50" cy="50" r="10" fill="#5844A8" />
+                  <text x="50" y="54" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold">R</text>
+                </svg>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-black text-[#1E1548]">{selectedCampaignObj.name}</h4>
+                <p className="text-xs text-gray-500 mt-0.5">{selectedCampaignObj.description}</p>
+              </div>
+
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 text-[#5844A8] text-xs font-bold">
+                <MapPin className="w-3.5 h-3.5" />
+                <span>Main Counter</span>
+              </div>
+            </div>
+
+            {/* Metadata Rows */}
+            <div className="space-y-2.5 pt-1 text-xs">
+              <div className="flex items-center justify-between text-gray-600">
+                <span className="flex items-center gap-2 text-gray-400">
+                  <Calendar className="w-3.5 h-3.5" /> Valid from
+                </span>
+                <span className="font-bold text-[#1E1548]">01 Oct 2025 – 31 Oct 2025</span>
+              </div>
+
+              <div className="flex items-center justify-between text-gray-600">
+                <span className="flex items-center gap-2 text-gray-400">
+                  <Tag className="w-3.5 h-3.5" /> Offer Type
+                </span>
+                <span className="font-bold text-[#1E1548]">Offer</span>
+              </div>
+
+              <div className="flex items-center justify-between text-gray-600">
+                <span className="flex items-center gap-2 text-gray-400">
+                  <Percent className="w-3.5 h-3.5" /> Discount
+                </span>
+                <span className="font-bold text-[#5844A8]">20% OFF</span>
+              </div>
+
+              <div className="flex items-center justify-between text-gray-600">
+                <span className="flex items-center gap-2 text-gray-400">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" /> Status
+                </span>
+                <span className="font-bold text-emerald-600">Active</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Right Column: Physical Acrylic Standee Mockup (lg:col-span-5) */}
-        <div className="lg:col-span-5 bg-gradient-to-br from-[#FAF8FF] to-purple-50/50 rounded-3xl p-6 lg:p-8 border border-purple-100 shadow-sm flex flex-col items-center">
-          <div className="text-xs font-bold text-[#1E1548] mb-1">Standee Preview</div>
-          <p className="text-[11px] text-gray-400 mb-4">Table #{previewTableIndex} of {qrTableCount}</p>
+        {/* Bottom Bar */}
+        <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
+          <button
+            type="button"
+            onClick={() => setQrStep(4)}
+            className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
+          >
+            &larr; Back
+          </button>
 
-          {/* Acrylic Stand Graphic Frame */}
-          <div className="w-[240px] bg-white rounded-2xl shadow-xl border-4 border-gray-100 p-4 text-center space-y-3 relative overflow-hidden">
-            {/* Top Header */}
-            <div className="bg-[#5844A8] -mx-4 -mt-4 py-2 text-white">
-              <span className="text-[9px] uppercase tracking-wider font-extrabold">SCAN TO AVAIL</span>
-              <div className="text-xs font-black">{selectedCampaignObj.name}</div>
-            </div>
-
-            {/* QR Code SVG */}
-            <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-2xs inline-block">
-              <svg viewBox="0 0 100 100" className="w-36 h-36">
-                {/* QR Finder Patterns */}
-                <rect x="5" y="5" width="28" height="28" fill="#1E1548" rx="4" />
-                <rect x="10" y="10" width="18" height="18" fill="white" rx="2" />
-                <rect x="14" y="14" width="10" height="10" fill="#5844A8" rx="1.5" />
-
-                <rect x="67" y="5" width="28" height="28" fill="#1E1548" rx="4" />
-                <rect x="72" y="10" width="18" height="18" fill="white" rx="2" />
-                <rect x="76" y="14" width="10" height="10" fill="#5844A8" rx="1.5" />
-
-                <rect x="5" y="67" width="28" height="28" fill="#1E1548" rx="4" />
-                <rect x="10" y="72" width="18" height="18" fill="white" rx="2" />
-                <rect x="14" y="76" width="10" height="10" fill="#5844A8" rx="1.5" />
-
-                {/* Grid Dots */}
-                <rect x="38" y="10" width="5" height="5" fill="#1E1548" />
-                <rect x="48" y="10" width="5" height="5" fill="#1E1548" />
-                <rect x="58" y="10" width="5" height="5" fill="#1E1548" />
-                <rect x="38" y="20" width="5" height="5" fill="#1E1548" />
-                <rect x="48" y="25" width="5" height="5" fill="#5844A8" />
-                <rect x="10" y="38" width="5" height="5" fill="#1E1548" />
-                <rect x="20" y="48" width="5" height="5" fill="#1E1548" />
-                <rect x="38" y="48" width="5" height="5" fill="#5844A8" />
-                <rect x="58" y="48" width="5" height="5" fill="#1E1548" />
-                <rect x="78" y="38" width="5" height="5" fill="#1E1548" />
-                <rect x="88" y="48" width="5" height="5" fill="#1E1548" />
-                <rect x="38" y="68" width="5" height="5" fill="#1E1548" />
-                <rect x="48" y="78" width="5" height="5" fill="#1E1548" />
-                <rect x="58" y="68" width="5" height="5" fill="#5844A8" />
-                <rect x="68" y="78" width="5" height="5" fill="#1E1548" />
-                <rect x="78" y="88" width="5" height="5" fill="#1E1548" />
-                <rect x="88" y="78" width="5" height="5" fill="#1E1548" />
-
-                {/* Center Logo */}
-                <circle cx="50" cy="50" r="10" fill="#5844A8" />
-                <text x="50" y="54" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold">R</text>
-              </svg>
-            </div>
-
-            {/* Table Number Badge */}
-            <div className="bg-purple-50 text-[#5844A8] border border-purple-200/60 rounded-lg py-1 px-3 inline-block">
-              <span className="text-xs font-black">TABLE #{previewTableIndex}</span>
-            </div>
-
-            <div className="text-[9.5px] text-gray-400">
-              Tap phone or scan with camera
-            </div>
-          </div>
-
-          {/* Table Stand Selector */}
-          <div className="flex items-center gap-2 mt-4">
-            <button
-              type="button"
-              disabled={previewTableIndex <= 1}
-              onClick={() => setPreviewTableIndex(i => Math.max(1, i - 1))}
-              className="px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-xs font-bold disabled:opacity-40 cursor-pointer"
-            >
-              &larr; Prev
-            </button>
-            <span className="text-xs font-bold text-[#1E1548]">Table {previewTableIndex} of {qrTableCount}</span>
-            <button
-              type="button"
-              disabled={previewTableIndex >= qrTableCount}
-              onClick={() => setPreviewTableIndex(i => Math.min(qrTableCount, i + 1))}
-              className="px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-xs font-bold disabled:opacity-40 cursor-pointer"
-            >
-              Next &rarr;
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              showToast(`${totalQrCodes} QR Codes successfully generated!`);
+              setPageMode('library');
+            }}
+            className="px-8 py-2.5 rounded-lg bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-1.5"
+          >
+            <span>Generate QR Code</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
-
-      {/* Bottom Bar */}
-      <div className="flex items-center justify-between pt-6 border-t border-purple-100/60">
-        <button
-          type="button"
-          onClick={() => setQrStep(4)}
-          className="text-xs font-bold text-gray-600 hover:text-black py-2.5 px-4 cursor-pointer"
-        >
-          &larr; Back
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            showToast(`${qrTableCount} QR Stands generated and saved to library!`);
-            setPageMode('library');
-          }}
-          className="px-8 py-2.5 rounded-lg bg-[#10B981] hover:bg-[#059669] text-white text-xs font-bold transition cursor-pointer shadow-md shadow-emerald-500/20 flex items-center gap-1.5"
-        >
-          <CheckCircle2 className="w-4 h-4" /> Finish &amp; View in Library
-        </button>
-      </div>
-    </div>
-  );
+    );
+  };
 
   // -------------------------------------------------------------
   // MAIN RENDER CONTROLLER

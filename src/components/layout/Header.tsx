@@ -132,11 +132,13 @@ export const Header: React.FC<HeaderProps> = ({
       case '/branches':
         return { category: 'Outlets & Infrastructure', page: 'Branch Management' };
       case '/staff':
-        return { category: 'Team & Security', page: 'Staff & RBAC' };
+        return { category: 'Team & Security', page: 'Staff & Employees' };
       case '/loyalty':
         return { category: 'Loyalty Engine', page: 'Loyalty Program Rules' };
       case '/qr-codes':
         return { category: 'Hardware & Beacons', page: 'Dynamic QR Codes' };
+      case '/approvals':
+        return { category: 'Operations & Verification', page: 'Approvals Directory' };
       case '/customerlist':
         return { category: 'CRM & Audience', page: 'Customer Directory' };
       case '/transactions':
