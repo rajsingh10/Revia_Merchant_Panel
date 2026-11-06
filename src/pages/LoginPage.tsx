@@ -25,7 +25,9 @@ import {
   Star,
   ChevronDown,
   ChevronRight,
-  Coffee
+  Coffee,
+  Calendar,
+  Heart
 } from 'lucide-react';
 
 interface LoginPageProps {
@@ -42,9 +44,18 @@ interface BranchItem {
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnboarding }) => {
   // Navigation & View States:
-  // 'role_select' | 'customer_welcome' | 'customer_otp' | 'merchant_access' | 'onboarding_step1' | 'onboarding_step2' | 'onboarding_step3' | 'onboarding_step4'
+  // 'role_select' | 'customer_welcome' | 'customer_otp' | 'customer_signup_step1' | 'customer_signup_step2' | 'merchant_access' | 'onboarding_step1' | 'onboarding_step2' | 'onboarding_step3' | 'onboarding_step4'
   const [viewState, setViewState] = useState<
-    'role_select' | 'customer_welcome' | 'customer_otp' | 'merchant_access' | 'onboarding_step1' | 'onboarding_step2' | 'onboarding_step3' | 'onboarding_step4'
+    | 'role_select'
+    | 'customer_welcome'
+    | 'customer_otp'
+    | 'customer_signup_step1'
+    | 'customer_signup_step2'
+    | 'merchant_access'
+    | 'onboarding_step1'
+    | 'onboarding_step2'
+    | 'onboarding_step3'
+    | 'onboarding_step4'
   >('role_select');
 
   // Customer Welcome & OTP States
@@ -53,6 +64,30 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerOtp, setCustomerOtp] = useState(['4', '8', '7', '2', '6', '1']);
   const [customerTimer, setCustomerTimer] = useState(45);
+
+  // Customer Registration / Sign Up States (Desktop Adaptation)
+  // Step 1: Tell us about yourself
+  const [custFirstName, setCustFirstName] = useState('Salena');
+  const [custLastName, setCustLastName] = useState('Mishra');
+  const [custGender, setCustGender] = useState<'female' | 'male' | 'other'>('female');
+  const [custDob, setCustDob] = useState('2000-08-14');
+  const [custAge, setCustAge] = useState('24');
+  const [custMobile, setCustMobile] = useState('98765 43210');
+  const [custSameWhatsapp, setCustSameWhatsapp] = useState(true);
+
+  // Step 2: A few more details (optional)
+  const [custMaritalStatus, setCustMaritalStatus] = useState('Married');
+  const [custAnniversary, setCustAnniversary] = useState('2023-11-20');
+  const [custPartnerName, setCustPartnerName] = useState('Rohan Mishra');
+  const [custPartnerMobile, setCustPartnerMobile] = useState('98765 12345');
+
+  // Customer Access Mode (Login vs Sign Up)
+  const [customerTab, setCustomerTab] = useState<'login' | 'signup'>('login');
+  const [customerSignupPhone, setCustomerSignupPhone] = useState('9876543210');
+  const [customerSignupPassword, setCustomerSignupPassword] = useState('SecurePass@123');
+  const [customerSignupConfirmPassword, setCustomerSignupConfirmPassword] = useState('SecurePass@123');
+  const [showCustomerSignupPassword, setShowCustomerSignupPassword] = useState(false);
+  const [showCustomerSignupConfirmPassword, setShowCustomerSignupConfirmPassword] = useState(false);
 
   // Merchant Access States
   const [merchantTab, setMerchantTab] = useState<'login' | 'signup'>('login');
@@ -139,11 +174,17 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
     }
   };
 
-  // Password validation checks
+  // Merchant Password validation checks
   const hasMinLength = signupPassword.length >= 8;
   const hasUppercase = /[A-Z]/.test(signupPassword);
   const hasNumber = /[0-9]/.test(signupPassword);
   const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(signupPassword);
+
+  // Customer Password validation checks (matching uploaded mockup)
+  const custPassMinLength = customerSignupPassword.length >= 8;
+  const custPassUppercase = /[A-Z]/.test(customerSignupPassword);
+  const custPassNumber = /[0-9]/.test(customerSignupPassword);
+  const custPassSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(customerSignupPassword);
 
   // Complete Merchant Login
   const completeMerchantLogin = () => {
@@ -168,8 +209,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
       'customer',
       JSON.stringify({
         id: 'cust_1',
-        phone: customerPhone,
-        email: customerEmail || 'customer@revia.co'
+        firstName: custFirstName || 'Salena',
+        lastName: custLastName || 'Mishra',
+        name: `${custFirstName || 'Salena'} ${custLastName || 'Mishra'}`,
+        phone: custMobile || customerPhone,
+        email: customerEmail || 'salena@revia.co',
+        gender: custGender,
+        dob: custDob,
+        age: custAge,
+        maritalStatus: custMaritalStatus,
+        anniversary: custAnniversary,
+        partnerName: custPartnerName,
+        partnerMobile: custPartnerMobile
       })
     );
     onLoginSuccess('customer');
@@ -363,7 +414,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
                 {/* Option 1: Customer */}
                 <button
                   type="button"
-                  onClick={() => setViewState('customer_welcome')}
+                  onClick={() => {
+                    setCustomerTab('login');
+                    setViewState('customer_welcome');
+                  }}
                   className="w-full text-left p-4 sm:p-5 rounded-2xl border-2 border-gray-100 hover:border-[#5844A8]/40 hover:bg-[#FAF8FF] transition-all cursor-pointer flex items-center justify-between group shadow-2xs hover:shadow-md"
                 >
                   <div className="flex items-center gap-4">
@@ -415,7 +469,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
           )}
 
           {/* =======================================================================
-              VIEW 2: CUSTOMER AUTH - WELCOME BACK (Image 4 & 5)
+              VIEW 2: CUSTOMER AUTH - WELCOME BACK (OTP Login)
              ======================================================================= */}
           {viewState === 'customer_welcome' && (
             <div className="max-w-md mx-auto w-full space-y-6">
@@ -514,8 +568,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
                   <button
                     type="button"
                     onClick={() => {
-                      setCustomerTimer(45);
-                      setViewState('customer_otp');
+                      setViewState('customer_signup_step1');
                     }}
                     className="text-[#5844A8] font-bold hover:underline cursor-pointer"
                   >
@@ -623,14 +676,410 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
                 </div>
               </div>
 
-              {/* Primary Next Action */}
+              {/* Primary Next Action: Directly Authenticate and Enter Customer Portal */}
               <button
                 type="button"
                 onClick={completeCustomerLogin}
                 className="w-full py-3 bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold rounded-xl shadow-md shadow-[#5844A8]/20 transition cursor-pointer"
               >
+                Verify &amp; Log In &rarr;
+              </button>
+            </div>
+          )}
+
+          {/* =======================================================================
+              VIEW 3A: CUSTOMER SIGN UP STEP 1 - TELL US ABOUT YOURSELF
+             ======================================================================= */}
+          {viewState === 'customer_signup_step1' && (
+            <div className="max-w-md mx-auto w-full space-y-4 animate-in fade-in duration-300">
+              <button
+                type="button"
+                onClick={() => setViewState('customer_welcome')}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-[#1E1548] cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" /> Back
+              </button>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <h2 className="text-2xl font-black text-[#1E1548]">Tell us about yourself</h2>
+                  <span className="text-[10px] font-black text-[#5844A8] bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100 uppercase tracking-wider">
+                    Step 1 of 2
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 font-medium">
+                  This helps us give you a better experience at Sly Granny Cafe.
+                </p>
+              </div>
+
+              {/* Form Fields */}
+              <div className="space-y-3">
+                {/* First Name & Last Name */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#1E1548] mb-1">First Name *</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <User className="w-3.5 h-3.5 text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        value={custFirstName}
+                        onChange={(e) => setCustFirstName(e.target.value)}
+                        placeholder="Salena"
+                        className="w-full bg-[#FAF8FF] border border-gray-200 rounded-xl pl-9 pr-3 py-2 text-xs font-bold text-[#1E1548] focus:bg-white focus:outline-none focus:border-[#5844A8]"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#1E1548] mb-1">Last Name *</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <User className="w-3.5 h-3.5 text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        value={custLastName}
+                        onChange={(e) => setCustLastName(e.target.value)}
+                        placeholder="Mishra"
+                        className="w-full bg-[#FAF8FF] border border-gray-200 rounded-xl pl-9 pr-3 py-2 text-xs font-bold text-[#1E1548] focus:bg-white focus:outline-none focus:border-[#5844A8]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Gender Pills */}
+                <div>
+                  <label className="block text-[11px] font-bold text-[#1E1548] mb-1">Gender *</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setCustGender('female')}
+                      className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                        custGender === 'female'
+                          ? 'bg-[#2D1A47] text-white shadow-xs'
+                          : 'bg-[#FAF8FF] border border-gray-200 text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span>♀ Female</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCustGender('male')}
+                      className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                        custGender === 'male'
+                          ? 'bg-[#2D1A47] text-white shadow-xs'
+                          : 'bg-[#FAF8FF] border border-gray-200 text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span>♂ Male</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCustGender('other')}
+                      className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                        custGender === 'other'
+                          ? 'bg-[#2D1A47] text-white shadow-xs'
+                          : 'bg-[#FAF8FF] border border-gray-200 text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span>••• Other</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Date of Birth & Age (2 columns) */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#1E1548] mb-1">Date of Birth *</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                      </div>
+                      <input
+                        type="date"
+                        value={custDob}
+                        onChange={(e) => setCustDob(e.target.value)}
+                        className="w-full bg-[#FAF8FF] border border-gray-200 rounded-xl pl-9 pr-3 py-2 text-xs font-bold text-[#1E1548] focus:bg-white focus:outline-none focus:border-[#5844A8]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#1E1548] mb-1">Age *</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <User className="w-3.5 h-3.5 text-gray-400" />
+                      </div>
+                      <select
+                        value={custAge}
+                        onChange={(e) => setCustAge(e.target.value)}
+                        className="w-full bg-[#FAF8FF] border border-gray-200 rounded-xl pl-9 pr-8 py-2 text-xs font-bold text-[#1E1548] focus:bg-white focus:outline-none focus:border-[#5844A8] appearance-none cursor-pointer"
+                      >
+                        <option value="">Select age</option>
+                        <option value="18">18 - 24 years</option>
+                        <option value="24">24 years</option>
+                        <option value="25">25 - 34 years</option>
+                        <option value="35">35 - 44 years</option>
+                        <option value="45">45 - 54 years</option>
+                        <option value="55">55+ years</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mobile Number */}
+                <div>
+                  <label className="block text-[11px] font-bold text-[#1E1548] mb-1">Mobile Number *</label>
+                  <div className="flex gap-2">
+                    <div className="flex items-center gap-1.5 bg-[#FAF8FF] border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-[#1E1548] shrink-0">
+                      <Phone className="w-3.5 h-3.5 text-gray-400" />
+                      <span>+91</span>
+                    </div>
+                    <input
+                      type="tel"
+                      value={custMobile}
+                      onChange={(e) => setCustMobile(e.target.value)}
+                      placeholder="Enter mobile number"
+                      className="flex-1 bg-[#FAF8FF] border border-gray-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#1E1548] focus:bg-white focus:outline-none focus:border-[#5844A8]"
+                    />
+                  </div>
+                </div>
+
+                {/* WhatsApp Checkbox */}
+                <label className="flex items-center gap-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={custSameWhatsapp}
+                    onChange={(e) => setCustSameWhatsapp(e.target.checked)}
+                    className="w-4 h-4 rounded text-[#2D1A47] focus:ring-[#5844A8] border-gray-300 cursor-pointer"
+                  />
+                  <span className="text-xs font-bold text-[#1E1548]">My WhatsApp number is same</span>
+                </label>
+
+                {/* Create Password */}
+                <div>
+                  <label className="block text-[11px] font-bold text-[#1E1548] mb-1">
+                    Create Password <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showCustomerSignupPassword ? 'text' : 'password'}
+                      value={customerSignupPassword}
+                      onChange={(e) => setCustomerSignupPassword(e.target.value)}
+                      placeholder="Enter your password"
+                      className="w-full bg-[#FAF8FF] border border-gray-200 rounded-xl pl-3.5 pr-10 py-2 text-xs font-bold text-[#1E1548] focus:bg-white focus:outline-none focus:border-[#5844A8]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCustomerSignupPassword((v) => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                    >
+                      {showCustomerSignupPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Password Rules Checklist Card */}
+                <div className="bg-[#FAF8FF] border border-purple-100 rounded-2xl p-3 space-y-1">
+                  {[
+                    { ok: custPassMinLength, text: 'At least 8 characters' },
+                    { ok: custPassUppercase, text: '1 uppercase letter (A–Z)' },
+                    { ok: custPassNumber, text: '1 number (0–9)' },
+                    { ok: custPassSpecial, text: '1 special character (e.g. ! @ # $ %)' }
+                  ].map((rule, idx) => (
+                    <div key={idx} className="flex items-center gap-2 text-[10px] font-semibold">
+                      <div
+                        className={`w-3 h-3 rounded-full flex items-center justify-center ${
+                          rule.ok ? 'bg-[#5844A8] text-white' : 'bg-gray-200 text-gray-400'
+                        }`}
+                      >
+                        <Check className="w-2 h-2 stroke-[3]" />
+                      </div>
+                      <span className={rule.ok ? 'text-[#1E1548]' : 'text-gray-400'}>
+                        {rule.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Confirm Password */}
+                <div>
+                  <label className="block text-[11px] font-bold text-[#1E1548] mb-1">
+                    Confirm Password <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showCustomerSignupConfirmPassword ? 'text' : 'password'}
+                      value={customerSignupConfirmPassword}
+                      onChange={(e) => setCustomerSignupConfirmPassword(e.target.value)}
+                      placeholder="Re-enter your password"
+                      className="w-full bg-[#FAF8FF] border border-gray-200 rounded-xl pl-3.5 pr-10 py-2 text-xs font-bold text-[#1E1548] focus:bg-white focus:outline-none focus:border-[#5844A8]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCustomerSignupConfirmPassword((v) => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                    >
+                      {showCustomerSignupConfirmPassword ? (
+                        <EyeOff className="w-3.5 h-3.5" />
+                      ) : (
+                        <Eye className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Next Button */}
+              <button
+                type="button"
+                onClick={() => setViewState('customer_signup_step2')}
+                className="w-full py-3 bg-[#2D1A47] hover:bg-[#1E1130] text-white text-xs font-bold rounded-2xl shadow-md transition cursor-pointer mt-2"
+              >
                 Next &rarr;
               </button>
+
+              <div className="pt-2 text-center">
+                <span className="text-xs text-gray-500">
+                  Already have an account?{' '}
+                  <button
+                    type="button"
+                    onClick={() => setViewState('customer_welcome')}
+                    className="text-[#5844A8] font-bold hover:underline cursor-pointer"
+                  >
+                    Login
+                  </button>
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* =======================================================================
+              VIEW 3B: CUSTOMER SIGN UP STEP 2 - A FEW MORE DETAILS (OPTIONAL)
+             ======================================================================= */}
+          {viewState === 'customer_signup_step2' && (
+            <div className="max-w-md mx-auto w-full space-y-5 animate-in fade-in duration-300">
+              <button
+                type="button"
+                onClick={() => setViewState('customer_signup_step1')}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-[#1E1548] cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" /> Back
+              </button>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-2xl font-black text-[#1E1548]">A few more details</h2>
+                    <span className="text-xs font-bold text-gray-400">(optional)</span>
+                  </div>
+                  <span className="text-[10px] font-black text-[#5844A8] bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100 uppercase tracking-wider">
+                    Step 2 of 2
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 font-medium">
+                  Help us personalise your experience and offers.
+                </p>
+              </div>
+
+              {/* Card 1: Marital Status */}
+              <div className="bg-white border border-gray-200/90 rounded-2xl p-4 shadow-2xs space-y-2">
+                <label className="block text-xs font-bold text-[#1E1548]">Marital Status</label>
+                <div className="relative">
+                  <select
+                    value={custMaritalStatus}
+                    onChange={(e) => setCustMaritalStatus(e.target.value)}
+                    className="w-full bg-[#FAF8FF] border border-gray-200 rounded-xl px-3.5 py-2.5 pr-8 text-xs font-bold text-[#1E1548] focus:bg-white focus:outline-none focus:border-[#5844A8] appearance-none cursor-pointer"
+                  >
+                    <option value="">Select</option>
+                    <option value="Married">Married</option>
+                    <option value="Single">Single</option>
+                    <option value="In a relationship">In a relationship</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2: If married */}
+              <div className="bg-white border border-gray-200/90 rounded-2xl p-4 shadow-2xs space-y-3.5">
+                <h3 className="text-xs font-black text-[#1E1548]">If married</h3>
+
+                {/* Anniversary Date */}
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-500 mb-1">Anniversary Date</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                    </div>
+                    <input
+                      type="date"
+                      value={custAnniversary}
+                      onChange={(e) => setCustAnniversary(e.target.value)}
+                      className="w-full bg-[#FAF8FF] border border-gray-200 rounded-xl pl-9 pr-3 py-2 text-xs font-bold text-[#1E1548] focus:bg-white focus:outline-none focus:border-[#5844A8]"
+                    />
+                  </div>
+                </div>
+
+                {/* Partner's Name */}
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-500 mb-1">Partner&apos;s Name</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <User className="w-3.5 h-3.5 text-gray-400" />
+                    </div>
+                    <input
+                      type="text"
+                      value={custPartnerName}
+                      onChange={(e) => setCustPartnerName(e.target.value)}
+                      placeholder="Enter partner's name"
+                      className="w-full bg-[#FAF8FF] border border-gray-200 rounded-xl pl-9 pr-3 py-2 text-xs font-bold text-[#1E1548] focus:bg-white focus:outline-none focus:border-[#5844A8]"
+                    />
+                  </div>
+                </div>
+
+                {/* Partner's Mobile Number */}
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-500 mb-1">Partner&apos;s Mobile Number</label>
+                  <div className="flex gap-2">
+                    <div className="flex items-center gap-1.5 bg-[#FAF8FF] border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-[#1E1548] shrink-0">
+                      <Phone className="w-3.5 h-3.5 text-gray-400" />
+                      <span>+91</span>
+                    </div>
+                    <input
+                      type="tel"
+                      value={custPartnerMobile}
+                      onChange={(e) => setCustPartnerMobile(e.target.value)}
+                      placeholder="Enter number"
+                      className="flex-1 bg-[#FAF8FF] border border-gray-200 rounded-xl px-3.5 py-2 text-xs font-bold text-[#1E1548] focus:bg-white focus:outline-none focus:border-[#5844A8]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Buttons: Skip for now & Next */}
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={completeCustomerLogin}
+                  className="flex-1 py-3 bg-white hover:bg-gray-50 text-[#2D1A47] border-2 border-[#2D1A47] text-xs font-black rounded-2xl transition cursor-pointer"
+                >
+                  Skip for now
+                </button>
+                <button
+                  type="button"
+                  onClick={completeCustomerLogin}
+                  className="flex-1 py-3 bg-[#2D1A47] hover:bg-[#1E1130] text-white text-xs font-black rounded-2xl shadow-md transition cursor-pointer"
+                >
+                  Next
+                </button>
+              </div>
             </div>
           )}
 
