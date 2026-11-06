@@ -181,21 +181,27 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] pb-16 font-sans text-[#1A1615]">
+    <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
       {/* ======================================================== */}
       {/* VIEW 1: WEB BRANCH OVERVIEW TABLE VIEW */}
       {/* ======================================================== */}
       {viewMode === 'list' && (
-        <div className="max-w-7xl mx-auto px-6 pt-6 space-y-6">
+        <div className="max-w-[1400px] mx-auto space-y-6">
+          {/* Breadcrumb Navigation */}
+          <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
+            <span>Home</span>
+            <span>&gt;</span>
+            <span className="text-[#1E1548] font-bold">Branch Management</span>
+          </div>
+
           {/* Header Bar */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-1.5 text-base sm:text-xl font-bold tracking-tight text-[#1A1615]">
-                <span className="text-[#8B5CF6]">✦</span>
-                <h1>Branch Overview</h1>
-                <span className="text-[#8B5CF6]">✦</span>
-              </div>
-              <p className="text-xs text-[#6E6A66] font-medium mt-0.5">
+              <h1 className="text-2xl lg:text-3xl font-black text-[#1E1548] tracking-tight flex items-center gap-2">
+                Branch Overview
+                <Sparkles className="w-5 h-5 text-amber-400 fill-amber-400" />
+              </h1>
+              <p className="text-xs sm:text-sm text-gray-400 mt-1 font-medium">
                 Manage your branch, update items and keep your offerings fresh.
               </p>
             </div>
@@ -206,7 +212,7 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                   onNavigate('/branches/new' as any);
                 }
               }}
-              className="bg-[#2D124D] hover:bg-[#3E1A68] text-white px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 shadow-xs transition-colors cursor-pointer self-start sm:self-auto"
+              className="px-5 py-2.5 rounded-xl bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-[#5844A8]/20 transition-all cursor-pointer self-start sm:self-auto"
             >
               <Plus className="w-4 h-4 text-white" />
               <span>+ Add New Branch</span>
@@ -214,54 +220,54 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
           </div>
 
           {/* 4 Summary KPI Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Total Branches */}
-            <div className="bg-white border border-[#EBE7DF] rounded-2xl p-4 shadow-2xs flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-xl bg-[#FAF5FF] border border-[#F3E8FF] flex items-center justify-center shrink-0">
-                <Store className="w-5 h-5 text-[#8B5CF6]" />
+            <div className="bg-white rounded-3xl p-5 lg:p-6 border border-purple-50 shadow-sm space-y-3">
+              <div className="w-10 h-10 rounded-2xl bg-purple-50 text-[#5844A8] flex items-center justify-center">
+                <Store className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-[11px] text-[#6E6A66] font-medium">Total Branches</div>
-                <div className="text-2xl font-bold tracking-tight text-[#1A1615] mt-0.5">{totalCount}</div>
-                <div className="text-[10px] text-[#8C877D] font-medium mt-0.5">+2 this month</div>
+                <span className="text-xs font-bold text-gray-400">Total Branches</span>
+                <div className="text-3xl font-black text-[#1E1548] mt-0.5">{totalCount}</div>
+                <div className="text-[11px] text-[#5844A8] font-semibold mt-0.5">+2 this month</div>
               </div>
             </div>
 
             {/* Active Branches */}
-            <div className="bg-white border border-[#EBE7DF] rounded-2xl p-4 shadow-2xs flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-xl bg-[#F0FDF4] border border-[#DCFCE7] flex items-center justify-center shrink-0">
-                <Check className="w-5 h-5 text-[#16A34A] stroke-[2.5]" />
+            <div className="bg-white rounded-3xl p-5 lg:p-6 border border-purple-50 shadow-sm space-y-3">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <CheckCircle2 className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-[11px] text-[#6E6A66] font-medium">Active Branches</div>
-                <div className="text-2xl font-bold tracking-tight text-[#1A1615] mt-0.5">{activeCount}</div>
-                <div className="text-[10px] text-[#16A34A] font-bold mt-0.5">86%</div>
+                <span className="text-xs font-bold text-gray-400">Active Branches</span>
+                <div className="text-3xl font-black text-[#1E1548] mt-0.5">{activeCount}</div>
+                <div className="text-[11px] text-emerald-600 font-semibold mt-0.5">86%</div>
               </div>
             </div>
 
             {/* Total Footfall */}
-            <div className="bg-white border border-[#EBE7DF] rounded-2xl p-4 shadow-2xs flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-xl bg-[#F0F9FF] border border-[#E0F2FE] flex items-center justify-center shrink-0">
-                <Users className="w-5 h-5 text-[#0284C7]" />
+            <div className="bg-white rounded-3xl p-5 lg:p-6 border border-purple-50 shadow-sm space-y-3">
+              <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <Users className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-[11px] text-[#6E6A66] font-medium">Total Footfall</div>
-                <div className="text-2xl font-bold tracking-tight text-[#1A1615] mt-0.5">24,789</div>
-                <div className="text-[10px] text-[#0284C7] font-semibold mt-0.5 flex items-center gap-0.5">
+                <span className="text-xs font-bold text-gray-400">Total Footfall</span>
+                <div className="text-3xl font-black text-[#1E1548] mt-0.5">24,789</div>
+                <div className="text-[11px] text-blue-600 font-semibold mt-0.5 flex items-center gap-1">
                   <TrendingUp className="w-3 h-3" /> 14.2% vs last 30 days
                 </div>
               </div>
             </div>
 
             {/* Total Revenue */}
-            <div className="bg-white border border-[#EBE7DF] rounded-2xl p-4 shadow-2xs flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-xl bg-[#FFF5F5] border border-[#FFE4E6] flex items-center justify-center shrink-0">
-                <ShoppingBag className="w-5 h-5 text-[#E11D48]" />
+            <div className="bg-white rounded-3xl p-5 lg:p-6 border border-purple-50 shadow-sm space-y-3">
+              <div className="w-10 h-10 rounded-2xl bg-pink-50 text-pink-500 flex items-center justify-center">
+                <ShoppingBag className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-[11px] text-[#6E6A66] font-medium">Total Revenue</div>
-                <div className="text-2xl font-bold tracking-tight text-[#1A1615] mt-0.5">₹8,89,900</div>
-                <div className="text-[10px] text-[#15803D] font-bold mt-0.5 flex items-center gap-0.5">
+                <span className="text-xs font-bold text-gray-400">Total Revenue</span>
+                <div className="text-3xl font-black text-[#1E1548] mt-0.5">₹8,89,900</div>
+                <div className="text-[11px] text-emerald-600 font-semibold mt-0.5 flex items-center gap-1">
                   <TrendingUp className="w-3 h-3" /> 12.6% vs last 30 days
                 </div>
               </div>
@@ -269,38 +275,38 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
           </div>
 
           {/* Table Container Card */}
-          <div className="bg-white border border-[#EBE7DF] rounded-2xl shadow-2xs overflow-hidden">
+          <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
             {/* Table Filter Tabs & Search Header */}
-            <div className="p-4 sm:p-5 border-b border-[#F1EFEA] flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-gray-100">
               {/* Left Tabs */}
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-[#1A1615] mr-1">All Branches</span>
+                <span className="text-sm font-bold text-[#1E1548] mr-2">All Branches</span>
                 <button
                   onClick={() => { setActiveTab('all'); setCurrentPage(1); }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     activeTab === 'all'
-                      ? 'bg-[#2D124D] text-white shadow-2xs'
-                      : 'text-[#6E6A66] hover:bg-[#FAF8F5]'
+                      ? 'bg-[#5844A8] text-white shadow-md shadow-[#5844A8]/20'
+                      : 'text-gray-500 hover:text-[#1E1548] hover:bg-purple-50/60'
                   }`}
                 >
                   All ({totalCount})
                 </button>
                 <button
                   onClick={() => { setActiveTab('active'); setCurrentPage(1); }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     activeTab === 'active'
-                      ? 'bg-[#2D124D] text-white shadow-2xs'
-                      : 'text-[#6E6A66] hover:bg-[#FAF8F5]'
+                      ? 'bg-[#5844A8] text-white shadow-md shadow-[#5844A8]/20'
+                      : 'text-gray-500 hover:text-[#1E1548] hover:bg-purple-50/60'
                   }`}
                 >
                   Active ({activeCount})
                 </button>
                 <button
                   onClick={() => { setActiveTab('inactive'); setCurrentPage(1); }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     activeTab === 'inactive'
-                      ? 'bg-[#2D124D] text-white shadow-2xs'
-                      : 'text-[#6E6A66] hover:bg-[#FAF8F5]'
+                      ? 'bg-[#5844A8] text-white shadow-md shadow-[#5844A8]/20'
+                      : 'text-gray-500 hover:text-[#1E1548] hover:bg-purple-50/60'
                   }`}
                 >
                   Inactive ({inactiveCount})
@@ -310,13 +316,13 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
               {/* Right: Search & City Filter */}
               <div className="flex items-center gap-2.5">
                 <div className="relative">
-                  <Search className="w-3.5 h-3.5 text-[#8C877D] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                     placeholder="Search by branch name or location..."
-                    className="pl-8 pr-3 py-1.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-medium text-[#1A1615] placeholder-[#8C877D] focus:outline-hidden focus:border-[#2D124D] w-56 sm:w-64"
+                    className="pl-9 pr-3.5 py-2 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] placeholder:text-gray-400 focus:outline-none focus:border-[#5844A8] w-56 sm:w-64"
                   />
                 </div>
 
@@ -324,14 +330,14 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                 <div className="relative">
                   <button
                     onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
-                    className="bg-[#FAF8F5] border border-[#E5E0D8] hover:border-[#2D124D] px-3 py-1.5 rounded-xl text-xs font-semibold text-[#1A1615] flex items-center gap-1.5 cursor-pointer shadow-2xs transition-colors"
+                    className="bg-white border border-gray-200 hover:border-[#5844A8] px-3.5 py-2 rounded-xl text-xs font-bold text-[#1E1548] flex items-center gap-1.5 cursor-pointer shadow-2xs transition-colors"
                   >
                     <span>{cityFilter}</span>
-                    <ChevronDown className="w-3.5 h-3.5 text-[#8C877D]" />
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
                   </button>
 
                   {isCityDropdownOpen && (
-                    <div className="absolute right-0 mt-1.5 w-40 bg-white border border-[#E5E0D8] rounded-xl shadow-lg py-1 z-20 text-xs">
+                    <div className="absolute right-0 mt-1.5 w-40 bg-white border border-gray-100 rounded-2xl shadow-xl py-1.5 z-20 text-xs">
                       {cities.map((city) => (
                         <button
                           key={city}
@@ -340,8 +346,8 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                             setIsCityDropdownOpen(false);
                             setCurrentPage(1);
                           }}
-                          className={`w-full text-left px-3 py-2 font-medium hover:bg-[#FAF8F5] cursor-pointer ${
-                            cityFilter === city ? 'bg-[#FAF5FF] text-[#2D124D] font-bold' : 'text-[#1A1615]'
+                          className={`w-full text-left px-3.5 py-2 font-medium hover:bg-purple-50/60 transition-colors cursor-pointer ${
+                            cityFilter === city ? 'bg-purple-50 text-[#5844A8] font-bold' : 'text-[#1E1548]'
                           }`}
                         >
                           {city}
@@ -355,8 +361,8 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
 
             {/* Desktop Table */}
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-[#1A1615]">
-                <thead className="bg-[#FAF8F5] text-[#8C877D] font-bold text-[11px] uppercase tracking-wider border-b border-[#F1EFEA]">
+              <table className="w-full text-left text-xs text-[#1E1548]">
+                <thead className="bg-gray-50/60 text-gray-400 font-bold text-[11px] uppercase tracking-wider border-b border-gray-100">
                   <tr>
                     <th className="py-3.5 px-5">Branch Name ⇕</th>
                     <th className="py-3.5 px-4">Location</th>
@@ -367,10 +373,10 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                     <th className="py-3.5 px-5 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#F1EFEA]">
+                <tbody className="divide-y divide-gray-100">
                   {paginatedBranches.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-8 text-center text-xs text-[#8C877D]">
+                      <td colSpan={7} className="py-8 text-center text-xs text-gray-400">
                         No branches match your filters.
                       </td>
                     </tr>
@@ -379,7 +385,7 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                       <tr
                         key={b.id}
                         onClick={() => handleOpenDetails(b)}
-                        className="hover:bg-[#FAF8F5] transition-colors cursor-pointer group"
+                        className="hover:bg-[#FAF8FF]/60 transition-colors cursor-pointer group"
                       >
                         {/* Branch Photo & Name */}
                         <td className="py-3.5 px-5">
@@ -387,21 +393,21 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                             <img
                               src={b.image}
                               alt={b.name}
-                              className="w-10 h-10 rounded-lg object-cover border border-[#E5E0D8] shrink-0"
+                              className="w-10 h-10 rounded-xl object-cover border border-purple-50 shadow-2xs shrink-0"
                             />
                             <div>
-                              <div className="font-bold text-sm text-[#1A1615] group-hover:text-[#2D124D] transition-colors">
+                              <div className="font-bold text-sm text-[#1E1548] group-hover:text-[#5844A8] transition-colors">
                                 {b.name}
                               </div>
-                              <div className="text-[10px] text-[#8C877D] font-mono mt-0.5">{b.code}</div>
+                              <div className="text-[10px] text-gray-400 font-mono mt-0.5">{b.code}</div>
                             </div>
                           </div>
                         </td>
 
                         {/* Location */}
                         <td className="py-3.5 px-4 max-w-[280px]">
-                          <div className="flex items-center gap-1.5 text-[#6E6A66] truncate font-medium">
-                            <MapPin className="w-3.5 h-3.5 text-[#8C877D] shrink-0" />
+                          <div className="flex items-center gap-1.5 text-gray-600 truncate font-medium">
+                            <MapPin className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                             <span className="truncate">{b.location}</span>
                           </div>
                         </td>
@@ -411,8 +417,8 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                           <span
                             className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
                               b.status === 'Active'
-                                ? 'bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]'
-                                : 'bg-[#FFF1F2] text-[#E11D48] border border-[#FECDD3]'
+                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-200/60'
+                                : 'bg-rose-50 text-rose-500 border border-rose-200/60'
                             }`}
                           >
                             <span
@@ -431,7 +437,7 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                         <td className="py-3.5 px-4 text-center font-bold font-mono">{b.footfall.toLocaleString()}</td>
 
                         {/* Revenue */}
-                        <td className="py-3.5 px-4 text-right font-bold font-mono text-[#1A1615]">
+                        <td className="py-3.5 px-4 text-right font-bold font-mono text-[#1E1548]">
                           {b.revenueFormatted}
                         </td>
 
@@ -443,7 +449,7 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                               e.stopPropagation();
                               handleOpenDetails(b);
                             }}
-                            className="p-1.5 text-[#8C877D] hover:text-[#2D124D] hover:bg-white rounded-lg border border-transparent hover:border-[#E5E0D8] transition-colors cursor-pointer"
+                            className="p-1.5 text-gray-400 hover:text-[#5844A8] hover:bg-purple-50 rounded-xl border border-transparent hover:border-purple-100 transition-colors cursor-pointer"
                             title="View Branch Details"
                           >
                             <Eye className="w-4 h-4" />
@@ -457,16 +463,16 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
             </div>
 
             {/* Table Footer with Pagination */}
-            <div className="p-4 border-t border-[#F1EFEA] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#8C877D]">
+            <div className="pt-3 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-gray-400">
               <div>
                 Showing 1-{Math.min(itemsPerPage, filteredBranches.length)} of {filteredBranches.length} branches
               </div>
 
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="p-1 rounded-md border border-[#E5E0D8] text-[#6E6A66] hover:bg-[#FAF8F5] disabled:opacity-40 cursor-pointer"
+                  className="p-1.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 cursor-pointer transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -475,10 +481,10 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`w-7 h-7 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                    className={`w-7 h-7 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       currentPage === page
-                        ? 'bg-[#2D124D] text-white shadow-2xs'
-                        : 'border border-[#E5E0D8] text-[#1A1615] hover:bg-[#FAF8F5]'
+                        ? 'bg-[#5844A8] text-white shadow-sm shadow-[#5844A8]/20'
+                        : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
                     }`}
                   >
                     {page}
@@ -488,7 +494,7 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  className="p-1 rounded-md border border-[#E5E0D8] text-[#6E6A66] hover:bg-[#FAF8F5] disabled:opacity-40 cursor-pointer"
+                  className="p-1.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 cursor-pointer transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -502,17 +508,17 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
       {/* VIEW 2: WEB SINGLE BRANCH DETAILS VIEW */}
       {/* ======================================================== */}
       {viewMode === 'details' && selectedBranch && (
-        <div className="max-w-7xl mx-auto px-6 pt-6 space-y-6">
+        <div className="max-w-[1400px] mx-auto space-y-6">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs font-medium text-[#8C877D]">
+          <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
             <button
               onClick={() => setViewMode('list')}
-              className="hover:text-[#1A1615] transition-colors cursor-pointer"
+              className="hover:text-[#1E1548] transition-colors cursor-pointer"
             >
               Branches
             </button>
-            <ChevronRight className="w-3.5 h-3.5 text-[#8C877D]" />
-            <span className="text-[#1A1615] font-bold">Branch Details</span>
+            <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+            <span className="text-[#1E1548] font-bold">Branch Details</span>
           </div>
 
           {/* Title Header with Edit and View Performance Buttons */}
@@ -520,29 +526,29 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setViewMode('list')}
-                className="p-1.5 -ml-1.5 rounded-lg border border-[#E5E0D8] bg-white text-[#1A1615] hover:bg-[#FAF8F5] cursor-pointer"
+                className="p-2 rounded-xl border border-gray-200 bg-white text-[#1E1548] hover:bg-gray-50 cursor-pointer shadow-2xs"
                 title="Back to Branches"
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
               <div>
                 <div className="flex items-center gap-2.5">
-                  <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1A1615]">
+                  <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1E1548]">
                     {selectedBranch.name}
                   </h1>
-                  <span className="bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] px-2.5 py-0.5 rounded-full text-[11px] font-bold flex items-center gap-1">
+                  <span className="bg-emerald-50 text-emerald-600 border border-emerald-200/60 px-2.5 py-0.5 rounded-full text-[11px] font-bold flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                     {selectedBranch.status}
                   </span>
                 </div>
-                <p className="text-xs text-[#8C877D] font-mono mt-0.5">STORE ID: {selectedBranch.storeId}</p>
+                <p className="text-xs text-gray-400 font-mono mt-0.5">STORE ID: {selectedBranch.storeId}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
-                className="p-2 bg-white border border-[#E5E0D8] rounded-xl text-[#6E6A66] hover:bg-[#FAF8F5] cursor-pointer shadow-2xs"
+                className="p-2.5 bg-white border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 cursor-pointer shadow-2xs"
               >
                 <MoreVertical className="w-4 h-4" />
               </button>
@@ -550,16 +556,16 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
               <button
                 type="button"
                 onClick={() => setIsEditModalOpen(true)}
-                className="bg-white border border-[#E5E0D8] hover:bg-[#FAF8F5] text-[#1A1615] px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+                className="bg-white border border-gray-200 hover:bg-gray-50 text-[#1E1548] px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
               >
-                <Edit2 className="w-3.5 h-3.5 text-[#8C877D]" />
+                <Edit2 className="w-3.5 h-3.5 text-[#5844A8]" />
                 <span>Edit Branch</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => onNavigate?.('/analytics' as any)}
-                className="bg-[#2D124D] hover:bg-[#3E1A68] text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                className="bg-[#5844A8] hover:bg-[#47368E] text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-[#5844A8]/20 transition-all cursor-pointer"
               >
                 <BarChart2 className="w-3.5 h-3.5 text-white/90" />
                 <span>View Performance</span>
@@ -572,9 +578,9 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
             {/* Left Column: Gallery & Branch Information */}
             <div className="lg:col-span-7 space-y-6">
               {/* Photo Gallery Card */}
-              <div className="bg-white border border-[#EBE7DF] rounded-2xl p-4 shadow-2xs space-y-3">
+              <div className="bg-white border border-purple-50 rounded-3xl p-5 shadow-sm space-y-3">
                 {/* Main Banner */}
-                <div className="w-full h-72 rounded-xl overflow-hidden border border-[#E5E0D8]">
+                <div className="w-full h-72 rounded-2xl overflow-hidden border border-gray-100">
                   <img
                     src={selectedBranch.image}
                     alt={selectedBranch.name}
@@ -585,14 +591,14 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                 {/* Thumbnails row */}
                 <div className="grid grid-cols-4 gap-2.5">
                   {selectedBranch.galleryImages.map((img, i) => (
-                    <div key={i} className="h-20 rounded-lg overflow-hidden border border-[#E5E0D8]">
+                    <div key={i} className="h-20 rounded-xl overflow-hidden border border-gray-100">
                       <img src={img} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
                     </div>
                   ))}
 
                   <button
                     type="button"
-                    className="h-20 rounded-lg border-2 border-dashed border-[#D4CFC6] hover:border-[#2D124D] flex flex-col items-center justify-center text-[#8C877D] hover:text-[#2D124D] transition-colors cursor-pointer bg-[#FAF8F5]"
+                    className="h-20 rounded-xl border-2 border-dashed border-purple-200 hover:border-[#5844A8] flex flex-col items-center justify-center text-gray-400 hover:text-[#5844A8] transition-colors cursor-pointer bg-purple-50/40"
                   >
                     <Plus className="w-4 h-4 mb-0.5" />
                     <span className="text-[10px] font-bold">Add Photo</span>
@@ -601,15 +607,15 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
               </div>
 
               {/* Branch Information Card */}
-              <div className="bg-white border border-[#EBE7DF] rounded-2xl p-5 shadow-2xs space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-[#F1EFEA]">
+              <div className="bg-white border border-purple-50 rounded-3xl p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-gray-100">
                   <div className="flex items-center gap-2">
-                    <Store className="w-4 h-4 text-[#8B5CF6]" />
-                    <h2 className="text-sm font-bold text-[#1A1615]">Branch Information</h2>
+                    <Store className="w-4 h-4 text-[#5844A8]" />
+                    <h2 className="text-sm font-bold text-[#1E1548]">Branch Information</h2>
                   </div>
                   <button
                     onClick={() => setIsEditModalOpen(true)}
-                    className="text-xs text-[#2D124D] font-bold hover:underline flex items-center gap-1 cursor-pointer"
+                    className="text-xs text-[#5844A8] font-bold hover:underline flex items-center gap-1 cursor-pointer"
                   >
                     <Edit2 className="w-3 h-3" /> Edit
                   </button>
@@ -617,30 +623,30 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   <div>
-                    <span className="text-[#8C877D] block mb-0.5">Branch Name</span>
-                    <span className="font-bold text-[#1A1615]">{selectedBranch.name}</span>
+                    <span className="text-gray-400 font-semibold block mb-0.5">Branch Name</span>
+                    <span className="font-bold text-[#1E1548]">{selectedBranch.name}</span>
                   </div>
 
                   <div>
-                    <span className="text-[#8C877D] block mb-0.5">Branch Code</span>
-                    <span className="font-mono font-bold text-[#1A1615]">{selectedBranch.code}</span>
+                    <span className="text-gray-400 font-semibold block mb-0.5">Branch Code</span>
+                    <span className="font-mono font-bold text-[#1E1548]">{selectedBranch.code}</span>
                   </div>
 
                   <div>
-                    <span className="text-[#8C877D] block mb-0.5">Branch Type</span>
-                    <span className="font-bold text-[#1A1615]">{selectedBranch.type}</span>
+                    <span className="text-gray-400 font-semibold block mb-0.5">Branch Type</span>
+                    <span className="font-bold text-[#1E1548]">{selectedBranch.type}</span>
                   </div>
 
                   <div>
-                    <span className="text-[#8C877D] block mb-0.5">Address</span>
-                    <span className="font-semibold text-[#1A1615] leading-relaxed">
+                    <span className="text-gray-400 font-semibold block mb-0.5">Address</span>
+                    <span className="font-semibold text-[#1E1548] leading-relaxed">
                       {selectedBranch.fullAddress}
                     </span>
                   </div>
 
-                  <div className="sm:col-span-2 pt-1 border-t border-[#F1EFEA]">
-                    <span className="text-[#8C877D] block mb-0.5">Description</span>
-                    <p className="text-[#6E6A66] leading-relaxed">{selectedBranch.description}</p>
+                  <div className="sm:col-span-2 pt-2 border-t border-gray-100">
+                    <span className="text-gray-400 font-semibold block mb-0.5">Description</span>
+                    <p className="text-gray-600 leading-relaxed">{selectedBranch.description}</p>
                   </div>
                 </div>
               </div>
@@ -651,78 +657,78 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
               {/* 3 Metric Cards */}
               <div className="grid grid-cols-3 gap-3">
                 {/* Orders */}
-                <div className="bg-white border border-[#EBE7DF] rounded-2xl p-3.5 shadow-2xs text-center">
-                  <div className="w-7 h-7 rounded-lg bg-[#FAF5FF] border border-[#F3E8FF] flex items-center justify-center mx-auto mb-1.5 text-[#8B5CF6]">
-                    <ShoppingBag className="w-3.5 h-3.5" />
+                <div className="bg-white border border-purple-50 rounded-2xl p-4 shadow-sm text-center">
+                  <div className="w-8 h-8 rounded-xl bg-purple-50 text-[#5844A8] flex items-center justify-center mx-auto mb-1.5">
+                    <ShoppingBag className="w-4 h-4" />
                   </div>
-                  <div className="text-[10px] text-[#8C877D] font-medium">Orders</div>
-                  <div className="text-lg font-bold text-[#1A1615] mt-0.5">{selectedBranch.orders}</div>
-                  <div className="text-[9px] text-[#15803D] font-bold">{selectedBranch.ordersGrowth}</div>
+                  <div className="text-[10px] text-gray-400 font-semibold">Orders</div>
+                  <div className="text-lg font-black text-[#1E1548] mt-0.5">{selectedBranch.orders}</div>
+                  <div className="text-[9px] text-emerald-600 font-bold">{selectedBranch.ordersGrowth}</div>
                 </div>
 
                 {/* Footfall */}
-                <div className="bg-white border border-[#EBE7DF] rounded-2xl p-3.5 shadow-2xs text-center">
-                  <div className="w-7 h-7 rounded-lg bg-[#F0F9FF] border border-[#E0F2FE] flex items-center justify-center mx-auto mb-1.5 text-[#0284C7]">
-                    <Users className="w-3.5 h-3.5" />
+                <div className="bg-white border border-purple-50 rounded-2xl p-4 shadow-sm text-center">
+                  <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-1.5">
+                    <Users className="w-4 h-4" />
                   </div>
-                  <div className="text-[10px] text-[#8C877D] font-medium">Footfall</div>
-                  <div className="text-lg font-bold text-[#1A1615] mt-0.5">{selectedBranch.footfall}</div>
-                  <div className="text-[9px] text-[#0284C7] font-bold">{selectedBranch.footfallGrowth}</div>
+                  <div className="text-[10px] text-gray-400 font-semibold">Footfall</div>
+                  <div className="text-lg font-black text-[#1E1548] mt-0.5">{selectedBranch.footfall}</div>
+                  <div className="text-[9px] text-blue-600 font-bold">{selectedBranch.footfallGrowth}</div>
                 </div>
 
                 {/* Revenue */}
-                <div className="bg-white border border-[#EBE7DF] rounded-2xl p-3.5 shadow-2xs text-center">
-                  <div className="w-7 h-7 rounded-lg bg-[#FFF5F5] border border-[#FFE4E6] flex items-center justify-center mx-auto mb-1.5 text-[#E11D48]">
+                <div className="bg-white border border-purple-50 rounded-2xl p-4 shadow-sm text-center">
+                  <div className="w-8 h-8 rounded-xl bg-pink-50 text-pink-500 flex items-center justify-center mx-auto mb-1.5">
                     <span className="font-bold text-xs">₹</span>
                   </div>
-                  <div className="text-[10px] text-[#8C877D] font-medium">Revenue</div>
-                  <div className="text-lg font-bold text-[#1A1615] mt-0.5">{selectedBranch.revenueFormatted}</div>
-                  <div className="text-[9px] text-[#15803D] font-bold">{selectedBranch.revenueGrowth}</div>
+                  <div className="text-[10px] text-gray-400 font-semibold">Revenue</div>
+                  <div className="text-lg font-black text-[#1E1548] mt-0.5">{selectedBranch.revenueFormatted}</div>
+                  <div className="text-[9px] text-emerald-600 font-bold">{selectedBranch.revenueGrowth}</div>
                 </div>
               </div>
 
               {/* Operating Hours Card */}
               <div
                 onClick={() => setIsHoursModalOpen(true)}
-                className="bg-white border border-[#EBE7DF] hover:border-[#2D124D] rounded-2xl p-4 shadow-2xs transition-all cursor-pointer group flex items-center justify-between"
+                className="bg-white border border-purple-50 hover:border-[#5844A8] rounded-2xl p-4 shadow-sm transition-all cursor-pointer group flex items-center justify-between"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#FAF5FF] border border-[#F3E8FF] flex items-center justify-center text-[#8B5CF6]">
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-[#5844A8] flex items-center justify-center">
                     <Clock className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-[#1A1615] group-hover:text-[#2D124D] transition-colors">
+                    <div className="text-xs font-bold text-[#1E1548] group-hover:text-[#5844A8] transition-colors">
                       Operating Hours
                     </div>
-                    <div className="text-[11px] text-[#8C877D] mt-0.5">{selectedBranch.operatingHours}</div>
+                    <div className="text-[11px] text-gray-400 mt-0.5">{selectedBranch.operatingHours}</div>
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-[#8C877D] group-hover:text-[#2D124D] transition-colors" />
+                <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#5844A8] transition-colors" />
               </div>
 
               {/* Branch Setup & License Card */}
-              <div className="bg-white border border-[#EBE7DF] hover:border-[#2D124D] rounded-2xl p-4 shadow-2xs transition-all cursor-pointer group flex items-center justify-between">
+              <div className="bg-white border border-purple-50 hover:border-[#5844A8] rounded-2xl p-4 shadow-sm transition-all cursor-pointer group flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#FAF8F5] border border-[#EAE6DF] flex items-center justify-center text-[#6E6A66]">
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-[#5844A8] flex items-center justify-center">
                     <Building2 className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-[#1A1615] group-hover:text-[#2D124D] transition-colors">
+                    <div className="text-xs font-bold text-[#1E1548] group-hover:text-[#5844A8] transition-colors">
                       Branch Info
                     </div>
-                    <div className="text-[11px] text-[#8C877D] mt-0.5">License, tables, kitchen setups</div>
+                    <div className="text-[11px] text-gray-400 mt-0.5">License, tables, kitchen setups</div>
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-[#8C877D] group-hover:text-[#2D124D] transition-colors" />
+                <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#5844A8] transition-colors" />
               </div>
 
               {/* Recent Activity Card */}
-              <div className="bg-white border border-[#EBE7DF] rounded-2xl p-5 shadow-2xs space-y-3.5">
+              <div className="bg-white border border-purple-50 rounded-3xl p-5 shadow-sm space-y-3.5">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold text-[#1A1615]">Recent Activity</h3>
+                  <h3 className="text-xs font-bold text-[#1E1548]">Recent Activity</h3>
                   <button
                     onClick={() => onNavigate?.('/settings/audit' as any)}
-                    className="text-[11px] text-[#2D124D] font-bold hover:underline cursor-pointer"
+                    className="text-[11px] text-[#5844A8] font-bold hover:underline cursor-pointer"
                   >
                     View All
                   </button>
@@ -732,7 +738,7 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                   {selectedBranch.recentActivity.map((act, i) => (
                     <div
                       key={i}
-                      className="flex items-start justify-between gap-2 pb-2.5 border-b border-[#F1EFEA] last:border-b-0 last:pb-0"
+                      className="flex items-start justify-between gap-2 pb-2.5 border-b border-gray-100 last:border-b-0 last:pb-0"
                     >
                       <div className="flex items-start gap-2.5">
                         <div
@@ -745,11 +751,11 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                           }`}
                         />
                         <div>
-                          <div className="font-bold text-[#1A1615]">{act.title}</div>
-                          <div className="text-[11px] text-[#8C877D] mt-0.5">{act.subtitle}</div>
+                          <div className="font-bold text-[#1E1548]">{act.title}</div>
+                          <div className="text-[11px] text-gray-400 mt-0.5">{act.subtitle}</div>
                         </div>
                       </div>
-                      <span className="text-[10px] text-[#8C877D] font-mono shrink-0">{act.timeAgo}</span>
+                      <span className="text-[10px] text-gray-400 font-mono shrink-0">{act.timeAgo}</span>
                     </div>
                   ))}
                 </div>
@@ -763,21 +769,21 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
       {/* OPERATING HOURS MODAL */}
       {/* ======================================================== */}
       {isHoursModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto animate-in fade-in duration-150">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-[#E5E0D8] animate-in fade-in zoom-in-95">
-            <div className="px-6 py-5 border-b border-[#F1EFEA] flex items-start justify-between">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 sm:p-6 overflow-y-auto animate-in fade-in duration-150">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-purple-50 animate-in fade-in zoom-in-95">
+            <div className="px-6 py-5 border-b border-gray-100 flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#FAF5FF] border border-[#F3E8FF] flex items-center justify-center text-[#8B5CF6]">
+                <div className="w-10 h-10 rounded-2xl bg-purple-50 text-[#5844A8] flex items-center justify-center">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#1A1615]">Operating Hours</h3>
-                  <p className="text-xs text-[#8C877D] mt-0.5">Set the operating hours for this branch.</p>
+                  <h3 className="text-base font-bold text-[#1E1548]">Operating Hours</h3>
+                  <p className="text-xs text-gray-400 mt-0.5">Set the operating hours for this branch.</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsHoursModalOpen(false)}
-                className="text-[#8C877D] hover:text-[#1A1615] p-1.5 cursor-pointer rounded-lg hover:bg-[#FAF8F5]"
+                className="text-gray-400 hover:text-[#1E1548] p-1.5 cursor-pointer rounded-full hover:bg-gray-100 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -786,14 +792,14 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
             <div className="p-6 space-y-3.5 max-h-[60vh] overflow-y-auto">
               {editingHours.map((row, idx) => (
                 <div key={row.day} className="flex items-center justify-between text-xs py-1">
-                  <div className="w-24 font-bold text-[#1A1615]">{row.day}</div>
+                  <div className="w-24 font-bold text-[#1E1548]">{row.day}</div>
 
                   <div className="flex items-center gap-3">
                     <button
                       type="button"
                       onClick={() => handleToggleDay(idx)}
                       className={`w-10 h-5 rounded-full transition-colors relative cursor-pointer ${
-                        row.isOpen ? 'bg-[#2D124D]' : 'bg-[#E5E0D8]'
+                        row.isOpen ? 'bg-[#5844A8]' : 'bg-gray-200'
                       }`}
                     >
                       <span
@@ -805,7 +811,7 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
 
                     {row.isOpen ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-[#8C877D] text-[11px]">Open</span>
+                        <span className="text-gray-400 text-[11px]">Open</span>
                         <select
                           value={row.openTime}
                           onChange={(e) => {
@@ -813,7 +819,7 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                             updated[idx].openTime = e.target.value;
                             setEditingHours(updated);
                           }}
-                          className="px-2 py-1 rounded-lg border border-[#E5E0D8] bg-[#FAF8F5] font-semibold text-[11px] text-[#1A1615] focus:outline-hidden"
+                          className="px-2.5 py-1.5 rounded-xl border border-gray-200 bg-white font-semibold text-[11px] text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
                         >
                           {['06:00 AM', '07:00 AM', '08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM'].map((t) => (
                             <option key={t} value={t}>
@@ -822,7 +828,7 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                           ))}
                         </select>
 
-                        <span className="text-[#8C877D] text-[11px]">Close</span>
+                        <span className="text-gray-400 text-[11px]">Close</span>
                         <select
                           value={row.closeTime}
                           onChange={(e) => {
@@ -830,7 +836,7 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
                             updated[idx].closeTime = e.target.value;
                             setEditingHours(updated);
                           }}
-                          className="px-2 py-1 rounded-lg border border-[#E5E0D8] bg-[#FAF8F5] font-semibold text-[11px] text-[#1A1615] focus:outline-hidden"
+                          className="px-2.5 py-1.5 rounded-xl border border-gray-200 bg-white font-semibold text-[11px] text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
                         >
                           {['08:00 PM', '09:00 PM', '10:00 PM', '11:00 PM', '12:00 AM', '01:00 AM'].map((t) => (
                             <option key={t} value={t}>
@@ -841,46 +847,46 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
 
                         <button
                           type="button"
-                          className="w-6 h-6 rounded-lg border border-[#E5E0D8] bg-white flex items-center justify-center text-[#8C877D] hover:bg-[#FAF8F5] cursor-pointer"
+                          className="w-7 h-7 rounded-xl border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-gray-50 cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     ) : (
-                      <div className="text-[11px] font-semibold text-[#8C877D] w-48 text-left pl-3">Closed</div>
+                      <div className="text-[11px] font-semibold text-gray-400 w-48 text-left pl-3">Closed</div>
                     )}
                   </div>
                 </div>
               ))}
 
-              <div className="mt-4 p-3.5 bg-[#FAF5FF] border border-[#F3E8FF] rounded-2xl flex items-center justify-between cursor-pointer hover:border-[#8B5CF6] transition-colors">
+              <div className="mt-4 p-4 bg-purple-50/50 border border-purple-100 rounded-2xl flex items-center justify-between cursor-pointer hover:border-[#5844A8] transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-white border border-[#E9D5FF] flex items-center justify-center text-[#8B5CF6]">
+                  <div className="w-8 h-8 rounded-xl bg-white border border-purple-100 flex items-center justify-center text-[#5844A8]">
                     <Calendar className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-[#1A1615]">Set Special Hours / Holidays</div>
-                    <div className="text-[10px] text-[#8C877D]">
+                    <div className="text-xs font-bold text-[#1E1548]">Set Special Hours / Holidays</div>
+                    <div className="text-[10px] text-gray-400">
                       Add different timings for special days, holidays or events.
                     </div>
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-[#8C877D]" />
+                <ChevronRight className="w-4 h-4 text-gray-400" />
               </div>
             </div>
 
-            <div className="px-6 py-4 border-t border-[#F1EFEA] flex items-center justify-end gap-2.5 bg-[#FAF8F5]">
+            <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-2.5 bg-gray-50/50">
               <button
                 type="button"
                 onClick={() => setIsHoursModalOpen(false)}
-                className="px-4 py-2 bg-white border border-[#E5E0D8] hover:bg-[#F5F2EC] rounded-xl text-xs font-bold text-[#6E6A66] cursor-pointer"
+                className="px-4 py-2 bg-white border border-gray-200 hover:bg-gray-100 rounded-xl text-xs font-bold text-gray-600 cursor-pointer transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleSaveHours}
-                className="px-5 py-2 bg-[#2D124D] hover:bg-[#3E1A68] text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer"
+                className="px-5 py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-bold shadow-md shadow-[#5844A8]/20 cursor-pointer transition-all"
               >
                 Save Changes
               </button>
@@ -893,16 +899,16 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
       {/* EDIT BRANCH MODAL */}
       {/* ======================================================== */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto animate-in fade-in duration-150">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-[#E5E0D8] animate-in fade-in zoom-in-95">
-            <div className="px-6 py-5 border-b border-[#F1EFEA] flex items-center justify-between">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 sm:p-6 overflow-y-auto animate-in fade-in duration-150">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-purple-50 animate-in fade-in zoom-in-95">
+            <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-[#1A1615]">Edit Branch Information</h3>
-                <p className="text-xs text-[#8C877D] mt-0.5">{selectedBranch.name}</p>
+                <h3 className="text-base font-bold text-[#1E1548]">Edit Branch Information</h3>
+                <p className="text-xs text-gray-400 mt-0.5">{selectedBranch.name}</p>
               </div>
               <button
                 onClick={() => setIsEditModalOpen(false)}
-                className="text-[#8C877D] hover:text-[#1A1615] p-1.5 cursor-pointer rounded-lg hover:bg-[#FAF8F5]"
+                className="text-gray-400 hover:text-[#1E1548] p-1.5 cursor-pointer rounded-full hover:bg-gray-100 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -910,57 +916,57 @@ export const WebBranchesView: React.FC<WebBranchesViewProps> = ({
 
             <form onSubmit={handleSaveEdit} className="p-6 space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-[#6E6A66] uppercase mb-1">Branch Name</label>
+                <label className="block font-bold text-[#1E1548] mb-1">Branch Name</label>
                 <input
                   type="text"
                   required
                   value={editForm.name}
                   onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  className="w-full px-3.5 py-2 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                  className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-[#6E6A66] uppercase mb-1">Branch Type</label>
+                <label className="block font-bold text-[#1E1548] mb-1">Branch Type</label>
                 <input
                   type="text"
                   value={editForm.type}
                   onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
-                  className="w-full px-3.5 py-2 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                  className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-[#6E6A66] uppercase mb-1">Full Address</label>
+                <label className="block font-bold text-[#1E1548] mb-1">Full Address</label>
                 <input
                   type="text"
                   value={editForm.address}
                   onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
-                  className="w-full px-3.5 py-2 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                  className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-[#6E6A66] uppercase mb-1">Description</label>
+                <label className="block font-bold text-[#1E1548] mb-1">Description</label>
                 <textarea
                   rows={3}
                   value={editForm.description}
                   onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                  className="w-full px-3.5 py-2 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                  className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
                 />
               </div>
 
-              <div className="pt-3 border-t border-[#F1EFEA] flex items-center justify-end gap-2.5">
+              <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setIsEditModalOpen(false)}
-                  className="px-4 py-2 bg-white border border-[#E5E0D8] hover:bg-[#FAF8F5] rounded-xl text-xs font-bold text-[#6E6A66] cursor-pointer"
+                  className="px-4 py-2 bg-white border border-gray-200 hover:bg-gray-100 rounded-xl text-xs font-bold text-gray-600 cursor-pointer transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#2D124D] hover:bg-[#3E1A68] text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer"
+                  className="px-5 py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-bold shadow-md shadow-[#5844A8]/20 cursor-pointer transition-all"
                 >
                   Save Changes
                 </button>

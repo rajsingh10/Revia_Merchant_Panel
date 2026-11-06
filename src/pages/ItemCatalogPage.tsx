@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { TabletMenuView } from '../components/menu/TabletMenuView';
 import {
   Upload,
   Plus,
@@ -466,7 +467,7 @@ const INITIAL_MENU_ITEMS: MenuItemRecord[] = [
   },
 ];
 
-export const ItemCatalogPage: React.FC = () => {
+export const WebItemCatalogView: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { items } = useSelector((state: RootState) => state.catalog);
 
@@ -2520,3 +2521,33 @@ export const ItemCatalogPage: React.FC = () => {
     </div>
   );
 };
+
+export const ItemCatalogPage: React.FC = () => {
+  const [isTabletOrMobile, setIsTabletOrMobile] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('view') === 'tablet' || params.get('device') === 'tablet') return true;
+      return window.innerWidth < 1024;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      const params = new URLSearchParams(window.location.search);
+      if (!params.get('view') && !params.get('device')) {
+        setIsTabletOrMobile(window.innerWidth < 1024);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (isTabletOrMobile) {
+    return <TabletMenuView />;
+  }
+
+  return <WebItemCatalogView />;
+};
+
+export default ItemCatalogPage;

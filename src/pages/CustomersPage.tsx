@@ -360,28 +360,38 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
       );
 
       return (
-        <div className="min-h-screen bg-[#FAF8F5] pb-16 font-sans text-[#1A1615]">
-          {/* Main Web Header */}
-          <div className="bg-white border-b border-[#EAE6E1] px-6 py-4">
-            <div className="max-w-[1400px] mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+          <div className="max-w-[1400px] mx-auto space-y-6">
+            {/* Breadcrumb Navigation */}
+            <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
+              <button
+                onClick={() => setSelectedCustomerId(null)}
+                className="hover:text-[#1E1548] cursor-pointer transition-colors"
+              >
+                Customer Directory
+              </button>
+              <span>&gt;</span>
+              <span className="text-[#1E1548] font-bold">Customer Details</span>
+            </div>
+
+            {/* Main Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-2xl font-bold text-[#1A1615] tracking-tight">
-                    Customer Details
-                  </h1>
-                  <span className="text-[#A855F7] text-lg font-bold">✦</span>
-                </div>
-                <p className="text-xs text-[#8C877D] mt-0.5">
+                <h1 className="text-2xl lg:text-3xl font-black text-[#1E1548] tracking-tight flex items-center gap-2">
+                  Customer Details
+                  <Sparkles className="w-5 h-5 text-amber-400 fill-amber-400" />
+                </h1>
+                <p className="text-xs sm:text-sm text-gray-400 mt-1 font-medium">
                   View customer profile, purchase history, loyalty activity and active offers.
                 </p>
               </div>
 
               <div className="flex items-center gap-3">
                 {/* View Mode Switcher */}
-                <div className="bg-[#FAF8F5] p-1 rounded-xl border border-gray-200 flex items-center">
+                <div className="bg-white p-1 rounded-xl border border-gray-200 flex items-center shadow-2xs">
                   <button
                     onClick={() => setDeviceView('web')}
-                    className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-[#2D124D] text-white flex items-center gap-1.5 cursor-pointer"
+                    className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-[#5844A8] text-white flex items-center gap-1.5 cursor-pointer shadow-xs"
                   >
                     <Laptop className="w-3.5 h-3.5" />
                     <span>Web UI</span>
@@ -397,19 +407,17 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
 
                 <button
                   onClick={() => handleOpenWebEditModal(cust)}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#2D124D] text-white text-sm font-semibold hover:bg-[#3B1864] transition-all shadow-sm cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#5844A8] text-white text-xs font-bold hover:bg-[#47368E] transition-all shadow-md shadow-[#5844A8]/20 cursor-pointer"
                 >
                   <Edit2 className="w-4 h-4 text-white" />
                   <span>Edit Customer</span>
                 </button>
               </div>
             </div>
-          </div>
 
-          <div className="max-w-[1400px] mx-auto px-6 pt-6 space-y-6">
             {/* Top Row: Customer Profile Card + Customer Overview Stats */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              <div className="lg:col-span-5 bg-white rounded-2xl border border-[#F3F4F6] p-6 shadow-xs flex flex-col justify-between">
+              <div className="lg:col-span-5 bg-white rounded-3xl border border-purple-50 p-6 shadow-sm flex flex-col justify-between">
                 <div>
                   <div className="flex items-start gap-4">
                     <img
@@ -419,26 +427,26 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h2 className="text-lg font-bold text-[#1A1615] tracking-tight truncate">
+                        <h2 className="text-lg font-bold text-[#1E1548] tracking-tight truncate">
                           {cust.name}
                         </h2>
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
                           <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                           {cust.status}
                         </span>
                       </div>
-                      <div className="text-xs text-[#8C877D] mt-0.5">
+                      <div className="text-xs text-gray-400 mt-0.5">
                         <span className="font-semibold text-gray-700">{cust.memberId}</span>
                         <span className="mx-1.5">|</span>
                         <span>Member Since {cust.memberSince}</span>
                       </div>
-                      <div className="flex items-center gap-4 mt-3 text-xs text-[#6B7280]">
+                      <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
                         <div className="flex items-center gap-1.5">
-                          <Phone className="w-3.5 h-3.5 text-[#8C877D]" />
+                          <Phone className="w-3.5 h-3.5 text-gray-400" />
                           <span>{cust.phone}</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <Mail className="w-3.5 h-3.5 text-[#8C877D]" />
+                          <Mail className="w-3.5 h-3.5 text-gray-400" />
                           <span className="truncate max-w-[150px]">{cust.email}</span>
                         </div>
                       </div>
@@ -447,76 +455,76 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 mt-6 pt-4 border-t border-gray-100">
-                  <div className="bg-[#FAF8F5] rounded-xl p-3 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-[#FEFCE8] text-[#CA8A04] flex items-center justify-center shrink-0">
-                      <Star className="w-4 h-4 fill-[#CA8A04]" />
+                  <div className="bg-[#FAF8FF] border border-purple-50 rounded-2xl p-3.5 flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0">
+                      <Star className="w-4 h-4 fill-amber-500" />
                     </div>
                     <div>
-                      <div className="text-[11px] text-[#8C877D] font-medium">Points Balance</div>
-                      <div className="text-base font-bold text-[#1A1615]">{cust.pointsBalance}</div>
+                      <div className="text-[11px] text-gray-400 font-semibold">Points Balance</div>
+                      <div className="text-base font-black text-[#1E1548]">{cust.pointsBalance}</div>
                     </div>
                   </div>
 
-                  <div className="bg-[#FAF8F5] rounded-xl p-3 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-[#F5F3FF] text-[#7C3AED] flex items-center justify-center shrink-0">
+                  <div className="bg-[#FAF8FF] border border-purple-50 rounded-2xl p-3.5 flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-purple-50 text-[#5844A8] flex items-center justify-center shrink-0">
                       <Store className="w-4 h-4" />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-[11px] text-[#8C877D] font-medium">Branch</div>
-                      <div className="text-xs font-bold text-[#1A1615] truncate">{cust.preferredBranch}</div>
+                      <div className="text-[11px] text-gray-400 font-semibold">Branch</div>
+                      <div className="text-xs font-bold text-[#1E1548] truncate">{cust.preferredBranch}</div>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Right Customer Overview Stats (7 cols) */}
-              <div className="lg:col-span-7 bg-white rounded-2xl border border-[#F3F4F6] p-6 shadow-xs">
+              <div className="lg:col-span-7 bg-white rounded-3xl border border-purple-50 p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-5">
-                  <h3 className="text-sm font-bold text-[#1A1615]">Customer Overview</h3>
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 bg-[#FAF8F5] px-3 py-1.5 rounded-lg border border-gray-200">
+                  <h3 className="text-sm font-bold text-[#1E1548]">Customer Overview</h3>
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#1E1548] bg-white px-3 py-1.5 rounded-xl border border-gray-200">
                     <span>Last 6 Months</span>
-                    <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-[#FAF8F5] rounded-xl p-4 flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-[#FFF7ED] text-[#EA580C] flex items-center justify-center shrink-0">
+                  <div className="bg-[#FAF8FF] border border-purple-50 rounded-2xl p-4 flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
                       <ShoppingBag className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-lg font-bold text-[#1A1615]">₹{cust.totalSpend.toLocaleString()}</div>
-                      <div className="text-xs text-[#8C877D] font-medium">Total Spend</div>
+                      <div className="text-lg font-black text-[#1E1548]">₹{cust.totalSpend.toLocaleString()}</div>
+                      <div className="text-xs text-gray-400 font-semibold">Total Spend</div>
                     </div>
                   </div>
 
-                  <div className="bg-[#FAF8F5] rounded-xl p-4 flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-[#F5F3FF] text-[#7C3AED] flex items-center justify-center shrink-0">
+                  <div className="bg-[#FAF8FF] border border-purple-50 rounded-2xl p-4 flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-purple-50 text-[#5844A8] flex items-center justify-center shrink-0">
                       <Layers className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-lg font-bold text-[#1A1615]">{cust.totalOrders}</div>
-                      <div className="text-xs text-[#8C877D] font-medium">Total Orders</div>
+                      <div className="text-lg font-black text-[#1E1548]">{cust.totalOrders}</div>
+                      <div className="text-xs text-gray-400 font-semibold">Total Orders</div>
                     </div>
                   </div>
 
-                  <div className="bg-[#FAF8F5] rounded-xl p-4 flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-[#FEFCE8] text-[#CA8A04] flex items-center justify-center shrink-0">
-                      <Star className="w-5 h-5 fill-[#CA8A04]" />
+                  <div className="bg-[#FAF8FF] border border-purple-50 rounded-2xl p-4 flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0">
+                      <Star className="w-5 h-5 fill-amber-500" />
                     </div>
                     <div>
-                      <div className="text-lg font-bold text-[#1A1615]">{cust.pointsBalance}</div>
-                      <div className="text-xs text-[#8C877D] font-medium">Points Balance</div>
+                      <div className="text-lg font-black text-[#1E1548]">{cust.pointsBalance}</div>
+                      <div className="text-xs text-gray-400 font-semibold">Points Balance</div>
                     </div>
                   </div>
 
-                  <div className="bg-[#FAF8F5] rounded-xl p-4 flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-[#FFF1F2] text-[#E11D48] flex items-center justify-center shrink-0">
+                  <div className="bg-[#FAF8FF] border border-purple-50 rounded-2xl p-4 flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-pink-50 text-pink-500 flex items-center justify-center shrink-0">
                       <Tag className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-lg font-bold text-[#1A1615]">{cust.offersUsed}</div>
-                      <div className="text-xs text-[#8C877D] font-medium">Offers Used</div>
+                      <div className="text-lg font-black text-[#1E1548]">{cust.offersUsed}</div>
+                      <div className="text-xs text-gray-400 font-semibold">Offers Used</div>
                     </div>
                   </div>
                 </div>
@@ -621,18 +629,18 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                       value={webPurchaseSearch}
                       onChange={(e) => setWebPurchaseSearch(e.target.value)}
                       placeholder="Search by order ID or item..."
-                      className="pl-8 pr-3 py-1.5 text-xs bg-[#FAF8F5] border border-gray-200 rounded-lg outline-none focus:border-[#7C3AED] w-[220px]"
+                      className="pl-8 pr-3 py-1.5 text-xs bg-white border border-gray-200 rounded-xl outline-none focus:border-[#5844A8] w-[220px] text-[#1E1548] font-semibold"
                     />
                   </div>
 
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 bg-[#FAF8F5] border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors">
-                    <Filter className="w-3.5 h-3.5 text-gray-500" />
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+                    <Filter className="w-3.5 h-3.5 text-gray-400" />
                     <span>Filter</span>
                   </button>
 
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 bg-[#FAF8F5] px-3 py-1.5 rounded-lg border border-gray-200">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#1E1548] bg-white px-3 py-1.5 rounded-xl border border-gray-200">
                     <span>Last 6 Months</span>
-                    <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
                   </div>
                 </div>
               </div>
@@ -640,7 +648,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
               <div className="overflow-x-auto mt-4">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-gray-100 text-[11px] font-bold text-[#8C877D] uppercase tracking-wider">
+                    <tr className="border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider bg-gray-50/60">
                       <th className="py-3 px-3">Order ID</th>
                       <th className="py-3 px-3">Branch</th>
                       <th className="py-3 px-3">Date & Time</th>
@@ -650,30 +658,30 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                       <th className="py-3 px-3 text-right">Points Earned</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50 text-xs">
+                  <tbody className="divide-y divide-gray-100 text-xs">
                     {filteredPurchases.map((order) => (
-                      <tr key={order.id} className="hover:bg-[#FAF8F5]/80 transition-colors">
-                        <td className="py-3.5 px-3 font-semibold text-[#1A1615]">{order.id}</td>
-                        <td className="py-3.5 px-3 text-[#6E6A66]">{order.branch}</td>
-                        <td className="py-3.5 px-3 text-[#6E6A66]">{order.dateTime}</td>
+                      <tr key={order.id} className="hover:bg-[#FAF8FF]/60 transition-colors">
+                        <td className="py-3.5 px-3 font-semibold text-[#1E1548]">{order.id}</td>
+                        <td className="py-3.5 px-3 text-gray-600">{order.branch}</td>
+                        <td className="py-3.5 px-3 text-gray-600">{order.dateTime}</td>
                         <td className="py-3.5 px-3">
                           <div className="flex items-center gap-2.5">
                             <img
                               src={order.itemImage}
                               alt={order.itemName}
-                              className="w-8 h-8 rounded-lg object-cover border border-gray-100"
+                              className="w-8 h-8 rounded-lg object-cover border border-purple-50"
                             />
                             <div>
-                              <div className="font-semibold text-[#1A1615]">{order.itemName}</div>
-                              <div className="text-[10px] text-[#8C877D]">{order.itemCategory}</div>
+                              <div className="font-bold text-[#1E1548]">{order.itemName}</div>
+                              <div className="text-[10px] text-gray-400">{order.itemCategory}</div>
                             </div>
                           </div>
                         </td>
-                        <td className="py-3.5 px-3 font-bold text-[#1A1615]">₹{order.amount}</td>
+                        <td className="py-3.5 px-3 font-bold text-[#1E1548]">₹{order.amount}</td>
                         <td className="py-3.5 px-3">
-                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#FAF8F5] border border-gray-200 text-[11px] font-medium text-gray-700">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-50 border border-purple-100 text-[11px] font-bold text-[#5844A8]">
                             {order.paymentMethod === 'Card' ? (
-                              <CreditCard className="w-3 h-3 text-[#7C3AED]" />
+                              <CreditCard className="w-3 h-3 text-[#5844A8]" />
                             ) : (
                               <QrCode className="w-3 h-3 text-[#059669]" />
                             )}
@@ -690,7 +698,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
               <div className="pt-6 mt-4 border-t border-gray-100">
                 <button
                   onClick={() => setSelectedCustomerId(null)}
-                  className="inline-flex items-center gap-2 px-4 py-2 border border-[#EAE6E1] bg-white rounded-xl text-xs font-semibold text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors shadow-xs cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 bg-white rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#1E1548] transition-colors shadow-2xs cursor-pointer"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Back to Customer Directory</span>
@@ -709,19 +717,19 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
       const cust = selectedTabletCustomer;
 
       return (
-        <div className="min-h-screen bg-[#FBF9FD] pb-24 font-sans text-[#1A1615]">
-          <div className="bg-white border-b border-[#F1EFEA] px-5 lg:px-8 py-3.5">
+        <div className="min-h-screen bg-[#FAF8FF] pb-24 font-sans text-[#1A1615]">
+          <div className="bg-white border-b border-gray-100 px-5 lg:px-8 py-3.5">
             <div className="max-w-[1280px] mx-auto flex items-center justify-between">
               <button
                 onClick={() => setSelectedCustomerId(null)}
-                className="inline-flex items-center gap-2 text-xs font-bold text-[#6E6A66] hover:text-[#1A1615] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 text-xs font-bold text-gray-600 hover:text-[#1E1548] transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to Directory</span>
               </button>
 
               <div className="flex items-center gap-2">
-                <div className="bg-[#FAF8F5] p-1 rounded-xl border border-gray-200 flex items-center">
+                <div className="bg-white p-1 rounded-xl border border-gray-200 flex items-center">
                   <button
                     onClick={() => setDeviceView('web')}
                     className="px-2 py-1 rounded-lg text-xs font-bold text-gray-600 hover:text-gray-900 cursor-pointer"
@@ -817,18 +825,23 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
      VIEW: DIRECTORY (DEFAULT TO WEB DESKTOP UI, WITH TABLET UI OPTION)
      ========================================================================= */
   return (
-    <div className="min-h-screen bg-[#FAF8F5] pb-16 font-sans text-[#1A1615]">
-      {/* Header Bar */}
-      <div className="bg-white border-b border-[#EAE6E1] px-6 py-4">
-        <div className="max-w-[1400px] mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+      <div className="max-w-[1400px] mx-auto space-y-6">
+        {/* Breadcrumb Navigation */}
+        <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
+          <span>Home</span>
+          <span>&gt;</span>
+          <span className="text-[#1E1548] font-bold">Customer Directory</span>
+        </div>
+
+        {/* Header Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-[#1A1615] tracking-tight">
-                Customer Directory
-              </h1>
-              <span className="text-[#A855F7] text-lg font-bold">✦</span>
-            </div>
-            <p className="text-xs text-[#8C877D] mt-0.5">
+            <h1 className="text-2xl lg:text-3xl font-black text-[#1E1548] tracking-tight flex items-center gap-2">
+              Customer Directory
+              <Sparkles className="w-5 h-5 text-amber-400 fill-amber-400" />
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-400 mt-1 font-medium">
               View and manage your customers, their visits, purchases and loyalty activity.
             </p>
           </div>
@@ -837,37 +850,35 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
             {/* Add Customer Button */}
             <button
               onClick={() => setIsWebAddModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#2D124D] text-white text-sm font-semibold hover:bg-[#3B1864] transition-all shadow-sm cursor-pointer self-start sm:self-auto shrink-0"
+              className="px-5 py-2.5 rounded-xl bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-[#5844A8]/20 transition-all cursor-pointer self-start sm:self-auto shrink-0"
             >
               <Plus className="w-4 h-4 text-white" />
-              <span>Add Customer</span>
+              <span>+ Add Customer</span>
             </button>
           </div>
         </div>
-      </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 pt-6 space-y-6">
         {/* ========================================================================= */}
-        {/* 1. WEB DESKTOP FLOW (Frame 629069.png) */}
+        {/* 1. WEB DESKTOP FLOW */}
         {/* ========================================================================= */}
         {deviceView === 'web' && (
           <div className="space-y-6 animate-in fade-in duration-150">
             {/* 4 Metric KPI Cards with Sparklines */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-white rounded-2xl border border-[#F3F4F6] p-5 shadow-xs flex flex-col justify-between">
+              <div className="bg-white rounded-3xl p-5 lg:p-6 border border-purple-50 shadow-sm flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between">
-                    <div className="w-10 h-10 rounded-xl bg-[#FDF2F8] text-[#DB2777] flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-2xl bg-pink-50 text-pink-500 flex items-center justify-center">
                       <Users className="w-5 h-5" />
                     </div>
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#059669] bg-[#ECFDF5] px-2 py-0.5 rounded-full">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                       <span>&uarr; 12%</span>
-                      <span className="text-[10px] text-gray-500 font-normal">vs last month</span>
+                      <span className="text-[10px] text-gray-400 font-normal">vs last month</span>
                     </span>
                   </div>
                   <div className="mt-3">
-                    <div className="text-xs font-medium text-[#8C877D]">Total Customers</div>
-                    <div className="text-2xl font-bold text-[#1A1615] mt-0.5">1,248</div>
+                    <div className="text-xs font-bold text-gray-400">Total Customers</div>
+                    <div className="text-3xl font-black text-[#1E1548] mt-0.5">1,248</div>
                   </div>
                 </div>
                 <div className="mt-3 h-8 w-full">
@@ -877,20 +888,20 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-[#F3F4F6] p-5 shadow-xs flex flex-col justify-between">
+              <div className="bg-white rounded-3xl p-5 lg:p-6 border border-purple-50 shadow-sm flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between">
-                    <div className="w-10 h-10 rounded-xl bg-[#F5F3FF] text-[#7C3AED] flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-2xl bg-purple-50 text-[#5844A8] flex items-center justify-center">
                       <UserCheck className="w-5 h-5" />
                     </div>
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#059669] bg-[#ECFDF5] px-2 py-0.5 rounded-full">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                       <span>&uarr; 8%</span>
-                      <span className="text-[10px] text-gray-500 font-normal">vs last month</span>
+                      <span className="text-[10px] text-gray-400 font-normal">vs last month</span>
                     </span>
                   </div>
                   <div className="mt-3">
-                    <div className="text-xs font-medium text-[#8C877D]">Active Customers</div>
-                    <div className="text-2xl font-bold text-[#1A1615] mt-0.5">892</div>
+                    <div className="text-xs font-bold text-gray-400">Active Customers</div>
+                    <div className="text-3xl font-black text-[#1E1548] mt-0.5">892</div>
                   </div>
                 </div>
                 <div className="mt-3 h-8 w-full">
@@ -900,20 +911,20 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-[#F3F4F6] p-5 shadow-xs flex flex-col justify-between">
+              <div className="bg-white rounded-3xl p-5 lg:p-6 border border-purple-50 shadow-sm flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between">
-                    <div className="w-10 h-10 rounded-xl bg-[#FFF1F2] text-[#F43F5E] flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center">
                       <UserPlus className="w-5 h-5" />
                     </div>
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#059669] bg-[#ECFDF5] px-2 py-0.5 rounded-full">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                       <span>&uarr; 16%</span>
-                      <span className="text-[10px] text-gray-500 font-normal">vs last month</span>
+                      <span className="text-[10px] text-gray-400 font-normal">vs last month</span>
                     </span>
                   </div>
                   <div className="mt-3">
-                    <div className="text-xs font-medium text-[#8C877D]">New Customers (This Month)</div>
-                    <div className="text-2xl font-bold text-[#1A1615] mt-0.5">120</div>
+                    <div className="text-xs font-bold text-gray-400">New Customers (This Month)</div>
+                    <div className="text-3xl font-black text-[#1E1548] mt-0.5">120</div>
                   </div>
                 </div>
                 <div className="mt-3 h-8 w-full">
@@ -923,20 +934,20 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-[#F3F4F6] p-5 shadow-xs flex flex-col justify-between">
+              <div className="bg-white rounded-3xl p-5 lg:p-6 border border-purple-50 shadow-sm flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between">
-                    <div className="w-10 h-10 rounded-xl bg-[#FEFCE8] text-[#CA8A04] flex items-center justify-center">
-                      <Star className="w-5 h-5 fill-[#CA8A04]" />
+                    <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                      <Star className="w-5 h-5 fill-amber-500" />
                     </div>
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#059669] bg-[#ECFDF5] px-2 py-0.5 rounded-full">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                       <span>&uarr; 20%</span>
-                      <span className="text-[10px] text-gray-500 font-normal">vs last month</span>
+                      <span className="text-[10px] text-gray-400 font-normal">vs last month</span>
                     </span>
                   </div>
                   <div className="mt-3">
-                    <div className="text-xs font-medium text-[#8C877D]">Highest Loyalty Tier</div>
-                    <div className="text-2xl font-bold text-[#1A1615] mt-0.5">318</div>
+                    <div className="text-xs font-bold text-gray-400">Highest Loyalty Tier</div>
+                    <div className="text-3xl font-black text-[#1E1548] mt-0.5">318</div>
                   </div>
                 </div>
                 <div className="mt-3 h-8 w-full">
@@ -947,89 +958,89 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
               </div>
             </div>
 
-            {/* Filter and Search Bar */}
-            <div className="bg-white rounded-2xl border border-[#F3F4F6] p-3 shadow-xs flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
-              <div className="relative flex-1 max-w-md">
-                <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={webSearchQuery}
-                  onChange={(e) => {
-                    setWebSearchQuery(e.target.value);
-                    setWebCurrentPage(1);
-                  }}
-                  placeholder="Search by name, phone number or member ID..."
-                  className="w-full pl-9 pr-4 py-2 text-xs bg-[#FAF8F5] border border-transparent focus:border-[#7C3AED] rounded-xl outline-none transition-all placeholder:text-gray-400"
-                />
+            {/* Filter and Search Bar Container */}
+            <div className="bg-white rounded-3xl p-6 lg:p-8 border border-purple-50 shadow-sm space-y-6">
+              <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pb-2 border-b border-gray-100">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={webSearchQuery}
+                    onChange={(e) => {
+                      setWebSearchQuery(e.target.value);
+                      setWebCurrentPage(1);
+                    }}
+                    placeholder="Search by name, phone number or member ID..."
+                    className="w-full pl-9 pr-4 py-2.5 text-xs font-semibold text-[#1E1548] bg-white border border-gray-200 focus:outline-none focus:border-[#5844A8] rounded-xl transition-all placeholder:text-gray-400"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <div className="relative">
+                    <select
+                      value={webTierFilter}
+                      onChange={(e) => {
+                        setWebTierFilter(e.target.value as any);
+                        setWebCurrentPage(1);
+                      }}
+                      className="appearance-none pl-3 pr-8 py-2 text-xs font-bold bg-white border border-gray-200 rounded-xl text-[#1E1548] outline-none hover:border-[#5844A8] transition-colors cursor-pointer"
+                    >
+                      <option value="All">All Tiers</option>
+                      <option value="Platinum">Platinum</option>
+                      <option value="Gold">Gold</option>
+                      <option value="Silver">Silver</option>
+                      <option value="Bronze">Bronze</option>
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+
+                  <div className="relative">
+                    <select
+                      value={webStatusFilter}
+                      onChange={(e) => {
+                        setWebStatusFilter(e.target.value as any);
+                        setWebCurrentPage(1);
+                      }}
+                      className="appearance-none pl-3 pr-8 py-2 text-xs font-bold bg-white border border-gray-200 rounded-xl text-[#1E1548] outline-none hover:border-[#5844A8] transition-colors cursor-pointer"
+                    >
+                      <option value="All">All Status</option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+
+                  <div className="relative">
+                    <select
+                      value={webBranchFilter}
+                      onChange={(e) => {
+                        setWebBranchFilter(e.target.value);
+                        setWebCurrentPage(1);
+                      }}
+                      className="appearance-none pl-3 pr-8 py-2 text-xs font-bold bg-white border border-gray-200 rounded-xl text-[#1E1548] outline-none hover:border-[#5844A8] transition-colors cursor-pointer"
+                    >
+                      <option value="All">All Branches</option>
+                      <option value="Connaught Place">Connaught Place</option>
+                      <option value="CP – Bakery">CP – Bakery</option>
+                      <option value="Cyber Hub">Cyber Hub</option>
+                      <option value="Indiranagar">Indiranagar</option>
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+
+                  <div className="relative flex items-center bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-[#1E1548] hover:border-[#5844A8] transition-colors cursor-pointer">
+                    <Calendar className="w-3.5 h-3.5 text-gray-400 mr-1.5" />
+                    <span>Select Date</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400 ml-2" />
+                  </div>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <div className="relative">
-                  <select
-                    value={webTierFilter}
-                    onChange={(e) => {
-                      setWebTierFilter(e.target.value as any);
-                      setWebCurrentPage(1);
-                    }}
-                    className="appearance-none pl-3 pr-8 py-2 text-xs font-medium bg-[#FAF8F5] border border-gray-200 rounded-xl text-gray-700 outline-none hover:bg-gray-100 transition-colors cursor-pointer"
-                  >
-                    <option value="All">All Tiers</option>
-                    <option value="Platinum">Platinum</option>
-                    <option value="Gold">Gold</option>
-                    <option value="Silver">Silver</option>
-                    <option value="Bronze">Bronze</option>
-                  </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                </div>
-
-                <div className="relative">
-                  <select
-                    value={webStatusFilter}
-                    onChange={(e) => {
-                      setWebStatusFilter(e.target.value as any);
-                      setWebCurrentPage(1);
-                    }}
-                    className="appearance-none pl-3 pr-8 py-2 text-xs font-medium bg-[#FAF8F5] border border-gray-200 rounded-xl text-gray-700 outline-none hover:bg-gray-100 transition-colors cursor-pointer"
-                  >
-                    <option value="All">All Status</option>
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                </div>
-
-                <div className="relative">
-                  <select
-                    value={webBranchFilter}
-                    onChange={(e) => {
-                      setWebBranchFilter(e.target.value);
-                      setWebCurrentPage(1);
-                    }}
-                    className="appearance-none pl-3 pr-8 py-2 text-xs font-medium bg-[#FAF8F5] border border-gray-200 rounded-xl text-gray-700 outline-none hover:bg-gray-100 transition-colors cursor-pointer"
-                  >
-                    <option value="All">All Branches</option>
-                    <option value="Connaught Place">Connaught Place</option>
-                    <option value="CP – Bakery">CP – Bakery</option>
-                    <option value="Cyber Hub">Cyber Hub</option>
-                    <option value="Indiranagar">Indiranagar</option>
-                  </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                </div>
-
-                <div className="relative flex items-center bg-[#FAF8F5] border border-gray-200 rounded-xl px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer">
-                  <Calendar className="w-3.5 h-3.5 text-gray-400 mr-1.5" />
-                  <span>Select Date</span>
-                  <ChevronDown className="w-3.5 h-3.5 text-gray-400 ml-2" />
-                </div>
-              </div>
-            </div>
-
-            {/* Desktop Customer Table */}
-            <div className="bg-white rounded-2xl border border-[#F3F4F6] shadow-xs overflow-hidden">
+              {/* Desktop Customer Table */}
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-[#FAFAFA] border-b border-[#F3F4F6] text-[11px] font-bold text-[#8C877D] tracking-wider uppercase">
+                    <tr className="bg-gray-50/60 border-b border-gray-100 text-[11px] font-bold text-gray-400 tracking-wider uppercase">
                       <th className="py-3.5 px-4">Customer Details</th>
                       <th className="py-3.5 px-4">Member ID</th>
                       <th className="py-3.5 px-4">Phone No.</th>
@@ -1039,11 +1050,11 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                       <th className="py-3.5 px-4 text-center">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#F3F4F6] text-xs">
+                  <tbody className="divide-y divide-gray-100 text-xs">
                     {paginatedWebCustomers.map((cust) => (
                       <tr
                         key={cust.id}
-                        className="hover:bg-[#FAF8F5]/80 transition-colors group cursor-pointer"
+                        className="hover:bg-[#FAF8FF]/60 transition-colors group cursor-pointer"
                         onClick={() => handleViewCustomer(cust.id)}
                       >
                         <td className="py-3.5 px-4">
@@ -1054,49 +1065,49 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                               {cust.initials}
                             </div>
                             <div className="min-w-0">
-                              <div className="font-bold text-[#1A1615] group-hover:text-[#7C3AED] transition-colors">
+                              <div className="font-bold text-[#1E1548] group-hover:text-[#5844A8] transition-colors">
                                 {cust.name}
                               </div>
-                              <div className="text-[11px] text-[#8C877D] truncate">{cust.email}</div>
+                              <div className="text-[11px] text-gray-400 truncate">{cust.email}</div>
                             </div>
                           </div>
                         </td>
 
-                        <td className="py-3.5 px-4 font-semibold text-[#1A1615]">{cust.memberId}</td>
-                        <td className="py-3.5 px-4 text-[#6E6A66]">{cust.phone}</td>
+                        <td className="py-3.5 px-4 font-semibold text-[#1E1548]">{cust.memberId}</td>
+                        <td className="py-3.5 px-4 text-gray-600">{cust.phone}</td>
                         <td className="py-3.5 px-4">{renderWebTierBadge(cust.tier)}</td>
                         <td className="py-3.5 px-4">
                           {cust.status === 'Active' ? (
-                            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#10B981]">
+                            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#10B981]">
                               <span className="w-2 h-2 rounded-full bg-[#10B981]" /> Active
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#EF4444]">
+                            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#EF4444]">
                               <span className="w-2 h-2 rounded-full bg-[#EF4444]" /> Inactive
                             </span>
                           )}
                         </td>
-                        <td className="py-3.5 px-4 text-center font-bold text-[#1A1615]">{cust.offersUsed}</td>
+                        <td className="py-3.5 px-4 text-center font-bold text-[#1E1548]">{cust.offersUsed}</td>
                         <td className="py-3.5 px-4 text-center" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center justify-center gap-1.5 text-gray-400">
                             <button
                               title="View Customer Details"
                               onClick={() => handleViewCustomer(cust.id)}
-                              className="p-1.5 rounded-lg hover:text-[#7C3AED] hover:bg-[#FAF5FF] transition-colors cursor-pointer"
+                              className="p-1.5 rounded-lg hover:text-[#5844A8] hover:bg-purple-50 transition-colors cursor-pointer"
                             >
                               <Eye className="w-4 h-4" />
                             </button>
                             <button
                               title="Customer Analytics"
                               onClick={() => handleViewCustomer(cust.id)}
-                              className="p-1.5 rounded-lg hover:text-[#7C3AED] hover:bg-[#FAF5FF] transition-colors cursor-pointer"
+                              className="p-1.5 rounded-lg hover:text-[#5844A8] hover:bg-purple-50 transition-colors cursor-pointer"
                             >
                               <BarChart2 className="w-4 h-4" />
                             </button>
                             <button
                               title="More Options"
                               onClick={() => setWebMenuOpenId(webMenuOpenId === cust.id ? null : cust.id)}
-                              className="p-1.5 rounded-lg hover:text-[#1A1615] hover:bg-gray-100 transition-colors cursor-pointer"
+                              className="p-1.5 rounded-lg hover:text-[#1E1548] hover:bg-gray-100 transition-colors cursor-pointer"
                             >
                               <MoreVertical className="w-4 h-4" />
                             </button>
@@ -1109,17 +1120,17 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
               </div>
 
               {/* Pagination */}
-              <div className="px-4 py-3.5 border-t border-[#F3F4F6] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#8C877D]">
+              <div className="pt-3 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-400">
                 <div>
-                  Showing <span className="font-semibold text-[#1A1615]">1–{paginatedWebCustomers.length}</span> of{' '}
-                  <span className="font-semibold text-[#1A1615]">{filteredWebCustomers.length}</span> customers
+                  Showing <span className="font-semibold text-[#1E1548]">1–{paginatedWebCustomers.length}</span> of{' '}
+                  <span className="font-semibold text-[#1E1548]">{filteredWebCustomers.length}</span> customers
                 </div>
 
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5">
                   <button
                     disabled={webCurrentPage === 1}
                     onClick={() => setWebCurrentPage((p) => Math.max(1, p - 1))}
-                    className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center disabled:opacity-40 cursor-pointer"
+                    className="p-1.5 rounded-xl border border-gray-200 flex items-center justify-center disabled:opacity-40 cursor-pointer text-gray-600 hover:bg-gray-50 transition-colors"
                   >
                     &lt;
                   </button>
@@ -1127,8 +1138,10 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                     <button
                       key={page}
                       onClick={() => setWebCurrentPage(page)}
-                      className={`w-8 h-8 rounded-lg font-semibold flex items-center justify-center cursor-pointer ${
-                        webCurrentPage === page ? 'bg-[#2D124D] text-white' : 'border border-gray-200 text-gray-700'
+                      className={`w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center cursor-pointer transition-all ${
+                        webCurrentPage === page
+                          ? 'bg-[#5844A8] text-white shadow-sm shadow-[#5844A8]/20'
+                          : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
                       }`}
                     >
                       {page}
@@ -1137,7 +1150,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                   <button
                     disabled={webCurrentPage === webTotalPages}
                     onClick={() => setWebCurrentPage((p) => Math.min(webTotalPages, p + 1))}
-                    className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center disabled:opacity-40 cursor-pointer"
+                    className="p-1.5 rounded-xl border border-gray-200 flex items-center justify-center disabled:opacity-40 cursor-pointer text-gray-600 hover:bg-gray-50 transition-colors"
                   >
                     &gt;
                   </button>
@@ -1166,7 +1179,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
               </div>
               <button
                 type="button"
-                className="w-11 h-11 rounded-2xl bg-white border border-[#EAE6E1] flex items-center justify-center text-gray-600 hover:bg-[#FAF8F5] transition-colors shadow-2xs cursor-pointer"
+                className="w-11 h-11 rounded-2xl bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors shadow-2xs cursor-pointer"
               >
                 <Filter className="w-4 h-4" />
               </button>
@@ -1263,14 +1276,14 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative my-auto border border-gray-100">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-[#FAF5FF] text-[#7C3AED] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-purple-50 text-[#5844A8] flex items-center justify-center">
                   <UserPlus className="w-4 h-4" />
                 </div>
-                <h3 className="text-base font-bold text-[#1A1615]">Add New Customer</h3>
+                <h3 className="text-base font-bold text-[#1E1548]">Add New Customer</h3>
               </div>
               <button
                 onClick={() => setIsWebAddModalOpen(false)}
-                className="p-1 text-gray-400 hover:text-gray-700 rounded-lg cursor-pointer"
+                className="p-1 text-gray-400 hover:text-black rounded-lg cursor-pointer transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1278,48 +1291,48 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
 
             <form onSubmit={handleCreateWebCustomer} className="space-y-4 pt-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">Customer Full Name *</label>
+                <label className="block text-xs font-bold text-[#1E1548] mb-1">Customer Full Name *</label>
                 <input
                   type="text"
                   placeholder="e.g. Ananya Sen"
                   value={newWebName}
                   onChange={(e) => setNewWebName(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 text-xs bg-[#FAF8F5] border border-gray-200 rounded-xl focus:bg-white focus:border-[#7C3AED] outline-none"
+                  className="w-full px-3.5 py-2.5 text-xs bg-white border border-gray-200 rounded-xl focus:border-[#5844A8] outline-none text-[#1E1548] font-semibold"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">Phone Number *</label>
+                  <label className="block text-xs font-bold text-[#1E1548] mb-1">Phone Number *</label>
                   <input
                     type="text"
                     placeholder="e.g. 98765 00000"
                     value={newWebPhone}
                     onChange={(e) => setNewWebPhone(e.target.value)}
                     required
-                    className="w-full px-3.5 py-2.5 text-xs bg-[#FAF8F5] border border-gray-200 rounded-xl focus:bg-white focus:border-[#7C3AED] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs bg-white border border-gray-200 rounded-xl focus:border-[#5844A8] outline-none text-[#1E1548] font-semibold"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">Email Address</label>
+                  <label className="block text-xs font-bold text-[#1E1548] mb-1">Email Address</label>
                   <input
                     type="email"
                     placeholder="e.g. ananya@example.com"
                     value={newWebEmail}
                     onChange={(e) => setNewWebEmail(e.target.value)}
-                    className="w-full px-3.5 py-2.5 text-xs bg-[#FAF8F5] border border-gray-200 rounded-xl focus:bg-white focus:border-[#7C3AED] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs bg-white border border-gray-200 rounded-xl focus:border-[#5844A8] outline-none text-[#1E1548] font-semibold"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">Initial Tier</label>
+                  <label className="block text-xs font-bold text-[#1E1548] mb-1">Initial Tier</label>
                   <select
                     value={newWebTier}
                     onChange={(e) => setNewWebTier(e.target.value as any)}
-                    className="w-full px-3.5 py-2.5 text-xs bg-[#FAF8F5] border border-gray-200 rounded-xl focus:bg-white focus:border-[#7C3AED] outline-none bg-white cursor-pointer"
+                    className="w-full px-3.5 py-2.5 text-xs bg-white border border-gray-200 rounded-xl focus:border-[#5844A8] outline-none text-[#1E1548] font-bold cursor-pointer"
                   >
                     <option value="Bronze">Bronze</option>
                     <option value="Silver">Silver</option>
@@ -1328,22 +1341,22 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">Initial Points</label>
+                  <label className="block text-xs font-bold text-[#1E1548] mb-1">Initial Points</label>
                   <input
                     type="number"
                     value={newWebPoints}
                     onChange={(e) => setNewWebPoints(e.target.value)}
-                    className="w-full px-3.5 py-2.5 text-xs bg-[#FAF8F5] border border-gray-200 rounded-xl focus:bg-white focus:border-[#7C3AED] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs bg-white border border-gray-200 rounded-xl focus:border-[#5844A8] outline-none text-[#1E1548] font-semibold"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">Assigned Branch</label>
+                <label className="block text-xs font-bold text-[#1E1548] mb-1">Assigned Branch</label>
                 <select
                   value={newWebBranch}
                   onChange={(e) => setNewWebBranch(e.target.value)}
-                  className="w-full px-3.5 py-2.5 text-xs bg-[#FAF8F5] border border-gray-200 rounded-xl focus:bg-white focus:border-[#7C3AED] outline-none bg-white cursor-pointer"
+                  className="w-full px-3.5 py-2.5 text-xs bg-white border border-gray-200 rounded-xl focus:border-[#5844A8] outline-none text-[#1E1548] font-bold cursor-pointer"
                 >
                   <option value="Connaught Place">Connaught Place</option>
                   <option value="CP – Bakery">CP – Bakery</option>
@@ -1356,13 +1369,13 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsWebAddModalOpen(false)}
-                  className="px-4 py-2.5 border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50 cursor-pointer"
+                  className="px-4 py-2.5 border border-gray-200 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-[#2D124D] text-white rounded-xl text-xs font-semibold hover:bg-[#3B1864] cursor-pointer shadow-xs"
+                  className="px-5 py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-bold cursor-pointer shadow-md shadow-[#5844A8]/20 transition-all"
                 >
                   Create Customer
                 </button>
@@ -1374,18 +1387,18 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
 
       {/* WEB EDIT CUSTOMER MODAL */}
       {isWebEditModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto animate-in fade-in duration-150">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative my-auto border border-gray-100">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 sm:p-6 overflow-y-auto animate-in fade-in duration-150">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative my-auto border border-purple-50">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-[#FAF5FF] text-[#7C3AED] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-purple-50 text-[#5844A8] flex items-center justify-center">
                   <Edit2 className="w-4 h-4" />
                 </div>
-                <h3 className="text-base font-bold text-[#1A1615]">Edit Customer Profile</h3>
+                <h3 className="text-base font-bold text-[#1E1548]">Edit Customer Profile</h3>
               </div>
               <button
                 onClick={() => setIsWebEditModalOpen(false)}
-                className="p-1 text-gray-400 hover:text-gray-700 rounded-lg cursor-pointer"
+                className="p-1 text-gray-400 hover:text-black rounded-lg cursor-pointer transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1393,44 +1406,44 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
 
             <form onSubmit={handleSaveWebEdit} className="space-y-4 pt-4 text-xs">
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Full Name</label>
+                <label className="block font-bold text-[#1E1548] mb-1">Full Name</label>
                 <input
                   type="text"
                   value={editWebName}
                   onChange={(e) => setEditWebName(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-gray-200 rounded-xl focus:bg-white focus:border-[#7C3AED] outline-none"
+                  className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl focus:border-[#5844A8] outline-none text-[#1E1548] font-semibold"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Phone Number</label>
+                  <label className="block font-bold text-[#1E1548] mb-1">Phone Number</label>
                   <input
                     type="text"
                     value={editWebPhone}
                     onChange={(e) => setEditWebPhone(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-gray-200 rounded-xl focus:bg-white focus:border-[#7C3AED] outline-none"
+                    className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl focus:border-[#5844A8] outline-none text-[#1E1548] font-semibold"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Email</label>
+                  <label className="block font-bold text-[#1E1548] mb-1">Email</label>
                   <input
                     type="email"
                     value={editWebEmail}
                     onChange={(e) => setEditWebEmail(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-gray-200 rounded-xl focus:bg-white focus:border-[#7C3AED] outline-none"
+                    className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl focus:border-[#5844A8] outline-none text-[#1E1548] font-semibold"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Tier</label>
+                  <label className="block font-bold text-[#1E1548] mb-1">Tier</label>
                   <select
                     value={editWebTier}
                     onChange={(e) => setEditWebTier(e.target.value as any)}
-                    className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-gray-200 rounded-xl focus:bg-white focus:border-[#7C3AED] outline-none cursor-pointer"
+                    className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl focus:border-[#5844A8] outline-none cursor-pointer text-[#1E1548] font-bold"
                   >
                     <option value="Bronze">Bronze</option>
                     <option value="Silver">Silver</option>
@@ -1439,11 +1452,11 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Status</label>
+                  <label className="block font-bold text-[#1E1548] mb-1">Status</label>
                   <select
                     value={editWebStatus}
                     onChange={(e) => setEditWebStatus(e.target.value as any)}
-                    className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-gray-200 rounded-xl focus:bg-white focus:border-[#7C3AED] outline-none cursor-pointer"
+                    className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl focus:border-[#5844A8] outline-none cursor-pointer text-[#1E1548] font-bold"
                   >
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
@@ -1455,13 +1468,13 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsWebEditModalOpen(false)}
-                  className="px-4 py-2.5 border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50 cursor-pointer"
+                  className="px-4 py-2.5 border border-gray-200 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-[#2D124D] text-white rounded-xl text-xs font-semibold hover:bg-[#3B1864] cursor-pointer shadow-xs"
+                  className="px-5 py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-bold cursor-pointer shadow-md shadow-[#5844A8]/20 transition-all"
                 >
                   Save Changes
                 </button>

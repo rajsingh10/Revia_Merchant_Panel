@@ -316,11 +316,11 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
   const activeStaff = INITIAL_STAFF.find(s => s.id === selectedStaffId) || INITIAL_STAFF[0];
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#1A1615] flex flex-col font-sans pb-28">
+    <div className="min-h-screen bg-[#FAF8FF] text-[#1A1615] flex flex-col font-sans pb-28">
       {/* Top Tablet Navigation Header */}
       <div className="bg-white/95 backdrop-blur-md border-b border-[#F1EFEA] px-4 sm:px-6 md:px-8 py-3.5 sm:py-4 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
         <div className="flex items-center gap-3.5">
-          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#2D124D] to-[#7C3AED] flex items-center justify-center text-white shadow-xs">
+          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#5844A8] to-[#7C3AED] flex items-center justify-center text-white shadow-xs">
             <Sparkles className="w-5 h-5" />
           </div>
           <div>
@@ -344,7 +344,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
               setIsAddStaffOpen(true);
               setAddStaffStep(1);
             }}
-            className="px-3.5 sm:px-5 py-2 sm:py-2.5 bg-[#2D124D] hover:bg-[#3B1864] text-white rounded-xl text-xs font-black flex items-center gap-1.5 sm:gap-2 shadow-md shadow-purple-950/20 cursor-pointer transition-all shrink-0"
+            className="px-3.5 sm:px-5 py-2 sm:py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 sm:gap-2 shadow-md shadow-purple-900/10 cursor-pointer transition-all shrink-0"
           >
             <UserPlus className="w-4 h-4" />
             <span>+ Invite Staff</span>
@@ -466,7 +466,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                 <div className="bg-white rounded-3xl p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3.5">
-                      <div className="w-12 h-12 rounded-2xl bg-[#2D124D] text-white flex items-center justify-center shadow-xs">
+                      <div className="w-12 h-12 rounded-2xl bg-[#5844A8] text-white flex items-center justify-center shadow-xs">
                         <MapPin className="w-6 h-6" />
                       </div>
                       <div>
@@ -478,7 +478,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                     </div>
                     <button
                       onClick={() => setStaffSubView('states')}
-                      className="px-5 py-2.5 bg-[#2D124D] hover:bg-[#3B1864] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md shadow-purple-950/20 cursor-pointer"
+                      className="px-5 py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md shadow-purple-900/10 cursor-pointer"
                     >
                       <span>Explore Locations →</span>
                     </button>
@@ -637,7 +637,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                         setIsAddStaffOpen(true);
                         setAddStaffStep(1);
                       }}
-                      className="px-4 py-2 bg-[#2D124D] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md"
+                      className="px-4 py-2 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md cursor-pointer"
                     >
                       <Plus className="w-4 h-4" />
                       <span>+ Invite Staff</span>
@@ -650,7 +650,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                   <button
                     onClick={() => setDirectoryMode('all')}
                     className={`py-2 text-xs font-black rounded-xl transition-all cursor-pointer ${
-                      directoryMode === 'all' ? 'bg-[#2D124D] text-white shadow-xs' : 'text-gray-500'
+                      directoryMode === 'all' ? 'bg-[#5844A8] text-white shadow-xs' : 'text-gray-500'
                     }`}
                   >
                     All Staff
@@ -661,7 +661,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                       setStaffSubView('states');
                     }}
                     className={`py-2 text-xs font-black rounded-xl transition-all cursor-pointer ${
-                      directoryMode === 'location' ? 'bg-[#2D124D] text-white shadow-xs' : 'text-gray-500'
+                      directoryMode === 'location' ? 'bg-[#5844A8] text-white shadow-xs' : 'text-gray-500'
                     }`}
                   >
                     ★ By Location
@@ -693,7 +693,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                       onClick={() => setDirectoryFilter(f.id as any)}
                       className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
                         directoryFilter === f.id
-                          ? 'bg-[#2D124D] text-white shadow-xs'
+                          ? 'bg-[#5844A8] text-white shadow-xs'
                           : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
                     >
@@ -959,7 +959,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                             setSelectedBranch(br.branch);
                             setStaffSubView('branch_staff');
                           }}
-                          className="px-4 py-2 bg-[#2D124D] text-white rounded-xl text-xs font-black hover:bg-[#3B1864] cursor-pointer"
+                          className="px-4 py-2 bg-[#5844A8] text-white rounded-xl text-xs font-black hover:bg-[#47368E] cursor-pointer"
                         >
                           View Staff ↗
                         </button>
@@ -1032,7 +1032,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                   setIsAddRoleOpen(true);
                   setAddRoleStep(2);
                 }}
-                className="px-5 py-2.5 bg-[#2D124D] hover:bg-[#3B1864] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md shadow-purple-950/20 cursor-pointer"
+                className="px-5 py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md shadow-purple-900/10 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>+ Add New Role</span>
@@ -1103,7 +1103,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                     <h1 className="text-2xl font-black text-[#1A1615]">Staff Activity Log</h1>
                     <p className="text-xs text-[#8C877D] mt-0.5">Track software actions performed by your team across all branches.</p>
                   </div>
-                  <button className="px-5 py-2.5 bg-[#2D124D] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md">
+                  <button className="px-5 py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md cursor-pointer">
                     <Download className="w-4 h-4" />
                     <span>Export</span>
                   </button>
@@ -1252,19 +1252,19 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setReportsSubView('categories')}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold ${reportsSubView === 'categories' ? 'bg-[#2D124D] text-white' : 'bg-white border text-gray-700'}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold ${reportsSubView === 'categories' ? 'bg-[#5844A8] text-white' : 'bg-white border text-gray-700'}`}
                 >
                   Categories
                 </button>
                 <button
                   onClick={() => setReportsSubView('performance')}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold ${reportsSubView === 'performance' ? 'bg-[#2D124D] text-white' : 'bg-white border text-gray-700'}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold ${reportsSubView === 'performance' ? 'bg-[#5844A8] text-white' : 'bg-white border text-gray-700'}`}
                 >
                   Performance
                 </button>
                 <button
                   onClick={() => setReportsSubView('audit')}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold ${reportsSubView === 'audit' ? 'bg-[#2D124D] text-white' : 'bg-white border text-gray-700'}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold ${reportsSubView === 'audit' ? 'bg-[#5844A8] text-white' : 'bg-white border text-gray-700'}`}
                 >
                   Audit Trail
                 </button>
@@ -1294,7 +1294,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                       </div>
                       <button
                         onClick={() => setReportsSubView(rep.title.includes('Performance') ? 'performance' : 'audit')}
-                        className="w-full py-2.5 bg-[#FAF9F5] hover:bg-purple-50 text-[#2D124D] rounded-xl text-xs font-black transition-all cursor-pointer"
+                        className="w-full py-2.5 bg-[#FAF9F5] hover:bg-purple-50 text-[#5844A8] rounded-xl text-xs font-black transition-all cursor-pointer"
                       >
                         Generate Report →
                       </button>
@@ -1365,7 +1365,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                 <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                   <span className="text-sm font-black text-[#1A1615]">Report Preview — Access Modifications</span>
                   <div className="flex gap-2">
-                    <button className="px-4 py-2 bg-[#2D124D] text-white rounded-xl text-xs font-black">Export PDF</button>
+                    <button className="px-4 py-2 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black cursor-pointer">Export PDF</button>
                     <button className="px-4 py-2 bg-white border border-gray-200 text-[#1A1615] rounded-xl text-xs font-black">Export CSV</button>
                   </div>
                 </div>
@@ -1427,7 +1427,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black ${
                       addStaffStep === st.step
-                        ? 'bg-[#2D124D] text-white shadow-xs'
+                        ? 'bg-[#5844A8] text-white shadow-xs'
                         : addStaffStep > st.step
                         ? 'bg-emerald-600 text-white'
                         : 'border-2 border-gray-300 text-gray-400'
@@ -1435,7 +1435,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                   >
                     {addStaffStep > st.step ? '✓' : st.step}
                   </div>
-                  <span className={`text-[10px] font-bold ${addStaffStep >= st.step ? 'text-[#2D124D]' : 'text-gray-400'}`}>
+                  <span className={`text-[10px] font-bold ${addStaffStep >= st.step ? 'text-[#5844A8]' : 'text-gray-400'}`}>
                     {st.label}
                   </span>
                 </div>
@@ -1452,7 +1452,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                     type="text"
                     value={newStaffName}
                     onChange={(e) => setNewStaffName(e.target.value)}
-                    className="w-full bg-[#FAF9F5] border border-gray-200 rounded-xl p-3 text-xs font-bold text-[#1A1615] outline-none"
+                    className="w-full bg-[#FAF8FF] border border-gray-200 rounded-xl p-3 text-xs font-bold text-[#1A1615] outline-none"
                   />
                 </div>
                 <div>
@@ -1461,7 +1461,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                     type="text"
                     value={newStaffEmpId}
                     onChange={(e) => setNewStaffEmpId(e.target.value)}
-                    className="w-full bg-[#FAF9F5] border border-gray-200 rounded-xl p-3 text-xs font-bold text-[#1A1615] outline-none"
+                    className="w-full bg-[#FAF8FF] border border-gray-200 rounded-xl p-3 text-xs font-bold text-[#1A1615] outline-none"
                   />
                 </div>
                 <div>
@@ -1470,7 +1470,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                     type="text"
                     value={newStaffPhone}
                     onChange={(e) => setNewStaffPhone(e.target.value)}
-                    className="w-full bg-[#FAF9F5] border border-gray-200 rounded-xl p-3 text-xs font-bold text-[#1A1615] outline-none"
+                    className="w-full bg-[#FAF8FF] border border-gray-200 rounded-xl p-3 text-xs font-bold text-[#1A1615] outline-none"
                   />
                 </div>
                 <div>
@@ -1479,13 +1479,13 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                     type="text"
                     value={newStaffEmail}
                     onChange={(e) => setNewStaffEmail(e.target.value)}
-                    className="w-full bg-[#FAF9F5] border border-gray-200 rounded-xl p-3 text-xs font-bold text-[#1A1615] outline-none"
+                    className="w-full bg-[#FAF8FF] border border-gray-200 rounded-xl p-3 text-xs font-bold text-[#1A1615] outline-none"
                   />
                 </div>
                 <div className="pt-2 flex justify-end">
                   <button
                     onClick={() => setAddStaffStep(2)}
-                    className="px-6 py-2.5 bg-[#2D124D] text-white rounded-xl text-xs font-bold shadow-md cursor-pointer"
+                    className="px-6 py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-bold shadow-md cursor-pointer"
                   >
                     Next: Role →
                   </button>
@@ -1512,7 +1512,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                       key={r.role}
                       onClick={() => setSelectedRoleForNewStaff(r.role)}
                       className={`p-4 rounded-2xl border-2 flex flex-col justify-between cursor-pointer transition-all ${
-                        selectedRoleForNewStaff === r.role ? 'border-[#2D124D] bg-purple-50/20 shadow-xs' : 'border-gray-200'
+                        selectedRoleForNewStaff === r.role ? 'border-[#5844A8] bg-purple-50/40 shadow-xs' : 'border-gray-200'
                       }`}
                     >
                       <div>
@@ -1520,7 +1520,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                         <p className="text-[10px] text-gray-500 mt-1 leading-snug">{r.desc}</p>
                       </div>
                       <div className="pt-3 flex justify-end">
-                        <div className={`w-4 h-4 rounded-full flex items-center justify-center ${selectedRoleForNewStaff === r.role ? 'border-4 border-[#2D124D]' : 'border-2 border-gray-300'}`} />
+                        <div className={`w-4 h-4 rounded-full flex items-center justify-center ${selectedRoleForNewStaff === r.role ? 'border-4 border-[#5844A8]' : 'border-2 border-gray-300'}`} />
                       </div>
                     </div>
                   ))}
@@ -1530,7 +1530,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                   <button onClick={() => setAddStaffStep(1)} className="text-xs font-bold text-gray-600">← Back</button>
                   <button
                     onClick={() => setAddStaffStep(3)}
-                    className="px-6 py-2.5 bg-[#2D124D] text-white rounded-xl text-xs font-bold shadow-md cursor-pointer"
+                    className="px-6 py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-bold shadow-md cursor-pointer"
                   >
                     Next: Branches →
                   </button>
@@ -1556,11 +1556,11 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                           }
                         }}
                         className={`p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer ${
-                          isChecked ? 'border-[#2D124D] bg-purple-50/20' : 'border-gray-200'
+                          isChecked ? 'border-[#5844A8] bg-purple-50/40' : 'border-gray-200'
                         }`}
                       >
                         <span className="text-xs font-bold text-[#1A1615]">{br}</span>
-                        <div className={`w-5 h-5 rounded-md flex items-center justify-center ${isChecked ? 'bg-[#2D124D] text-white' : 'border border-gray-300'}`}>
+                        <div className={`w-5 h-5 rounded-md flex items-center justify-center ${isChecked ? 'bg-[#5844A8] text-white' : 'border border-gray-300'}`}>
                           {isChecked && '✓'}
                         </div>
                       </div>
@@ -1571,7 +1571,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                   <button onClick={() => setAddStaffStep(2)} className="text-xs font-bold text-gray-600">← Back</button>
                   <button
                     onClick={() => setAddStaffStep(4)}
-                    className="px-6 py-2.5 bg-[#2D124D] text-white rounded-xl text-xs font-bold shadow-md cursor-pointer"
+                    className="px-6 py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-bold shadow-md cursor-pointer"
                   >
                     Next: Review →
                   </button>
@@ -1597,7 +1597,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                       alert('Staff invitation sent successfully!');
                       setIsAddStaffOpen(false);
                     }}
-                    className="px-8 py-3 bg-[#2D124D] hover:bg-[#3B1864] text-white rounded-xl text-xs font-black shadow-md cursor-pointer"
+                    className="px-8 py-3 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black shadow-md cursor-pointer"
                   >
                     Send Invitation
                   </button>
@@ -1656,7 +1656,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                       <span className="bg-purple-50 text-purple-700 text-xs font-bold px-3 py-1.5 rounded-xl">
                         {mod.level}
                       </span>
-                      <div className={`w-10 h-6 rounded-full relative cursor-pointer ${mod.active ? 'bg-[#2D124D]' : 'bg-gray-200'}`}>
+                      <div className={`w-10 h-6 rounded-full relative cursor-pointer ${mod.active ? 'bg-[#5844A8]' : 'bg-gray-200'}`}>
                         <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${mod.active ? 'right-0.5' : 'left-0.5'}`} />
                       </div>
                     </div>
@@ -1670,7 +1670,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                     alert('New role saved successfully!');
                     setIsAddRoleOpen(false);
                   }}
-                  className="px-8 py-3 bg-[#2D124D] text-white rounded-xl text-xs font-black shadow-md"
+                  className="px-8 py-3 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black shadow-md cursor-pointer"
                 >
                   Save & Publish Role
                 </button>
@@ -1736,7 +1736,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                   onClick={() => setProfileTab(tb.id as any)}
                   className={`px-5 py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
                     profileTab === tb.id
-                      ? 'bg-[#2D124D] text-white shadow-xs'
+                      ? 'bg-[#5844A8] text-white shadow-xs'
                       : 'text-gray-500 hover:text-gray-900'
                   }`}
                 >
@@ -1844,7 +1844,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
               <div className="bg-white rounded-3xl p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-base font-black text-[#1A1615]">Active Module Permissions</h3>
-                  <button className="px-4 py-2 bg-[#2D124D] text-white rounded-xl text-xs font-bold">Edit Permissions</button>
+                  <button className="px-4 py-2 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-bold cursor-pointer">Edit Permissions</button>
                 </div>
                 <div className="grid grid-cols-4 gap-3 text-xs">
                   {['Campaigns', 'Approvals', 'QR Codes', 'Customer Data', 'Menu', 'Reports', 'Rewards', 'Branch Settings'].map((mod) => (
@@ -1862,7 +1862,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
               <div className="bg-white rounded-3xl p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-base font-black text-[#1A1615]">Assigned Branch Coverage</h3>
-                  <button className="px-4 py-2 bg-[#2D124D] text-white rounded-xl text-xs font-bold">Manage Branches</button>
+                  <button className="px-4 py-2 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-bold cursor-pointer">Manage Branches</button>
                 </div>
                 <div className="space-y-3">
                   {['Main Branch (Primary)', 'City Mall (View & Manage)', 'Riverside (View Only)'].map((br) => (
@@ -1915,7 +1915,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
             setIsAddRoleOpen(false);
           }}
           className={`flex flex-col items-center gap-1 text-[11px] font-black cursor-pointer transition-colors ${
-            currentTab === 'staff' ? 'text-[#2D124D]' : 'text-[#8C877D] hover:text-[#1A1615]'
+            currentTab === 'staff' ? 'text-[#5844A8]' : 'text-[#8C877D] hover:text-[#1A1615]'
           }`}
         >
           <Users className="w-5 h-5" />
@@ -1931,7 +1931,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
             setIsAddRoleOpen(false);
           }}
           className={`flex flex-col items-center gap-1 text-[11px] font-black cursor-pointer transition-colors ${
-            currentTab === 'permissions' ? 'text-[#2D124D]' : 'text-[#8C877D] hover:text-[#1A1615]'
+            currentTab === 'permissions' ? 'text-[#5844A8]' : 'text-[#8C877D] hover:text-[#1A1615]'
           }`}
         >
           <Shield className="w-5 h-5" />
@@ -1944,7 +1944,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
             setIsAddStaffOpen(true);
             setAddStaffStep(1);
           }}
-          className="w-13 h-13 -mt-6 rounded-full bg-[#2D124D] text-white flex items-center justify-center shadow-lg hover:bg-[#3B1864] transition-all cursor-pointer"
+          className="w-13 h-13 -mt-6 rounded-full bg-[#5844A8] text-white flex items-center justify-center shadow-lg hover:bg-[#47368E] transition-all cursor-pointer"
         >
           <Plus className="w-7 h-7 stroke-[2.5]" />
         </button>
@@ -1959,7 +1959,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
             setIsAddRoleOpen(false);
           }}
           className={`flex flex-col items-center gap-1 text-[11px] font-black cursor-pointer transition-colors ${
-            currentTab === 'activity' ? 'text-[#2D124D]' : 'text-[#8C877D] hover:text-[#1A1615]'
+            currentTab === 'activity' ? 'text-[#5844A8]' : 'text-[#8C877D] hover:text-[#1A1615]'
           }`}
         >
           <Clock className="w-5 h-5" />
@@ -1976,7 +1976,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
             setIsAddRoleOpen(false);
           }}
           className={`flex flex-col items-center gap-1 text-[11px] font-black cursor-pointer transition-colors ${
-            currentTab === 'reports' ? 'text-[#2D124D]' : 'text-[#8C877D] hover:text-[#1A1615]'
+            currentTab === 'reports' ? 'text-[#5844A8]' : 'text-[#8C877D] hover:text-[#1A1615]'
           }`}
         >
           <FileText className="w-5 h-5" />

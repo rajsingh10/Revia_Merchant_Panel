@@ -351,7 +351,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
       <div className="min-h-screen bg-[#FAF8FF] font-sans pb-28 text-[#1A1615]">
         {/* Toast */}
         {toastMessage && (
-          <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] bg-[#2D124D] text-white px-5 py-2.5 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2 animate-in fade-in">
+          <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] bg-[#5844A8] text-white px-5 py-2.5 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2 animate-in fade-in">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
             {toastMessage}
           </div>
@@ -397,7 +397,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                     <div
                       className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold transition-all shadow-2xs ${
                         isActive
-                          ? 'bg-[#2D124D] text-white ring-3 ring-[#2D124D]/15'
+                          ? 'bg-[#5844A8] text-white ring-3 ring-[#5844A8]/15'
                           : isCompleted
                           ? 'bg-[#6D28D9] text-white'
                           : 'bg-white border-2 border-[#CBD5E1] text-[#64748B]'
@@ -407,7 +407,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                     </div>
                     <span
                       className={`text-[8px] sm:text-[9.5px] font-semibold mt-1 tracking-tight text-center leading-tight ${
-                        isActive ? 'text-[#2D124D] font-bold' : 'text-[#8C877D]'
+                        isActive ? 'text-[#5844A8] font-bold' : 'text-[#8C877D]'
                       }`}
                     >
                       {s.label}
@@ -442,7 +442,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                     value={campaignName}
                     onChange={(e) => setCampaignName(e.target.value)}
                     placeholder="e.g. Summer Special"
-                    className="w-full px-4 py-3 bg-[#FAF8FF] border border-[#E9D5FF] rounded-2xl text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                    className="w-full px-4 py-3 bg-[#FAF8FF] border border-[#E9D5FF] rounded-2xl text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#5844A8]"
                   />
                 </div>
 
@@ -460,7 +460,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                     value={campaignDescription}
                     onChange={(e) => setCampaignDescription(e.target.value)}
                     placeholder="Short description for your customers..."
-                    className="w-full px-4 py-3 bg-[#FAF8FF] border border-[#E9D5FF] rounded-2xl text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D] resize-none"
+                    className="w-full px-4 py-3 bg-[#FAF8FF] border border-[#E9D5FF] rounded-2xl text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#5844A8] resize-none"
                   />
                 </div>
               </div>
@@ -512,7 +512,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                         name="timeActiveMode"
                         checked={timeActiveMode === 'entire_day'}
                         onChange={() => setTimeActiveMode('entire_day')}
-                        className="w-4 h-4 text-[#2D124D] accent-[#2D124D]"
+                        className="w-4 h-4 text-[#5844A8] accent-[#5844A8]"
                       />
                       <span className="text-xs font-semibold text-[#1A1615]">Entire day</span>
                     </label>
@@ -523,7 +523,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                         name="timeActiveMode"
                         checked={timeActiveMode === 'specific_time'}
                         onChange={() => setTimeActiveMode('specific_time')}
-                        className="w-4 h-4 text-[#2D124D] accent-[#2D124D]"
+                        className="w-4 h-4 text-[#5844A8] accent-[#5844A8]"
                       />
                       <span className="text-xs font-semibold text-[#1A1615]">Specific time</span>
                     </label>
@@ -581,7 +581,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                       <div className="text-[11px] text-[#6E6A66]">Campaign will be live as soon as you save it.</div>
                     </div>
                   </div>
-                  <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${campaignStatus === 'Active' ? 'border-[#2D124D] bg-[#2D124D]' : 'border-gray-300'}`}>
+                  <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${campaignStatus === 'Active' ? 'border-[#5844A8] bg-[#5844A8]' : 'border-gray-300'}`}>
                     {campaignStatus === 'Active' && <div className="w-2 h-2 rounded-full bg-white" />}
                   </div>
                 </div>
@@ -603,7 +603,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                       <div className="text-[11px] text-[#6E6A66]">Save and activate it later.</div>
                     </div>
                   </div>
-                  <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${campaignStatus === 'Draft' ? 'border-[#2D124D] bg-[#2D124D]' : 'border-gray-300'}`}>
+                  <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${campaignStatus === 'Draft' ? 'border-[#5844A8] bg-[#5844A8]' : 'border-gray-300'}`}>
                     {campaignStatus === 'Draft' && <div className="w-2 h-2 rounded-full bg-white" />}
                   </div>
                 </div>
@@ -614,7 +614,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setBuilderStep(2)}
-                  className="w-full py-3.5 bg-[#2D124D] hover:bg-[#3E1A68] text-white rounded-2xl text-sm font-bold shadow-md cursor-pointer transition-all active:scale-[0.99]"
+                  className="w-full py-3.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-2xl text-sm font-bold shadow-md cursor-pointer transition-all active:scale-[0.99]"
                 >
                   Next
                 </button>
@@ -665,7 +665,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                       </div>
                       <div
                         className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
-                          isSelected ? 'border-[#2D124D] bg-[#2D124D]' : 'border-gray-300'
+                          isSelected ? 'border-[#5844A8] bg-[#5844A8]' : 'border-gray-300'
                         }`}
                       >
                         {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
@@ -720,7 +720,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                         </div>
                         <div
                           className={`w-4 h-4 rounded-md border flex items-center justify-center shrink-0 ${
-                            isSelected ? 'bg-[#2D124D] border-[#2D124D]' : 'border-gray-300'
+                            isSelected ? 'bg-[#5844A8] border-[#5844A8]' : 'border-gray-300'
                           }`}
                         >
                           {isSelected && <Check className="w-3 h-3 text-white stroke-[3]" />}
@@ -752,7 +752,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                     max={65}
                     value={ageRange[1]}
                     onChange={(e) => setAgeRange([18, parseInt(e.target.value)])}
-                    className="w-full accent-[#2D124D] cursor-pointer"
+                    className="w-full accent-[#5844A8] cursor-pointer"
                   />
                 </div>
 
@@ -769,7 +769,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                         onClick={() => setGenderFilter(g as any)}
                         className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                           genderFilter === g
-                            ? 'bg-[#2D124D] text-white shadow-xs'
+                            ? 'bg-[#5844A8] text-white shadow-xs'
                             : 'text-[#6E6A66] hover:bg-white/80'
                         }`}
                       >
@@ -792,7 +792,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                     step={5000}
                     value={totalSpendLimit}
                     onChange={(e) => setTotalSpendLimit(parseInt(e.target.value))}
-                    className="w-full accent-[#2D124D] cursor-pointer"
+                    className="w-full accent-[#5844A8] cursor-pointer"
                   />
                 </div>
               </div>
@@ -833,7 +833,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                           </div>
                           <div
                             className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                              isSelected ? 'bg-[#2D124D] border-[#2D124D]' : 'border-gray-300'
+                              isSelected ? 'bg-[#5844A8] border-[#5844A8]' : 'border-gray-300'
                             }`}
                           >
                             {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
@@ -854,14 +854,14 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setBuilderStep(1)}
-                  className="text-xs font-bold text-[#1A1615] hover:text-[#2D124D] flex items-center gap-1.5 cursor-pointer py-2.5 px-3"
+                  className="text-xs font-bold text-[#1A1615] hover:text-[#5844A8] flex items-center gap-1.5 cursor-pointer py-2.5 px-3"
                 >
                   <ChevronLeft className="w-4 h-4" /> Back
                 </button>
                 <button
                   type="button"
                   onClick={() => setBuilderStep(3)}
-                  className="px-8 py-3 bg-[#2D124D] hover:bg-[#3E1A68] text-white rounded-2xl text-xs font-bold shadow-md cursor-pointer transition-all"
+                  className="px-8 py-3 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-2xl text-xs font-bold shadow-md cursor-pointer transition-all"
                 >
                   Next
                 </button>
@@ -948,7 +948,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                           onClick={() => setBillingTargetAmount(amt)}
                           className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                             billingTargetAmount === amt
-                              ? 'bg-[#2D124D] text-white shadow-xs'
+                              ? 'bg-[#5844A8] text-white shadow-xs'
                               : 'bg-[#FAF8FF] border border-[#E9D5FF] text-[#1A1615]'
                           }`}
                         >
@@ -1048,7 +1048,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                       <button
                         type="button"
                         onClick={() => setVisitQualifyingCount(visitQualifyingCount + 1)}
-                        className="w-9 h-9 rounded-xl bg-[#2D124D] text-white font-bold text-sm"
+                        className="w-9 h-9 rounded-xl bg-[#5844A8] text-white font-bold text-sm"
                       >
                         +
                       </button>
@@ -1118,7 +1118,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                             }}
                             className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                               isDayActive
-                                ? 'bg-[#2D124D] text-white shadow-xs'
+                                ? 'bg-[#5844A8] text-white shadow-xs'
                                 : 'bg-[#FAF8FF] text-[#8C877D] border border-[#E9D5FF]'
                             }`}
                           >
@@ -1144,7 +1144,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                       type="button"
                       onClick={() => setSpecialDayMode('birthday')}
                       className={`py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                        specialDayMode === 'birthday' ? 'bg-[#2D124D] text-white' : 'text-[#6E6A66]'
+                        specialDayMode === 'birthday' ? 'bg-[#5844A8] text-white' : 'text-[#6E6A66]'
                       }`}
                     >
                       <Cake className="w-3.5 h-3.5" /> Birthday
@@ -1153,7 +1153,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                       type="button"
                       onClick={() => setSpecialDayMode('anniversary')}
                       className={`py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                        specialDayMode === 'anniversary' ? 'bg-[#2D124D] text-white' : 'text-[#6E6A66]'
+                        specialDayMode === 'anniversary' ? 'bg-[#5844A8] text-white' : 'text-[#6E6A66]'
                       }`}
                     >
                       <PartyPopper className="w-3.5 h-3.5" /> Anniversary
@@ -1169,7 +1169,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                           type="button"
                           onClick={() => setBirthdayMonth(m)}
                           className={`py-1.5 rounded-lg text-[11px] font-bold cursor-pointer ${
-                            birthdayMonth === m ? 'bg-[#2D124D] text-white' : 'bg-[#FAF8FF] text-[#6E6A66] border border-[#E9D5FF]'
+                            birthdayMonth === m ? 'bg-[#5844A8] text-white' : 'bg-[#FAF8FF] text-[#6E6A66] border border-[#E9D5FF]'
                           }`}
                         >
                           {m}
@@ -1192,7 +1192,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                       <button
                         type="button"
                         onClick={() => setBirthdayDaysSpan(birthdayDaysSpan + 1)}
-                        className="w-8 h-8 rounded-lg bg-[#2D124D] text-white font-bold text-sm"
+                        className="w-8 h-8 rounded-lg bg-[#5844A8] text-white font-bold text-sm"
                       >
                         +
                       </button>
@@ -1223,7 +1223,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                       <button
                         type="button"
                         onClick={() => setStampsCount(stampsCount + 1)}
-                        className="w-8 h-8 rounded-lg bg-[#2D124D] text-white font-bold text-sm"
+                        className="w-8 h-8 rounded-lg bg-[#5844A8] text-white font-bold text-sm"
                       >
                         +
                       </button>
@@ -1235,7 +1235,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                     <div className="text-[11px] font-bold text-[#8C877D] mb-2">Customer Pass Preview</div>
                     <div className="flex items-center gap-2">
                       {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="w-9 h-9 rounded-xl bg-[#2D124D] text-white flex items-center justify-center font-bold text-xs shadow-2xs">
+                        <div key={i} className="w-9 h-9 rounded-xl bg-[#5844A8] text-white flex items-center justify-center font-bold text-xs shadow-2xs">
                           <Check className="w-4 h-4 stroke-[3]" />
                         </div>
                       ))}
@@ -1276,7 +1276,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                           }`}
                         >
                           <div className="flex items-center gap-2.5">
-                            <div className={`w-4 h-4 rounded-md border flex items-center justify-center ${isSel ? 'bg-[#2D124D] border-[#2D124D]' : 'border-gray-300'}`}>
+                            <div className={`w-4 h-4 rounded-md border flex items-center justify-center ${isSel ? 'bg-[#5844A8] border-[#5844A8]' : 'border-gray-300'}`}>
                               {isSel && <Check className="w-3 h-3 text-white stroke-[3]" />}
                             </div>
                             <div>
@@ -1297,14 +1297,14 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsConfiguringCondition(false)}
-                  className="text-xs font-bold text-[#1A1615] hover:text-[#2D124D] cursor-pointer py-2.5 px-3"
+                  className="text-xs font-bold text-[#1A1615] hover:text-[#5844A8] cursor-pointer py-2.5 px-3"
                 >
                   Change condition
                 </button>
                 <button
                   type="button"
                   onClick={() => setBuilderStep(4)}
-                  className="px-8 py-3 bg-[#2D124D] hover:bg-[#3E1A68] text-white rounded-2xl text-xs font-bold shadow-md cursor-pointer transition-all"
+                  className="px-8 py-3 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-2xl text-xs font-bold shadow-md cursor-pointer transition-all"
                 >
                   Next
                 </button>
@@ -1386,7 +1386,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                         <button
                           type="button"
                           onClick={() => setBogoBuyQty(bogoBuyQty + 1)}
-                          className="w-8 h-8 rounded-lg bg-[#2D124D] text-white font-bold text-sm"
+                          className="w-8 h-8 rounded-lg bg-[#5844A8] text-white font-bold text-sm"
                         >
                           +
                         </button>
@@ -1396,7 +1396,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                     <div className="p-3 bg-[#FAF8FF] border border-[#E9D5FF] rounded-2xl">
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-[10px] font-bold text-[#6E6A66] uppercase">Get Free</span>
-                        <span className="text-[8.5px] text-rose-500 font-bold bg-rose-50 px-1 py-0.5 rounded">100% OFF</span>
+                        <span className="text-[8.5px] text-rose-500 font-bold bg-rose-50 px-1 py-0.5 rounded-100% OFF">100% OFF</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <button
@@ -1410,7 +1410,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                         <button
                           type="button"
                           onClick={() => setBogoGetFreeQty(bogoGetFreeQty + 1)}
-                          className="w-8 h-8 rounded-lg bg-[#2D124D] text-white font-bold text-sm"
+                          className="w-8 h-8 rounded-lg bg-[#5844A8] text-white font-bold text-sm"
                         >
                           +
                         </button>
@@ -1451,7 +1451,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                             <div className="flex items-center gap-2.5">
                               <div
                                 className={`w-4 h-4 rounded-md border flex items-center justify-center ${
-                                  isChecked ? 'bg-[#2D124D] border-[#2D124D]' : 'border-gray-300'
+                                  isChecked ? 'bg-[#5844A8] border-[#5844A8]' : 'border-gray-300'
                                 }`}
                               >
                                 {isChecked && <Check className="w-3 h-3 text-white stroke-[3]" />}
@@ -1500,14 +1500,14 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setBuilderStep(3)}
-                  className="text-xs font-bold text-[#1A1615] hover:text-[#2D124D] flex items-center gap-1.5 cursor-pointer py-2.5 px-3"
+                  className="text-xs font-bold text-[#1A1615] hover:text-[#5844A8] flex items-center gap-1.5 cursor-pointer py-2.5 px-3"
                 >
                   <ChevronLeft className="w-4 h-4" /> Back
                 </button>
                 <button
                   type="button"
                   onClick={() => setBuilderStep(5)}
-                  className="px-8 py-3 bg-[#2D124D] hover:bg-[#3E1A68] text-white rounded-2xl text-xs font-bold shadow-md cursor-pointer transition-all"
+                  className="px-8 py-3 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-2xl text-xs font-bold shadow-md cursor-pointer transition-all"
                 >
                   Next
                 </button>
@@ -1538,7 +1538,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                     onClick={() => setMessageChannel(ch.id as any)}
                     className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       messageChannel === ch.id
-                        ? 'bg-[#2D124D] text-white shadow-xs'
+                        ? 'bg-[#5844A8] text-white shadow-xs'
                         : 'text-[#6E6A66] hover:bg-[#FAF8F5]'
                     }`}
                   >
@@ -1551,7 +1551,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
               <div className="bg-white rounded-3xl p-4 sm:p-5 border border-[#F1EFEA] shadow-md max-w-sm mx-auto">
                 <div className="bg-[#FAF8F5] rounded-2xl p-4 border border-[#EAE6DF] space-y-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-[#2D124D] text-white flex items-center justify-center font-bold text-xs">
+                    <div className="w-8 h-8 rounded-full bg-[#5844A8] text-white flex items-center justify-center font-bold text-xs">
                       L
                     </div>
                     <div>
@@ -1563,7 +1563,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                   <div className="p-3 bg-white rounded-xl border border-[#F1EFEA] space-y-2">
                     <div className="text-xs font-black text-[#1A1615]">{messageHeadline}</div>
                     <p className="text-[11px] text-[#6E6A66] leading-relaxed">
-                      Hey there! Visit us and enjoy <span className="font-bold text-[#2D124D]">{campaignName}</span>: {campaignDescription}
+                      Hey there! Visit us and enjoy <span className="font-bold text-[#5844A8]">{campaignName}</span>: {campaignDescription}
                     </p>
                     <div className="flex items-center justify-between pt-2 border-t border-dashed border-[#F1EFEA]">
                       <span className="text-[10px] font-bold text-[#8C877D]">USE CODE</span>
@@ -1573,7 +1573,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                     </div>
                   </div>
 
-                  <button className="w-full py-2 bg-[#2D124D] text-white rounded-xl text-xs font-bold">
+                  <button className="w-full py-2 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-bold cursor-pointer">
                     Claim Offer Now
                   </button>
                 </div>
@@ -1584,14 +1584,14 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setBuilderStep(4)}
-                  className="text-xs font-bold text-[#1A1615] hover:text-[#2D124D] flex items-center gap-1.5 cursor-pointer py-2.5 px-3"
+                  className="text-xs font-bold text-[#1A1615] hover:text-[#5844A8] flex items-center gap-1.5 cursor-pointer py-2.5 px-3"
                 >
                   <ChevronLeft className="w-4 h-4" /> Back
                 </button>
                 <button
                   type="button"
                   onClick={() => setBuilderStep(6)}
-                  className="px-8 py-3 bg-[#2D124D] hover:bg-[#3E1A68] text-white rounded-2xl text-xs font-bold shadow-md cursor-pointer transition-all"
+                  className="px-8 py-3 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-2xl text-xs font-bold shadow-md cursor-pointer transition-all"
                 >
                   Review
                 </button>
@@ -1653,7 +1653,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                   <Users className="w-5 h-5 text-[#6D28D9] shrink-0" />
                   <div className="text-xs text-[#581C87]">
                     <span className="font-bold">Projected Reach: </span>
-                    Estimated <span className="font-black text-[#2D124D]">~1,420 customers</span> eligible across all branches.
+                    Estimated <span className="font-black text-[#5844A8]">~1,420 customers</span> eligible across all branches.
                   </div>
                 </div>
               </div>
@@ -1663,14 +1663,14 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setBuilderStep(5)}
-                  className="text-xs font-bold text-[#1A1615] hover:text-[#2D124D] flex items-center gap-1.5 cursor-pointer py-2.5 px-3"
+                  className="text-xs font-bold text-[#1A1615] hover:text-[#5844A8] flex items-center gap-1.5 cursor-pointer py-2.5 px-3"
                 >
                   <ChevronLeft className="w-4 h-4" /> Back
                 </button>
                 <button
                   type="button"
                   onClick={handleLaunchCampaign}
-                  className="px-8 py-3 bg-[#2D124D] hover:bg-[#3E1A68] text-white rounded-2xl text-xs font-bold shadow-lg cursor-pointer transition-all active:scale-[0.99] flex items-center justify-center gap-2"
+                  className="px-8 py-3 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-2xl text-xs font-bold shadow-lg cursor-pointer transition-all active:scale-[0.99] flex items-center justify-center gap-2"
                 >
                   <Sparkles className="w-4 h-4 text-amber-300" />
                   Launch Campaign
@@ -1690,7 +1690,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
     <div className="min-h-screen bg-[#FAF8FF] font-sans pb-28 text-[#1A1615] overflow-x-hidden">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] bg-[#2D124D] text-white px-5 py-2.5 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2 animate-in fade-in">
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] bg-[#5844A8] text-white px-5 py-2.5 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2 animate-in fade-in">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           {toastMessage}
         </div>
@@ -1850,7 +1850,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Campaign"
-              className="w-full pl-9 pr-3 py-2.5 bg-white border border-[#E5E0D8] rounded-2xl text-xs font-medium text-[#1A1615] placeholder-[#8C877D] focus:outline-hidden focus:border-[#2D124D] shadow-2xs"
+              className="w-full pl-9 pr-3 py-2.5 bg-white border border-[#E5E0D8] rounded-2xl text-xs font-medium text-[#1A1615] placeholder-[#8C877D] focus:outline-hidden focus:border-[#5844A8] shadow-2xs"
             />
           </div>
 
@@ -1860,7 +1860,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
               setViewMode('builder');
               setBuilderStep(1);
             }}
-            className="px-3.5 sm:px-5 py-2.5 bg-[#581C87] hover:bg-[#4C1D95] text-white rounded-2xl text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer whitespace-nowrap active:scale-[0.99] shrink-0"
+            className="px-3.5 sm:px-5 py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-2xl text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer whitespace-nowrap active:scale-[0.99] shrink-0"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>+ Add New +</span>
@@ -1876,7 +1876,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                 type="checkbox"
                 checked={selectedCampaignIds.length === filteredCampaigns.length && filteredCampaigns.length > 0}
                 onChange={handleSelectAll}
-                className="w-4 h-4 rounded text-[#2D124D] accent-[#2D124D]"
+                className="w-4 h-4 rounded text-[#5844A8] accent-[#5844A8]"
               />
               <span className="text-[11px] sm:text-xs">Select All</span>
             </label>
@@ -2004,7 +2004,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => handleToggleSelectCampaign(camp.id)}
-                        className="w-4 h-4 rounded text-[#2D124D] accent-[#2D124D] cursor-pointer shrink-0"
+                        className="w-4 h-4 rounded text-[#5844A8] accent-[#5844A8] cursor-pointer shrink-0"
                       />
 
                       <div className="relative shrink-0">
@@ -2160,7 +2160,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
               setActiveNavTab('home');
               if (onNavigate) onNavigate('/dashboard');
             }}
-            className="flex flex-col items-center gap-1 text-[#8C877D] hover:text-[#2D124D] cursor-pointer"
+            className="flex flex-col items-center gap-1 text-[#8C877D] hover:text-[#5844A8] cursor-pointer"
           >
             <Home className="w-5 h-5" />
             <span className="text-[9.5px] font-bold">Home</span>
@@ -2175,7 +2175,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
               setBuilderStep(1);
             }}
             className={`flex flex-col items-center gap-1 cursor-pointer ${
-              activeNavTab === 'create' ? 'text-[#2D124D]' : 'text-[#8C877D]'
+              activeNavTab === 'create' ? 'text-[#5844A8]' : 'text-[#8C877D]'
             }`}
           >
             <Megaphone className="w-5 h-5" />
@@ -2191,7 +2191,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
                 if (onToggleMobileMenu) onToggleMobileMenu();
                 else showToast('Merchant Menu');
               }}
-              className="w-12 h-12 rounded-full bg-[#2D124D] text-white flex items-center justify-center shadow-lg ring-4 ring-white hover:bg-[#3E1A68] transition-transform active:scale-95 cursor-pointer"
+              className="w-12 h-12 rounded-full bg-[#5844A8] text-white flex items-center justify-center shadow-lg ring-4 ring-white hover:bg-[#47368E] transition-transform active:scale-95 cursor-pointer"
               title="Menu"
             >
               <MessageSquare className="w-5 h-5 text-white" />
@@ -2206,7 +2206,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
               setActiveNavTab('report');
               if (onNavigate) onNavigate('/analytics');
             }}
-            className="flex flex-col items-center gap-1 text-[#8C877D] hover:text-[#2D124D] cursor-pointer"
+            className="flex flex-col items-center gap-1 text-[#8C877D] hover:text-[#5844A8] cursor-pointer"
           >
             <BarChart2 className="w-5 h-5" />
             <span className="text-[9.5px] font-bold">Report</span>
@@ -2219,7 +2219,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
               setActiveNavTab('approve');
               if (onNavigate) onNavigate('/approvals');
             }}
-            className="flex flex-col items-center gap-1 text-[#8C877D] hover:text-[#2D124D] cursor-pointer"
+            className="flex flex-col items-center gap-1 text-[#8C877D] hover:text-[#5844A8] cursor-pointer"
           >
             <Shield className="w-5 h-5" />
             <span className="text-[9.5px] font-bold">Approve</span>
