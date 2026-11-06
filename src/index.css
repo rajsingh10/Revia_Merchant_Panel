@@ -6,7 +6,7 @@
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   }
   body {
-    background-color: #FAF8F5;
+    background-color: #FAF8FF;
     color: #1A1615;
   }
   body, button, input, select, textarea, optgroup {
@@ -265,18 +265,23 @@
   font-size: 14px !important;
 }
 
-/* Custom scrollbars for master-detail and sidebar */
+/* Custom scrollbars matching Revia brand */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #5844A8 transparent;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #9E782F;
+  background: #5844A8;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #D4A753;
+  background: #47368E;
 }

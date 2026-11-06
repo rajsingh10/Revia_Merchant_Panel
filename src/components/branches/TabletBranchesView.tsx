@@ -340,10 +340,10 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
   }, [currentCity, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-[#FBF9FD] pb-24 font-sans text-[#1A1615]">
+    <div className="min-h-screen bg-[#FAF8FF] pb-24 font-sans text-[#1A1615]">
       {/* Toast Notification for Report Download */}
       {reportDownloaded && (
-        <div className="fixed top-6 right-6 z-[120] flex items-center gap-2 bg-[#2D124D] text-white px-4 py-3 rounded-xl shadow-lg border border-purple-800 text-xs font-semibold animate-in fade-in slide-in-from-top-2">
+        <div className="fixed top-6 right-6 z-[120] flex items-center gap-2 bg-[#5844A8] text-white px-4 py-3 rounded-xl shadow-lg border border-purple-800 text-xs font-semibold animate-in fade-in slide-in-from-top-2">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           Branch Analytics Report generated &amp; downloaded successfully!
         </div>
@@ -452,7 +452,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
             {level === 'details' ? (
               <button
                 onClick={() => setIsEditBranchModalOpen(true)}
-                className="flex items-center gap-1.5 px-4 py-2 bg-[#2D124D] hover:bg-[#3E1A68] text-white rounded-xl text-xs font-black shadow-xs transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-4 py-2 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black shadow-md shadow-[#5844A8]/20 transition-all cursor-pointer"
               >
                 <Edit2 className="w-3.5 h-3.5" />
                 <span>Edit Branch</span>
@@ -460,7 +460,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
             ) : (
               <button
                 onClick={() => setIsAddBranchModalOpen(true)}
-                className="flex items-center gap-1.5 px-4 py-2 bg-[#2D124D] hover:bg-[#3E1A68] text-white rounded-xl text-xs font-black shadow-xs transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-4 py-2 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black shadow-md shadow-[#5844A8]/20 transition-all cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Branch</span>
@@ -479,15 +479,15 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
           <>
             {/* 4 Summary Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 lg:gap-4">
-              <div className="bg-[#FAF7FD] border border-[#EFEAF5] rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 lg:p-4 shadow-2xs flex items-center gap-2.5 sm:gap-3 lg:gap-3.5 min-w-0">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl bg-[#F3E8FF] border border-[#E9D5FF] flex items-center justify-center shrink-0">
-                  <Store className="w-4 h-4 sm:w-5 sm:h-5 text-[#2D124D]" />
+              <div className="bg-[#FAF8FF] border border-purple-100/60 rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 lg:p-4 shadow-2xs flex items-center gap-2.5 sm:gap-3 lg:gap-3.5 min-w-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center shrink-0">
+                  <Store className="w-4 h-4 sm:w-5 sm:h-5 text-[#5844A8]" />
                 </div>
                 <div className="min-w-0 flex-1 overflow-hidden">
-                  <div className="text-base sm:text-lg lg:text-2xl font-black tracking-tight text-[#1A1615] truncate">
+                  <div className="text-base sm:text-lg lg:text-2xl font-black tracking-tight text-[#1E1548] truncate">
                     {overallStats.totalBranches}
                   </div>
-                  <div className="text-[10px] sm:text-[11px] text-[#6E6A66] font-semibold truncate">
+                  <div className="text-[10px] sm:text-[11px] text-[#5844A8] font-semibold truncate">
                     Total Branches
                   </div>
                 </div>
@@ -521,15 +521,15 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                 </div>
               </div>
 
-              <div className="bg-[#FAF7FD] border border-[#EFEAF5] rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 lg:p-4 shadow-2xs flex items-center gap-2.5 sm:gap-3 lg:gap-3.5 min-w-0">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl bg-[#F3E8FF] border border-[#E9D5FF] flex items-center justify-center shrink-0">
-                  <BarChart2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#2D124D]" />
+              <div className="bg-[#FAF8FF] border border-purple-100/60 rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 lg:p-4 shadow-2xs flex items-center gap-2.5 sm:gap-3 lg:gap-3.5 min-w-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center shrink-0">
+                  <BarChart2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#5844A8]" />
                 </div>
                 <div className="min-w-0 flex-1 overflow-hidden">
-                  <div className="text-base sm:text-lg lg:text-2xl font-black tracking-tight text-[#1A1615] truncate">
+                  <div className="text-base sm:text-lg lg:text-2xl font-black tracking-tight text-[#1E1548] truncate">
                     {overallStats.revenueFormatted}
                   </div>
-                  <div className="text-[10px] sm:text-[11px] text-[#6E6A66] font-semibold truncate">
+                  <div className="text-[10px] sm:text-[11px] text-[#5844A8] font-semibold truncate">
                     Reported Revenue
                   </div>
                 </div>
@@ -545,7 +545,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search states..."
-                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#EAE6E1] rounded-2xl text-xs font-medium text-[#1A1615] placeholder-[#8C877D] focus:outline-none focus:border-[#2D124D] shadow-2xs"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#EAE6E1] rounded-2xl text-xs font-medium text-[#1A1615] placeholder-[#8C877D] focus:outline-none focus:border-[#5844A8] shadow-2xs"
                 />
               </div>
               <button
@@ -569,12 +569,12 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                     {/* Header */}
                     <div className="flex items-start justify-between pb-3.5 border-b border-[#F1EFEA]">
                       <div>
-                        <h2 className="text-base font-black text-[#1A1615] group-hover:text-[#2D124D] transition-colors">
+                        <h2 className="text-base font-black text-[#1A1615] group-hover:text-[#5844A8] transition-colors">
                           {state.name}
                         </h2>
                         <span className="text-xs text-[#8C877D] font-medium">{state.branchesCount} branches</span>
                       </div>
-                      <div className="w-7 h-7 rounded-full bg-[#FAF8F5] group-hover:bg-[#FAF5FF] flex items-center justify-center text-[#8C877D] group-hover:text-[#2D124D] transition-colors">
+                      <div className="w-7 h-7 rounded-full bg-[#FAF8F5] group-hover:bg-[#FAF5FF] flex items-center justify-center text-[#8C877D] group-hover:text-[#5844A8] transition-colors">
                         <ChevronRight className="w-4 h-4" />
                       </div>
                     </div>
@@ -699,8 +699,8 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                   onClick={() => setSelectedStateId(st.id)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer shadow-2xs ${
                     st.id === selectedStateId
-                      ? 'bg-[#2D124D] text-white shadow-xs'
-                      : 'bg-white hover:bg-[#FAF8F5] text-[#6E6A66] border border-[#E5E0D8]'
+                      ? 'bg-[#5844A8] text-white shadow-md shadow-[#5844A8]/20'
+                      : 'bg-white hover:bg-purple-50/60 text-[#6E6A66] border border-[#E5E0D8]'
                   }`}
                 >
                   {st.name}
@@ -710,29 +710,29 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
 
             {/* 4 Summary Cards for this State */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 lg:gap-4">
-              <div className="bg-[#FAF7FD] border border-[#EFEAF5] rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 lg:p-4 shadow-2xs flex items-center gap-2.5 sm:gap-3 lg:gap-3.5 min-w-0">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl bg-[#F3E8FF] border border-[#E9D5FF] flex items-center justify-center shrink-0">
-                  <span className="text-[#2D124D] font-bold text-sm sm:text-base lg:text-lg">₹</span>
+              <div className="bg-[#FAF8FF] border border-purple-100/60 rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 lg:p-4 shadow-2xs flex items-center gap-2.5 sm:gap-3 lg:gap-3.5 min-w-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center shrink-0">
+                  <span className="text-[#5844A8] font-bold text-sm sm:text-base lg:text-lg">₹</span>
                 </div>
                 <div className="min-w-0 flex-1 overflow-hidden">
-                  <div className="text-base sm:text-lg lg:text-2xl font-black tracking-tight text-[#1A1615] truncate">
+                  <div className="text-base sm:text-lg lg:text-2xl font-black tracking-tight text-[#1E1548] truncate">
                     {currentState.revenueFormatted}
                   </div>
-                  <div className="text-[10px] sm:text-[11px] text-[#6E6A66] font-semibold truncate">
+                  <div className="text-[10px] sm:text-[11px] text-[#5844A8] font-semibold truncate">
                     Total Revenue
                   </div>
                 </div>
               </div>
 
-              <div className="bg-[#FAF7FD] border border-[#EFEAF5] rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 lg:p-4 shadow-2xs flex items-center gap-2.5 sm:gap-3 lg:gap-3.5 min-w-0">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl bg-[#F3E8FF] border border-[#E9D5FF] flex items-center justify-center shrink-0">
-                  <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#2D124D]" />
+              <div className="bg-[#FAF8FF] border border-purple-100/60 rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 lg:p-4 shadow-2xs flex items-center gap-2.5 sm:gap-3 lg:gap-3.5 min-w-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center shrink-0">
+                  <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#5844A8]" />
                 </div>
                 <div className="min-w-0 flex-1 overflow-hidden">
-                  <div className="text-base sm:text-lg lg:text-2xl font-black tracking-tight text-[#1A1615] truncate">
+                  <div className="text-base sm:text-lg lg:text-2xl font-black tracking-tight text-[#1E1548] truncate">
                     {currentState.cities.length}
                   </div>
-                  <div className="text-[10px] sm:text-[11px] text-[#6E6A66] font-semibold truncate">
+                  <div className="text-[10px] sm:text-[11px] text-[#5844A8] font-semibold truncate">
                     Total Cities
                   </div>
                 </div>
@@ -752,12 +752,12 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                 </div>
               </div>
 
-              <div className="bg-[#FAF7FD] border border-[#EFEAF5] rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 lg:p-4 shadow-2xs flex items-center gap-2.5 sm:gap-3 lg:gap-3.5 min-w-0">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl bg-[#F3E8FF] border border-[#E9D5FF] flex items-center justify-center shrink-0">
-                  <BarChart2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#2D124D]" />
+              <div className="bg-[#FAF8FF] border border-purple-100/60 rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 lg:p-4 shadow-2xs flex items-center gap-2.5 sm:gap-3 lg:gap-3.5 min-w-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center shrink-0">
+                  <BarChart2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#5844A8]" />
                 </div>
                 <div className="min-w-0 flex-1 overflow-hidden">
-                  <div className="text-base sm:text-lg lg:text-2xl font-black tracking-tight text-[#1A1615] truncate">
+                  <div className="text-base sm:text-lg lg:text-2xl font-black tracking-tight text-[#1E1548] truncate">
                     {Math.floor(
                       (currentState.morningOrders + currentState.afternoonOrders + currentState.eveningOrders) /
                         (currentState.branchesCount || 1)
@@ -779,12 +779,12 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search cities..."
-                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#EAE6E1] rounded-2xl text-xs font-medium text-[#1A1615] placeholder-[#8C877D] focus:outline-none focus:border-[#2D124D] shadow-2xs"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#EAE6E1] rounded-2xl text-xs font-medium text-[#1A1615] placeholder-[#8C877D] focus:outline-none focus:border-[#5844A8] shadow-2xs"
                 />
               </div>
               <button
                 type="button"
-                className="p-2.5 bg-white border border-[#EAE6E1] rounded-2xl text-[#6E6A66] hover:bg-[#FAF8F5] shadow-2xs"
+                className="p-2.5 bg-white border border-[#EAE6E1] rounded-2xl text-[#6E6A66] hover:bg-[#FAF8FF] shadow-2xs"
                 title="Grid layout active"
               >
                 <LayoutGrid className="w-4 h-4" />
@@ -803,12 +803,12 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                     {/* Header */}
                     <div className="flex items-start justify-between pb-3.5 border-b border-[#F1EFEA]">
                       <div>
-                        <h2 className="text-base font-black text-[#1A1615] group-hover:text-[#2D124D] transition-colors">
+                        <h2 className="text-base font-black text-[#1A1615] group-hover:text-[#5844A8] transition-colors">
                           {city.name}
                         </h2>
                         <span className="text-xs text-[#8C877D] font-medium">{city.branchesCount} branches</span>
                       </div>
-                      <div className="w-7 h-7 rounded-full bg-[#FAF8F5] group-hover:bg-[#FAF5FF] flex items-center justify-center text-[#8C877D] group-hover:text-[#2D124D] transition-colors">
+                      <div className="w-7 h-7 rounded-full bg-[#FAF8FF] group-hover:bg-[#FAF5FF] flex items-center justify-center text-[#8C877D] group-hover:text-[#5844A8] transition-colors">
                         <ChevronRight className="w-4 h-4" />
                       </div>
                     </div>
@@ -936,8 +936,8 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                   onClick={() => setSelectedCityId(ct.id)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer shadow-2xs ${
                     ct.id === selectedCityId
-                      ? 'bg-[#2D124D] text-white shadow-xs'
-                      : 'bg-white hover:bg-[#FAF8F5] text-[#6E6A66] border border-[#E5E0D8]'
+                      ? 'bg-[#5844A8] text-white shadow-xs'
+                      : 'bg-white hover:bg-[#FAF8FF] text-[#6E6A66] border border-[#E5E0D8]'
                   }`}
                 >
                   {ct.name}, {currentState.name}
@@ -949,7 +949,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 lg:gap-4">
               <div className="bg-[#FAF7FD] border border-[#EFEAF5] rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 lg:p-4 shadow-2xs flex items-center gap-2.5 sm:gap-3 lg:gap-3.5 min-w-0">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl bg-[#F3E8FF] border border-[#E9D5FF] flex items-center justify-center shrink-0">
-                  <span className="text-[#2D124D] font-bold text-sm sm:text-base lg:text-lg">₹</span>
+                  <span className="text-[#5844A8] font-bold text-sm sm:text-base lg:text-lg">₹</span>
                 </div>
                 <div className="min-w-0 flex-1 overflow-hidden">
                   <div className="text-base sm:text-lg lg:text-2xl font-black tracking-tight text-[#1A1615] truncate">
@@ -991,7 +991,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
 
               <div className="bg-[#FAF7FD] border border-[#EFEAF5] rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 lg:p-4 shadow-2xs flex items-center gap-2.5 sm:gap-3 lg:gap-3.5 min-w-0">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl bg-[#F3E8FF] border border-[#E9D5FF] flex items-center justify-center shrink-0">
-                  <BarChart2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#2D124D]" />
+                  <BarChart2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#5844A8]" />
                 </div>
                 <div className="min-w-0 flex-1 overflow-hidden">
                   <div className="text-base sm:text-lg lg:text-2xl font-black tracking-tight text-[#1A1615] truncate">
@@ -1013,12 +1013,12 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search branches or managers..."
-                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#EAE6E1] rounded-2xl text-xs font-medium text-[#1A1615] placeholder-[#8C877D] focus:outline-none focus:border-[#2D124D] shadow-2xs"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#EAE6E1] rounded-2xl text-xs font-medium text-[#1A1615] placeholder-[#8C877D] focus:outline-none focus:border-[#5844A8] shadow-2xs"
                 />
               </div>
               <button
                 type="button"
-                className="p-2.5 bg-white border border-[#EAE6E1] rounded-2xl text-[#6E6A66] hover:bg-[#FAF8F5] shadow-2xs cursor-pointer"
+                className="p-2.5 bg-white border border-[#EAE6E1] rounded-2xl text-[#6E6A66] hover:bg-[#FAF8FF] shadow-2xs cursor-pointer"
                 title="Filter options"
               >
                 <Filter className="w-4 h-4" />
@@ -1044,7 +1044,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h2 className="text-base font-black text-[#1A1615] group-hover:text-[#2D124D] transition-colors">
+                          <h2 className="text-base font-black text-[#1A1615] group-hover:text-[#5844A8] transition-colors">
                             {branch.name}
                           </h2>
                           <span
@@ -1069,7 +1069,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                     </div>
 
                     <div className="flex items-center gap-2 self-end sm:self-center">
-                      <div className="w-8 h-8 rounded-full bg-[#FAF8F5] group-hover:bg-[#FAF5FF] flex items-center justify-center text-[#8C877D] group-hover:text-[#2D124D] transition-colors">
+                      <div className="w-8 h-8 rounded-full bg-[#FAF8FF] group-hover:bg-[#FAF5FF] flex items-center justify-center text-[#8C877D] group-hover:text-[#5844A8] transition-colors">
                         <ChevronRight className="w-4 h-4" />
                       </div>
                     </div>
@@ -1230,12 +1230,12 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                 </div>
 
                 {/* Map Preview Card */}
-                <div className="lg:col-span-3 bg-[#FAF8F5] border border-[#E5E0D8] hover:border-[#7C3AED]/40 rounded-2xl p-4 transition-all cursor-pointer group flex flex-col justify-between h-full min-h-[140px]">
+                <div className="lg:col-span-3 bg-[#FAF8FF] border border-[#E5E0D8] hover:border-[#5844A8]/40 rounded-2xl p-4 transition-all cursor-pointer group flex flex-col justify-between h-full min-h-[140px]">
                   <div className="flex items-start justify-between">
-                    <div className="w-8 h-8 rounded-full bg-[#2D124D] text-white flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-[#5844A8] text-white flex items-center justify-center">
                       <MapPin className="w-4 h-4" />
                     </div>
-                    <ChevronRight className="w-4 h-4 text-[#8C877D] group-hover:text-[#2D124D] transition-colors" />
+                    <ChevronRight className="w-4 h-4 text-[#8C877D] group-hover:text-[#5844A8] transition-colors" />
                   </div>
                   <div>
                     <div className="text-xs font-bold text-[#1A1615] line-clamp-2">{currentBranch.fullAddress}</div>
@@ -1256,8 +1256,8 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                   onClick={() => setDetailTab(tab)}
                   className={`px-5 py-2.5 rounded-2xl text-xs font-black capitalize transition-all cursor-pointer ${
                     detailTab === tab
-                      ? 'bg-[#2D124D] text-white shadow-xs'
-                      : 'bg-white hover:bg-[#FAF8F5] text-[#6E6A66] border border-[#F1EFEA]'
+                      ? 'bg-[#5844A8] text-white shadow-md shadow-[#5844A8]/20'
+                      : 'bg-white hover:bg-purple-50/60 text-[#6E6A66] border border-[#F1EFEA]'
                   }`}
                 >
                   {tab}
@@ -1519,7 +1519,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                           <QrCode className="w-4 h-4 text-[#6D28D9]" />
                           <h3 className="text-sm font-black text-[#1A1615]">QR Codes &amp; Tables</h3>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-[#8C877D] group-hover:text-[#2D124D] transition-colors" />
+                        <ChevronRight className="w-4 h-4 text-[#8C877D] group-hover:text-[#5844A8] transition-colors" />
                       </div>
 
                       <div className="grid grid-cols-2 gap-3">
@@ -1533,7 +1533,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                           <ChevronRight className="w-4 h-4 text-[#A855F7]" />
                         </div>
 
-                        <div className="bg-[#FAF8F5] border border-[#EAE6DF] rounded-2xl p-4 flex items-center justify-between">
+                        <div className="bg-[#FAF8FF] border border-[#EAE6DF] rounded-2xl p-4 flex items-center justify-between">
                           <div>
                             <div className="text-xl font-black text-[#1A1615]">
                               {currentBranch.tables || 12}
@@ -1588,7 +1588,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                         <h3 className="text-sm font-black text-[#1A1615]">Recent Activity</h3>
                         <button
                           onClick={() => onNavigate?.('/settings/audit' as any)}
-                          className="text-xs text-[#2D124D] font-bold hover:underline cursor-pointer"
+                          className="text-xs text-[#5844A8] font-bold hover:underline cursor-pointer"
                         >
                           View All &gt;
                         </button>
@@ -1742,16 +1742,16 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
 
         <button
           onClick={() => setLevel('states')}
-          className="flex flex-col items-center gap-1 text-[10px] font-bold text-[#2D124D] cursor-pointer"
+          className="flex flex-col items-center gap-1 text-[10px] font-bold text-[#5844A8] cursor-pointer"
         >
-          <Building2 className="w-5 h-5 text-[#2D124D]" />
+          <Building2 className="w-5 h-5 text-[#5844A8]" />
           <span>Branches</span>
         </button>
 
         {/* Center Floating Plus Button */}
         <button
           onClick={() => setIsAddBranchModalOpen(true)}
-          className="w-12 h-12 -mt-5 rounded-full bg-[#2D124D] text-white flex items-center justify-center shadow-lg hover:bg-[#3B1864] transition-all cursor-pointer"
+          className="w-12 h-12 -mt-5 rounded-full bg-[#5844A8] text-white flex items-center justify-center shadow-lg shadow-[#5844A8]/30 hover:bg-[#47368E] transition-all cursor-pointer"
         >
           <Plus className="w-6 h-6 stroke-[2.5]" />
         </button>
@@ -1870,13 +1870,13 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsAddBranchModalOpen(false)}
-                  className="px-4 py-2 bg-white border border-gray-200 text-[#6E6A66] font-bold rounded-xl hover:bg-[#FAF8F5] cursor-pointer"
+                  className="px-4 py-2 bg-white border border-gray-200 text-[#6E6A66] font-bold rounded-xl hover:bg-[#FAF8FF] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#2D124D] hover:bg-[#3E1A68] text-white font-bold rounded-xl shadow-xs cursor-pointer"
+                  className="px-5 py-2 bg-[#5844A8] hover:bg-[#47368E] text-white font-bold rounded-xl shadow-xs cursor-pointer"
                 >
                   Create Branch
                 </button>
@@ -1911,7 +1911,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                 <input
                   type="text"
                   defaultValue={currentBranch.name}
-                  className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-xs font-medium text-[#1A1615] focus:bg-white focus:border-[#7C3AED] outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#FAF8FF] border border-gray-200 rounded-xl text-xs font-medium text-[#1A1615] focus:bg-white focus:border-[#5844A8] outline-none"
                 />
               </div>
 
@@ -1920,7 +1920,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                 <input
                   type="text"
                   defaultValue={currentBranch.manager}
-                  className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-xs font-medium text-[#1A1615] focus:bg-white focus:border-[#7C3AED] outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#FAF8FF] border border-gray-200 rounded-xl text-xs font-medium text-[#1A1615] focus:bg-white focus:border-[#5844A8] outline-none"
                 />
               </div>
 
@@ -1929,7 +1929,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                 <input
                   type="text"
                   defaultValue={currentBranch.phone}
-                  className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-xs font-medium text-[#1A1615] focus:bg-white focus:border-[#7C3AED] outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#FAF8FF] border border-gray-200 rounded-xl text-xs font-medium text-[#1A1615] focus:bg-white focus:border-[#5844A8] outline-none"
                 />
               </div>
 
@@ -1938,7 +1938,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                 <input
                   type="text"
                   defaultValue={currentBranch.operatingHours || '11:00 AM - 11:00 PM'}
-                  className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-xs font-medium text-[#1A1615] focus:bg-white focus:border-[#7C3AED] outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#FAF8FF] border border-gray-200 rounded-xl text-xs font-medium text-[#1A1615] focus:bg-white focus:border-[#5844A8] outline-none"
                 />
               </div>
 
@@ -1946,14 +1946,14 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsEditBranchModalOpen(false)}
-                  className="px-4 py-2 bg-white border border-gray-200 text-[#6E6A66] font-bold rounded-xl hover:bg-[#FAF8F5] cursor-pointer"
+                  className="px-4 py-2 bg-white border border-gray-200 text-[#6E6A66] font-bold rounded-xl hover:bg-[#FAF8FF] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsEditBranchModalOpen(false)}
-                  className="px-5 py-2 bg-[#2D124D] hover:bg-[#3E1A68] text-white font-bold rounded-xl shadow-xs cursor-pointer"
+                  className="px-5 py-2 bg-[#5844A8] hover:bg-[#47368E] text-white font-bold rounded-xl shadow-xs cursor-pointer"
                 >
                   Save Changes
                 </button>

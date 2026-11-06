@@ -555,6 +555,26 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
   // Modals
   const [isCreateRoleModalOpen, setIsCreateRoleModalOpen] = useState<boolean>(false);
   const [isEditStaffModalOpen, setIsEditStaffModalOpen] = useState<boolean>(false);
+  const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState<boolean>(false);
+
+  // Add Staff Form
+  const [newStaffFullName, setNewStaffFullName] = useState('');
+  const [newStaffEmail, setNewStaffEmail] = useState('');
+  const [newStaffPhone, setNewStaffPhone] = useState('');
+  const [newStaffRole, setNewStaffRole] = useState<'Manager' | 'Staff' | 'Counter'>('Staff');
+  const [newStaffBranch, setNewStaffBranch] = useState('Connaught Place');
+  const [newStaffEmployeeType, setNewStaffEmployeeType] = useState<'Full-time' | 'Part-time' | 'Contract'>('Full-time');
+  const [newStaffReportingTo, setNewStaffReportingTo] = useState('Liam Vance');
+  const [newStaffWorkLocation, setNewStaffWorkLocation] = useState('Connaught Place - Floor 1');
+  const [newStaffSendInvite, setNewStaffSendInvite] = useState(true);
+  const [newStaffPermissions, setNewStaffPermissions] = useState({
+    posOperations: true,
+    campaignManagement: false,
+    reportsAnalytics: false,
+    staffManagement: false,
+    customerData: true,
+    settingsConfig: false,
+  });
 
   // Create Role Form
   const [newRoleName, setNewRoleName] = useState('');
@@ -646,6 +666,68 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
     setNewRoleName('');
     setNewRoleDesc('');
   };
+
+  const handleAddStaffSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newStaffFullName.trim()) {
+      showToast('Please enter the staff member full name.');
+      return;
+    }
+    if (!newStaffEmail.trim()) {
+      showToast('Please enter an email address for the staff member.');
+      return;
+    }
+
+    const nameParts = newStaffFullName.trim().split(' ');
+    const initials = nameParts.length >= 2
+      ? `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase()
+      : newStaffFullName.slice(0, 2).toUpperCase();
+
+    const avatarPalettes = [
+      { bg: 'bg-[#EDE9FE]', text: 'text-[#6D28D9]' },
+      { bg: 'bg-[#FFE4E6]', text: 'text-[#E11D48]' },
+      { bg: 'bg-[#FEF3C7]', text: 'text-[#D97706]' },
+      { bg: 'bg-[#E0F2FE]', text: 'text-[#0284C7]' },
+      { bg: 'bg-[#DCFCE7]', text: 'text-[#15803D]' },
+    ];
+    const color = avatarPalettes[staffList.length % avatarPalettes.length];
+
+    const newStaffItem: StaffMember = {
+      id: `staff-${Date.now()}`,
+      name: newStaffFullName.trim(),
+      email: newStaffEmail.trim(),
+      phone: newStaffPhone.trim() || '+91 98765 43210',
+      role: newStaffRole,
+      branch: newStaffBranch,
+      joinedOn: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      status: 'Active',
+      staffId: `STF-${1040 + staffList.length + 1}`,
+      workLocation: newStaffWorkLocation || `${newStaffBranch} - Main Floor`,
+      employeeType: newStaffEmployeeType,
+      reportingTo: newStaffReportingTo || 'Liam Vance',
+      roleDescription: newStaffRole === 'Manager'
+        ? 'Oversees daily shift operations, staff scheduling and guest escalations.'
+        : 'Assists customers with checkout, order placing and loyalty rewards.',
+      accessLevel: newStaffRole === 'Manager' ? 'Full Operational Access' : 'Standard Terminal Access',
+      initials,
+      avatarBg: color.bg,
+      avatarTextColor: color.text,
+      assignedBranches: [newStaffBranch],
+      permissions: { ...newStaffPermissions }
+    };
+
+    setStaffList(prev => [newStaffItem, ...prev]);
+    setIsAddStaffModalOpen(false);
+    setNewStaffFullName('');
+    setNewStaffEmail('');
+    setNewStaffPhone('');
+    showToast(`Staff member "${newStaffItem.name}" invited successfully!`);
+  };
+
+  const totalStaffCount = staffList.length;
+  const activeStaffCount = staffList.filter(s => s.status === 'Active').length;
+  const pendingStaffCount = staffList.filter(s => s.status === 'Updated' || (s.status as any) === 'Pending').length;
+  const inactiveStaffCount = staffList.filter(s => s.status === 'Revoked' || s.status === 'Inactive' || (s.status as any) === 'Disabled').length;
 
   // -------------------------------------------------------------
   // VIEW: STAFF DETAILS (Image 5)
@@ -917,7 +999,7 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
             <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
               <span>Home</span>
               <span>&gt;</span>
-              <span className="text-[#1E1548] font-bold">Staff</span>
+              <span className="text-[#1E1548] font-bold">Staff Directory</span>
             </div>
 
             {/* Header */}
@@ -932,14 +1014,32 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsCreateRoleModalOpen(true)}
-                className="px-5 py-2.5 rounded-xl bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-[#5844A8]/20 transition-all cursor-pointer self-start sm:self-auto"
-              >
-                <Plus className="w-4 h-4 stroke-[2.5]" />
-                <span>Create new Role</span>
-              </button>
+              <div className="flex items-center gap-3 self-start sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateRoleModalOpen(true)}
+                  className="px-4 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-[#1E1548] text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-2xs"
+                >
+                  <ShieldCheck className="w-4 h-4 text-[#5844A8]" />
+                  <span>Create new Role</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNewStaffFullName('');
+                    setNewStaffEmail('');
+                    setNewStaffPhone('');
+                    setNewStaffRole('Staff');
+                    setNewStaffBranch('Connaught Place');
+                    setIsAddStaffModalOpen(true);
+                  }}
+                  className="px-5 py-2.5 rounded-xl bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-[#5844A8]/20 transition-all cursor-pointer"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  <span>+ Add New Staff</span>
+                </button>
+              </div>
             </div>
 
             {/* 4 Stat Cards Row */}
@@ -951,7 +1051,7 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
                 </div>
                 <div>
                   <span className="text-xs font-bold text-gray-400">Total Staff</span>
-                  <div className="text-3xl font-black text-[#1E1548] mt-0.5">14</div>
+                  <div className="text-3xl font-black text-[#1E1548] mt-0.5">{totalStaffCount}</div>
                   <div className="text-[11px] text-pink-500 font-semibold mt-0.5">+2 this month</div>
                 </div>
               </div>
@@ -963,8 +1063,10 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
                 </div>
                 <div>
                   <span className="text-xs font-bold text-gray-400">Active</span>
-                  <div className="text-3xl font-black text-[#1E1548] mt-0.5">12</div>
-                  <div className="text-[11px] text-emerald-600 font-semibold mt-0.5">86%</div>
+                  <div className="text-3xl font-black text-[#1E1548] mt-0.5">{activeStaffCount}</div>
+                  <div className="text-[11px] text-emerald-600 font-semibold mt-0.5">
+                    {Math.round((activeStaffCount / (totalStaffCount || 1)) * 100)}%
+                  </div>
                 </div>
               </div>
 
@@ -975,7 +1077,7 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
                 </div>
                 <div>
                   <span className="text-xs font-bold text-gray-400">Pending Invites</span>
-                  <div className="text-3xl font-black text-[#1E1548] mt-0.5">2</div>
+                  <div className="text-3xl font-black text-[#1E1548] mt-0.5">{pendingStaffCount}</div>
                   <div className="text-[11px] text-gray-400 font-medium mt-0.5">Awaiting response</div>
                 </div>
               </div>
@@ -987,8 +1089,10 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
                 </div>
                 <div>
                   <span className="text-xs font-bold text-gray-400">Inactive</span>
-                  <div className="text-3xl font-black text-[#1E1548] mt-0.5">0</div>
-                  <div className="text-[11px] text-gray-400 font-medium mt-0.5">-</div>
+                  <div className="text-3xl font-black text-[#1E1548] mt-0.5">{inactiveStaffCount}</div>
+                  <div className="text-[11px] text-gray-400 font-medium mt-0.5">
+                    {inactiveStaffCount > 0 ? 'Disabled' : '-'}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1001,7 +1105,24 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
                   <Briefcase className="w-4 h-4 text-[#5844A8]" />
                   <h3 className="text-base font-bold text-[#1E1548]">Staff List</h3>
                 </div>
-                <span className="text-xs font-bold text-gray-400">{filteredStaff.length} Staff Members</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-gray-400">{filteredStaff.length} Staff Members</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewStaffFullName('');
+                      setNewStaffEmail('');
+                      setNewStaffPhone('');
+                      setNewStaffRole('Staff');
+                      setNewStaffBranch('Connaught Place');
+                      setIsAddStaffModalOpen(true);
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-[#5844A8] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Invite Staff</span>
+                  </button>
+                </div>
               </div>
 
               {/* Filter Bar */}
@@ -1089,13 +1210,14 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
                       <th className="py-3 px-4">Role</th>
                       <th className="py-3 px-4">Branch / Venue</th>
                       <th className="py-3 px-4">Joined On</th>
-                      <th className="py-3 px-6 lg:px-8">Status</th>
+                      <th className="py-3 px-4">Status</th>
+                      <th className="py-3 px-6 lg:px-8 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50 text-xs">
                     {paginatedStaff.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="py-12 text-center text-gray-400">
+                        <td colSpan={6} className="py-12 text-center text-gray-400">
                           No staff members found matching your search.
                         </td>
                       </tr>
@@ -1147,7 +1269,7 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
                           </td>
 
                           {/* Status */}
-                          <td className="py-3.5 px-6 lg:px-8">
+                          <td className="py-3.5 px-4">
                             <span className={`inline-block px-3 py-0.5 rounded-full text-xs font-bold ${
                               member.status === 'Active'
                                 ? 'bg-[#DEF7EC] text-[#03543F]'
@@ -1156,6 +1278,14 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
                                 : 'bg-[#FDE8E8] text-[#9B1C1C]'
                             }`}>
                               {member.status}
+                            </span>
+                          </td>
+
+                          {/* Actions */}
+                          <td className="py-3.5 px-6 lg:px-8 text-right">
+                            <span className="text-xs font-bold text-[#5844A8] group-hover:underline inline-flex items-center gap-1">
+                              <span>View Profile</span>
+                              <ChevronRight className="w-3.5 h-3.5" />
                             </span>
                           </td>
                         </tr>
@@ -1218,7 +1348,7 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
 
       {/* CREATE NEW ROLE MODAL */}
       {isCreateRoleModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 animate-in fade-in">
           <div className="bg-white rounded-3xl p-6 lg:p-8 max-w-md w-full border border-purple-50 shadow-2xl space-y-5 animate-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div className="flex items-center gap-2">
@@ -1226,8 +1356,9 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
                 <h3 className="text-base font-bold text-[#1E1548]">Create New Role</h3>
               </div>
               <button
+                type="button"
                 onClick={() => setIsCreateRoleModalOpen(false)}
-                className="text-gray-400 hover:text-black cursor-pointer"
+                className="p-1 rounded-full text-gray-400 hover:text-black hover:bg-gray-100 transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1283,96 +1414,99 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
 
       {/* EDIT STAFF DETAILS MODAL */}
       {isEditStaffModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 lg:p-8 max-w-lg w-full border border-purple-50 shadow-2xl space-y-5 animate-in zoom-in-95">
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col border border-purple-50 shadow-2xl overflow-hidden animate-in zoom-in-95">
+            <div className="p-6 pb-4 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white">
               <div className="flex items-center gap-2">
                 <Edit2 className="w-5 h-5 text-[#5844A8]" />
                 <h3 className="text-base font-bold text-[#1E1548]">Edit Staff Member</h3>
               </div>
               <button
+                type="button"
                 onClick={() => setIsEditStaffModalOpen(false)}
-                className="text-gray-400 hover:text-black cursor-pointer"
+                className="p-1 rounded-full text-gray-400 hover:text-black hover:bg-gray-100 transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveStaffDetails} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
-                  Full Name <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={editFullName}
-                  onChange={(e) => setEditFullName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <form onSubmit={handleSaveStaffDetails} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+              <div className="overflow-y-auto p-6 space-y-4 flex-1">
                 <div>
                   <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
-                    Email Address <span className="text-rose-500">*</span>
+                    Full Name <span className="text-rose-500">*</span>
                   </label>
                   <input
-                    type="email"
+                    type="text"
                     required
-                    value={editEmail}
-                    onChange={(e) => setEditEmail(e.target.value)}
+                    value={editFullName}
+                    onChange={(e) => setEditFullName(e.target.value)}
                     className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
-                    Phone Number
-                  </label>
-                  <input
-                    type="text"
-                    value={editPhone}
-                    onChange={(e) => setEditPhone(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Email Address <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={editEmail}
+                      onChange={(e) => setEditEmail(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Phone Number
+                    </label>
+                    <input
+                      type="text"
+                      value={editPhone}
+                      onChange={(e) => setEditPhone(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Role Tier
+                    </label>
+                    <select
+                      value={editRole}
+                      onChange={(e) => setEditRole(e.target.value as any)}
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                    >
+                      <option value="Manager">Manager</option>
+                      <option value="Staff">Staff</option>
+                      <option value="Counter">Counter</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Work Location
+                    </label>
+                    <input
+                      type="text"
+                      value={editWorkLocation}
+                      onChange={(e) => setEditWorkLocation(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div>
-                  <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
-                    Role Tier
-                  </label>
-                  <select
-                    value={editRole}
-                    onChange={(e) => setEditRole(e.target.value as any)}
-                    className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
-                  >
-                    <option value="Manager">Manager</option>
-                    <option value="Staff">Staff</option>
-                    <option value="Counter">Counter</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
-                    Work Location
-                  </label>
-                  <input
-                    type="text"
-                    value={editWorkLocation}
-                    onChange={(e) => setEditWorkLocation(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]"
-                  />
-                </div>
-              </div>
-
-              <div className="pt-2 flex items-center justify-end gap-2.5">
+              <div className="p-4 sm:p-5 border-t border-gray-100 flex items-center justify-end gap-2.5 shrink-0 bg-gray-50/50">
                 <button
                   type="button"
                   onClick={() => setIsEditStaffModalOpen(false)}
-                  className="px-4 py-2 border border-gray-200 text-xs font-bold text-gray-600 rounded-xl hover:bg-gray-50 cursor-pointer"
+                  className="px-4 py-2 border border-gray-200 text-xs font-bold text-gray-600 rounded-xl hover:bg-gray-100 cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -1381,6 +1515,242 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
                   className="px-5 py-2 bg-[#5844A8] text-white text-xs font-bold rounded-xl hover:bg-[#47368E] cursor-pointer shadow-md shadow-[#5844A8]/20"
                 >
                   Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ADD NEW STAFF MODAL */}
+      {isAddStaffModalOpen && (
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col border border-purple-50 shadow-2xl animate-in zoom-in-95 overflow-hidden">
+            <div className="p-6 pb-4 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-purple-50 text-[#5844A8] flex items-center justify-center shrink-0">
+                  <UserPlus className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#1E1548]">Add New Staff Member</h3>
+                  <p className="text-xs text-gray-400">Send an invitation to onboard a team member to your outlets</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddStaffModalOpen(false)}
+                className="p-1.5 rounded-full text-gray-400 hover:text-black hover:bg-gray-100 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddStaffSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+              <div className="overflow-y-auto p-6 space-y-4 flex-1">
+                <div>
+                  <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                    Full Name <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Rahul Sharma"
+                    value={newStaffFullName}
+                    onChange={(e) => setNewStaffFullName(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] placeholder:text-gray-400 focus:outline-none focus:border-[#5844A8]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Email Address <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="e.g. rahul.sharma@loyaltics.co"
+                      value={newStaffEmail}
+                      onChange={(e) => setNewStaffEmail(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] placeholder:text-gray-400 focus:outline-none focus:border-[#5844A8]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      placeholder="e.g. +91 98765 43210"
+                      value={newStaffPhone}
+                      onChange={(e) => setNewStaffPhone(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] placeholder:text-gray-400 focus:outline-none focus:border-[#5844A8]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Assign Role <span className="text-rose-500">*</span>
+                    </label>
+                    <select
+                      value={newStaffRole}
+                      onChange={(e) => {
+                        const r = e.target.value as 'Manager' | 'Staff' | 'Counter';
+                        setNewStaffRole(r);
+                        if (r === 'Manager') {
+                          setNewStaffPermissions({
+                            posOperations: true,
+                            campaignManagement: true,
+                            reportsAnalytics: true,
+                            staffManagement: true,
+                            customerData: true,
+                            settingsConfig: true,
+                          });
+                        } else {
+                          setNewStaffPermissions({
+                            posOperations: true,
+                            campaignManagement: false,
+                            reportsAnalytics: false,
+                            staffManagement: false,
+                            customerData: true,
+                            settingsConfig: false,
+                          });
+                        }
+                      }}
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8] cursor-pointer"
+                    >
+                      <option value="Manager">Manager</option>
+                      <option value="Staff">Staff</option>
+                      <option value="Counter">Counter Staff</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Primary Branch / Venue <span className="text-rose-500">*</span>
+                    </label>
+                    <select
+                      value={newStaffBranch}
+                      onChange={(e) => setNewStaffBranch(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8] cursor-pointer"
+                    >
+                      <option value="Connaught Place">Connaught Place</option>
+                      <option value="CP - Bakery">CP - Bakery</option>
+                      <option value="Downtown Flagship">Downtown Flagship</option>
+                      <option value="Northside Mall">Northside Mall</option>
+                      <option value="All Branches">All Branches</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Employment Type
+                    </label>
+                    <select
+                      value={newStaffEmployeeType}
+                      onChange={(e) => setNewStaffEmployeeType(e.target.value as any)}
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-[#1E1548] focus:outline-none focus:border-[#5844A8] cursor-pointer"
+                    >
+                      <option value="Full-time">Full-time</option>
+                      <option value="Part-time">Part-time</option>
+                      <option value="Contract">Contract</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
+                      Reporting Manager
+                    </label>
+                    <input
+                      type="text"
+                      value={newStaffReportingTo}
+                      onChange={(e) => setNewStaffReportingTo(e.target.value)}
+                      placeholder="e.g. Liam Vance"
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-[#1E1548] placeholder:text-gray-400 focus:outline-none focus:border-[#5844A8]"
+                    />
+                  </div>
+                </div>
+
+                {/* Module Permissions Checkbox Section */}
+                <div className="pt-2">
+                  <span className="block text-xs font-bold text-[#1E1548] mb-2">
+                    Module Permissions
+                  </span>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {[
+                      { key: 'posOperations', label: 'POS Operations' },
+                      { key: 'customerData', label: 'Customer Data' },
+                      { key: 'campaignManagement', label: 'Campaigns' },
+                      { key: 'reportsAnalytics', label: 'Analytics' },
+                      { key: 'staffManagement', label: 'Staff' },
+                      { key: 'settingsConfig', label: 'Settings' },
+                    ].map((perm) => {
+                      const isChecked = (newStaffPermissions as any)[perm.key];
+                      return (
+                        <label
+                          key={perm.key}
+                          className={`flex items-center gap-2 p-2.5 rounded-xl border cursor-pointer text-xs font-bold transition-all ${
+                            isChecked
+                              ? 'bg-[#FAF8FF] border-[#5844A8] text-[#5844A8]'
+                              : 'bg-white border-gray-200 text-gray-500 hover:border-gray-300'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={(e) =>
+                              setNewStaffPermissions((prev) => ({
+                                ...prev,
+                                [perm.key]: e.target.checked,
+                              }))
+                            }
+                            className="rounded text-[#5844A8] focus:ring-[#5844A8]"
+                          />
+                          <span>{perm.label}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Invitation Email Toggle */}
+                <div className="bg-[#FAF8FF] border border-purple-100 rounded-2xl p-3.5 flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="sendInviteCheckbox"
+                    checked={newStaffSendInvite}
+                    onChange={(e) => setNewStaffSendInvite(e.target.checked)}
+                    className="mt-0.5 rounded text-[#5844A8] focus:ring-[#5844A8]"
+                  />
+                  <label htmlFor="sendInviteCheckbox" className="text-xs text-[#1E1548] font-medium cursor-pointer">
+                    <span className="font-bold block">Send Invitation &amp; Login Details</span>
+                    <span className="text-[11px] text-gray-500">
+                      An email will be dispatched immediately with temporary password and mobile POS download link.
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="p-4 sm:p-5 border-t border-gray-100 flex items-center justify-end gap-2.5 shrink-0 bg-gray-50/50">
+                <button
+                  type="button"
+                  onClick={() => setIsAddStaffModalOpen(false)}
+                  className="px-4 py-2 border border-gray-200 text-xs font-bold text-gray-600 rounded-xl hover:bg-gray-100 cursor-pointer transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-[#5844A8] text-white text-xs font-bold rounded-xl hover:bg-[#47368E] cursor-pointer shadow-md shadow-[#5844A8]/20 flex items-center gap-2 transition-all"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  <span>Add &amp; Send Invite</span>
                 </button>
               </div>
             </form>
