@@ -295,7 +295,7 @@ export default function App() {
                 <Route path="/control-panel" element={<ProtectedRoute><ControlPanelPage /></ProtectedRoute>} />
                 <Route path="/branches" element={<ProtectedRoute><BranchesPage onNavigate={handleNavigate as any} onBranchSelect={setActiveBranch} outlets={outlets} onAddBranch={handleAddOutlet} selectedOutletId={selectedOutletId} onSelectOutletId={setSelectedOutletId} /></ProtectedRoute>} />
                 <Route path="/branches/new" element={<ProtectedRoute><AddNewBranchPage onNavigate={handleNavigate as any} onAddBranch={handleAddOutlet} /></ProtectedRoute>} />
-                <Route path="/staff" element={<ProtectedRoute><StaffPage /></ProtectedRoute>} />
+                <Route path="/staff" element={<ProtectedRoute><StaffPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/loyalty" element={<ProtectedRoute><LoyaltyPage /></ProtectedRoute>} />
                 <Route path="/qr-codes" element={<ProtectedRoute><QrCodesPage /></ProtectedRoute>} />
                 <Route path="/approvals" element={<ProtectedRoute><ApprovalsPage /></ProtectedRoute>} />

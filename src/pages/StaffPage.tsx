@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { TabletStaffView } from '../components/staff/TabletStaffView';
 import { useWallet } from '../context/WalletContext';
 import {
   Users,
@@ -527,7 +528,11 @@ const INITIAL_STAFF_MEMBERS: StaffMember[] = [
   }
 ];
 
-export const StaffPage: React.FC = () => {
+export interface StaffPageProps {
+  onNavigate?: (route: any) => void;
+}
+
+const WebStaffView: React.FC<StaffPageProps> = () => {
   const { checkAndDeductCredit } = useWallet();
   const dispatch = useDispatch<AppDispatch>();
   const { staffList: reduxStaffList } = useSelector((state: RootState) => state.staff);
@@ -1385,3 +1390,35 @@ export const StaffPage: React.FC = () => {
     </div>
   );
 };
+
+export const StaffPage: React.FC<StaffPageProps> = (props) => {
+  const [isTablet, setIsTablet] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('view') === 'tablet' || params.get('device') === 'tablet') {
+        return true;
+      }
+      return window.innerWidth < 1024;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      const params = new URLSearchParams(window.location.search);
+      if (!params.get('view') && !params.get('device')) {
+        setIsTablet(window.innerWidth < 1024);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (isTablet) {
+    return <TabletStaffView onNavigate={props.onNavigate} />;
+  }
+
+  return <WebStaffView {...props} />;
+};
+
+export default StaffPage;

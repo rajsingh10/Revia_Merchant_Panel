@@ -761,19 +761,8 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
   if (creationSetupStep === 'choose_type') {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#FDF8FD] via-[#FFF9FA] to-[#FAF8FD] flex flex-col justify-between p-6 font-sans text-[#1A102F]">
-        {/* Top Spacer / Back */}
-        <div className="flex items-center justify-between pb-2">
-          <button
-            onClick={() => setViewMode('dashboard')}
-            className="p-1 rounded-full text-gray-400 hover:text-black cursor-pointer"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <div className="w-5" />
-        </div>
-
         {/* Center Illustration & Options */}
-        <div className="space-y-6 my-auto pt-2 pb-6 max-w-sm mx-auto w-full">
+        <div className="space-y-6 my-auto pt-4 pb-6 max-w-sm mx-auto w-full">
           <div className="text-center space-y-2">
             <h1 className="text-[26px] font-black text-[#1A102F] tracking-tight leading-tight">
               How many campaigns<br />
@@ -1088,16 +1077,7 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FDF8FD] via-[#FFF9FA] to-[#FAF8FD] flex flex-col justify-between pb-6 font-sans text-[#1A102F]">
       {/* Top Header with 6-Step Connected Progress Stepper (Matching Image 3 & 4) */}
-      <div className="px-5 pt-3 pb-3 border-b border-[#F0EBF5] bg-white/90 backdrop-blur-md sticky top-0 z-30">
-        <div className="flex items-center justify-end mb-1">
-          <button
-            onClick={() => setViewMode('dashboard')}
-            className="p-1.5 rounded-full text-gray-400 hover:text-black hover:bg-gray-100 transition-colors cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
+      <div className="px-5 pt-4 pb-3 border-b border-[#F0EBF5] bg-white/90 backdrop-blur-md sticky top-0 z-30">
         {/* Connected Step Indicator */}
         <div className="flex items-center justify-between relative px-2">
           {/* Horizontal connecting background line */}
@@ -1141,7 +1121,16 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
         {currentStep === 1 && (
           <div className="space-y-4 animate-in fade-in duration-150">
             <div>
-              <h1 className="text-[22px] font-black text-[#1A102F]">Basic Details</h1>
+              <div className="flex items-center justify-between">
+                <h1 className="text-[22px] font-black text-[#1A102F]">Basic Details</h1>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('dashboard')}
+                  className="p-1 rounded-full text-gray-400 hover:text-black hover:bg-gray-100 transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
               <p className="text-xs text-[#64748B] mt-0.5">Give your campaign a name and add a short description.</p>
             </div>
 
@@ -1235,19 +1224,16 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
                   </label>
 
                   {!isActiveAllDay && (
-                    <div className="grid grid-cols-2 gap-2 pt-1 pl-6">
-                      <input
-                        type="text"
-                        value={startTime}
-                        onChange={(e) => setStartTime(e.target.value)}
-                        className="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold"
-                      />
-                      <input
-                        type="text"
-                        value={endTime}
-                        onChange={(e) => setEndTime(e.target.value)}
-                        className="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold"
-                      />
+                    <div className="flex items-center gap-2 pt-1 pl-6">
+                      <div className="flex-1 px-3.5 py-2.5 bg-white border border-[#E2E8F0] rounded-2xl flex items-center justify-between text-xs font-bold text-[#1A102F] shadow-2xs">
+                        <span>{startTime}</span>
+                        <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                      </div>
+                      <span className="text-gray-400 text-xs font-bold">-</span>
+                      <div className="flex-1 px-3.5 py-2.5 bg-white border border-[#E2E8F0] rounded-2xl flex items-center justify-between text-xs font-bold text-[#1A102F] shadow-2xs">
+                        <span>{endTime}</span>
+                        <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1625,7 +1611,7 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
               <div className="space-y-4">
                 <div>
                   <h1 className="text-[20px] font-black text-[#1A102F] leading-tight">
-                    Narrow down your audeince with more conditions (optional).
+                    Narrow down your audience with more conditions (optional)
                   </h1>
                 </div>
 
@@ -1884,15 +1870,31 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
                           ? 'bg-[#FFE4E6] text-[#E11D48]'
                           : conditionType === 'billing'
                           ? 'bg-[#EDE9FE] text-[#7C3AED]'
-                          : 'bg-[#FEF3C7] text-[#D97706]'
+                          : conditionType === 'stamps'
+                          ? 'bg-[#FEF3C7] text-[#D97706]'
+                          : conditionType === 'item'
+                          ? 'bg-[#E0F2FE] text-[#0284C7]'
+                          : conditionType === 'happy_hours'
+                          ? 'bg-[#FFEDD5] text-[#EA580C]'
+                          : conditionType === 'birthday' || conditionType === 'anniversary'
+                          ? 'bg-[#FCE7F3] text-[#DB2777]'
+                          : 'bg-[#F3E8FF] text-[#9333EA]'
                       }`}
                     >
                       {conditionType === 'visit' ? (
                         <Car className="w-5 h-5" />
                       ) : conditionType === 'billing' ? (
                         <FileText className="w-5 h-5" />
-                      ) : (
+                      ) : conditionType === 'stamps' ? (
                         <Star className="w-5 h-5" />
+                      ) : conditionType === 'item' ? (
+                        <ShoppingBag className="w-5 h-5" />
+                      ) : conditionType === 'happy_hours' ? (
+                        <Clock className="w-5 h-5" />
+                      ) : conditionType === 'birthday' || conditionType === 'anniversary' ? (
+                        <Cake className="w-5 h-5" />
+                      ) : (
+                        <Package className="w-5 h-5" />
                       )}
                     </div>
                     <div>
@@ -1903,7 +1905,13 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
                           ? 'Billing'
                           : conditionType === 'stamps'
                           ? 'Stamps'
-                          : conditionType}
+                          : conditionType === 'item'
+                          ? 'Item based offers'
+                          : conditionType === 'happy_hours'
+                          ? 'Happy Hours'
+                          : conditionType === 'birthday' || conditionType === 'anniversary'
+                          ? 'Birthday / Anniversary'
+                          : 'Combo offers'}
                       </div>
                       <div className="text-xs text-[#64748B]">
                         {conditionType === 'visit'
@@ -1912,7 +1920,13 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
                           ? 'Target amount / frequency'
                           : conditionType === 'stamps'
                           ? 'Qualifying item / no of stamps'
-                          : 'Configured rule'}
+                          : conditionType === 'item'
+                          ? 'Specific items or categories'
+                          : conditionType === 'happy_hours'
+                          ? 'Time + day based'
+                          : conditionType === 'birthday' || conditionType === 'anniversary'
+                          ? 'Special day based'
+                          : 'Qualifying item / combo'}
                       </div>
                     </div>
                   </div>
