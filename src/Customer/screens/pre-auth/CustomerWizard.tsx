@@ -36,6 +36,10 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
   const [countryText, setCountryText] = useState('India');
   const [stateText, setStateText] = useState('');
   const [pincode, setPincode] = useState('');
+  const [maritalStatus, setMaritalStatus] = useState('Married');
+  const [anniversaryDate, setAnniversaryDate] = useState('');
+  const [partnerName, setPartnerName] = useState('');
+  const [partnerMobile, setPartnerMobile] = useState('');
 
   const dispatch = useDispatch<AppDispatch>();
   const { countries, states, cities, isCountriesLoading, isStatesLoading, isCitiesLoading } = useSelector((state: RootState) => state.location);
@@ -453,6 +457,63 @@ export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => v
                           </select>
                         </div>
                       </div>
+                    </div>
+
+                    {/* Personalisation: Marital Status & Partner Details */}
+                    <div className="bg-[#FAF8FF] border border-purple-100 rounded-2xl p-5 mb-6 space-y-4">
+                      <div>
+                        <label className="block text-[12px] font-black uppercase tracking-wider text-[#1E1548] mb-1.5">Marital Status</label>
+                        <select
+                          value={maritalStatus}
+                          onChange={(e) => setMaritalStatus(e.target.value)}
+                          className="w-full bg-white border border-purple-100 rounded-xl px-4 py-2.5 text-sm font-bold text-[#1E1548] focus:outline-hidden focus:border-[#5844A8] cursor-pointer"
+                        >
+                          <option value="Married">Married</option>
+                          <option value="Single">Single</option>
+                          <option value="In a relationship">In a relationship</option>
+                          <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                      </div>
+
+                      {maritalStatus === 'Married' && (
+                        <div className="space-y-4 pt-2 border-t border-purple-100/60">
+                          <h4 className="text-xs font-black text-[#1E1548]">If married</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                              <label className="block text-[11px] font-bold text-gray-500 mb-1">Anniversary Date</label>
+                              <input
+                                type="date"
+                                value={anniversaryDate}
+                                onChange={(e) => setAnniversaryDate(e.target.value)}
+                                className="w-full bg-white border border-purple-100 rounded-xl px-3 py-2 text-xs font-bold text-[#1E1548] focus:outline-hidden focus:border-[#5844A8]"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[11px] font-bold text-gray-500 mb-1">Partner&apos;s Name</label>
+                              <input
+                                type="text"
+                                value={partnerName}
+                                onChange={(e) => setPartnerName(e.target.value)}
+                                placeholder="Enter partner's name"
+                                className="w-full bg-white border border-purple-100 rounded-xl px-3 py-2 text-xs font-bold text-[#1E1548] focus:outline-hidden focus:border-[#5844A8]"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[11px] font-bold text-gray-500 mb-1">Partner&apos;s Mobile Number</label>
+                              <div className="flex gap-2">
+                                <span className="bg-white border border-purple-100 rounded-xl px-2.5 py-2 text-xs font-bold text-[#1E1548] flex items-center">+91</span>
+                                <input
+                                  type="tel"
+                                  value={partnerMobile}
+                                  onChange={(e) => setPartnerMobile(e.target.value)}
+                                  placeholder="Enter number"
+                                  className="flex-1 bg-white border border-purple-100 rounded-xl px-3 py-2 text-xs font-bold text-[#1E1548] focus:outline-hidden focus:border-[#5844A8]"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="mb-5">
