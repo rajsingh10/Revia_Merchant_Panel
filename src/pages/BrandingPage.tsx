@@ -37,21 +37,21 @@ interface BrandingPageProps {
 }
 
 export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
-   const [primaryGold, setPrimaryGold] = useState('#C59B46');
+   const [primaryGold, setPrimaryGold] = useState('#5844A8');
    const [charcoal, setCharcoal] = useState('#1A1615');
-   const [canvasIvory, setCanvasIvory] = useState('#FAF8F5');
+   const [canvasIvory, setCanvasIvory] = useState('#FAF8FF');
    const [forestEmerald, setForestEmerald] = useState('#0D7A53');
    const [activeTheme, setActiveTheme] = useState('Artisanal Roastery (Default)');
    const [activePreviewTab, setActivePreviewTab] = useState('Pass Ledger');
 
    useEffect(() => {
       if (activeTheme === 'Artisanal Roastery (Default)') {
-         setPrimaryGold('#C59B46');
+         setPrimaryGold('#5844A8');
          setCharcoal('#1A1615');
-         setCanvasIvory('#FAF8F5');
+         setCanvasIvory('#FAF8FF');
          setForestEmerald('#0D7A53');
       } else if (activeTheme === 'Midnight Obsidian') {
-         setPrimaryGold('#D4A753');
+         setPrimaryGold('#7C3AED');
          setCharcoal('#EAE6E1');
          setCanvasIvory('#1A1615');
          setForestEmerald('#16A36D');
@@ -64,7 +64,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
    }, [activeTheme]);
 
    return (
-      <div className="flex flex-col h-full bg-[#FAF8F5] text-[#1A1615] font-sans">
+      <div className="flex flex-col h-full bg-[#FAF8FF] text-[#1A1615] font-sans">
 
          <div className="p-4 lg:p-6 space-y-6 flex-1 max-w-[1600px] mx-auto w-full">
             {/* Page Title Section */}
@@ -80,7 +80,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                   <button className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors whitespace-nowrap shrink-0 cursor-pointer w-full sm:w-auto">
                      <RotateCcw className="w-4 h-4" /> Discard Changes
                   </button>
-                  <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#B38637] border border-[#A37837] rounded-lg text-[13px] font-bold text-white shadow-sm hover:from-[#DFB35A] hover:to-[#C0903B] transition-colors whitespace-nowrap shrink-0 cursor-pointer w-full sm:w-auto">
+                  <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-b from-[#7C3AED] to-[#5844A8] border border-[#5844A8] rounded-lg text-[13px] font-bold text-white shadow-sm hover:opacity-95 transition-colors whitespace-nowrap shrink-0 cursor-pointer w-full sm:w-auto">
                      <Sparkles className="w-4 h-4" /> Publish Brand Tokens
                   </button>
                </div>
@@ -105,7 +105,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
 
                      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
                         {/* Primary Emblem */}
-                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col group relative">
+                        <div className="bg-[#FAF8FF] border border-[#EAE6E1] rounded-xl p-4 flex flex-col group relative">
                            <div className="flex items-start justify-between mb-2">
                               <div className="text-[13px] font-bold text-[#1A1615]">Primary Emblem</div>
                               <CheckCircle2 className="w-4 h-4 text-[#A37837]" />
@@ -124,7 +124,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                         </div>
 
                         {/* Loyalty Stamp Crest */}
-                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col group relative">
+                        <div className="bg-[#FAF8FF] border border-[#EAE6E1] rounded-xl p-4 flex flex-col group relative">
                            <div className="flex items-start justify-between mb-2">
                               <div className="text-[13px] font-bold text-[#1A1615]">Loyalty Stamp Crest</div>
                               <CheckCircle2 className="w-4 h-4 text-[#A37837]" />
@@ -143,7 +143,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                         </div>
 
                         {/* Favicon & PWA */}
-                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col group relative">
+                        <div className="bg-[#FAF8FF] border border-[#EAE6E1] rounded-xl p-4 flex flex-col group relative">
                            <div className="flex items-start justify-between mb-2">
                               <div className="text-[13px] font-bold text-[#1A1615]">Favicon & PWA</div>
                               <CheckCircle2 className="w-4 h-4 text-[#A37837]" />
@@ -178,7 +178,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                               <p className="text-[11px] text-[#8C827A] mt-0.5 leading-snug">Rich tactile grain applied to digital membership keys and salon displays.</p>
                            </div>
                         </div>
-                        <button className="w-full sm:w-auto px-4 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[12px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors shrink-0">
+                        <button className="w-full sm:w-auto px-4 py-2 bg-[#FAF8FF] border border-[#EAE6E1] rounded-lg text-[12px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors shrink-0">
                            Replace Scrim
                         </button>
                      </div>
@@ -191,7 +191,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                            <Store className="w-5 h-5 text-[#A37837] shrink-0 mt-0.5" />
                            <h2 className="text-lg font-bold text-[#1A1615] leading-tight">Public Roastery & Concierge Metadata</h2>
                         </div>
-                        <div className="self-start sm:self-auto px-2.5 py-1 bg-[#FAF8F5] rounded text-[10px] font-bold text-[#8C827A] uppercase tracking-wider shrink-0">
+                        <div className="self-start sm:self-auto px-2.5 py-1 bg-[#FAF8FF] rounded text-[10px] font-bold text-[#8C827A] uppercase tracking-wider shrink-0">
                            CUSTOMER-FACING
                         </div>
                      </div>
@@ -200,26 +200,26 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                         {/* Legal Name */}
                         <div>
                            <label className="block text-[12px] font-bold text-[#1A1615] mb-1.5">Legal Business Entity Name</label>
-                           <input type="text" defaultValue="Revia Roasters & Hospitality Co." className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg py-2.5 px-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#C59B46]/30" />
+                           <input type="text" defaultValue="Revia Roasters & Hospitality Co." className="w-full bg-[#FAF8FF] border border-[#EAE6E1] rounded-lg py-2.5 px-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#5844A8]/30" />
                         </div>
 
                         {/* Tagline */}
                         <div>
                            <label className="block text-[12px] font-bold text-[#1A1615] mb-1.5">Hero Salon Statement / Tagline</label>
-                           <input type="text" defaultValue="Purveyors of Single-Origin Geisha & Bespoke Tasting Salon." className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg py-2.5 px-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#C59B46]/30" />
+                           <input type="text" defaultValue="Purveyors of Single-Origin Geisha & Bespoke Tasting Salon." className="w-full bg-[#FAF8FF] border border-[#EAE6E1] rounded-lg py-2.5 px-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#5844A8]/30" />
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                            {/* Industry */}
                            <div>
                               <label className="block text-[12px] font-bold text-[#1A1615] mb-1.5">Industry Category & MCC</label>
-                              <input type="text" defaultValue="Specialty Coffee & Private Lounge (5499)" className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg py-2.5 px-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#C59B46]/30" />
+                              <input type="text" defaultValue="Specialty Coffee & Private Lounge (5499)" className="w-full bg-[#FAF8FF] border border-[#EAE6E1] rounded-lg py-2.5 px-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#5844A8]/30" />
                            </div>
 
                            {/* Email */}
                            <div>
                               <label className="block text-[12px] font-bold text-[#1A1615] mb-1.5">Concierge Support Email</label>
-                              <input type="text" defaultValue="concierge@revia.com" className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg py-2.5 px-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#C59B46]/30" />
+                              <input type="text" defaultValue="concierge@revia.com" className="w-full bg-[#FAF8FF] border border-[#EAE6E1] rounded-lg py-2.5 px-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#5844A8]/30" />
                            </div>
 
                            {/* Instagram */}
@@ -227,7 +227,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                               <label className="block text-[12px] font-bold text-[#1A1615] mb-1.5">Instagram / Social Handle</label>
                               <div className="relative">
                                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8C827A] text-[13px]">@</span>
-                                 <input type="text" defaultValue="reviaroasters" className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg py-2.5 pl-7 pr-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#C59B46]/30" />
+                                 <input type="text" defaultValue="reviaroasters" className="w-full bg-[#FAF8FF] border border-[#EAE6E1] rounded-lg py-2.5 pl-7 pr-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#5844A8]/30" />
                               </div>
                            </div>
 
@@ -236,7 +236,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                               <label className="block text-[12px] font-bold text-[#1A1615] mb-1.5">Primary Web URL</label>
                               <div className="relative">
                                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8C827A] text-[13px]">https://</span>
-                                 <input type="text" defaultValue="revia.com" className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg py-2.5 pl-14 pr-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#C59B46]/30" />
+                                 <input type="text" defaultValue="revia.com" className="w-full bg-[#FAF8FF] border border-[#EAE6E1] rounded-lg py-2.5 pl-14 pr-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#5844A8]/30" />
                               </div>
                            </div>
                         </div>
@@ -248,21 +248,21 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                               <button onClick={() => onNavigate && onNavigate('/branches')} className="text-[11px] font-bold text-[#C59B46] hover:underline flex items-center gap-1 cursor-pointer">Manage Branches <ArrowRight className="w-3 h-3" /></button>
                            </div>
                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                              <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg p-3 flex items-start justify-between">
+                              <div className="bg-[#FAF8FF] border border-[#EAE6E1] rounded-lg p-3 flex items-start justify-between">
                                  <div>
                                     <div className="text-[12px] font-bold text-[#1A1615]">Downtown Flagship</div>
                                     <div className="text-[10px] text-[#8C827A]">SoHo Roastery</div>
                                  </div>
                                  <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53] mt-1.5"></span>
                               </div>
-                              <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg p-3 flex items-start justify-between">
+                              <div className="bg-[#FAF8FF] border border-[#EAE6E1] rounded-lg p-3 flex items-start justify-between">
                                  <div>
                                     <div className="text-[12px] font-bold text-[#1A1615]">Tribeca Salon</div>
                                     <div className="text-[10px] text-[#8C827A]">Lounge & Bar</div>
                                  </div>
                                  <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53] mt-1.5"></span>
                               </div>
-                              <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg p-3 flex items-start justify-between">
+                              <div className="bg-[#FAF8FF] border border-[#EAE6E1] rounded-lg p-3 flex items-start justify-between">
                                  <div>
                                     <div className="text-[12px] font-bold text-[#1A1615]">Brooklyn Works</div>
                                     <div className="text-[10px] text-[#8C827A]">Cupping Lab</div>
@@ -284,7 +284,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                            <Smartphone className="w-5 h-5 text-[#A37837] shrink-0 mt-0.5" />
                            <h2 className="text-[15px] font-bold text-[#1A1615] leading-tight">Client Viewport Live Preview</h2>
                         </div>
-                        <div className="flex items-center gap-1 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg p-1">
+                        <div className="flex items-center gap-1 bg-[#FAF8FF] border border-[#EAE6E1] rounded-lg p-1">
                            <button onClick={() => setActivePreviewTab('Pass Ledger')} className={`px-3 py-1 rounded text-[11px] transition-colors ${activePreviewTab === 'Pass Ledger' ? 'bg-white border border-[#EAE6E1] shadow-xs font-bold text-[#1A1615]' : 'font-medium text-[#8C827A] hover:text-[#1A1615] border border-transparent'}`}>Pass Ledger</button>
                            <button onClick={() => setActivePreviewTab('Welcome Hub')} className={`px-3 py-1 rounded text-[11px] transition-colors ${activePreviewTab === 'Welcome Hub' ? 'bg-white border border-[#EAE6E1] shadow-xs font-bold text-[#1A1615]' : 'font-medium text-[#8C827A] hover:text-[#1A1615] border border-transparent'}`}>Welcome Hub</button>
                         </div>
@@ -297,7 +297,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#1A1615] rounded-b-3xl z-30"></div>
 
                            {/* Screen Content */}
-                           <div className="bg-[#FAF8F5] w-full h-[650px] rounded-[32px] overflow-hidden relative border border-[#EAE6E1]">
+                           <div className="bg-[#FAF8FF] w-full h-[650px] rounded-[32px] overflow-hidden relative border border-[#EAE6E1]">
 
                               {/* iOS Status Bar */}
                               <div className="h-12 w-full pt-4 px-6 flex justify-between items-center text-[#1A1615] text-[12px] font-semibold z-20 relative">
@@ -339,12 +339,12 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                                     {/* Stamps Grid */}
                                     <div className="grid grid-cols-5 gap-2 mb-6">
                                        {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                                          <div key={i} className="aspect-square bg-[#FDF8EB] rounded-full border border-[#F3E5C8] flex flex-col items-center justify-center relative">
+                                          <div key={i} className="aspect-square bg-[#FAF5FF] rounded-full border border-[#E9D5FF] flex flex-col items-center justify-center relative">
                                              <Star className="w-3 h-3 text-[#C59B46] mb-0.5 fill-[#C59B46]" />
                                              <div className="text-[8px] text-[#C59B46] font-bold">#{i}</div>
                                           </div>
                                        ))}
-                                       <div className="aspect-square bg-[#FAF8F5] rounded-full border border-[#EAE6E1] border-dashed flex flex-col items-center justify-center">
+                                       <div className="aspect-square bg-[#FAF8FF] rounded-full border border-[#EAE6E1] border-dashed flex flex-col items-center justify-center">
                                           <Plus className="w-3 h-3 text-[#A8A29A] mb-0.5" />
                                           <div className="text-[8px] text-[#A8A29A] font-bold">NEXT</div>
                                        </div>
@@ -367,11 +367,11 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                                           <QrCode className="w-4 h-4 mb-1" />
                                           Scan to Earn
                                        </button>
-                                       <button className="flex-1 bg-white border border-[#EAE6E1] text-[#1A1615] py-2.5 rounded-xl text-[12px] font-bold flex flex-col items-center justify-center hover:bg-[#FAF8F5]">
+                                       <button className="flex-1 bg-white border border-[#EAE6E1] text-[#1A1615] py-2.5 rounded-xl text-[12px] font-bold flex flex-col items-center justify-center hover:bg-[#FAF8FF]">
                                           <Gift className="w-4 h-4 mb-1 text-[#6E6A66]" />
                                           Redeem
                                        </button>
-                                       <button className="flex-1 bg-white border border-[#EAE6E1] text-[#1A1615] py-2.5 rounded-xl text-[12px] font-bold flex flex-col items-center justify-center hover:bg-[#FAF8F5]">
+                                       <button className="flex-1 bg-white border border-[#EAE6E1] text-[#1A1615] py-2.5 rounded-xl text-[12px] font-bold flex flex-col items-center justify-center hover:bg-[#FAF8FF]">
                                           <Store className="w-4 h-4 mb-1 text-[#6E6A66]" />
                                           Salon Perks
                                        </button>
@@ -410,7 +410,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                                           <div className="text-[9px] text-[#8C827A] mt-0.5 leading-tight mb-2">Notes of Jasmine, Bergamot & White Peach</div>
                                           <div className="flex items-center justify-between">
                                              <div className="text-[13px] font-bold text-[#1A1615]">₹8.50</div>
-                                             <button className="px-3 py-1 bg-[#FAF8F5] border border-[#EAE6E1] rounded-full text-[10px] font-bold text-[#1A1615]">Order Ahead</button>
+                                             <button className="px-3 py-1 bg-[#FAF8FF] border border-[#EAE6E1] rounded-full text-[10px] font-bold text-[#1A1615]">Order Ahead</button>
                                           </div>
                                        </div>
                                     </div>

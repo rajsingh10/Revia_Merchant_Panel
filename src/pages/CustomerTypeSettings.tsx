@@ -34,7 +34,7 @@ const defaultTiers: Tier[] = [
     startBasis: 'Date threshold reached',
     autoRenew: true,
     status: 'Active',
-    colorClass: 'bg-[#FDF8EB] text-[#B8862E] border-[#F3E5C8]'
+    colorClass: 'bg-[#FDF8EB] text-[#5844A8] border-[#F3E5C8]'
   },
   {
     id: '3',
@@ -137,7 +137,7 @@ export const CustomerTypeSettings: React.FC = () => {
 
     const colors = [
       'bg-[#F3E8FF] text-[#7E22CE] border-[#D8B4FE]',
-      'bg-[#FDF8EB] text-[#B8862E] border-[#F3E5C8]',
+      'bg-[#FDF8EB] text-[#5844A8] border-[#F3E5C8]',
       'bg-[#FEF9C3] text-[#A16207] border-[#FEF08A]',
       'bg-[#F3F4F6] text-[#374151] border-[#E5E7EB]',
       'bg-[#FFEDD5] text-[#C2410C] border-[#FED7AA]',
@@ -196,9 +196,9 @@ export const CustomerTypeSettings: React.FC = () => {
               </div>
             ) : (
               tiers.map((tier) => (
-                <div key={tier.id} className="bg-white rounded-2xl p-3 sm:p-5 border border-[#EFECE6] shadow-sm flex items-center justify-between gap-2 group hover:border-[#D4A753]/40 transition-colors">
+                <div key={tier.id} className="bg-white rounded-2xl p-3 sm:p-5 border border-[#EFECE6] shadow-sm flex items-center justify-between gap-2 group hover:border-[#5844A8]/40 transition-colors">
                   <div className="flex items-center gap-3 sm:gap-5 flex-1 min-w-0">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#FAF8FF] border border-[#EFECE6] flex items-center justify-center shrink-0">
                       <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5 text-[#9E9A93]" />
                     </div>
                     <div className="min-w-0">
@@ -215,7 +215,7 @@ export const CustomerTypeSettings: React.FC = () => {
                       </div>
                       <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-[12px] sm:text-[13px] text-[#6E6A66] font-medium">
                         <span className="flex items-center gap-1.5 whitespace-nowrap">
-                          <span className="w-1.5 h-1.5 shrink-0 rounded-full bg-[#D4A753]"></span>
+                          <span className="w-1.5 h-1.5 shrink-0 rounded-full bg-[#5844A8]"></span>
                           {formatCurrency(tier.minBilling)} Min. Spend
                         </span>
                         <span className="flex items-center gap-1.5 whitespace-nowrap">
@@ -234,7 +234,7 @@ export const CustomerTypeSettings: React.FC = () => {
                         e.stopPropagation();
                         handleEdit(tier);
                       }}
-                      className="w-9 h-9 rounded-full cursor-pointer bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#6E6A66] hover:text-[#B8862E] hover:border-[#B8862E]/30 transition-colors"
+                      className="w-9 h-9 rounded-full cursor-pointer bg-[#FAF8FF] border border-[#EFECE6] flex items-center justify-center text-[#6E6A66] hover:text-[#5844A8] hover:border-[#B8862E]/30 transition-colors"
                       title="Edit Tier"
                     >
                       <Pencil className="w-4 h-4" />
@@ -246,7 +246,7 @@ export const CustomerTypeSettings: React.FC = () => {
                         e.stopPropagation();
                         handleDelete(tier.id);
                       }}
-                      className="w-9 h-9 rounded-full cursor-pointer bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#6E6A66] hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors"
+                      className="w-9 h-9 rounded-full cursor-pointer bg-[#FAF8FF] border border-[#EFECE6] flex items-center justify-center text-[#6E6A66] hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors"
                       title="Delete Tier"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -262,11 +262,11 @@ export const CustomerTypeSettings: React.FC = () => {
             <div className="sticky top-6 bg-white rounded-2xl border border-[#EFECE6] p-6 shadow-sm">
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#EFECE6]">
                 <h2 className="text-[16px] font-bold text-[#1A1615] flex items-center gap-2">
-                  <Settings className="w-5 h-5 text-[#B8862E]" />
+                  <Settings className="w-5 h-5 text-[#5844A8]" />
                   {editingTier ? 'Edit Tier' : 'Create New Tier'}
                 </h2>
                 {editingTier && (
-                  <button onClick={handleAddNew} className="px-4 py-2 text-[13px] rounded-lg cursor-pointer font-bold text-[#B8862E] hover:bg-[#FAF8F5] hover:text-[#9E782F] flex items-center gap-2 transition-colors">
+                  <button onClick={handleAddNew} className="px-4 py-2 text-[13px] rounded-lg cursor-pointer font-bold text-[#5844A8] hover:bg-[#FAF5FF] hover:text-[#9E782F] flex items-center gap-2 transition-colors">
                     <Plus className="w-4 h-4" /> Add New
                   </button>
                 )}
@@ -280,7 +280,7 @@ export const CustomerTypeSettings: React.FC = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Platinum"
-                    className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] transition-colors"
+                    className="w-full px-4 py-2.5 bg-[#FAF8FF] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#5844A8] transition-colors"
                   />
                 </div>
 
@@ -293,7 +293,7 @@ export const CustomerTypeSettings: React.FC = () => {
                       value={minBilling}
                       onChange={(e) => setMinBilling(e.target.value === '' ? '' : Number(e.target.value))}
                       placeholder="5000"
-                      className="w-full pl-8 pr-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] transition-colors"
+                      className="w-full pl-8 pr-4 py-2.5 bg-[#FAF8FF] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#5844A8] transition-colors"
                     />
                   </div>
                   <p className="mt-1.5 text-[11px] text-[#9E9A93] font-medium leading-relaxed">
@@ -309,13 +309,13 @@ export const CustomerTypeSettings: React.FC = () => {
                       value={validityDuration}
                       onChange={(e) => setValidityDuration(e.target.value === '' ? '' : Number(e.target.value))}
                       placeholder="1"
-                      className="flex-1 min-w-0 px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] transition-colors"
+                      className="flex-1 min-w-0 px-4 py-2.5 bg-[#FAF8FF] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#5844A8] transition-colors"
                     />
                     <div ref={validityUnitDropdownRef} className="relative w-24 sm:w-28 shrink-0">
                       <button
                         type="button"
                         onClick={() => setValidityUnitDropdownOpen(!validityUnitDropdownOpen)}
-                        className="w-full flex items-center justify-between pl-3 pr-2 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
+                        className="w-full flex items-center justify-between pl-3 pr-2 py-2.5 bg-[#FAF8FF] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
                       >
                         <span className="truncate">{validityUnit}</span>
                         <ChevronDown className={`ml-1 h-4 w-4 shrink-0 text-[#6E6A66] transition-transform ${validityUnitDropdownOpen ? 'rotate-180' : ''}`} />
@@ -344,7 +344,7 @@ export const CustomerTypeSettings: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setStartBasisDropdownOpen(!startBasisDropdownOpen)}
-                      className="w-full flex items-center justify-between pl-4 pr-3 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
+                      className="w-full flex items-center justify-between pl-4 pr-3 py-2.5 bg-[#FAF8FF] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
                     >
                       <span className="truncate">{startBasis}</span>
                       <ChevronDown className={`ml-2 h-4 w-4 shrink-0 text-[#6E6A66] transition-transform ${startBasisDropdownOpen ? 'rotate-180' : ''}`} />
@@ -376,7 +376,7 @@ export const CustomerTypeSettings: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setAutoRenew(!autoRenew)}
-                    className={`relative w-11 h-6 rounded-full border-2 transition-all cursor-pointer shrink-0 ${autoRenew ? 'bg-[#B8862E] border-[#9E782F]' : 'bg-[#EFECE6] border-[#D1CDC7]'
+                    className={`relative w-11 h-6 rounded-full border-2 transition-all cursor-pointer shrink-0 ${autoRenew ? 'bg-[#5844A8] border-[#47368E]' : 'bg-[#EFECE6] border-[#D1CDC7]'
                       }`}
                   >
                     <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${autoRenew ? 'left-[22px]' : 'left-0.5'
@@ -388,7 +388,7 @@ export const CustomerTypeSettings: React.FC = () => {
                   onClick={handleSave}
                   disabled={!name || minBilling === '' || validityDuration === ''}
                   className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-[13px] font-bold transition-all ${name && minBilling !== '' && validityDuration !== ''
-                    ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-md hover:opacity-95 cursor-pointer'
+                    ? 'bg-gradient-to-r from-[#7C3AED] to-[#5844A8] text-white shadow-md hover:opacity-95 cursor-pointer'
                     : 'bg-[#EFECE6] text-[#9E9A93] cursor-not-allowed'
                     }`}
                 >

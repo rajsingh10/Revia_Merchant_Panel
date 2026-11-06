@@ -2135,6 +2135,9 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const [bogoSelectedItems, setBogoSelectedItems] = useState<string[]>(['Margherita Pizza', 'Farmhouse Pizza']);
   const [bogoRule, setBogoRule] = useState<'same_item' | 'any_item_same_price'>('same_item');
 
+  // Preview Mode: Mobile vs Desktop
+  const [previewDevice, setPreviewDevice] = useState<'mobile' | 'desktop'>('mobile');
+
   // Step 5: Customize Banner State (Image 2)
   const [bannerTab, setBannerTab] = useState<'content' | 'design' | 'layout'>('content');
   const [bannerOfferTitle, setBannerOfferTitle] = useState('Buy 1 Get 1 Free');
@@ -8095,59 +8098,71 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
   {/* Reusable High-Fidelity Mobile Preview Mockup for Step 5 & Step 6 */}
   const renderMobilePhonePreviewMockup = () => (
-    <div className="w-[300px] sm:w-[320px] bg-black rounded-[46px] p-3 shadow-2xl border-4 border-gray-800 mx-auto relative select-none">
+    <div className="w-[330px] sm:w-[350px] bg-[#0E0C14] rounded-[48px] p-2.5 shadow-2xl border-[10px] sm:border-[11px] border-[#0E0C14] mx-auto relative select-none shadow-purple-950/25">
       {/* Dynamic Island */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 w-24 h-4 bg-black rounded-full z-20 flex items-center justify-end px-2">
-        <div className="w-2.5 h-2.5 rounded-full bg-[#111] border border-gray-700" />
+      <div className="absolute top-3.5 left-1/2 -translate-x-1/2 w-28 h-5 sm:h-5.5 bg-black rounded-full z-20 flex items-center justify-end px-3 shadow-xs">
+        <div className="w-2.5 h-2.5 rounded-full bg-[#1A1824] border border-gray-700/60" />
       </div>
 
       {/* Phone Screen */}
-      <div className="bg-[#FAF8FF] rounded-[38px] overflow-hidden text-[#1E1548] font-sans pb-4">
+      <div className="bg-[#FAF8FF] rounded-[38px] overflow-hidden text-[#1E1548] font-sans pb-4 shadow-inner">
         {/* Status Bar */}
-        <div className="flex items-center justify-between px-6 pt-3 pb-2 text-[11px] font-bold text-gray-800">
-          <span>9:41</span>
-          <div className="flex items-center gap-1.5">
-            <Wifi className="w-3 h-3 text-gray-800" />
-            <div className="w-4 h-2 rounded border border-gray-700 flex items-center p-0.5"><div className="w-2.5 h-1 bg-gray-800 rounded-2xs" /></div>
+        <div className="flex items-center justify-between px-6 pt-3 pb-2 text-[11px] font-bold text-gray-900">
+          <span className="font-semibold tracking-tight">9:41</span>
+          <div className="flex items-center gap-1.5 text-gray-900">
+            {/* Cellular Signal Icon */}
+            <div className="flex items-end gap-[1.5px] h-2.5">
+              <span className="w-[2.5px] h-1 bg-gray-900 rounded-[0.5px]" />
+              <span className="w-[2.5px] h-1.5 bg-gray-900 rounded-[0.5px]" />
+              <span className="w-[2.5px] h-2 bg-gray-900 rounded-[0.5px]" />
+              <span className="w-[2.5px] h-2.5 bg-gray-900 rounded-[0.5px]" />
+            </div>
+            {/* Wifi Icon */}
+            <Wifi className="w-3 h-3 text-gray-900" />
+            {/* Battery Icon */}
+            <div className="w-4 h-2 rounded-[2px] border border-gray-900 flex items-center p-[1px] relative">
+              <div className="w-2.5 h-full bg-gray-900 rounded-[1px]" />
+              <div className="w-[1px] h-1 bg-gray-900 absolute -right-[2px] rounded-r-[0.5px]" />
+            </div>
           </div>
         </div>
 
         {/* Banner Graphic Card */}
-        <div className="p-3">
-          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-pink-100 via-rose-50 to-purple-100 p-4 border border-rose-100 shadow-xs min-h-[145px] flex flex-col justify-between">
-            <div>
+        <div className="p-3 pt-1">
+          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-[#FFF0F5] via-[#FFF5F7] to-[#F5F0FF] border border-pink-100/90 p-4 shadow-xs min-h-[160px] flex flex-col justify-between">
+            <div className="max-w-[58%] z-10 relative">
               {bannerSpecialTag && (
-                <span className="inline-block bg-[#E11D48] text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-1.5 shadow-2xs">
+                <span className="inline-block bg-[#E11D48] text-white text-[9.5px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1.5 shadow-2xs">
                   {bannerSpecialTag}
                 </span>
               )}
-              <h3 className="text-base font-black text-[#1E1548] leading-tight">
+              <h3 className="text-[17px] font-black text-[#1E1548] leading-tight">
                 {bannerOfferTitle || 'Buy 1 Get 1 Free'}
               </h3>
-              <p className="text-[11px] font-semibold text-rose-600 mt-0.5">
+              <p className="text-xs font-bold text-[#E11D48] mt-0.5">
                 {bannerSubtext || 'On all pizzas'}
               </p>
             </div>
 
-            {/* Food illustration on right */}
+            {/* Food illustration on right matching user's image */}
             <img
-              src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=200&auto=format&fit=crop&q=80"
+              src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=320&auto=format&fit=crop&q=80"
               alt="Offer Item"
-              className="absolute -right-3 -bottom-3 w-28 h-28 object-contain drop-shadow-md rounded-full pointer-events-none"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-28 h-28 object-cover rounded-full shadow-md pointer-events-none border-2 border-white/60"
             />
 
             {/* Validity & Location Pills */}
-            <div className="flex flex-wrap items-center gap-1.5 mt-3 relative z-10">
+            <div className="flex flex-col gap-1.5 mt-3 relative z-10 max-w-[62%]">
               {bannerShowValidity && (
-                <span className="inline-flex items-center gap-1 bg-white/85 backdrop-blur-xs border border-white/60 text-[9px] font-bold text-gray-700 px-2 py-0.5 rounded-md">
-                  <Calendar className="w-2.5 h-2.5 text-gray-500" />
-                  Valid till {bannerValidityDate}
+                <span className="inline-flex items-center gap-1.5 bg-white/95 backdrop-blur-xs border border-white text-[9.5px] font-semibold text-gray-700 px-2.5 py-1 rounded-lg shadow-2xs">
+                  <Calendar className="w-2.5 h-2.5 text-gray-500 shrink-0" />
+                  <span className="truncate">Valid till {bannerValidityDate || '31 Dec 2025'}</span>
                 </span>
               )}
               {bannerShowLocation && (
-                <span className="inline-flex items-center gap-1 bg-white/85 backdrop-blur-xs border border-white/60 text-[9px] font-bold text-gray-700 px-2 py-0.5 rounded-md">
-                  <MapPin className="w-2.5 h-2.5 text-gray-500" />
-                  {bannerLocationText}
+                <span className="inline-flex items-center gap-1.5 bg-white/95 backdrop-blur-xs border border-white text-[9.5px] font-semibold text-gray-700 px-2.5 py-1 rounded-lg shadow-2xs">
+                  <MapPin className="w-2.5 h-2.5 text-gray-500 shrink-0" />
+                  <span className="truncate">{bannerLocationText || 'Available at all branches'}</span>
                 </span>
               )}
             </div>
@@ -8155,33 +8170,145 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
         </div>
 
         {/* Offer Details */}
-        <div className="px-3.5 space-y-3">
-          <div className="bg-white rounded-xl p-3 border border-purple-50 shadow-2xs">
-            <h4 className="text-[11px] font-bold text-[#1E1548]">Offer Details</h4>
-            <p className="text-[10px] text-gray-500 mt-1 leading-relaxed">
+        <div className="px-3 space-y-2.5">
+          <div className="bg-white rounded-2xl p-4 border border-purple-50/80 shadow-xs">
+            <h4 className="text-xs font-bold text-[#1E1548]">Offer Details</h4>
+            <p className="text-[11px] text-gray-600 mt-1 leading-relaxed">
               {bannerDescription || 'Enjoy 1+1 on all pizzas. Treat yourself and a friend to your favourite pizza!'}
             </p>
           </div>
 
           {/* Terms & Conditions */}
-          <div className="bg-white rounded-xl p-3 border border-purple-50 shadow-2xs">
-            <h4 className="text-[11px] font-bold text-[#1E1548]">Terms &amp; Conditions</h4>
-            <ul className="text-[9.5px] text-gray-500 mt-1.5 space-y-1">
-              <li className="flex items-center gap-1.5">• Valid on all pizza variants.</li>
-              <li className="flex items-center gap-1.5">• Lowest priced item will be free.</li>
-              <li className="flex items-center gap-1.5">• Cannot be clubbed with other offers.</li>
-              <li className="flex items-center gap-1.5">• Valid at all outlets.</li>
-              <li className="flex items-center gap-1.5">• Valid till {bannerValidityDate}.</li>
+          <div className="bg-white rounded-2xl p-4 border border-purple-50/80 shadow-xs">
+            <h4 className="text-xs font-bold text-[#1E1548]">Terms &amp; Conditions</h4>
+            <ul className="text-[10px] text-gray-600 mt-1.5 space-y-1">
+              <li className="flex items-start gap-1.5">• Valid on all pizza variants.</li>
+              <li className="flex items-start gap-1.5">• Lowest priced item will be free.</li>
+              <li className="flex items-start gap-1.5">• Cannot be clubbed with other offers.</li>
+              <li className="flex items-start gap-1.5">• Valid at all outlets.</li>
+              <li className="flex items-start gap-1.5">• Valid till {bannerValidityDate || '31 Dec 2025'}.</li>
             </ul>
           </div>
 
           {/* Redeem Button */}
           <button
             type="button"
-            className="w-full py-2.5 bg-gradient-to-r from-[#5844A8] to-[#47368E] text-white text-xs font-bold rounded-xl shadow-md shadow-purple-900/20 text-center"
+            className="w-full py-3.5 bg-[#48348C] hover:bg-[#3D2C76] text-white text-xs font-bold rounded-2xl shadow-md shadow-purple-900/20 text-center transition-colors cursor-pointer"
           >
             Redeem Offer
           </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  {/* High-Fidelity Desktop Browser Preview Mockup */}
+  const renderDesktopBrowserPreviewMockup = () => (
+    <div className="w-full bg-white rounded-2xl border border-purple-100 shadow-xl overflow-hidden select-none transition-all text-[#1E1548]">
+      {/* Browser Navigation Bar */}
+      <div className="bg-[#FAF8FF] px-4 py-2.5 border-b border-purple-100 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block" />
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block" />
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" />
+        </div>
+        <div className="flex-1 max-w-[280px] bg-white border border-purple-100 rounded-lg px-2.5 py-1 flex items-center gap-1.5 text-[10px] text-gray-500 font-mono">
+          <Lock className="w-2.5 h-2.5 text-emerald-600 shrink-0" />
+          <span className="truncate">https://revia.co/campaign/bogo-pizza</span>
+        </div>
+        <div className="flex items-center gap-2 text-gray-400">
+          <RefreshCw className="w-3 h-3" />
+        </div>
+      </div>
+
+      {/* Web Page Viewport */}
+      <div className="bg-[#FAF8FF] p-4 sm:p-5 space-y-4 max-h-[640px] overflow-y-auto">
+        {/* Store Web Header */}
+        <div className="flex items-center justify-between bg-white px-4 py-2.5 rounded-xl border border-purple-50 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#5844A8] text-white flex items-center justify-center font-bold text-xs">
+              R
+            </div>
+            <span className="font-extrabold text-xs text-[#1E1548]">Revia Café &amp; Roastery</span>
+          </div>
+          <div className="flex items-center gap-3 text-[11px] font-semibold text-gray-600">
+            <span className="hidden sm:inline">Menu</span>
+            <span className="hidden sm:inline">Locations</span>
+            <span className="px-2.5 py-1 rounded-full bg-purple-50 text-[#5844A8] font-bold text-[10px]">
+              Guest Offer
+            </span>
+          </div>
+        </div>
+
+        {/* Hero Showcase Card */}
+        <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-[#FFF0F5] via-[#FFF5F7] to-[#F5F0FF] border border-pink-100 p-5 shadow-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+            <div className="sm:col-span-7 space-y-2">
+              {bannerSpecialTag && (
+                <span className="inline-block bg-[#E11D48] text-white text-[9.5px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-2xs">
+                  {bannerSpecialTag}
+                </span>
+              )}
+              <h3 className="text-xl sm:text-2xl font-black text-[#1E1548] leading-tight">
+                {bannerOfferTitle || 'Buy 1 Get 1 Free'}
+              </h3>
+              <p className="text-xs font-bold text-[#E11D48]">
+                {bannerSubtext || 'On all pizzas'}
+              </p>
+
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                {bannerShowValidity && (
+                  <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-xs border border-white text-[10px] font-bold text-gray-700 px-2.5 py-1 rounded-lg shadow-2xs">
+                    <Calendar className="w-3 h-3 text-gray-500" />
+                    Valid till {bannerValidityDate || '31 Dec 2025'}
+                  </span>
+                )}
+                {bannerShowLocation && (
+                  <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-xs border border-white text-[10px] font-bold text-gray-700 px-2.5 py-1 rounded-lg shadow-2xs">
+                    <MapPin className="w-3 h-3 text-gray-500" />
+                    {bannerLocationText || 'Available at all branches'}
+                  </span>
+                )}
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  className="px-6 py-2.5 bg-[#48348C] hover:bg-[#3D2C76] text-white text-xs font-bold rounded-xl shadow-md shadow-purple-900/20 cursor-pointer transition-colors"
+                >
+                  Redeem Offer Online
+                </button>
+              </div>
+            </div>
+
+            <div className="sm:col-span-5 flex justify-center sm:justify-end">
+              <img
+                src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&auto=format&fit=crop&q=80"
+                alt="Offer Hero"
+                className="w-36 h-36 sm:w-44 sm:h-44 object-cover rounded-2xl shadow-md"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Side by side: Offer Details & Terms */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="bg-white rounded-2xl p-4 border border-purple-50 shadow-xs">
+            <h4 className="text-xs font-bold text-[#1E1548]">Offer Details</h4>
+            <p className="text-[11px] text-gray-600 mt-1.5 leading-relaxed">
+              {bannerDescription || 'Enjoy 1+1 on all pizzas. Treat yourself and a friend to your favourite pizza!'}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-4 border border-purple-50 shadow-xs">
+            <h4 className="text-xs font-bold text-[#1E1548]">Terms &amp; Conditions</h4>
+            <ul className="text-[10px] text-gray-600 mt-1.5 space-y-1">
+              <li>• Valid on all pizza variants.</li>
+              <li>• Lowest priced item will be free.</li>
+              <li>• Cannot be clubbed with other offers.</li>
+              <li>• Valid at all outlets till {bannerValidityDate || '31 Dec 2025'}.</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -8404,24 +8531,50 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               </div>
             </div>
 
-            {/* Right Column: Mobile Preview (lg:col-span-5) */}
+            {/* Right Column: Preview Area (lg:col-span-5) */}
             <div className="lg:col-span-5 space-y-4">
               <div className="flex items-center justify-between px-1">
                 <div>
-                  <h3 className="text-sm font-bold text-[#1E1548]">Mobile Preview</h3>
-                  <p className="text-[11px] text-gray-400">This is how your campaign will look to customers.</p>
+                  <h3 className="text-sm font-bold text-[#1E1548]">
+                    {previewDevice === 'mobile' ? 'Mobile Preview' : 'Desktop Preview'}
+                  </h3>
+                  <p className="text-[11px] text-gray-400">
+                    {previewDevice === 'mobile'
+                      ? 'This is how your campaign will look to customers.'
+                      : 'This is how your campaign will look to customers on desktop.'}
+                  </p>
                 </div>
                 <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-1">
-                  <button type="button" aria-label="Desktop preview" className="p-1 text-gray-400 hover:text-black">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewDevice('desktop')}
+                    aria-label="Desktop preview"
+                    className={`p-1.5 rounded transition-colors cursor-pointer ${
+                      previewDevice === 'desktop'
+                        ? 'text-[#5844A8] bg-purple-100/80 shadow-2xs font-bold'
+                        : 'text-gray-400 hover:text-black'
+                    }`}
+                  >
                     <Monitor className="w-3.5 h-3.5" />
                   </button>
-                  <button type="button" aria-label="Mobile preview" className="p-1 text-[#5844A8] bg-purple-50 rounded">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewDevice('mobile')}
+                    aria-label="Mobile preview"
+                    className={`p-1.5 rounded transition-colors cursor-pointer ${
+                      previewDevice === 'mobile'
+                        ? 'text-[#5844A8] bg-purple-100/80 shadow-2xs font-bold'
+                        : 'text-gray-400 hover:text-black'
+                    }`}
+                  >
                     <Smartphone className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
 
-              {renderMobilePhonePreviewMockup()}
+              {previewDevice === 'mobile'
+                ? renderMobilePhonePreviewMockup()
+                : renderDesktopBrowserPreviewMockup()}
             </div>
           </div>
 
@@ -8641,24 +8794,50 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               </div>
             </div>
 
-            {/* Right Column: Mobile Preview (lg:col-span-5) */}
+            {/* Right Column: Preview Area (lg:col-span-5) */}
             <div className="lg:col-span-5 space-y-4">
               <div className="flex items-center justify-between px-1">
                 <div>
-                  <h3 className="text-sm font-bold text-[#1E1548]">Mobile Preview</h3>
-                  <p className="text-[11px] text-gray-400">This is how your campaign will look to customers.</p>
+                  <h3 className="text-sm font-bold text-[#1E1548]">
+                    {previewDevice === 'mobile' ? 'Mobile Preview' : 'Desktop Preview'}
+                  </h3>
+                  <p className="text-[11px] text-gray-400">
+                    {previewDevice === 'mobile'
+                      ? 'This is how your campaign will look to customers.'
+                      : 'This is how your campaign will look to customers on desktop.'}
+                  </p>
                 </div>
                 <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-1">
-                  <button type="button" aria-label="Desktop preview" className="p-1 text-gray-400 hover:text-black">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewDevice('desktop')}
+                    aria-label="Desktop preview"
+                    className={`p-1.5 rounded transition-colors cursor-pointer ${
+                      previewDevice === 'desktop'
+                        ? 'text-[#5844A8] bg-purple-100/80 shadow-2xs font-bold'
+                        : 'text-gray-400 hover:text-black'
+                    }`}
+                  >
                     <Monitor className="w-3.5 h-3.5" />
                   </button>
-                  <button type="button" aria-label="Mobile preview" className="p-1 text-[#5844A8] bg-purple-50 rounded">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewDevice('mobile')}
+                    aria-label="Mobile preview"
+                    className={`p-1.5 rounded transition-colors cursor-pointer ${
+                      previewDevice === 'mobile'
+                        ? 'text-[#5844A8] bg-purple-100/80 shadow-2xs font-bold'
+                        : 'text-gray-400 hover:text-black'
+                    }`}
+                  >
                     <Smartphone className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
 
-              {renderMobilePhonePreviewMockup()}
+              {previewDevice === 'mobile'
+                ? renderMobilePhonePreviewMockup()
+                : renderDesktopBrowserPreviewMockup()}
             </div>
           </div>
 

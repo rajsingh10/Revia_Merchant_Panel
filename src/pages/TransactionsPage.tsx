@@ -117,7 +117,7 @@ export const TransactionsPage: React.FC = () => {
     <div className={`relative w-full ${!fullWidth ? 'sm:w-auto' : ''}`} ref={openDropdown === id ? dropdownRef : null}>
       <button
         onClick={() => setOpenDropdown(openDropdown === id ? null : id)}
-        className={`flex items-center justify-between gap-1.5 px-3 py-2 bg-white border border-[#EFECE6] rounded-lg ${fullWidth ? 'text-sm' : 'text-xs'} font-semibold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors cursor-pointer w-full ${!fullWidth ? 'sm:w-auto' : ''}`}
+        className={`flex items-center justify-between gap-1.5 px-3 py-2 bg-white border border-[#EFECE6] rounded-lg ${fullWidth ? 'text-sm' : 'text-xs'} font-semibold text-[#1A1615] hover:bg-[#FAF5FF] transition-colors cursor-pointer w-full ${!fullWidth ? 'sm:w-auto' : ''}`}
       >
         <span className="truncate">{value}</span> <ChevronDown className="w-3.5 h-3.5 text-[#9E9A93] shrink-0" />
       </button>
@@ -127,7 +127,7 @@ export const TransactionsPage: React.FC = () => {
             <button
               key={opt}
               onClick={(e) => { e.preventDefault(); onChange(opt); setOpenDropdown(null); }}
-              className={`w-full text-left px-3 py-2 ${fullWidth ? 'text-sm' : 'text-xs'} hover:bg-[#FAF8F5] transition-colors ${value === opt ? 'font-bold text-[#1A1615] bg-[#FAF8F5]' : 'font-medium text-[#6E6A66]'}`}
+              className={`w-full text-left px-3 py-2 ${fullWidth ? 'text-sm' : 'text-xs'} hover:bg-[#FAF5FF] transition-colors ${value === opt ? 'font-bold text-[#1A1615] bg-[#FAF5FF]' : 'font-medium text-[#6E6A66]'}`}
             >
               {opt}
             </button>
@@ -142,7 +142,7 @@ export const TransactionsPage: React.FC = () => {
       case 'BLACK TIER':
         return <span className="px-1.5 py-0.5 rounded bg-[#1A1615] text-white text-[9px] font-bold tracking-wider uppercase">BLACK TIER</span>;
       case 'RESERVE':
-        return <span className="px-1.5 py-0.5 rounded bg-[#FDF8EB] text-[#9E782F] text-[9px] font-bold tracking-wider uppercase border border-[#F3E5C8]">RESERVE</span>;
+        return <span className="px-1.5 py-0.5 rounded bg-[#FAF5FF] text-[#5844A8] text-[9px] font-bold tracking-wider uppercase border border-[#E9D5FF]">RESERVE</span>;
       default:
         return <span className="px-1.5 py-0.5 rounded bg-[#F5F4F0] text-[#6E6A66] text-[9px] font-bold tracking-wider uppercase">NON-MEMBER</span>;
     }
@@ -165,7 +165,7 @@ export const TransactionsPage: React.FC = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-[#FAF8F5] flex flex-col font-sans text-[#1A1615]">
+      <div className="min-h-screen bg-[#FAF8FF] flex flex-col font-sans text-[#1A1615]">
         {/* Bottom Toast Feedback */}
         {feedbackToast && (
           <div className="fixed bottom-6 right-6 z-50 bg-[#1A1615] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-semibold border border-[#3D3732] animate-in slide-in-from-bottom-5 fade-in">
@@ -182,7 +182,7 @@ export const TransactionsPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-1">
                 {/* <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">Transactions &amp; POS Counter Entry</h1> */}
                 <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">Transactions</h1>
-                <span className="w-fit px-2.5 py-1 text-[10px] font-bold bg-[#FDF8EB] text-[#9E782F] rounded-full uppercase tracking-wider border border-[#F3E5C8]">
+                <span className="w-fit px-2.5 py-1 text-[10px] font-bold bg-[#FAF5FF] text-[#5844A8] rounded-full uppercase tracking-wider border border-[#E9D5FF]">
                   Live Terminal Feed
                 </span>
               </div>
@@ -192,13 +192,13 @@ export const TransactionsPage: React.FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 shrink-0 mt-2 md:mt-0">
-              <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer">
+              <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF5FF] rounded-lg transition-colors shadow-sm cursor-pointer">
                 <Download className="w-4 h-4 text-[#6E6A66]" />
                 Export Ledger CSV
               </button>
               <button
                 onClick={() => setFastPosModalOpen(true)}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-[13px] font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 rounded-lg transition-all shadow-xs cursor-pointer"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-[13px] font-bold text-white bg-gradient-to-r from-[#7C3AED] to-[#5844A8] hover:opacity-95 rounded-lg transition-all shadow-xs cursor-pointer"
               >
                 <UserPlus className="w-4 h-4 text-white" />
                 Fast Counter Entry
@@ -256,7 +256,7 @@ export const TransactionsPage: React.FC = () => {
             <div className="xl:col-span-12 bg-white rounded-xl border border-[#EFECE6] shadow-sm flex flex-col overflow-hidden">
 
               {/* Filter & Category Tabs */}
-              <div className="p-4 border-b border-[#EFECE6] bg-[#FAF8F5]/50">
+              <div className="p-4 border-b border-[#EFECE6] bg-[#FAF8FF]/50">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
                   <div className="flex items-center gap-2">
                     <button
@@ -294,7 +294,7 @@ export const TransactionsPage: React.FC = () => {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Filter by Member ID, Order ID..."
-                      className="w-full pl-8 pr-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-xs focus:outline-none focus:border-[#D4A753] text-[#1A1615] placeholder:text-[#9E9A93] font-semibold"
+                      className="w-full pl-8 pr-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-xs focus:outline-none focus:border-[#5844A8] text-[#1A1615] placeholder:text-[#9E9A93] font-semibold"
                     />
                   </div>
                   <div className="grid grid-cols-1 sm:flex sm:items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
@@ -309,7 +309,7 @@ export const TransactionsPage: React.FC = () => {
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left border-collapse min-w-[800px]">
                   <thead>
-                    <tr className="bg-[#FAF8F5] border-b border-[#EFECE6]">
+                    <tr className="bg-[#FAF8FF] border-b border-[#EFECE6]">
                       <th className="py-3 px-4 text-[11px] font-bold uppercase tracking-widest text-[#9E9A93] w-[18%]">Order / Stamp ID</th>
                       <th className="py-3 px-4 text-[11px] font-bold uppercase tracking-widest text-[#9E9A93] w-[18%]">Guest / Member</th>
                       <th className="py-3 px-4 text-[11px] font-bold uppercase tracking-widest text-[#9E9A93] w-[25%]">Type &amp; Items</th>
@@ -323,9 +323,9 @@ export const TransactionsPage: React.FC = () => {
                   </thead>
                   <tbody className="divide-y divide-[#EFECE6]">
                     {currentTransactions.map((tx, idx) => (
-                      <tr key={idx} className="hover:bg-[#FAF8F5]/80 transition-colors">
+                      <tr key={idx} className="hover:bg-[#FAF8FF]/80 transition-colors">
                         <td className="py-3 px-4">
-                          <div className="text-xs font-mono font-bold text-[#D4A753]">{tx.id.split(' ')[0]}</div>
+                          <div className="text-xs font-mono font-bold text-[#5844A8]">{tx.id.split(' ')[0]}</div>
                           <div className="text-[10px] font-semibold text-[#9E9A93] mt-0.5">{tx.id.split(' ')[1]}</div>
                         </td>
                         <td className="py-3 px-4">
@@ -353,7 +353,7 @@ export const TransactionsPage: React.FC = () => {
                         </td>
                         <td className="py-3 px-4">
                           <div className="text-xs font-bold text-[#1A1615]">{tx.amount}</div>
-                          <div className={`text-[10px] font-bold mt-0.5 ${(tx.stamps || '').includes('+') ? 'text-[#D4A753]' : (tx.stamps || '').includes('-') ? 'text-[#0D7A53]' : 'text-[#9E9A93]'}`}>
+                          <div className={`text-[10px] font-bold mt-0.5 ${(tx.stamps || '').includes('+') ? 'text-[#5844A8]' : (tx.stamps || '').includes('-') ? 'text-[#0D7A53]' : 'text-[#9E9A93]'}`}>
                             {tx.stamps}
                           </div>
                         </td>
@@ -374,7 +374,7 @@ export const TransactionsPage: React.FC = () => {
                             <>
                               <div className="fixed inset-0 z-[50]" onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); }} />
                               <div className={`absolute right-0 w-40 bg-white border border-[#EFECE6] rounded-xl shadow-xl z-[60] overflow-hidden text-left ${idx >= currentTransactions.length - 2 && currentTransactions.length > 2 ? 'bottom-full mb-1' : 'top-full mt-1'}`}>
-                                <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); setReceiptModalTx(tx); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1A1615] cursor-pointer hover:bg-[#FAF8F5]">View Receipt</button>
+                                <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); setReceiptModalTx(tx); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1A1615] cursor-pointer hover:bg-[#FAF5FF]">View Receipt</button>
                                 <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); showToast('Refunding transaction...'); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#DC2626] cursor-pointer hover:bg-[#FEE2E2]">Refund</button>
                               </div>
                             </>
@@ -395,7 +395,7 @@ export const TransactionsPage: React.FC = () => {
                     <div key={idx} className="border-b border-[#EFECE6] last:border-b-0 overflow-hidden">
                       <button
                         onClick={() => setExpandedTxId(isExpanded ? null : tx.id)}
-                        className="w-full p-4 flex items-start justify-between transition-colors cursor-pointer bg-white hover:bg-[#FAF8F5]"
+                        className="w-full p-4 flex items-start justify-between transition-colors cursor-pointer bg-white hover:bg-[#FAF5FF]"
                       >
                         <div className="flex gap-3 text-left">
                           <div className="w-8 h-8 mt-1 rounded-full bg-[#EFECE6] border border-[#D1CDC7] flex items-center justify-center text-[10px] font-bold text-[#6E6A66] shrink-0">
@@ -405,7 +405,7 @@ export const TransactionsPage: React.FC = () => {
                             <div className="text-xs font-bold text-[#1A1615] mb-1">
                               {tx.guestName}
                             </div>
-                            <div className="text-xs font-mono font-bold text-[#D4A753]">
+                            <div className="text-xs font-mono font-bold text-[#5844A8]">
                               {(tx.id || '').split(' ')[0]}
                             </div>
                             <div className="text-[10px] font-semibold text-[#9E9A93] mt-0.5">
@@ -428,7 +428,7 @@ export const TransactionsPage: React.FC = () => {
                       </button>
 
                       {isExpanded && (
-                        <div className="p-4 grid grid-cols-2 gap-4 border-t border-[#EFECE6] bg-[#FAF8F5]/50">
+                        <div className="p-4 grid grid-cols-2 gap-4 border-t border-[#EFECE6] bg-[#FAF8FF]/50">
                           <div className="col-span-2">
                             <div className="text-[9px] uppercase font-bold text-[#9E9A93] mb-1 tracking-wider">Type &amp; Items</div>
                             <div className="text-xs font-bold text-[#1A1615]">{tx.type}</div>
@@ -446,7 +446,7 @@ export const TransactionsPage: React.FC = () => {
                           </div>
                           <div>
                             <div className="text-[9px] uppercase font-bold text-[#9E9A93] mb-1 tracking-wider">Stamps</div>
-                            <div className={`text-[11px] font-bold ${(tx.stamps || '').includes('+') ? 'text-[#D4A753]' : (tx.stamps || '').includes('-') ? 'text-[#0D7A53]' : 'text-[#1A1615]'}`}>
+                            <div className={`text-[11px] font-bold ${(tx.stamps || '').includes('+') ? 'text-[#5844A8]' : (tx.stamps || '').includes('-') ? 'text-[#0D7A53]' : 'text-[#1A1615]'}`}>
                               {tx.stamps}
                             </div>
                           </div>
@@ -455,7 +455,7 @@ export const TransactionsPage: React.FC = () => {
                             <div className="text-[11px] font-bold text-[#1A1615]">{tx.commission || '₹0.00'}</div>
                           </div>
                           <div className="col-span-2 pt-2 border-t border-[#EFECE6] flex justify-end gap-2 mt-2">
-                            <button onClick={(e) => { e.stopPropagation(); setReceiptModalTx(tx); }} className="px-4 py-2 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EFECE6] rounded-lg shadow-sm hover:bg-[#FAF8F5]">View Receipt</button>
+                            <button onClick={(e) => { e.stopPropagation(); setReceiptModalTx(tx); }} className="px-4 py-2 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EFECE6] rounded-lg shadow-sm hover:bg-[#FAF5FF]">View Receipt</button>
                             <button onClick={(e) => { e.stopPropagation(); showToast('Refunding transaction...'); }} className="px-4 py-2 text-[13px] font-semibold text-[#DC2626] bg-[#FEE2E2] border border-[#FECACA] rounded-lg shadow-sm hover:bg-[#FCA5A5]">Refund</button>
                           </div>
                         </div>
@@ -466,7 +466,7 @@ export const TransactionsPage: React.FC = () => {
               </div>
 
               {/* Table Footer Pagination */}
-              <div className="px-5 py-4 border-t border-[#EFECE6] bg-[#FAF8F5] flex items-center justify-between text-xs">
+              <div className="px-5 py-4 border-t border-[#EFECE6] bg-[#FAF8FF] flex items-center justify-between text-xs">
                 <span className="font-semibold text-[#6E6A66]">
                   Showing {Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, filteredTransactions.length)} - {Math.min(currentPage * ITEMS_PER_PAGE, filteredTransactions.length)} of {filteredTransactions.length} transactions
                 </span>
@@ -484,7 +484,7 @@ export const TransactionsPage: React.FC = () => {
                       key={page}
                       onClick={() => setCurrentPage(page)}
                       className={`w-7 h-7 flex items-center justify-center rounded font-bold transition-colors cursor-pointer ${currentPage === page
-                        ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-xs'
+                        ? 'bg-gradient-to-b from-[#7C3AED] to-[#5844A8] text-white shadow-xs'
                         : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:text-[#1A1615]'
                         }`}
                     >
@@ -495,7 +495,7 @@ export const TransactionsPage: React.FC = () => {
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className={`px-3 py-1.5 font-bold transition-colors cursor-pointer ${currentPage === totalPages ? 'text-[#D1CDC7] cursor-not-allowed' : 'text-[#1A1615] hover:text-[#D4A753]'}`}
+                    className={`px-3 py-1.5 font-bold transition-colors cursor-pointer ${currentPage === totalPages ? 'text-[#D1CDC7] cursor-not-allowed' : 'text-[#1A1615] hover:text-[#5844A8]'}`}
                   >
                     Next
                   </button>
@@ -513,9 +513,9 @@ export const TransactionsPage: React.FC = () => {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={() => setFastPosModalOpen(false)}>
           <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 flex flex-col max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             {/* Header */}
-            <div className="px-5 py-4 border-b border-[#EFECE6] bg-[#1A1615] text-white flex items-center justify-between sticky top-0 z-10">
+            <div className="px-5 py-4 border-b border-[#EFECE6] bg-[#2D124D] text-white flex items-center justify-between sticky top-0 z-10">
               <h2 className="text-[15px] font-bold flex items-center gap-2">
-                <Zap className="w-4 h-4 text-[#D4A753]" />Fast Counter Entry
+                <Zap className="w-4 h-4 text-purple-300" />Fast Counter Entry
               </h2>
               <div className="flex items-center gap-3">
                 {/* <div className="flex items-center gap-2">
@@ -533,7 +533,7 @@ export const TransactionsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-5 space-y-6 bg-[#FDFBF7]">
+            <div className="p-5 space-y-6 bg-[#FAF8FF]">
 
               {/* 1. Transaction Details */}
               <div className="space-y-3">
@@ -560,11 +560,11 @@ export const TransactionsPage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Customer Name (Optional)</label>
-                    <input type="text" placeholder="e.g. John Doe" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                    <input type="text" placeholder="e.g. John Doe" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#5844A8]" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Customer Phone (Optional)</label>
-                    <input type="text" placeholder="+1 555-0000" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                    <input type="text" placeholder="+1 555-0000" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#5844A8]" />
                   </div>
                 </div>
               </div>
@@ -579,19 +579,19 @@ export const TransactionsPage: React.FC = () => {
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Description / Item</label>
-                    <input type="text" placeholder="Item details..." className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                    <input type="text" placeholder="Item details..." className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#5844A8]" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Amount *</label>
-                    <input type="number" placeholder="0.00" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                    <input type="number" placeholder="0.00" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#5844A8]" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Discount</label>
-                    <input type="number" placeholder="0.00" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                    <input type="number" placeholder="0.00" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#5844A8]" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Tax</label>
-                    <input type="number" placeholder="0.00" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                    <input type="number" placeholder="0.00" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#5844A8]" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-[#1A1615] mb-1">Final Amount</label>
@@ -614,7 +614,7 @@ export const TransactionsPage: React.FC = () => {
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Reference No. (Optional)</label>
-                    <input type="text" placeholder="Transaction ID / UPI Ref" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                    <input type="text" placeholder="Transaction ID / UPI Ref" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#5844A8]" />
                   </div>
                 </div>
               </div>
@@ -624,7 +624,7 @@ export const TransactionsPage: React.FC = () => {
                 <h3 className="text-[13px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2 border-b border-[#EFECE6] pb-1">5. Additional</h3>
                 <div>
                   <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Notes (Optional)</label>
-                  <textarea rows={2} placeholder="Add any extra notes here..." className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] resize-none"></textarea>
+                  <textarea rows={2} placeholder="Add any extra notes here..." className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#5844A8] resize-none"></textarea>
                 </div>
               </div>
 
@@ -652,35 +652,11 @@ export const TransactionsPage: React.FC = () => {
                   showToast('Transaction submitted successfully.');
                   setFastPosModalOpen(false);
                 }}
-                className="w-full px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-[13px] font-bold transition-opacity shadow-md cursor-pointer flex justify-center items-center gap-2"
+                className="w-full px-4 py-2 bg-gradient-to-b from-[#7C3AED] to-[#5844A8] hover:opacity-95 text-white rounded-lg text-[13px] font-bold transition-opacity shadow-md cursor-pointer flex justify-center items-center gap-2"
               >
                 <CheckCircle2 className="w-4 h-4" /> Submit Transaction
               </button>
             </div>
-
-            {/* Section 6: Counter Hotkeys Footer */}
-            {/* <div className="px-5 py-3 border-t border-[#EFECE6] bg-[#FAF8F5]">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#1A1615]">Counter Hotkeys</span>
-                <span className="px-2 py-0.5 bg-white border border-[#EFECE6] rounded text-[9px] font-bold text-[#9E9A93] uppercase tracking-wider flex items-center gap-1">
-                  <Check className="w-2.5 h-2.5 text-[#0D7A53]" /> Keyboard enabled
-                </span>
-              </div>
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-[10px] font-semibold text-[#6E6A66]">
-                  <span>Quick Stamp +1</span>
-                  <kbd className="px-1.5 py-0.5 bg-white border border-[#EFECE6] rounded shadow-xs font-mono font-bold text-[#1A1615]">Ctrl + 1</kbd>
-                </div>
-                <div className="flex items-center justify-between text-[10px] font-semibold text-[#6E6A66]">
-                  <span>Focus Search/Scan</span>
-                  <kbd className="px-1.5 py-0.5 bg-white border border-[#EFECE6] rounded shadow-xs font-mono font-bold text-[#1A1615]">Ctrl + K</kbd>
-                </div>
-                <div className="flex items-center justify-between text-[10px] font-semibold text-[#6E6A66]">
-                  <span>Process Order</span>
-                  <kbd className="px-1.5 py-0.5 bg-[#1A1615] text-white border border-[#1A1615] rounded shadow-xs font-mono font-bold">Enter ↵</kbd>
-                </div>
-              </div>
-            </div> */}
 
           </div>
         </div>
@@ -690,7 +666,7 @@ export const TransactionsPage: React.FC = () => {
       {receiptModalTx && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={() => setReceiptModalTx(null)}>
           <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
-            <div className="p-5 border-b border-[#EFECE6] flex justify-between items-center bg-[#FAF8F5]">
+            <div className="p-5 border-b border-[#EFECE6] flex justify-between items-center bg-[#FAF8FF]">
               <h2 className="text-[15px] font-bold text-[#1A1615]">Transaction Receipt</h2>
               <button onClick={() => setReceiptModalTx(null)} className="p-1 text-[#9E9A93] hover:text-[#1A1615] rounded transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
             </div>
@@ -726,13 +702,13 @@ export const TransactionsPage: React.FC = () => {
                 </div>
                 <div className="flex justify-between pt-2">
                   <span className="text-[#6E6A66] font-semibold">Stamps Applied</span>
-                  <span className={`font-bold ${receiptModalTx.stamps.includes('+') ? 'text-[#D4A753]' : receiptModalTx.stamps.includes('-') ? 'text-[#0D7A53]' : 'text-[#1A1615]'}`}>
+                  <span className={`font-bold ${receiptModalTx.stamps.includes('+') ? 'text-[#5844A8]' : receiptModalTx.stamps.includes('-') ? 'text-[#0D7A53]' : 'text-[#1A1615]'}`}>
                     {receiptModalTx.stamps}
                   </span>
                 </div>
               </div>
 
-              <button onClick={() => { setReceiptModalTx(null); showToast('Receipt printed'); }} className="w-full mt-6 px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] hover:bg-[#EFECE6] text-[#1A1615] rounded-lg text-[13px] font-bold shadow-sm transition-colors cursor-pointer">
+              <button onClick={() => { setReceiptModalTx(null); showToast('Receipt printed'); }} className="w-full mt-6 px-4 py-2 bg-[#FAF8FF] border border-[#EFECE6] hover:bg-[#EFECE6] text-[#1A1615] rounded-lg text-[13px] font-bold shadow-sm transition-colors cursor-pointer">
                 Print Receipt
               </button>
             </div>

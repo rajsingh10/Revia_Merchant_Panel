@@ -56,26 +56,26 @@ const MobileAuditView: React.FC<{ logs: AuditLogEntry[] }> = ({ logs }) => {
     <div className="min-h-screen bg-[#FBF8F4] px-5 pb-6 pt-3 text-[#211C19]">
       <div className="mx-auto w-full max-w-[430px]">
 
-        <section className="mt-3 rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex items-center gap-2 text-[19px] font-bold"><ShieldCheck className="h-4 w-4 text-[#8B681F]" />Security &amp; Audit Log</div><div className="my-3 h-px bg-[#E9E0D7]" /><div className="grid grid-cols-[1fr_1fr_auto] items-center gap-2 text-[11px]"><span className="flex gap-1.5"><span>▤</span>Downtown<br />Flagship</span><span className="border-l border-[#E9E0D7] pl-3 text-[#756D65]">Mesh ID: REV-<br />8402</span><b className="text-[#8B681F]">99.98%<br />Uptime</b></div></section>
+        <section className="mt-3 rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex items-center gap-2 text-[19px] font-bold"><ShieldCheck className="h-4 w-4 text-[#5844A8]" />Security &amp; Audit Log</div><div className="my-3 h-px bg-[#E9E0D7]" /><div className="grid grid-cols-[1fr_1fr_auto] items-center gap-2 text-[11px]"><span className="flex gap-1.5"><span>▤</span>Downtown<br />Flagship</span><span className="border-l border-[#E9E0D7] pl-3 text-[#756D65]">Mesh ID: REV-<br />8402</span><b className="text-[#5844A8]">99.98%<br />Uptime</b></div></section>
 
-        <nav className="scrollbar-hide mt-5 flex gap-2 overflow-x-auto pb-1"><button type="button" className="shrink-0 rounded-[7px] bg-[#C99B42] px-3 py-2 text-[12px] font-semibold text-white shadow-sm"><ShieldCheck className="mr-1 inline h-3.5 w-3.5" />Audit Log</button><button type="button" className="shrink-0 rounded-[7px] border border-[#E1D9D0] bg-[#F3EFEA] px-3 py-2 text-[12px] font-semibold text-[#4F4842]"><Cpu className="mr-1 inline h-3.5 w-3.5" />POS Mesh Fleet</button><button type="button" className="shrink-0 rounded-[7px] border border-[#E1D9D0] bg-[#F3EFEA] px-3 py-2 text-[12px] font-semibold text-[#4F4842]"><Webhook className="mr-1 inline h-3.5 w-3.5" />API &amp; Webhooks</button></nav>
+        <nav className="scrollbar-hide mt-5 flex gap-2 overflow-x-auto pb-1"><button type="button" className="shrink-0 rounded-[7px] bg-[#5844A8] px-3 py-2 text-[12px] font-semibold text-white shadow-sm"><ShieldCheck className="mr-1 inline h-3.5 w-3.5" />Audit Log</button><button type="button" className="shrink-0 rounded-[7px] border border-[#E1D9D0] bg-[#F3EFEA] px-3 py-2 text-[12px] font-semibold text-[#4F4842]"><Cpu className="mr-1 inline h-3.5 w-3.5" />POS Mesh Fleet</button><button type="button" className="shrink-0 rounded-[7px] border border-[#E1D9D0] bg-[#F3EFEA] px-3 py-2 text-[12px] font-semibold text-[#4F4842]"><Webhook className="mr-1 inline h-3.5 w-3.5" />API &amp; Webhooks</button></nav>
 
         <section className="mt-5 grid grid-cols-2 gap-3">
           {[
             { label: 'Compliance', value: 'SOC-2 Type II', detail: 'Enforced · 0 breaches', Icon: ShieldCheck, tone: 'text-[#087B55]' },
             { label: 'POS Mesh', value: '6 / 6 Online', detail: '18ms avg peer ping', Icon: Radio, tone: 'text-[#087B55]' },
             { label: 'API Volume', value: '48,219', detail: '0 failed HMAC sigs', Icon: Activity, tone: 'text-[#087B55]' },
-            { label: 'Crypto Ledger', value: '142 Events', detail: 'SHA-256 Validated', Icon: Key, tone: 'text-[#8B681F]' },
+            { label: 'Crypto Ledger', value: '142 Events', detail: 'SHA-256 Validated', Icon: Key, tone: 'text-[#5844A8]' },
           ].map(({ label, value, detail, Icon, tone }) => <div key={label} className="h-[116px] rounded-xl border border-[#EAE6E1] bg-white p-3 shadow-2xs"><div className="flex items-center justify-between text-[10px] font-medium text-[#7C746C]"><span>{label}</span><span className="rounded-[7px] bg-[#FCF1DF] p-1.5"><Icon className={`h-4 w-4 ${tone}`} /></span></div><div className="mt-2 text-xl font-bold leading-none tracking-tight">{value}</div><div className={`mt-2 text-[10px] font-medium leading-tight ${tone}`}>{label === 'Compliance' && '◉ '}{label === 'POS Mesh' && '• '}{detail}</div></div>)}
         </section>
 
         <div className="mt-5 flex min-h-[62px] items-center gap-2 rounded-xl bg-[#211C19] px-4 py-3 font-mono text-[10px] text-[#B6AFA8]"><span className="h-2 w-2 shrink-0 rounded-full bg-[#20C99A]" /><span className="shrink-0">WITNESS BLOCK #892,104:</span><b className="min-w-0 truncate text-[#20C99A]">sha:7b91e...4f9c</b><span className="ml-auto shrink-0 rounded border border-[#6D5730] px-1.5 py-1 text-[8px] text-[#C99B42]">SEALED</span></div>
 
-        <section className="mt-5 rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex items-start justify-between"><h2 className="flex items-start gap-2 text-[19px] font-bold leading-none"><Cpu className="mt-1 h-4 w-4 shrink-0 text-[#8B681F]" /><span>Active Hardware<br />Mesh</span></h2><span className="rounded-full bg-[#F2EEE9] px-3 py-1 text-[11px] leading-tight text-[#756D65]">Auto-Ping<br />30s</span></div><div className="mt-4 space-y-2"><div className="flex min-h-[94px] items-center gap-3 rounded-[10px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Cpu className="h-4 w-4" /></span><div className="min-w-0 flex-1 text-[12px]"><b className="block whitespace-nowrap">Downtown Counter 01</b><div className="text-[10px] leading-relaxed text-[#756D65]">RevOS v4.2.1 ·<br />192.168.1.104</div></div><span className="shrink-0 text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">12ms latency</span></span></div><div className="flex min-h-[94px] items-center gap-3 rounded-[10px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Server className="h-4 w-4" /></span><div className="min-w-0 flex-1 text-[12px]"><b className="block whitespace-nowrap">Roastery Reserve Bar 02</b><div className="text-[10px] leading-relaxed text-[#756D65]">RevOS v4.2.0 ·<br />192.168.2.88</div></div><span className="shrink-0 text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">18ms latency</span></span></div></div><button type="button" className="mt-3 w-full rounded-lg border border-[#E1D9D0] bg-[#F3EFEA] px-4 py-2 text-[13px] font-bold"><Radio className="mr-1 inline w-4 h-4 text-[#8B681F]" />Ping All 6 Terminals</button></section>
+        <section className="mt-5 rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex items-start justify-between"><h2 className="flex items-start gap-2 text-[19px] font-bold leading-none"><Cpu className="mt-1 h-4 w-4 shrink-0 text-[#5844A8]" /><span>Active Hardware<br />Mesh</span></h2><span className="rounded-full bg-[#F2EEE9] px-3 py-1 text-[11px] leading-tight text-[#756D65]">Auto-Ping<br />30s</span></div><div className="mt-4 space-y-2"><div className="flex min-h-[94px] items-center gap-3 rounded-[10px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#5844A8]"><Cpu className="h-4 w-4" /></span><div className="min-w-0 flex-1 text-[12px]"><b className="block whitespace-nowrap">Downtown Counter 01</b><div className="text-[10px] leading-relaxed text-[#756D65]">RevOS v4.2.1 ·<br />192.168.1.104</div></div><span className="shrink-0 text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">12ms latency</span></span></div><div className="flex min-h-[94px] items-center gap-3 rounded-[10px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#5844A8]"><Server className="h-4 w-4" /></span><div className="min-w-0 flex-1 text-[12px]"><b className="block whitespace-nowrap">Roastery Reserve Bar 02</b><div className="text-[10px] leading-relaxed text-[#756D65]">RevOS v4.2.0 ·<br />192.168.2.88</div></div><span className="shrink-0 text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">18ms latency</span></span></div></div><button type="button" className="mt-3 w-full rounded-lg border border-[#E1D9D0] bg-[#F3EFEA] px-4 py-2 text-[13px] font-bold"><Radio className="mr-1 inline w-4 h-4 text-[#5844A8]" />Ping All 6 Terminals</button></section>
 
-        <section className="mt-6"><div className="flex items-center justify-between"><div><h2 className="text-[19px] font-bold">Audit Event Stream</h2><span className="rounded-full bg-[#FFF4DC] px-2 py-1 text-[10px] font-bold text-[#8B681F]">Live SHA-256</span></div><button type="button" aria-label="Filter audit events" className="rounded-[7px] bg-white p-2 shadow-sm"><SlidersHorizontal className="h-4 w-4" /></button></div><label className="mt-3 flex items-center gap-2 rounded-[10px] border border-[#E1D9D0] bg-white px-3 py-2 text-[11px] text-[#8E847B]"><Search className="h-4 w-4" /><input className="min-w-0 flex-1 bg-transparent outline-none" placeholder="Filter by operator, IP, or hash key..." /></label><div className="mt-3 space-y-3">{visibleLogs.map((log) => { const flagged = log.cryptoState === 'FLAGGED'; const EventIcon = flagged ? AlertTriangle : log.actor.role === 'Admin' ? Download : log.actor.role === 'System' ? RefreshCw : Key; return <article key={log.id} className={`rounded-[12px] border bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)] ${flagged ? 'border-[#FFB6B0] bg-[#FFF8F7]' : 'border-[#E9E0D7]'}`}><div className="flex items-start gap-2"><span className={`rounded-[7px] p-2 ${flagged ? 'bg-[#FFE3E1] text-[#C2413A]' : log.actor.role === 'System' ? 'bg-[#E5F8F0] text-[#0D8B61]' : 'bg-[#FCF1DF] text-[#8B681F]'}`}><EventIcon className="h-4 w-4" /></span><div className="min-w-0 flex-1"><div className={`text-[12px] font-semibold ${flagged ? 'text-[#C2413A]' : ''}`}>{log.actor.name} <span className="ml-1 rounded bg-[#F2EEE9] px-1.5 py-1 text-[9px] text-[#756D65]">{log.actor.role}</span></div><div className="text-[10px] text-[#756D65]">{log.target}</div></div><span className="text-[10px] text-[#756D65]">{log.timestamp}</span></div><div className={`mt-3 rounded-[8px] p-3 text-[12px] ${flagged ? 'border border-[#FFB6B0] bg-white text-[#C2413A]' : 'bg-[#F3EFEA]'}`}><b>{flagged ? 'Blocked unauthorized IP access attempt' : log.action.replaceAll('_', ' ')}</b><div className="mt-1 text-[10px] text-[#756D65]">{flagged ? log.ip : 'Cryptographic witness verified · hash sealed'}</div></div></article>; })}</div></section>
+        <section className="mt-6"><div className="flex items-center justify-between"><div><h2 className="text-[19px] font-bold">Audit Event Stream</h2><span className="rounded-full bg-[#FFF4DC] px-2 py-1 text-[10px] font-bold text-[#5844A8]">Live SHA-256</span></div><button type="button" aria-label="Filter audit events" className="rounded-[7px] bg-white p-2 shadow-sm"><SlidersHorizontal className="h-4 w-4" /></button></div><label className="mt-3 flex items-center gap-2 rounded-[10px] border border-[#E1D9D0] bg-white px-3 py-2 text-[11px] text-[#8E847B]"><Search className="h-4 w-4" /><input className="min-w-0 flex-1 bg-transparent outline-none" placeholder="Filter by operator, IP, or hash key..." /></label><div className="mt-3 space-y-3">{visibleLogs.map((log) => { const flagged = log.cryptoState === 'FLAGGED'; const EventIcon = flagged ? AlertTriangle : log.actor.role === 'Admin' ? Download : log.actor.role === 'System' ? RefreshCw : Key; return <article key={log.id} className={`rounded-[12px] border bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)] ${flagged ? 'border-[#FFB6B0] bg-[#FFF8F7]' : 'border-[#E9E0D7]'}`}><div className="flex items-start gap-2"><span className={`rounded-[7px] p-2 ${flagged ? 'bg-[#FFE3E1] text-[#C2413A]' : log.actor.role === 'System' ? 'bg-[#E5F8F0] text-[#0D8B61]' : 'bg-[#FCF1DF] text-[#5844A8]'}`}><EventIcon className="h-4 w-4" /></span><div className="min-w-0 flex-1"><div className={`text-[12px] font-semibold ${flagged ? 'text-[#C2413A]' : ''}`}>{log.actor.name} <span className="ml-1 rounded bg-[#F2EEE9] px-1.5 py-1 text-[9px] text-[#756D65]">{log.actor.role}</span></div><div className="text-[10px] text-[#756D65]">{log.target}</div></div><span className="text-[10px] text-[#756D65]">{log.timestamp}</span></div><div className={`mt-3 rounded-[8px] p-3 text-[12px] ${flagged ? 'border border-[#FFB6B0] bg-white text-[#C2413A]' : 'bg-[#F3EFEA]'}`}><b>{flagged ? 'Blocked unauthorized IP access attempt' : log.action.replaceAll('_', ' ')}</b><div className="mt-1 text-[10px] text-[#756D65]">{flagged ? log.ip : 'Cryptographic witness verified · hash sealed'}</div></div></article>; })}</div></section>
 
-        <button type="button" className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-4 py-2 text-[13px] font-bold text-white shadow-[0_5px_12px_rgba(158,120,47,0.2)]"><Download className="w-4 h-4" />Export Immutable Audit Dossier (CSV/PDF)</button><button type="button" className="mt-3 w-full rounded-lg border border-[#E1D9D0] bg-white px-4 py-2 text-[13px] font-bold"><Lock className="w-4 h-4 mr-1 inline" />Commit &amp; Seal New Policy Hash</button>
+        <button type="button" className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#7C3AED] to-[#5844A8] px-4 py-2 text-[13px] font-bold text-white shadow-[0_5px_12px_rgba(158,120,47,0.2)]"><Download className="w-4 h-4" />Export Immutable Audit Dossier (CSV/PDF)</button><button type="button" className="mt-3 w-full rounded-lg border border-[#E1D9D0] bg-white px-4 py-2 text-[13px] font-bold"><Lock className="w-4 h-4 mr-1 inline" />Commit &amp; Seal New Policy Hash</button>
       </div>
     </div>
   );
@@ -107,7 +107,7 @@ const AccessControlSettings: React.FC = () => {
 
   return (
     <div className="mt-4 overflow-hidden rounded-xl border border-[#E5E0D8] bg-white shadow-xs">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E0D8] bg-[#FAF8F5] px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E0D8] bg-[#FAF8FF] px-4 py-3">
         <div>
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-[#B7842C]" />
@@ -121,7 +121,7 @@ const AccessControlSettings: React.FC = () => {
             setEditingRole({ id: '', name: '', isSystem: false, permissions: {} });
             setIsRoleBuilderOpen(true);
           }}
-          className="inline-flex items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#FAF8F5] cursor-pointer"
+          className="inline-flex items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#FAF5FF] cursor-pointer"
         >
           <UserPlus className="w-4 h-4 text-[#B7842C]" /> Create Custom Role
         </button>
@@ -129,7 +129,7 @@ const AccessControlSettings: React.FC = () => {
 
       <div className="grid gap-4 p-4 lg:grid-cols-12">
         <div className="space-y-3 lg:col-span-8 min-w-0">
-          <div className="rounded-lg border border-[#E5E0D8] bg-[#FAF8F5] p-3">
+          <div className="rounded-lg border border-[#E5E0D8] bg-[#FAF8FF] p-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="h-4 w-4 text-[#B7842C]" />
@@ -141,7 +141,7 @@ const AccessControlSettings: React.FC = () => {
           <div className="overflow-x-auto rounded-lg border border-[#E5E0D8] bg-white">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-[#E5E0D8] bg-[#FAF8F5] text-[10px] uppercase font-bold tracking-wider text-[#6E6A66]">
+                <tr className="border-b border-[#E5E0D8] bg-[#FAF8FF] text-[10px] uppercase font-bold tracking-wider text-[#6E6A66]">
                   <th className="py-2.5 px-3">SYSTEM PERMISSION CAPABILITY</th>
                   {roleTemplates.map(role => (
                     <th key={role.id} className="py-2.5 px-3 text-center">{role.name.toUpperCase()}</th>
@@ -150,7 +150,7 @@ const AccessControlSettings: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-[#E5E0D8] text-xs">
                 {SYSTEM_MODULES.map((mod, modIdx) => (
-                  <tr key={modIdx} className="hover:bg-[#FAF8F5] transition-colors">
+                  <tr key={modIdx} className="hover:bg-[#FAF5FF] transition-colors">
                     <td className="py-3 px-3 text-[#1A1615] font-bold uppercase tracking-wider text-[11px]">{mod.name}</td>
                     {roleTemplates.map(role => {
                       const activeActions = mod.actions.filter(action => role.permissions[`${mod.name}_${action}`]);
@@ -186,7 +186,7 @@ const AccessControlSettings: React.FC = () => {
                 <ShieldCheck className="h-4 w-4 text-[#B7842C]" />
                 <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#1A1615]">Access Session Review</span>
               </div>
-              <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">Last 24h</span>
+              <span className="rounded-full bg-[#FAF5FF] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">Last 24h</span>
             </div>
             <div className="mt-3 grid grid-cols-3 gap-2">
               <div className="rounded-md border border-[#E5E0D8] bg-white p-2">
@@ -211,7 +211,7 @@ const AccessControlSettings: React.FC = () => {
               <Lock className="h-4 w-4 text-[#B7842C]" />
               <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#1A1615]">Policy Controls</span>
             </div>
-            <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">SOC-2</span>
+            <span className="rounded-full bg-[#FAF5FF] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">SOC-2</span>
           </div>
           <div className="mt-3 space-y-2">
             <div className="rounded-md border border-[#E5E0D8] bg-white p-3">
@@ -229,7 +229,7 @@ const AccessControlSettings: React.FC = () => {
             <div className="rounded-md border border-[#E5E0D8] bg-white p-3">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold text-[#1A1615]">Session Timeout</span>
-                <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">15m</span>
+                <span className="rounded-full bg-[#FAF5FF] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">15m</span>
               </div>
             </div>
           </div>
@@ -275,7 +275,7 @@ const AccessControlSettings: React.FC = () => {
                     value={editingRole.name}
                     disabled={editingRole.isSystem}
                     onChange={(e) => setEditingRole({ ...editingRole, name: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#B38637] disabled:opacity-50"
+                    className="w-full px-3 py-2 bg-[#FAF8FF] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#5844A8] disabled:opacity-50"
                     placeholder="e.g., Shift Supervisor"
                   />
                   {editingRole.isSystem && (
@@ -287,7 +287,7 @@ const AccessControlSettings: React.FC = () => {
                   <h4 className="text-[11px] font-semibold text-[#7C746C] uppercase tracking-wider">System Permissions</h4>
                   {SYSTEM_MODULES.map(module => (
                     <div key={module.name} className="border border-[#EAE6E1] rounded-xl overflow-hidden bg-white">
-                      <div className="bg-[#FAF8F5] px-3 py-2 text-xs font-bold text-[#1A1615] border-b border-[#EAE6E1]">
+                      <div className="bg-[#FAF8FF] px-3 py-2 text-xs font-bold text-[#1A1615] border-b border-[#EAE6E1]">
                         {module.name}
                       </div>
                       <div className="p-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -302,7 +302,7 @@ const AccessControlSettings: React.FC = () => {
                                   ...editingRole,
                                   permissions: { ...editingRole.permissions, [cap]: e.target.checked }
                                 })}
-                                className="w-4 h-4 rounded border-[#D1C9BE] text-[#B38637] focus:ring-[#B38637] group-hover:border-[#B38637] transition-colors"
+                                className="w-4 h-4 rounded border-[#D1C9BE] text-[#5844A8] focus:ring-[#5844A8] group-hover:border-[#5844A8] transition-colors"
                               />
                               <span className="text-[11px] font-medium text-[#3D3732] group-hover:text-[#1A1615]">{action}</span>
                             </label>
@@ -317,7 +317,7 @@ const AccessControlSettings: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setEditingRole(null)}
-                    className="px-4 py-2 text-[13px] font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
+                    className="px-4 py-2 text-[13px] font-semibold text-[#7C746C] hover:bg-[#FAF5FF] rounded-lg cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -341,7 +341,7 @@ const AccessControlSettings: React.FC = () => {
                       setEditingRole(null);
                       showToast(`Role template "${editingRole.name}" saved successfully.`);
                     }}
-                    className="px-4 py-2 text-[13px] font-bold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer transition-colors shadow-sm"
+                    className="px-4 py-2 text-[13px] font-bold bg-[#5844A8] text-white rounded-lg hover:bg-[#47368E] cursor-pointer transition-colors shadow-sm"
                   >
                     Save Role
                   </button>
@@ -352,7 +352,7 @@ const AccessControlSettings: React.FC = () => {
               <div className="space-y-3">
                 <div className="max-h-96 overflow-y-auto pr-1 space-y-2">
                   {roleTemplates.map((tmpl) => (
-                    <div key={tmpl.id} className="p-3 rounded-xl border border-[#EAE6E1] bg-[#FAF8F5] flex items-center justify-between">
+                    <div key={tmpl.id} className="p-3 rounded-xl border border-[#EAE6E1] bg-[#FAF8FF] flex items-center justify-between">
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-[#1A1615] text-xs">{tmpl.name}</span>
@@ -391,7 +391,7 @@ const AccessControlSettings: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setEditingRole({ id: '', name: '', isSystem: false, permissions: {} })}
-                    className="px-4 py-2 text-[12px] font-bold text-[#A37837] hover:bg-[#FAF8F5] rounded-lg cursor-pointer flex items-center gap-1"
+                    className="px-4 py-2 text-[12px] font-bold text-[#A37837] hover:bg-[#FAF5FF] rounded-lg cursor-pointer flex items-center gap-1"
                   >
                     <UserPlus className="w-3.5 h-3.5" />
                     <span>Create Custom Role</span>
@@ -434,7 +434,7 @@ const ApiKeysWebhooksSettings: React.FC = () => {
 
   return (
     <div className="mt-4 overflow-hidden rounded-xl border border-[#E5E0D8] bg-white shadow-xs">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-[#E5E0D8] bg-[#FAF8F5] px-3 sm:px-4 py-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-[#E5E0D8] bg-[#FAF8FF] px-3 sm:px-4 py-3">
         <div>
           <div className="flex items-center gap-2">
             <Webhook className="h-4 w-4 text-[#B7842C]" />
@@ -449,7 +449,7 @@ const ApiKeysWebhooksSettings: React.FC = () => {
 
       <div className="grid gap-4 p-4 lg:grid-cols-12">
         <div className="space-y-3 lg:col-span-7">
-          <div className="rounded-lg border border-[#E5E0D8] bg-[#FAF8F5] p-3">
+          <div className="rounded-lg border border-[#E5E0D8] bg-[#FAF8FF] p-3">
             <div className="flex items-center gap-2">
               <Key className="h-4 w-4 text-[#B7842C]" />
               <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#6E6A66]">Credential Registry</span>
@@ -463,7 +463,7 @@ const ApiKeysWebhooksSettings: React.FC = () => {
               </div>
               <span className="shrink-0 rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">ACTIVE</span>
             </div>
-            <div className="mt-3 rounded-md border border-[#E5E0D8] bg-[#FAF8F5] px-3 py-2 font-mono text-[10px] text-[#6E6A66] break-all">
+            <div className="mt-3 rounded-md border border-[#E5E0D8] bg-[#FAF8FF] px-3 py-2 font-mono text-[10px] text-[#6E6A66] break-all">
               rev_live_994a••••••••••••
             </div>
           </div>
@@ -475,7 +475,7 @@ const ApiKeysWebhooksSettings: React.FC = () => {
               </div>
               <span className="shrink-0 rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">99.98%</span>
             </div>
-            <div className="mt-3 rounded-md border border-[#E5E0D8] bg-[#FAF8F5] px-3 py-2 font-mono text-[10px] text-[#6E6A66] break-all">
+            <div className="mt-3 rounded-md border border-[#E5E0D8] bg-[#FAF8FF] px-3 py-2 font-mono text-[10px] text-[#6E6A66] break-all">
               https://revia.example.com/webhooks/wallet/push
             </div>
           </div>
@@ -487,7 +487,7 @@ const ApiKeysWebhooksSettings: React.FC = () => {
               <Webhook className="h-4 w-4 text-[#B7842C]" />
               <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#1A1615]">Webhook Events</span>
             </div>
-            <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">3 ACTIVE</span>
+            <span className="rounded-full bg-[#FAF5FF] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">3 ACTIVE</span>
           </div>
           <div className="mt-3 space-y-2">
             <div className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-3 py-2">
@@ -500,7 +500,7 @@ const ApiKeysWebhooksSettings: React.FC = () => {
             </div>
             <div className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-3 py-2">
               <span className="text-[10px] font-bold text-[#1A1615]">audit.sealed</span>
-              <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">IDLE</span>
+              <span className="rounded-full bg-[#FAF5FF] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">IDLE</span>
             </div>
           </div>
           <button type="button" onClick={handleRotateSigningSecret} className="mt-4 w-full rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#1A1615] cursor-pointer">
@@ -534,7 +534,7 @@ const PosHardwareSettings: React.FC = () => {
 
   return (
     <div className="mt-4 overflow-hidden rounded-xl border border-[#E5E0D8] bg-white shadow-xs">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E0D8] bg-[#FAF8F5] px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E0D8] bg-[#FAF8FF] px-4 py-3">
         <div>
           <div className="flex items-center gap-2">
             <Server className="h-4 w-4 text-[#B7842C]" />
@@ -549,7 +549,7 @@ const PosHardwareSettings: React.FC = () => {
 
       <div className="grid gap-4 p-4 lg:grid-cols-12">
         <div className="space-y-3 lg:col-span-8">
-          <div className="rounded-lg border border-[#E5E0D8] bg-[#FAF8F5] p-3">
+          <div className="rounded-lg border border-[#E5E0D8] bg-[#FAF8FF] p-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Cpu className="h-4 w-4 text-[#B7842C]" />
@@ -561,7 +561,7 @@ const PosHardwareSettings: React.FC = () => {
           {hardwareNodes.map((node, idx) => (
             <div key={node.name} className="flex items-center justify-between rounded-lg border border-[#E5E0D8] bg-white p-3">
               <div className="flex items-center gap-3">
-                <span className="rounded-lg bg-[#F5F1EA] p-2 text-[#B7842C]"><Server className="h-4 w-4" /></span>
+                <span className="rounded-lg bg-[#FAF5FF] p-2 text-[#B7842C]"><Server className="h-4 w-4" /></span>
                 <div>
                   <div className="text-[12px] font-bold text-[#1A1615]">{node.name}</div>
                   <div className="text-[10px] text-[#6E6A66]">{node.type}</div>
@@ -570,7 +570,7 @@ const PosHardwareSettings: React.FC = () => {
               <div className="flex items-center gap-4 text-[10px] font-bold">
                 <span className={node.status === 'Standby' ? 'text-[#B7842C]' : 'text-[#0D7A53]'}>{node.status}</span>
                 <span className="text-[#6E6A66]">{node.latency}</span>
-                <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[#6E6A66]">{node.percent}</span>
+                <span className="rounded-full bg-[#FAF5FF] px-2 py-1 text-[#6E6A66]">{node.percent}</span>
               </div>
             </div>
           ))}
@@ -582,7 +582,7 @@ const PosHardwareSettings: React.FC = () => {
               <Wifi className="h-4 w-4 text-[#B7842C]" />
               <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#1A1615]">Mesh Network</span>
             </div>
-            <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">Auto-Ping 30s</span>
+            <span className="rounded-full bg-[#FAF5FF] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">Auto-Ping 30s</span>
           </div>
           <div className="mt-3 space-y-2">
             <div className="rounded-md border border-[#E5E0D8] bg-white p-2">
@@ -742,7 +742,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
         <div className="hidden shrink-0 items-center gap-2 rounded-full border border-[#E5E0D8] bg-white px-2.5 py-1 text-[8px] normal-case tracking-normal text-[#6E6A66] sm:flex">
           <span className="h-1.5 w-1.5 rounded-full bg-[#0D7A53]" />
           SOC-2 SHA-256 Ledger Synchronized
-          <span className="rounded bg-[#F5F1EA] px-1.5 py-0.5 font-mono text-[#9E9A93]">Block #392,104</span>
+          <span className="rounded bg-[#FAF5FF] px-1.5 py-0.5 font-mono text-[#9E9A93]">Block #392,104</span>
         </div>
       </div>
       */}
@@ -752,7 +752,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               {/* <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full border border-[#E6D4A8] bg-[#FFF8E8] px-2 py-0.5 text-[8px] font-bold uppercase tracking-[0.08em] text-[#8B681F]">
+                  <span className="rounded-full border border-[#E6D4A8] bg-[#FFF8E8] px-2 py-0.5 text-[8px] font-bold uppercase tracking-[0.08em] text-[#5844A8]">
                     Governance & Zero-Trust
                   </span>
                   <span className="text-[8px] text-[#A09A91]">• Revision v2.14r4</span>
@@ -764,9 +764,9 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
 
             <button
               onClick={exportAuditDossier}
-              className="inline-flex w-fit cursor-pointer items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#1A1615] shadow-2xs transition-colors hover:bg-[#FAF8F5] focus:outline-none focus:ring-2 focus:ring-[#D4A753]/40"
+              className="inline-flex w-fit cursor-pointer items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#1A1615] shadow-2xs transition-colors hover:bg-[#FAF5FF] focus:outline-none focus:ring-2 focus:ring-[#5844A8]/40"
             >
-              <Download className="w-4 h-4 text-[#9E782F]" />
+              <Download className="w-4 h-4 text-[#5844A8]" />
               Export Immutable Dossier (CSV/PDF)
             </button>
           </div>
@@ -775,27 +775,27 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
             <div className="flex min-w-full items-center gap-0.5">
               <button
                 onClick={() => setActiveTab('merchant_profile')}
-                className={`cursor-pointer min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'merchant_profile' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                className={`cursor-pointer min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'merchant_profile' ? 'bg-[#5844A8] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#FAF5FF]'}`}
                 type="button"
               >
                 Merchant Profile
               </button>
               <button
                 onClick={() => setActiveTab('general_brand')}
-                className={`cursor-pointer min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'general_brand' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                className={`cursor-pointer min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'general_brand' ? 'bg-[#5844A8] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#FAF5FF]'}`}
                 type="button"
               >
                 General & Brand
               </button>
               {/* <button
-                className={`cursor-pointer min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'pos_hardware' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                className={`cursor-pointer min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'pos_hardware' ? 'bg-[#5844A8] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#FAF5FF]'}`}
                 type="button"
                 onClick={() => setActiveTab('pos_hardware')}
               >
                 POS & Hardware
               </button>
               <button
-                className={`cursor-pointer min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'api_keys_webhooks' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                className={`cursor-pointer min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'api_keys_webhooks' ? 'bg-[#5844A8] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#FAF5FF]'}`}
                 type="button"
                 onClick={() => setActiveTab('api_keys_webhooks')}
               >
@@ -803,27 +803,27 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
               </button> */}
               {/* <button
                 onClick={() => setActiveTab('audit')}
-                className={`cursor-pointer min-w-max flex-1 rounded-md px-3 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'audit' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                className={`cursor-pointer min-w-max flex-1 rounded-md px-3 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'audit' ? 'bg-[#5844A8] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#FAF5FF]'}`}
                 type="button"
               >
                 Security & SOC-2 Audit Stream
               </button> */}
               <button
                 onClick={() => setActiveTab('customer_tiers')}
-                className={`cursor-pointer min-w-max flex-1 rounded-md px-3 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'customer_tiers' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                className={`cursor-pointer min-w-max flex-1 rounded-md px-3 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'customer_tiers' ? 'bg-[#5844A8] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#FAF5FF]'}`}
                 type="button"
               >
                 Customer Tiers
               </button>
               <button
-                className={`cursor-pointer min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'access_control' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                className={`cursor-pointer min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'access_control' ? 'bg-[#5844A8] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#FAF5FF]'}`}
                 type="button"
                 onClick={() => setActiveTab('access_control')}
               >
                 Access Control
               </button>
               <button
-                className={`cursor-pointer min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'automated_events' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                className={`cursor-pointer min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'automated_events' ? 'bg-[#5844A8] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#FAF5FF]'}`}
                 type="button"
                 onClick={() => setActiveTab('automated_events')}
               >
@@ -860,7 +860,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
               <div className="bg-white rounded-xl border border-[#EAE6E1] p-5 shadow-2xs transition-shadow hover:shadow-md">
                 <div className="flex justify-between items-start mb-2">
                   <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] flex items-center gap-1"><Radio className="h-3.5 w-3.5 text-[#0D7A53] animate-pulse" /> Connected Terminals</div>
-                  <span className="px-2 py-0.5 text-[10px] font-bold bg-[#FDF8EB] text-[#9E782F] rounded">
+                  <span className="px-2 py-0.5 text-[10px] font-bold bg-[#FAF5FF] text-[#5844A8] rounded">
                     All Online
                   </span>
                 </div>
@@ -871,7 +871,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
 
               <div className="bg-white rounded-xl border border-[#EAE6E1] p-5 shadow-2xs transition-shadow hover:shadow-md">
                 <div className="flex justify-between items-start mb-2">
-                  <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] flex items-center gap-1"><Cpu className="h-3.5 w-3.5 text-[#C08B31]" /> Audit Events (24h)</div>
+                  <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] flex items-center gap-1"><Cpu className="h-3.5 w-3.5 text-[#5844A8]" /> Audit Events (24h)</div>
                 </div>
                 <div className="text-[26px] font-bold text-[#1A1615] mb-1">48,219</div>
                 <div className="text-[11px] font-semibold text-[#6E6A66]">Configuration and access events recorded</div>
@@ -880,14 +880,14 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
 
               <div className="bg-white rounded-xl border border-[#EAE6E1] p-5 shadow-2xs transition-shadow hover:shadow-md">
                 <div className="flex justify-between items-start mb-2">
-                  <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] flex items-center gap-1"><Lock className="h-3.5 w-3.5 text-[#8B681F]" /> Cryptographic Ledger</div>
-                  <span className="px-2 py-0.5 text-[10px] font-bold bg-[#FDF8EB] text-[#9E782F] rounded">
+                  <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] flex items-center gap-1"><Lock className="h-3.5 w-3.5 text-[#5844A8]" /> Cryptographic Ledger</div>
+                  <span className="px-2 py-0.5 text-[10px] font-bold bg-[#FAF5FF] text-[#5844A8] rounded">
                     SHA-256
                   </span>
                 </div>
                 <div className="text-[26px] font-bold text-[#1A1615] mb-1">142 Events</div>
                 <div className="text-[11px] font-semibold text-[#6E6A66]">Stream rate: ~12.4 actions / hr</div>
-                <div className="mt-3 flex items-center gap-1 text-[11px] font-bold text-[#9E782F]"><Lock className="h-3.5 w-3.5" /> Immutable Block State Valid</div>
+                <div className="mt-3 flex items-center gap-1 text-[11px] font-bold text-[#5844A8]"><Lock className="h-3.5 w-3.5" /> Immutable Block State Valid</div>
               </div>
             </div>
 
@@ -895,7 +895,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
             <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-12">
               {/* Immutable Audit Trail Table */}
               <div className="lg:col-span-8 overflow-hidden rounded-lg border border-[#E5E0D8] bg-white shadow-xs">
-                <div className="border-b border-[#E5E0D8] bg-[#FAF8F5]/60 p-3">
+                <div className="border-b border-[#E5E0D8] bg-[#FAF8FF]/60 p-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
                       <div className="flex items-center gap-1.5">
@@ -907,8 +907,8 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button type="button" onClick={clearFilters} className="inline-flex items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#F5F1EA] cursor-pointer"><SlidersHorizontal className="w-4 h-4" /> Clear Filters</button>
-                      <button type="button" onClick={refreshLogs} className="inline-flex items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#F5F1EA] cursor-pointer"><RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} /> {refreshing ? 'Refreshing...' : 'Live Refresh'}</button>
+                      <button type="button" onClick={clearFilters} className="inline-flex items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#FAF5FF] cursor-pointer"><SlidersHorizontal className="w-4 h-4" /> Clear Filters</button>
+                      <button type="button" onClick={refreshLogs} className="inline-flex items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#FAF5FF] cursor-pointer"><RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} /> {refreshing ? 'Refreshing...' : 'Live Refresh'}</button>
                     </div>
                   </div>
                   <div className="mt-3 grid grid-cols-1 gap-1.5 sm:grid-cols-[minmax(0,1.7fr)_1fr_1fr_auto]">
@@ -930,7 +930,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                           <button
                             type="button"
                             onClick={() => { setEventType('All Event Types'); setCurrentPage(1); setEventTypeDropdownOpen(false); }}
-                            className={`w-full cursor-pointer px-3 py-1.5 text-left text-[11px] hover:bg-[#F5F1EA] ${eventType === 'All Event Types' ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                            className={`w-full cursor-pointer px-3 py-1.5 text-left text-[11px] hover:bg-[#FAF5FF] ${eventType === 'All Event Types' ? 'bg-[#FAF5FF] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
                           >
                             All Event Types
                           </button>
@@ -939,7 +939,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                               key={type}
                               type="button"
                               onClick={() => { setEventType(type); setCurrentPage(1); setEventTypeDropdownOpen(false); }}
-                              className={`w-full cursor-pointer px-3 py-1.5 text-left text-[11px] hover:bg-[#F5F1EA] ${eventType === type ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                              className={`w-full cursor-pointer px-3 py-1.5 text-left text-[11px] hover:bg-[#FAF5FF] ${eventType === type ? 'bg-[#FAF5FF] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
                             >
                               {type.replaceAll('_', ' ')}
                             </button>
@@ -961,7 +961,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                           <button
                             type="button"
                             onClick={() => { setBranchFilter('All Branches'); setCurrentPage(1); setBranchFilterDropdownOpen(false); }}
-                            className={`w-full cursor-pointer px-3 py-1.5 text-left text-[11px] hover:bg-[#F5F1EA] ${branchFilter === 'All Branches' ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                            className={`w-full cursor-pointer px-3 py-1.5 text-left text-[11px] hover:bg-[#FAF5FF] ${branchFilter === 'All Branches' ? 'bg-[#FAF5FF] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
                           >
                             All Branches
                           </button>
@@ -970,7 +970,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                               key={branch}
                               type="button"
                               onClick={() => { setBranchFilter(branch); setCurrentPage(1); setBranchFilterDropdownOpen(false); }}
-                              className={`w-full cursor-pointer px-3 py-1.5 text-left text-[11px] hover:bg-[#F5F1EA] ${branchFilter === branch ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                              className={`w-full cursor-pointer px-3 py-1.5 text-left text-[11px] hover:bg-[#FAF5FF] ${branchFilter === branch ? 'bg-[#FAF5FF] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
                             >
                               {branch}
                             </button>
@@ -978,7 +978,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                         </div>
                       )}
                     </div>
-                    <button type="button" className="rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]">Today, 2.4</button>
+                    <button type="button" className="rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#FAF5FF]">Today, 2.4</button>
                   </div>
                 </div>
                 <div className="divide-y divide-[#E5E0D8] sm:hidden">
@@ -990,7 +990,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                         key={`mobile-${log.id}`}
                         type="button"
                         onClick={() => setSelectedHash(log.hash)}
-                        className={`block w-full p-3 text-left transition-colors ${isFlagged ? 'bg-[#FFF7F6]' : 'bg-white hover:bg-[#FAF8F5]'}`}
+                        className={`block w-full p-3 text-left transition-colors ${isFlagged ? 'bg-[#FFF7F6]' : 'bg-white hover:bg-[#FAF5FF]'}`}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex min-w-0 items-center gap-2">
@@ -1015,7 +1015,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
 
                 <div className="hidden overflow-x-auto sm:block">
                   <table className="w-full min-w-[760px] text-left text-xs">
-                    <thead className="bg-[#FAF8F5] text-[#9E9A93] uppercase font-bold text-[10px] tracking-wider border-b border-[#E5E0D8]">
+                    <thead className="bg-[#FAF8FF] text-[#9E9A93] uppercase font-bold text-[10px] tracking-wider border-b border-[#E5E0D8]">
                       <tr>
                         <th className="w-[112px] px-4 py-3">Timestamp (EST)</th>
                         <th className="py-3 px-3">Actor</th>
@@ -1029,7 +1029,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                         <tr
                           key={log.id}
                           onClick={() => setSelectedHash(log.hash)}
-                          className={`cursor-pointer align-top transition-colors ${log.cryptoState === 'FLAGGED' ? 'bg-[#FFF7F6] hover:bg-[#FDEDEC]' : 'hover:bg-[#FAF8F5]/80'}`}
+                          className={`cursor-pointer align-top transition-colors ${log.cryptoState === 'FLAGGED' ? 'bg-[#FFF7F6] hover:bg-[#FDEDEC]' : 'hover:bg-[#FAF5FF]/80'}`}
                         >
                           {/* Timestamp */}
                           <td className={`whitespace-nowrap px-4 py-4 font-mono text-[11px] ${log.cryptoState === 'FLAGGED' ? 'text-[#C2413A]' : 'text-[#6E6A66]'}`}>
@@ -1081,9 +1081,9 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
 
                 {/* Hash Inspector Banner */}
                 {selectedHash && (
-                  <div className="p-3 bg-[#FAF8F5] border-t border-[#E5E0D8] flex items-center justify-between text-xs">
+                  <div className="p-3 bg-[#FAF8FF] border-t border-[#E5E0D8] flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2 min-w-0 pr-2">
-                      <Key className="w-3.5 h-3.5 text-[#9E782F] shrink-0" />
+                      <Key className="w-3.5 h-3.5 text-[#5844A8] shrink-0" />
                       <span className="font-mono text-[10px] text-[#1A1615] truncate">
                         SHA-256: {selectedHash}
                       </span>
@@ -1103,7 +1103,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                     <span><strong className="text-[#6E6A66]">Merkle Root:</strong> 0x88f...1c8d</span>
                     <button type="button" onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} className="cursor-pointer rounded border border-[#E5E0D8] bg-white px-2 py-1 font-semibold text-[#6E6A66] disabled:cursor-not-allowed disabled:opacity-40">Previous</button>
                     {Array.from({ length: totalPages }, (_, pageIndex) => pageIndex + 1).map((page) => (
-                      <button key={page} type="button" onClick={() => goToPage(page)} aria-current={currentPage === page ? 'page' : undefined} className={`cursor-pointer rounded px-2 py-1 font-bold ${currentPage === page ? 'bg-[#9E782F] text-white' : 'border border-[#E5E0D8] bg-white text-[#6E6A66]'}`}>{page}</button>
+                      <button key={page} type="button" onClick={() => goToPage(page)} aria-current={currentPage === page ? 'page' : undefined} className={`cursor-pointer rounded px-2 py-1 font-bold ${currentPage === page ? 'bg-[#5844A8] text-white' : 'border border-[#E5E0D8] bg-white text-[#6E6A66]'}`}>{page}</button>
                     ))}
                     <button type="button" onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages} className="cursor-pointer rounded border border-[#E5E0D8] bg-white px-2 py-1 font-semibold text-[#6E6A66] disabled:cursor-not-allowed disabled:opacity-40">Next</button>
                   </div>
@@ -1129,11 +1129,11 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                 <div id="pos-hardware-panel" className="space-y-3 rounded-lg border border-[#E5E0D8] bg-white p-4 shadow-xs">
                   <div className="flex items-center justify-between border-b border-[#E5E0D8] pb-2">
                     <div className="flex items-center gap-1.5"><Wifi className="h-3.5 w-3.5 text-[#B7842C]" /><span className="text-[12px] font-bold text-[#1A1615]">POS Mesh Fleet</span></div>
-                    <span className="rounded-full bg-[#F5F1EA] px-1.5 py-1 text-[8px] font-bold text-[#6E6A66]">◌ Ping Mesh</span>
+                    <span className="rounded-full bg-[#FAF5FF] px-1.5 py-1 text-[8px] font-bold text-[#6E6A66]">◌ Ping Mesh</span>
                   </div>
 
                   <div className="space-y-2 text-xs">
-                    <div className="p-2.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg flex items-center justify-between">
+                    <div className="p-2.5 bg-[#FAF8FF] border border-[#E5E0D8] rounded-lg flex items-center justify-between">
                       <div>
                         <div className="font-bold text-[#1A1615]">Downtown Counter 01</div>
                         <div className="text-[10px] text-[#6E6A66]">Apple iPad Pro 12.9&quot; • Revia Hub</div>
@@ -1141,7 +1141,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                       <span className="text-[9px] font-bold text-[#0D7A53]">Online<br /><span className="font-normal text-[#9E9A93]">4s ago</span></span>
                     </div>
 
-                    <div className="p-2.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg flex items-center justify-between">
+                    <div className="p-2.5 bg-[#FAF8FF] border border-[#E5E0D8] rounded-lg flex items-center justify-between">
                       <div>
                         <div className="font-bold text-[#1A1615]">Roastery Bar 02</div>
                         <div className="text-[10px] text-[#6E6A66]">Square Register • Revia Bridge</div>
@@ -1149,7 +1149,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                       <span className="text-[9px] font-bold text-[#0D7A53]">Online<br /><span className="font-normal text-[#9E9A93]">12s ago</span></span>
                     </div>
 
-                    <div className="p-2.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg flex items-center justify-between">
+                    <div className="p-2.5 bg-[#FAF8FF] border border-[#E5E0D8] rounded-lg flex items-center justify-between">
                       <div>
                         <div className="font-bold text-[#1A1615]">Northside Pop-up 01</div>
                         <div className="text-[10px] text-[#6E6A66]">Revia Mobile Handheld NFC</div>
@@ -1174,18 +1174,18 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                   </div>
 
                   <div className="space-y-2 text-xs">
-                    <div className="flex items-center justify-between p-2 rounded-lg bg-[#FAF8F5] border border-[#E5E0D8]">
+                    <div className="flex items-center justify-between p-2 rounded-lg bg-[#FAF8FF] border border-[#E5E0D8]">
                       <span className="font-semibold text-[#1A1615]">Shopify POS Sync</span>
                       <span className="text-[10px] text-[#0D7A53] font-bold">200 OK</span>
                     </div>
-                    <div className="flex items-center justify-between p-2 rounded-lg bg-[#FAF8F5] border border-[#E5E0D8]">
+                    <div className="flex items-center justify-between p-2 rounded-lg bg-[#FAF8FF] border border-[#E5E0D8]">
                       <span className="font-semibold text-[#1A1615]">Apple & Google Wallet Push</span>
                       <span className="text-[10px] text-[#0D7A53] font-bold">99.98%</span>
                     </div>
                   </div>
                   <div className="pt-1">
                     <div className="mb-1 text-[8px] font-bold uppercase tracking-wider text-[#9E9A93]">Live webhook signing secret</div>
-                    <div className="flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-[#FAF8F5] px-2 py-1.5 font-mono text-[9px] text-[#6E6A66]">
+                    <div className="flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-[#FAF8FF] px-2 py-1.5 font-mono text-[9px] text-[#6E6A66]">
                       <span className="min-w-0 flex-1 truncate">rev_sec_live_994a••••••••••••</span>
                       <button type="button" className="shrink-0 rounded bg-white px-1.5 py-0.5 text-[8px] font-semibold text-[#6E6A66]">Rotate</button>
                     </div>
@@ -1213,7 +1213,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                         <div className="font-semibold text-[#1A1615]">Terminal Inactivity Lock</div>
                         <p className="text-[10px] text-[#6E6A66]">Auto-lock POS cashier display</p>
                       </div>
-                      <span className="rounded bg-[#F5F1EA] px-1.5 py-1 text-[9px] font-semibold text-[#6E6A66]">15 Minutes</span>
+                      <span className="rounded bg-[#FAF5FF] px-1.5 py-1 text-[9px] font-semibold text-[#6E6A66]">15 Minutes</span>
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -1226,7 +1226,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                         <span className="h-3.5 w-7 rounded-full bg-[#D9D3C9] transition-colors peer-checked:bg-[#0D7A53] after:absolute after:left-0.5 after:top-0.5 after:h-2.5 after:w-2.5 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-3.5" />
                       </label>
                     </div>
-                    <div className="flex items-start gap-1.5 rounded-md bg-[#FAF8F5] p-2 text-[9px] leading-snug text-[#6E6A66]"><CircleCheck className="mt-0.5 h-3 w-3 shrink-0 text-[#0D7A53]" /> All 3 venues meet Level 1 PCI-DSS Merchant Attestation standard.</div>
+                    <div className="flex items-start gap-1.5 rounded-md bg-[#FAF8FF] p-2 text-[9px] leading-snug text-[#6E6A66]"><CircleCheck className="mt-0.5 h-3 w-3 shrink-0 text-[#0D7A53]" /> All 3 venues meet Level 1 PCI-DSS Merchant Attestation standard.</div>
                   </div>
                 </div>
               </div>

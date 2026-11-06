@@ -20,17 +20,17 @@ const MobileBillingPage: React.FC = () => {
         <section className="mt-5 grid grid-cols-2 gap-3">
           <div className="rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex justify-between text-xs font-medium text-[#7C746C]"><span>Current Plan</span><CreditCard className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-2xl font-bold leading-none tracking-tight">₹389<span className="ml-1 text-[12px] font-normal tracking-normal text-[#756D65]">/mo</span></div><div className="mt-1 text-[11px] font-bold text-[#A8761C]">Enterprise Atelier</div></div>
           <div className="rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex justify-between text-xs font-medium text-[#7C746C]"><span>Next Cycle</span><CalendarDays className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-4 text-2xl font-bold tracking-tight">Dec 1, 2025</div><div className="mt-1 text-[11px] text-[#756D65]"><span className="text-[#087B55]">✓</span> Auto-pay enabled</div></div>
-          <div className="rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex justify-between text-xs font-medium text-[#7C746C]"><span>Licensed Venues</span><Building2 className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-2xl font-bold leading-none tracking-tight">3<span className="ml-1 text-[12px] font-normal text-[#756D65]">/ 5 nodes</span></div><div className="mt-2 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-3/5 rounded-full bg-[#C99B42]" /></div></div>
+          <div className="rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex justify-between text-xs font-medium text-[#7C746C]"><span>Licensed Venues</span><Building2 className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-2xl font-bold leading-none tracking-tight">3<span className="ml-1 text-[12px] font-normal text-[#756D65]">/ 5 nodes</span></div><div className="mt-2 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-3/5 rounded-full bg-[#5844A8]" /></div></div>
           <div className="rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex justify-between text-xs font-medium text-[#7C746C]"><span>Scan Volume</span><Zap className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-2xl font-bold leading-none tracking-tight">14.2k<span className="ml-1 text-[12px] font-normal text-[#756D65]">/ 25k</span></div><div className="mt-2 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-[57%] rounded-full bg-[#087B55]" /></div></div>
         </section>
 
-        <section className="mt-7 rounded-[13px] bg-white p-5 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex items-start justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#B28529]">Tier Architecture</div><h2 className="mt-2 text-[23px] font-bold leading-none tracking-[-0.04em]">Enterprise Atelier</h2></div><span className="rounded-[9px] bg-[#F4EEE8] p-2.5 text-[#211C19]"><ShieldCheck className="h-5 w-5" /></span></div><div className="mt-4 grid grid-cols-2 gap-2 text-[11px] font-semibold"><span className="rounded-[7px] bg-[#FCF0E3] px-2 py-1.5">✓ 5 Venues Included</span><span className="rounded-[7px] bg-[#FCF0E3] px-2 py-1.5">✓ 20 Mesh Nodes</span><span className="rounded-[7px] bg-[#FCF0E3] px-2 py-1.5">✓ VIP Pass Portal</span><span className="rounded-[7px] bg-[#FCF0E3] px-2 py-1.5">✓ SOC-2 Audit Log</span></div><div className="mt-6 space-y-3 text-[12px]"><div><div className="flex justify-between"><span>Branch Locations</span><span className="text-[#756D65]">3 of 5 used (60%)</span></div><div className="mt-1 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-3/5 rounded-full bg-[#C99B42]" /></div></div><div><div className="flex justify-between"><span>Active POS Mesh Nodes</span><span className="text-[#756D65]">12 of 20 used (60%)</span></div><div className="mt-1 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-3/5 rounded-full bg-[#C99B42]" /></div></div><div><div className="flex justify-between"><span>Monthly Scan Transactions</span><span className="text-[#756D65]">14,240 / 25,000 (57%)</span></div><div className="mt-1 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-[57%] rounded-full bg-[#087B55]" /></div></div></div><button type="button" className="mt-6 w-full rounded-[11px] bg-gradient-to-r from-[#D4A753] to-[#9E782F] py-3 text-[13px] font-bold text-white"><ArrowRight className="mr-1 inline h-4 w-4" />Upgrade Plan Quota</button></section>
+        <section className="mt-7 rounded-[13px] bg-white p-5 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex items-start justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#5844A8]">Tier Architecture</div><h2 className="mt-2 text-[23px] font-bold leading-none tracking-[-0.04em]">Enterprise Atelier</h2></div><span className="rounded-[9px] bg-[#F4EEE8] p-2.5 text-[#211C19]"><ShieldCheck className="h-5 w-5" /></span></div><div className="mt-4 grid grid-cols-2 gap-2 text-[11px] font-semibold"><span className="rounded-[7px] bg-[#FAF5FF] px-2 py-1.5">✓ 5 Venues Included</span><span className="rounded-[7px] bg-[#FAF5FF] px-2 py-1.5">✓ 20 Mesh Nodes</span><span className="rounded-[7px] bg-[#FAF5FF] px-2 py-1.5">✓ VIP Pass Portal</span><span className="rounded-[7px] bg-[#FAF5FF] px-2 py-1.5">✓ SOC-2 Audit Log</span></div><div className="mt-6 space-y-3 text-[12px]"><div><div className="flex justify-between"><span>Branch Locations</span><span className="text-[#756D65]">3 of 5 used (60%)</span></div><div className="mt-1 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-3/5 rounded-full bg-[#5844A8]" /></div></div><div><div className="flex justify-between"><span>Active POS Mesh Nodes</span><span className="text-[#756D65]">12 of 20 used (60%)</span></div><div className="mt-1 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-3/5 rounded-full bg-[#5844A8]" /></div></div><div><div className="flex justify-between"><span>Monthly Scan Transactions</span><span className="text-[#756D65]">14,240 / 25,000 (57%)</span></div><div className="mt-1 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-[57%] rounded-full bg-[#087B55]" /></div></div></div><button type="button" className="mt-6 w-full rounded-[11px] bg-gradient-to-r from-[#7C3AED] to-[#5844A8] py-3 text-[13px] font-bold text-white"><ArrowRight className="mr-1 inline h-4 w-4" />Upgrade Plan Quota</button></section>
 
-        <section className="mt-7"><div className="flex items-center justify-between"><h2 className="text-[19px] font-bold">Payment Sources</h2><button type="button" className="text-[10px] font-bold uppercase text-[#A8761C]">Manage</button></div><div className="mt-3 rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex items-center gap-3 rounded-[8px] bg-[#FCF0E3] p-3"><span className="flex h-9 w-9 items-center justify-center rounded-[4px] bg-[#211C19] text-[12px] font-bold text-white">MC</span><div className="min-w-0 flex-1"><div className="text-[13px] font-semibold">Mastercard •••• 8814 <span className="ml-1 rounded bg-[#FFE0A2] px-1.5 py-0.5 text-[9px]">DEFAULT</span></div><div className="text-[11px] text-[#756D65]">Expires 08/27 • Atelier Corporate Debit</div></div><MoreVertical className="h-4 w-4 text-[#756D65]" /></div><div className="mt-3 flex items-center gap-3 rounded-[8px] bg-[#F4F0EC] p-3"><span className="flex h-9 w-9 items-center justify-center rounded-[4px] bg-white text-[#756D65]"><Building2 className="h-4 w-4" /></span><div className="min-w-0 flex-1"><div className="text-[13px] font-semibold">ACH Direct Debit •••• 4109</div><div className="text-[11px] text-[#756D65]">J.P. Morgan Chase • Secondary backup</div></div><MoreVertical className="h-4 w-4 text-[#756D65]" /></div></div></section>
+        <section className="mt-7"><div className="flex items-center justify-between"><h2 className="text-[19px] font-bold">Payment Sources</h2><button type="button" className="text-[10px] font-bold uppercase text-[#A8761C]">Manage</button></div><div className="mt-3 rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex items-center gap-3 rounded-[8px] bg-[#FAF5FF] p-3"><span className="flex h-9 w-9 items-center justify-center rounded-[4px] bg-[#211C19] text-[12px] font-bold text-white">MC</span><div className="min-w-0 flex-1"><div className="text-[13px] font-semibold">Mastercard •••• 8814 <span className="ml-1 rounded bg-[#FFE0A2] px-1.5 py-0.5 text-[9px]">DEFAULT</span></div><div className="text-[11px] text-[#756D65]">Expires 08/27 • Atelier Corporate Debit</div></div><MoreVertical className="h-4 w-4 text-[#756D65]" /></div><div className="mt-3 flex items-center gap-3 rounded-[8px] bg-[#F4F0EC] p-3"><span className="flex h-9 w-9 items-center justify-center rounded-[4px] bg-white text-[#756D65]"><Building2 className="h-4 w-4" /></span><div className="min-w-0 flex-1"><div className="text-[13px] font-semibold">ACH Direct Debit •••• 4109</div><div className="text-[11px] text-[#756D65]">J.P. Morgan Chase • Secondary backup</div></div><MoreVertical className="h-4 w-4 text-[#756D65]" /></div></div></section>
 
         <section className="mt-7"><div className="flex items-center justify-between"><h2 className="text-[19px] font-bold">Billing Ledger</h2><span className="text-[10px] font-bold uppercase text-[#756D65]">Last 3 Quarters</span></div><div className="mt-3 space-y-2">{invoices.map(([date, amount, detail]) => <div key={date} className="flex items-center gap-3 rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><span className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-[#B9F1CF] text-[#087B55]"><ReceiptText className="h-5 w-5" /></span><div className="min-w-0 flex-1"><div className="text-[13px] font-semibold">{date} <span className="text-[#087B55]">✓ Paid</span></div><div className="truncate text-[11px] text-[#756D65]">{detail}</div><div className="text-[19px] font-bold">{amount}</div></div><button type="button" aria-label={`Download invoice for ${date}`} className="rounded-[8px] bg-[#F4F0EC] p-2"><Download className="h-4 w-4" /><span className="block text-[8px] font-bold">PDF</span></button></div>)}</div></section>
 
-        <section className="mt-7 rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex gap-3"><span className="rounded-[8px] bg-[#F4F0EC] p-2 text-[#A8761C]"><FileText className="h-5 w-5" /></span><div><div className="text-[10px] font-bold uppercase text-[#756D65]">Registered Legal Entity</div><div className="mt-1 text-[14px] font-bold">Revia Hospitality Atelier Group LLC</div><div className="text-[11px] text-[#756D65]">EIN: 84-2910492 • Del. Division of Corps</div></div></div><div className="mt-3 rounded-[8px] bg-[#FCF0E3] p-3 text-[11px] text-[#756D65]"><div className="flex justify-between"><span>Billing Recipient:</span><b className="text-[#211C19]">Elena Vance</b></div><div className="mt-1 flex justify-between"><span>Dispatch Email:</span><b className="text-[#211C19]">billing@revia.hospitality.com</b></div></div><button type="button" className="mt-3 w-full rounded-[8px] bg-[#F4F0EC] py-2.5 text-[12px] font-semibold"><ReceiptText className="mr-1 inline h-4 w-4 text-[#A8761C]" />Export Annual Tax Dossier (CSV/PDF)</button></section>
+        <section className="mt-7 rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex gap-3"><span className="rounded-[8px] bg-[#F4F0EC] p-2 text-[#A8761C]"><FileText className="h-5 w-5" /></span><div><div className="text-[10px] font-bold uppercase text-[#756D65]">Registered Legal Entity</div><div className="mt-1 text-[14px] font-bold">Revia Hospitality Atelier Group LLC</div><div className="text-[11px] text-[#756D65]">EIN: 84-2910492 • Del. Division of Corps</div></div></div><div className="mt-3 rounded-[8px] bg-[#FAF5FF] p-3 text-[11px] text-[#756D65]"><div className="flex justify-between"><span>Billing Recipient:</span><b className="text-[#211C19]">Elena Vance</b></div><div className="mt-1 flex justify-between"><span>Dispatch Email:</span><b className="text-[#211C19]">billing@revia.hospitality.com</b></div></div><button type="button" className="mt-3 w-full rounded-[8px] bg-[#F4F0EC] py-2.5 text-[12px] font-semibold"><ReceiptText className="mr-1 inline h-4 w-4 text-[#A8761C]" />Export Annual Tax Dossier (CSV/PDF)</button></section>
       </div>
     </div>
   );
@@ -186,7 +186,7 @@ export const BillingPage: React.FC = () => {
 
         <button
           onClick={openTopUpModal}
-          className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-4 py-2 text-[13px] font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer self-start sm:self-auto shrink-0"
+          className="bg-gradient-to-r from-[#7C3AED] to-[#5844A8] hover:opacity-95 text-white rounded-lg px-4 py-2 text-[13px] font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer self-start sm:self-auto shrink-0"
         >
           <PlusCircle className="w-4 h-4 text-white" />
           <span>Add Credit</span>
@@ -227,7 +227,7 @@ export const BillingPage: React.FC = () => {
               <span className="text-lg font-bold text-[#6E6A66]">credits total</span>
             </div>
 
-            <div className="bg-[#FAF8F5] border border-[#EAE6E1] px-3 py-2 rounded-lg inline-block mt-2">
+            <div className="bg-[#FAF8FF] border border-[#EAE6E1] px-3 py-2 rounded-lg inline-block mt-2">
               <div className="text-[11px] text-[#6E6A66]">
                 <strong className="text-[#1A1615]">{usableBalance.toLocaleString()} credits</strong> usable for actions.
                 (250 credits are locked for system provisioning).
@@ -240,7 +240,7 @@ export const BillingPage: React.FC = () => {
           </div>
 
           {/* Right Summary Metrics */}
-          <div className="flex flex-wrap sm:flex-nowrap gap-3 sm:gap-5 bg-[#FAF8F5] border border-[#EAE6E1] p-3.5 sm:p-4 rounded-xl shrink-0">
+          <div className="flex flex-wrap sm:flex-nowrap gap-3 sm:gap-5 bg-[#FAF8FF] border border-[#EAE6E1] p-3.5 sm:p-4 rounded-xl shrink-0">
             <div className="flex-1 min-w-[110px]">
               <div className="text-[10px] font-bold text-[#8C827A] uppercase tracking-wider">Total Spent</div>
               <div className="text-[17px] sm:text-[18px] font-extrabold text-[#1A1615] mt-0.5">{grandTotalSpent.toLocaleString()}</div>
@@ -267,7 +267,7 @@ export const BillingPage: React.FC = () => {
         <div className="lg:col-span-2 bg-white border border-[#EAE6E1] rounded-xl p-5 shadow-2xs space-y-4">
           <div className="flex items-center justify-between border-b border-[#EAE6E1] pb-3">
             <div className="flex items-center gap-2">
-              <PieChart className="w-4 h-4 text-[#D4A753]" />
+              <PieChart className="w-4 h-4 text-[#5844A8]" />
               <h2 className="text-[15px] font-bold text-[#1A1615] tracking-tight">
                 Usage Breakdown by Action Category
               </h2>
@@ -281,7 +281,7 @@ export const BillingPage: React.FC = () => {
             {usageBreakdown.map((item) => {
               const percentage = grandTotalSpent > 0 ? Math.round((item.totalSpent / grandTotalSpent) * 100) : 0;
               return (
-                <div key={item.category} className="p-3 rounded-lg border border-[#EAE6E1] bg-[#FAF8F5] space-y-1.5">
+                <div key={item.category} className="p-3 rounded-lg border border-[#EAE6E1] bg-[#FAF8FF] space-y-1.5">
                   <div className="flex items-center justify-between text-[12px]">
                     <div className="flex items-center gap-2 min-w-0">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold border ${categoryConfig[item.category].color}`}>
@@ -299,7 +299,7 @@ export const BillingPage: React.FC = () => {
                   {/* Progress Bar */}
                   <div className="w-full bg-[#EAE6E1] h-1.5 rounded-full overflow-hidden">
                     <div
-                      className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] h-full rounded-full transition-all duration-300"
+                      className="bg-gradient-to-r from-[#7C3AED] to-[#5844A8] h-full rounded-full transition-all duration-300"
                       style={{ width: `${Math.max(percentage, item.totalSpent > 0 ? 3 : 0)}%` }}
                     />
                   </div>
@@ -314,12 +314,12 @@ export const BillingPage: React.FC = () => {
           <div>
             <div className="flex items-center justify-between border-b border-[#EAE6E1] pb-3 mb-3">
               <div className="flex items-center gap-2">
-                <Settings2 className="w-4 h-4 text-[#D4A753]" />
+                <Settings2 className="w-4 h-4 text-[#5844A8]" />
                 <h2 className="text-[15px] font-bold text-[#1A1615] tracking-tight">
                   Action Cost Matrix
                 </h2>
               </div>
-              <span className="text-[9px] font-bold uppercase tracking-wider bg-[#FAF6EE] text-[#9E782F] px-2 py-0.5 rounded border border-[#EAE6E1]">
+              <span className="text-[9px] font-bold uppercase tracking-wider bg-[#FAF5FF] text-[#5844A8] px-2 py-0.5 rounded border border-[#EAE6E1]">
                 Admin Editable
               </span>
             </div>
@@ -330,7 +330,7 @@ export const BillingPage: React.FC = () => {
                 return (
                   <div
                     key={rule.action}
-                    className="p-2.5 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg flex items-center justify-between text-[11px]"
+                    className="p-2.5 bg-[#FAF8FF] border border-[#EAE6E1] rounded-lg flex items-center justify-between text-[11px]"
                   >
                     <div>
                       <div className="font-bold text-[#1A1615]">{rule.label}</div>
@@ -343,12 +343,12 @@ export const BillingPage: React.FC = () => {
                           type="number"
                           value={newCostInput}
                           onChange={(e) => setNewCostInput(e.target.value)}
-                          className="w-14 px-2 py-1 bg-white border border-[#D4A753] rounded text-[11px] font-bold outline-none"
+                          className="w-14 px-2 py-1 bg-white border border-[#5844A8] rounded text-[11px] font-bold outline-none"
                           autoFocus
                         />
                         <button
                           onClick={() => handleSaveCostRule(rule.action)}
-                          className="px-2 py-1 bg-[#D4A753] text-white rounded font-bold text-[10px] cursor-pointer"
+                          className="px-2 py-1 bg-[#5844A8] text-white rounded font-bold text-[10px] cursor-pointer"
                         >
                           Save
                         </button>
@@ -363,7 +363,7 @@ export const BillingPage: React.FC = () => {
                             setEditingRule(rule.action);
                             setNewCostInput(String(rule.cost));
                           }}
-                          className="text-[10px] font-bold text-[#9E782F] hover:underline cursor-pointer"
+                          className="text-[10px] font-bold text-[#5844A8] hover:underline cursor-pointer"
                         >
                           Edit
                         </button>
@@ -390,7 +390,7 @@ export const BillingPage: React.FC = () => {
         {/* Ledger Header & Filters */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#EAE6E1] pb-3">
           <div className="flex items-center gap-2">
-            <History className="w-4 h-4 text-[#D4A753]" />
+            <History className="w-4 h-4 text-[#5844A8]" />
             <div>
               <h2 className="text-[15px] font-bold text-[#1A1615] tracking-tight">
                 Transaction Ledger
@@ -413,13 +413,13 @@ export const BillingPage: React.FC = () => {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full pl-8 pr-3 py-1.5 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[12px] font-medium text-[#1A1615] outline-none focus:border-[#D4A753]"
+                className="w-full pl-8 pr-3 py-1.5 bg-[#FAF8FF] border border-[#EAE6E1] rounded-lg text-[12px] font-medium text-[#1A1615] outline-none focus:border-[#5844A8]"
               />
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
               {/* Category Filter */}
-              <div className="flex-1 sm:flex-none flex items-center gap-1 bg-[#FAF8F5] border border-[#EAE6E1] px-2.5 py-1.5 rounded-lg text-[12px] relative" ref={categoryDropdownRef}>
+              <div className="flex-1 sm:flex-none flex items-center gap-1 bg-[#FAF8FF] border border-[#EAE6E1] px-2.5 py-1.5 rounded-lg text-[12px] relative" ref={categoryDropdownRef}>
                 <Filter className="w-3.5 h-3.5 text-[#6E6A66] shrink-0" />
                 <button
                   type="button"
@@ -460,7 +460,7 @@ export const BillingPage: React.FC = () => {
                           setCurrentPage(1);
                           setCategoryDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-3 py-2 text-[11px] hover:bg-[#FAF8F5] cursor-pointer ${selectedCategory === opt.value ? 'bg-[#FAF8F5] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                        className={`w-full text-left px-3 py-2 text-[11px] hover:bg-[#FAF8FF] cursor-pointer ${selectedCategory === opt.value ? 'bg-[#FAF8FF] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
                       >
                         {opt.label}
                       </button>
@@ -472,7 +472,7 @@ export const BillingPage: React.FC = () => {
               {/* Export CSV Button */}
               <button
                 onClick={handleExportCSV}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-[#FAF8F5] border border-[#EAE6E1] hover:bg-[#EAE6E1] text-[#1A1615] rounded-lg font-bold text-[13px] transition-colors cursor-pointer"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-[#FAF8FF] border border-[#EAE6E1] hover:bg-[#EAE6E1] text-[#1A1615] rounded-lg font-bold text-[13px] transition-colors cursor-pointer"
               >
                 <Download className="w-4 h-4 text-[#6E6A66] shrink-0" />
                 <span className="truncate">Export CSV</span>
@@ -485,7 +485,7 @@ export const BillingPage: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
-              <tr className="border-b border-[#EAE6E1] bg-[#FAF8F5] text-[10px] font-bold text-[#8C827A] uppercase tracking-wider">
+              <tr className="border-b border-[#EAE6E1] bg-[#FAF8FF] text-[10px] font-bold text-[#8C827A] uppercase tracking-wider">
                 <th className="py-2.5 px-3">Date &amp; ID</th>
                 <th className="py-2.5 px-3">Event Description</th>
                 <th className="py-2.5 px-3">Category</th>
@@ -506,7 +506,7 @@ export const BillingPage: React.FC = () => {
                   const catCfg = categoryConfig[tx.category] || { label: tx.category, color: 'bg-gray-100 text-gray-800 border-gray-200' };
                   const isCredit = tx.type === 'credit';
                   return (
-                    <tr key={tx.id} className="hover:bg-[#FAF8F5] transition-colors">
+                    <tr key={tx.id} className="hover:bg-[#FAF8FF] transition-colors">
                       <td className="py-3 px-3 font-mono text-[11px]">
                         <div className="font-bold text-[#1A1615]">{tx.createdAt}</div>
                         <div className="text-[10px] text-[#9E9A93]">{tx.id}</div>
@@ -561,7 +561,7 @@ export const BillingPage: React.FC = () => {
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="p-1.5 rounded-lg border border-[#EAE6E1] text-[#6E6A66] hover:text-[#1A1615] hover:bg-[#FAF8F5] disabled:opacity-40 cursor-pointer"
+              className="p-1.5 rounded-lg border border-[#EAE6E1] text-[#6E6A66] hover:text-[#1A1615] hover:bg-[#FAF8FF] disabled:opacity-40 cursor-pointer"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
             </button>
@@ -571,7 +571,7 @@ export const BillingPage: React.FC = () => {
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="p-1.5 rounded-lg border border-[#EAE6E1] text-[#6E6A66] hover:text-[#1A1615] hover:bg-[#FAF8F5] disabled:opacity-40 cursor-pointer"
+              className="p-1.5 rounded-lg border border-[#EAE6E1] text-[#6E6A66] hover:text-[#1A1615] hover:bg-[#FAF8FF] disabled:opacity-40 cursor-pointer"
             >
               <ChevronRight className="w-3.5 h-3.5" />
             </button>

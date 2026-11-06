@@ -39,10 +39,14 @@ import { StaffPage } from './pages/StaffPage';
 import { QrCodesPage } from './pages/QrCodesPage';
 import { ApprovalsPage } from './pages/ApprovalsPage';
 import { ItemCatalogPage } from './pages/ItemCatalogPage';
+import { RedemptionRulesPage } from './pages/RedemptionRulesPage';
+import { ControlPanelPage } from './pages/ControlPanelPage';
 import { MastersPage } from './pages/MastersPage';
 import { OrderQueuePage } from './pages/OrderQueuePage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { RewardsPage } from './pages/RewardsPage';
+import { SalesRewardsPage } from './pages/SalesRewardsPage';
+import { InsightsConfigPage } from './pages/InsightsConfigPage';
 import { CreateRewardPage } from './pages/CreateRewardPage';
 import { RedemptionTerminalPage } from './pages/RedemptionTerminalPage';
 import { BillingPage } from './pages/BillingPage';
@@ -61,8 +65,8 @@ import { AddCreditModal } from './components/wallet/AddCreditModal';
 import { NotEnoughCreditModal } from './components/wallet/NotEnoughCreditModal';
 
 const VALID_ROUTES = [
-  '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
-  '/loyalty', '/qr-codes', '/approvals', '/item-catalog', '/masters/rule-fields', '/masters/tier-options', '/masters/reward-types', '/masters/asset-types', '/masters/placement-types', '/catalog', '/orders', '/invoices',
+  '/dashboard', '/control-panel', '/sales-rewards', '/insights-config', '/atelier', '/branches', '/branches/new', '/staff',
+  '/loyalty', '/qr-codes', '/approvals', '/item-catalog', '/redemption-rules', '/masters/rule-fields', '/masters/tier-options', '/masters/reward-types', '/masters/asset-types', '/masters/placement-types', '/catalog', '/orders', '/invoices',
   '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
   '/terminal', '/rewards', '/rewards/new', '/analytics', '/billing', '/notifications',
   '/settings/audit', '/settings/branding', '/login', '/onboarding',
@@ -156,10 +160,10 @@ export default function App() {
         try {
           const response = await apiClient.get('/merchant/business');
           const responseData = response.data;
-          
+
           // The API structure is typically { status: true, data: { business: { ... status: 'pending_approval' } } }
           const businessData = responseData?.data?.business;
-          
+
           if (businessData && businessData.status) {
             setBusinessStatus(businessData.status);
           } else if (responseData?.data?.status) {
@@ -167,19 +171,19 @@ export default function App() {
           } else if (Array.isArray(responseData?.data) && responseData.data.length > 0) {
             setBusinessStatus(responseData.data[0].status || 'success');
           } else {
-             setBusinessStatus('success');
+            setBusinessStatus('success');
           }
         } catch (error) {
           console.error("Failed to check business status", error);
         }
       };
-      
+
       fetchBusinessStatus();
     }
   }, [currentRoute]);
 
   const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/') || currentRoute.startsWith('/customerlist/detail') || currentRoute.startsWith('/c/') || currentRoute.startsWith('/campaigns/edit');
-  
+
   const isMerchantPanelRoute = !(
     currentRoute === '/' ||
     currentRoute === '/login' ||
@@ -229,7 +233,7 @@ export default function App() {
 
   return (
     <WalletProvider>
-      <div className="flex h-screen bg-[#FAF8F5] text-[#1A1615] font-sans antialiased selection:bg-[#FAF6EE] selection:text-[#A37837] overflow-hidden">
+      <div className="flex h-screen bg-[#FAF8FF] text-[#111827] font-sans antialiased selection:bg-purple-100 selection:text-[#5844A8] overflow-hidden">
         {isMobileMenuOpen && (
           <div
             className="fixed inset-0 bg-black/50 z-[50] lg:hidden backdrop-blur-xs transition-opacity cursor-pointer"
@@ -244,7 +248,7 @@ export default function App() {
         <AddCreditModal />
         <NotEnoughCreditModal />
         <PendingApprovalModal isOpen={businessStatus === 'pending' || businessStatus === 'pending_approval'} />
-        
+
         <Sidebar
           currentRoute={currentRoute as NavRoute}
           onRouteChange={handleNavigate as any}
@@ -254,7 +258,7 @@ export default function App() {
           isMobileOpen={isMobileMenuOpen}
           onMobileClose={() => setIsMobileMenuOpen(false)}
         />
-        
+
         <div ref={mainContentRef} className="flex-1 flex flex-col min-w-0 h-screen overflow-y-scroll">
           <LowBalanceBanner />
           {!currentRoute.startsWith('/campaigns') && (
@@ -271,6 +275,7 @@ export default function App() {
             ) : (
               <Routes>
                 <Route path="/dashboard" element={<ProtectedRoute><DashboardPage onNavigate={handleNavigate as any} customers={customers} catalog={catalog} branches={branches} /></ProtectedRoute>} />
+                <Route path="/control-panel" element={<ProtectedRoute><ControlPanelPage /></ProtectedRoute>} />
                 <Route path="/branches" element={<ProtectedRoute><BranchesPage onNavigate={handleNavigate as any} onBranchSelect={setActiveBranch} outlets={outlets} onAddBranch={handleAddOutlet} selectedOutletId={selectedOutletId} onSelectOutletId={setSelectedOutletId} /></ProtectedRoute>} />
                 <Route path="/branches/new" element={<ProtectedRoute><AddNewBranchPage onNavigate={handleNavigate as any} onAddBranch={handleAddOutlet} /></ProtectedRoute>} />
                 <Route path="/staff" element={<ProtectedRoute><StaffPage /></ProtectedRoute>} />
@@ -278,6 +283,7 @@ export default function App() {
                 <Route path="/qr-codes" element={<ProtectedRoute><QrCodesPage /></ProtectedRoute>} />
                 <Route path="/approvals" element={<ProtectedRoute><ApprovalsPage /></ProtectedRoute>} />
                 <Route path="/item-catalog" element={<ProtectedRoute><ItemCatalogPage /></ProtectedRoute>} />
+                <Route path="/redemption-rules" element={<ProtectedRoute><RedemptionRulesPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/masters/rule-fields" element={<ProtectedRoute><MastersPage defaultTab="fields" /></ProtectedRoute>} />
                 <Route path="/masters/tier-options" element={<ProtectedRoute><MastersPage defaultTab="tiers" /></ProtectedRoute>} />
                 <Route path="/masters/reward-types" element={<ProtectedRoute><MastersPage defaultTab="rewards" /></ProtectedRoute>} />
@@ -286,6 +292,8 @@ export default function App() {
                 <Route path="/orders" element={<ProtectedRoute><OrderQueuePage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/customerlist" element={<ProtectedRoute><CustomersPage customers={customers} onUpdateCustomer={(updated) => setCustomers((c) => c.map((cust) => (cust.id === updated.id ? updated : cust)))} onAddCustomer={(newCustomer) => setCustomers((c) => [newCustomer, ...c])} onViewCustomer={(id) => handleNavigate(`/customerlist/detail?id=${id}` as any)} /></ProtectedRoute>} />
                 <Route path="/customerlist/detail" element={<ProtectedRoute><CustomerDetailPage onNavigate={handleNavigate as any} customer={customers.find(c => { const searchParams = new URLSearchParams(window.location.search); return c.id === searchParams.get('id'); })} /></ProtectedRoute>} />
+                <Route path="/sales-rewards" element={<ProtectedRoute><SalesRewardsPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
+                <Route path="/insights-config" element={<ProtectedRoute><InsightsConfigPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/transactions" element={<ProtectedRoute><TransactionsPage /></ProtectedRoute>} />
                 <Route path="/campaigns" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="dashboard" onNavigate={(route) => handleNavigate(route as NavRoute)} onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)} /></ProtectedRoute>} />
                 <Route path="/campaigns/new" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="builder" onNavigate={(route) => handleNavigate(route as NavRoute)} /></ProtectedRoute>} />
