@@ -297,8 +297,8 @@ export default function App() {
                 <Route path="/branches/new" element={<ProtectedRoute><AddNewBranchPage onNavigate={handleNavigate as any} onAddBranch={handleAddOutlet} /></ProtectedRoute>} />
                 <Route path="/staff" element={<ProtectedRoute><StaffPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/loyalty" element={<ProtectedRoute><LoyaltyPage /></ProtectedRoute>} />
-                <Route path="/qr-codes" element={<ProtectedRoute><QrCodesPage /></ProtectedRoute>} />
-                <Route path="/approvals" element={<ProtectedRoute><ApprovalsPage /></ProtectedRoute>} />
+                <Route path="/qr-codes" element={<ProtectedRoute><QrCodesPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
+                <Route path="/approvals" element={<ProtectedRoute><ApprovalsPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/item-catalog" element={<ProtectedRoute><ItemCatalogPage /></ProtectedRoute>} />
                 <Route path="/redemption-rules" element={<ProtectedRoute><RedemptionRulesPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/masters/rule-fields" element={<ProtectedRoute><MastersPage defaultTab="fields" /></ProtectedRoute>} />

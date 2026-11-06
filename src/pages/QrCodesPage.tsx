@@ -45,8 +45,46 @@ import {
   Percent,
   Utensils
 } from 'lucide-react';
+import { MobileQrCodesView } from '../components/merchant/MobileQrCodesView';
 
-export const QrCodesPage: React.FC = () => {
+interface QrCodesPageProps {
+  onNavigate?: (route: string) => void;
+}
+
+export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get('view') === 'mobile' || p.get('device') === 'mobile') return true;
+      if (p.get('view') === 'desktop' || p.get('device') === 'desktop') return false;
+      return window.innerWidth < 768;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      const p = new URLSearchParams(window.location.search);
+      if (!p.get('view') && !p.get('device')) {
+        setIsMobile(window.innerWidth < 768);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+
+    const mql = window.matchMedia('(max-width: 767px)');
+    const handleMedia = (e: MediaQueryListEvent) => {
+      const p = new URLSearchParams(window.location.search);
+      if (!p.get('view') && !p.get('device')) {
+        setIsMobile(e.matches);
+      }
+    };
+    mql.addEventListener?.('change', handleMedia);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      mql.removeEventListener?.('change', handleMedia);
+    };
+  }, []);
   const dispatch = useDispatch<AppDispatch>();
   const { qrCodes, currentQrCode, currentHistory, isLoading, error } = useSelector((state: RootState) => state.qrCode);
   const { branches } = useSelector((state: RootState) => state.branch);
@@ -1508,6 +1546,10 @@ export const QrCodesPage: React.FC = () => {
   // -------------------------------------------------------------
   // MAIN RENDER CONTROLLER
   // -------------------------------------------------------------
+  if (isMobile) {
+    return <MobileQrCodesView onNavigate={onNavigate} onClose={() => setIsMobile(false)} />;
+  }
+
   if (pageMode === 'wizard') {
     return (
       <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
