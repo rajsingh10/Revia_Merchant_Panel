@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Heart,
   CheckCircle2,
@@ -27,6 +27,11 @@ import {
   ArrowRight,
   Filter
 } from 'lucide-react';
+import { MobileApprovalsView } from '../components/merchant/MobileApprovalsView';
+
+export interface ApprovalsPageProps {
+  onNavigate?: (route: string) => void;
+}
 
 export interface ApprovalRequest {
   id: string;
@@ -237,7 +242,41 @@ const INITIAL_APPROVAL_REQUESTS: ApprovalRequest[] = [
   }
 ];
 
-export const ApprovalsPage: React.FC = () => {
+export const ApprovalsPage: React.FC<ApprovalsPageProps> = ({ onNavigate }) => {
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get('view') === 'mobile' || p.get('device') === 'mobile') return true;
+      if (p.get('view') === 'desktop' || p.get('device') === 'desktop') return false;
+      return window.innerWidth < 768;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      const p = new URLSearchParams(window.location.search);
+      if (!p.get('view') && !p.get('device')) {
+        setIsMobile(window.innerWidth < 768);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+
+    const mql = window.matchMedia('(max-width: 767px)');
+    const handleMedia = (e: MediaQueryListEvent) => {
+      const p = new URLSearchParams(window.location.search);
+      if (!p.get('view') && !p.get('device')) {
+        setIsMobile(e.matches);
+      }
+    };
+    mql.addEventListener?.('change', handleMedia);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      mql.removeEventListener?.('change', handleMedia);
+    };
+  }, []);
+
   const [requests, setRequests] = useState<ApprovalRequest[]>(INITIAL_APPROVAL_REQUESTS);
   const [activeTab, setActiveTab] = useState<'Pending' | 'Approved' | 'Declined'>('Pending');
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -352,6 +391,21 @@ export const ApprovalsPage: React.FC = () => {
         return <Gift className="w-4 h-4" />;
     }
   };
+
+  if (isMobile) {
+    return (
+      <MobileApprovalsView
+        onNavigate={onNavigate}
+        onRequestAction={(id, action) => {
+          setRequests((prev) =>
+            prev.map((r) =>
+              r.id === id ? { ...r, status: action === 'accept' ? 'Approved' : 'Declined' } : r
+            )
+          );
+        }}
+      />
+    );
+  }
 
   return (
     <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
