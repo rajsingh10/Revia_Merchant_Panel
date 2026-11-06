@@ -30,7 +30,7 @@ const CustomSelect = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2 text-[13px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#B7842C] transition-colors cursor-pointer"
+        className="flex items-center justify-between w-full bg-[#FAF8FF] border border-[#E5E0D8] rounded-lg px-3 py-2 text-[13px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#5844A8] transition-colors cursor-pointer"
       >
         <span className="truncate">{selectedLabel}</span>
         <ChevronDown className={`w-4 h-4 shrink-0 text-[#9E9A93] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
@@ -42,7 +42,7 @@ const CustomSelect = ({
               key={opt.value}
               type="button"
               onClick={() => { onChange(opt.value); setIsOpen(false); }}
-              className={`w-full cursor-pointer px-3 py-2 text-left text-[13px] hover:bg-[#F5F1EA] ${value === opt.value ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+              className={`w-full cursor-pointer px-3 py-2 text-left text-[13px] hover:bg-[#FAF5FF] ${value === opt.value ? 'bg-[#FAF5FF] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
             >
               {opt.label}
             </button>
@@ -103,7 +103,7 @@ export const AutomatedEventsSettings: React.FC = () => {
 
   return (
     <div className="mt-4 overflow-hidden rounded-xl border border-[#E5E0D8] bg-white shadow-xs">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E0D8] bg-[#FAF8F5] px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E0D8] bg-[#FAF8FF] px-4 py-3">
         <div>
           <div className="flex items-center gap-2">
             <CalendarHeart className="h-4 w-4 text-[#B7842C]" />
@@ -114,7 +114,7 @@ export const AutomatedEventsSettings: React.FC = () => {
         <button 
           onClick={handleSave} 
           disabled={saving}
-          className="inline-flex items-center gap-2 rounded-lg bg-[#B7842C] px-4 py-2 text-[13px] font-bold text-white hover:bg-[#9E782F] transition-colors disabled:opacity-70 cursor-pointer"
+          className="inline-flex items-center gap-2 rounded-lg bg-[#5844A8] px-4 py-2 text-[13px] font-bold text-white hover:bg-[#47368E] transition-colors disabled:opacity-70 cursor-pointer"
         >
           {saving ? 'Saving...' : 'Save Changes'}
         </button>
@@ -130,7 +130,7 @@ export const AutomatedEventsSettings: React.FC = () => {
           <div className={`relative rounded-xl border ${birthdayEnabled ? 'border-[#B7842C] shadow-sm' : 'border-[#E5E0D8]'} p-4 sm:p-5 bg-white transition-all`}>
             <div className="flex items-start justify-between gap-4 mb-4">
               <div className="flex items-start gap-3">
-                <div className={`p-2.5 rounded-lg shrink-0 ${birthdayEnabled ? 'bg-[#FCF1DF] text-[#B7842C]' : 'bg-[#F5F1EA] text-[#9E9A93]'}`}>
+                <div className={`p-2.5 rounded-lg shrink-0 ${birthdayEnabled ? 'bg-purple-100 text-[#5844A8]' : 'bg-[#FAF5FF] text-[#9E9A93]'}`}>
                   <Gift className="w-5 h-5" />
                 </div>
                 <div>
@@ -193,7 +193,7 @@ export const AutomatedEventsSettings: React.FC = () => {
           <div className={`relative rounded-xl border ${anniversaryEnabled ? 'border-[#B7842C] shadow-sm' : 'border-[#E5E0D8]'} p-4 sm:p-5 bg-white transition-all`}>
             <div className="flex items-start justify-between gap-4 mb-4">
               <div className="flex items-start gap-3">
-                <div className={`p-2.5 rounded-lg shrink-0 ${anniversaryEnabled ? 'bg-[#FCF1DF] text-[#B7842C]' : 'bg-[#F5F1EA] text-[#9E9A93]'}`}>
+                <div className={`p-2.5 rounded-lg shrink-0 ${anniversaryEnabled ? 'bg-purple-100 text-[#5844A8]' : 'bg-[#FAF5FF] text-[#9E9A93]'}`}>
                   <PartyPopper className="w-5 h-5" />
                 </div>
                 <div>
@@ -256,7 +256,7 @@ export const AutomatedEventsSettings: React.FC = () => {
           <div key={evt.id} className={`rounded-xl border ${evt.enabled ? 'border-[#B7842C] shadow-sm' : 'border-[#E5E0D8]'} p-4 sm:p-5 bg-white transition-all relative`}>
             <div className="flex items-start justify-between gap-4 mb-4">
               <div className="flex items-start gap-3 w-full max-w-sm">
-                <div className={`p-2.5 rounded-lg shrink-0 ${evt.enabled ? 'bg-[#FCF1DF] text-[#B7842C]' : 'bg-[#F5F1EA] text-[#9E9A93]'}`}>
+                <div className={`p-2.5 rounded-lg shrink-0 ${evt.enabled ? 'bg-purple-100 text-[#5844A8]' : 'bg-[#FAF5FF] text-[#9E9A93]'}`}>
                   <CalendarHeart className="w-5 h-5" />
                 </div>
                 <div className="w-full">
@@ -264,7 +264,7 @@ export const AutomatedEventsSettings: React.FC = () => {
                     type="text" 
                     value={evt.name}
                     onChange={(e) => updateCustomEvent(evt.id, 'name', e.target.value)}
-                    className="text-[15px] font-bold text-[#1A1615] bg-transparent border-b border-transparent hover:border-[#E5E0D8] focus:border-[#B7842C] focus:outline-none w-full pb-0.5 placeholder:text-[#9E9A93] transition-colors"
+                    className="text-[15px] font-bold text-[#1A1615] bg-transparent border-b border-transparent hover:border-[#E5E0D8] focus:border-[#5844A8] focus:outline-none w-full pb-0.5 placeholder:text-[#9E9A93] transition-colors"
                     placeholder="Event Name (e.g. VIP Status)"
                   />
                   <p className="text-xs text-[#6E6A66] mt-0.5">Custom milestone trigger</p>

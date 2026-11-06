@@ -197,7 +197,7 @@ export const NotificationPage: React.FC = () => {
 				<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 					<div>
 						<div className="flex flex-wrap items-center gap-2 sm:gap-3">
-							<Bell className="h-6 w-6 sm:h-7 sm:w-7 text-[#D4A753] shrink-0" />
+							<Bell className="h-6 w-6 sm:h-7 sm:w-7 text-[#5844A8] shrink-0" />
 							<h1 className="text-xl sm:text-2xl lg:text-[28px] font-bold tracking-tight text-[#1A1615] break-words">Notifications</h1>
 							<span className="rounded-full bg-[#EBF7F0] px-2 py-0.5 sm:px-2.5 text-[10px] sm:text-[11px] font-bold text-[#15803D] border border-[#15803D]/20 shrink-0">
 								{unreadCount} new
@@ -213,7 +213,7 @@ export const NotificationPage: React.FC = () => {
 							type="button"
 							onClick={markAllRead}
 							disabled={unreadCount === 0}
-							className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-4 py-2 text-[13px] font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:cursor-default disabled:opacity-40 cursor-pointer whitespace-nowrap flex-1 sm:flex-none"
+							className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#7C3AED] to-[#5844A8] px-4 py-2 text-[13px] font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:cursor-default disabled:opacity-40 cursor-pointer whitespace-nowrap flex-1 sm:flex-none"
 						>
 							<CheckCheck className="w-4 h-4" />
 							Mark all as read
@@ -223,7 +223,7 @@ export const NotificationPage: React.FC = () => {
 							<button
 								type="button"
 								onClick={restoreDefaults}
-								className="flex items-center justify-center gap-2 rounded-lg border border-[#EFECE6] bg-[#FAF8F5] px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#EFECE6] transition-colors cursor-pointer whitespace-nowrap flex-1 sm:flex-none"
+								className="flex items-center justify-center gap-2 rounded-lg border border-[#EFECE6] bg-[#FAF8FF] px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#EFECE6] transition-colors cursor-pointer whitespace-nowrap flex-1 sm:flex-none"
 								title="Reset mock notifications"
 							>
 								<RotateCcw className="w-4 h-4" />
@@ -244,7 +244,7 @@ export const NotificationPage: React.FC = () => {
 								type="checkbox"
 								checked={allVisibleSelected}
 								onChange={toggleSelectAll}
-								className="w-4 h-4 rounded border-[#D1CDC7] text-[#D4A753] focus:ring-[#D4A753] cursor-pointer"
+								className="w-4 h-4 rounded border-[#D1CDC7] text-[#5844A8] focus:ring-[#5844A8] cursor-pointer"
 							/>
 							<span>Select All</span>
 						</label>
@@ -300,7 +300,7 @@ export const NotificationPage: React.FC = () => {
 			<div className="divide-y divide-[#E5EAF0]">
 				{visibleItems.length === 0 ? (
 					<div className="px-6 py-16 text-center">
-						<div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#FAF8F5] text-[#9E9A93]">
+						<div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#FAF8FF] text-[#9E9A93]">
 							<Bell className="h-6 w-6" />
 						</div>
 						<h3 className="mt-3 text-sm font-bold text-[#1A1615]">No notifications found</h3>
@@ -320,7 +320,7 @@ export const NotificationPage: React.FC = () => {
 							<div
 								key={item.id}
 								className={`group flex flex-col sm:flex-row sm:items-center justify-between min-h-[86px] gap-3 px-4 py-4 sm:px-6 lg:px-8 transition-colors ${
-									isSelected ? 'bg-[#FDF8EB]/50' : !item.read ? 'bg-[#FCFDFF]' : 'bg-white hover:bg-[#FAF8F5]/60'
+									isSelected ? 'bg-[#FAF5FF]/50' : !item.read ? 'bg-[#FCFDFF]' : 'bg-white hover:bg-[#FAF8FF]/60'
 								}`}
 							>
 								<div className="flex items-start sm:items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
@@ -329,7 +329,7 @@ export const NotificationPage: React.FC = () => {
 										type="checkbox"
 										checked={isSelected}
 										onChange={() => toggleSelect(item.id)}
-										className="w-4 h-4 rounded border-[#D1CDC7] text-[#D4A753] focus:ring-[#D4A753] cursor-pointer shrink-0 mt-1 sm:mt-0"
+										className="w-4 h-4 rounded border-[#D1CDC7] text-[#5844A8] focus:ring-[#5844A8] cursor-pointer shrink-0 mt-1 sm:mt-0"
 									/>
 
 									{/* Notification Category Icon */}
@@ -433,7 +433,7 @@ export const NotificationPage: React.FC = () => {
 								<button
 									type="button"
 									onClick={closeModal}
-									className="flex-1 rounded-lg border border-[#EFECE6] bg-[#FAF8F5] px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#EFECE6] transition-colors cursor-pointer"
+									className="flex-1 rounded-lg border border-[#EFECE6] bg-[#FAF8FF] px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#EFECE6] transition-colors cursor-pointer"
 								>
 									Cancel
 								</button>

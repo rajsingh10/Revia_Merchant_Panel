@@ -120,15 +120,15 @@ const RewardRequestsView: React.FC<{
           requests.map(r => (
             <div key={r.id} className="bg-white border border-[#EFECE6] rounded-xl p-4 sm:p-5 shadow-sm hover:border-[#D1CDC7] transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
               <div className="flex items-start sm:items-center gap-3 sm:gap-5 w-full">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#FAF8F5] rounded-full flex items-center justify-center border border-[#EFECE6] shrink-0 mt-0.5 sm:mt-0">
-                  <Award className="w-5 h-5 sm:w-6 sm:h-6 text-[#9E782F]" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#FAF8FF] rounded-full flex items-center justify-center border border-[#EFECE6] shrink-0 mt-0.5 sm:mt-0">
+                  <Award className="w-5 h-5 sm:w-6 sm:h-6 text-[#5844A8]" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                       r.status === 'Accepted' ? 'bg-[#E6F4ED] text-[#0D7A53]' : 
                       r.status === 'Declined' ? 'bg-[#FEE2E2] text-[#DC2626]' : 
-                      'bg-[#FFF5D6] text-[#B38637]'
+                      'bg-purple-50 text-[#5844A8]'
                     }`}>{r.status}</span>
                     <span className="text-[9px] sm:text-[10px] font-bold text-[#9E9A93] uppercase whitespace-nowrap">{r.id} • {r.timestamp}</span>
                   </div>
@@ -138,7 +138,7 @@ const RewardRequestsView: React.FC<{
                     <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
                     <span>{r.branch}</span>
                     <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
-                    <span className="text-[#D4A753]">{r.cost}</span>
+                    <span className="text-[#5844A8]">{r.cost}</span>
                   </div>
                 </div>
               </div>
@@ -235,10 +235,10 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
             <div className="text-center">
               <h3 className="text-xl font-bold text-[#1A1615] mb-2">QR Preview</h3>
               <p className="text-[13px] text-[#6E6A66] mb-8">Scan to preview voucher <strong className="text-[#1A1615]">{showQRPreview}</strong></p>
-              <div className="bg-[#FAF8F5] w-56 h-56 mx-auto rounded-2xl flex items-center justify-center border border-[#EFECE6] mb-8 shadow-inner">
+              <div className="bg-[#FAF8FF] w-56 h-56 mx-auto rounded-2xl flex items-center justify-center border border-[#EFECE6] mb-8 shadow-inner">
                 <QrCode className="w-32 h-32 text-[#1A1615]" />
               </div>
-              <button onClick={() => setShowQRPreview(null)} className="w-full px-4 py-2 bg-[#D4A753] hover:bg-[#C29541] text-white rounded-lg text-[13px] font-bold transition-colors shadow-sm cursor-pointer">Close Preview</button>
+              <button onClick={() => setShowQRPreview(null)} className="w-full px-4 py-2 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-lg text-[13px] font-bold transition-colors shadow-sm cursor-pointer">Close Preview</button>
             </div>
           </div>
         </div>
@@ -251,15 +251,15 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
             </button>
             <div>
-              <h3 className="text-xl font-bold text-[#1A1615] mb-2 flex items-center gap-2"><Calendar className="w-5 h-5 text-[#D4A753]" /> Manage Slots</h3>
+              <h3 className="text-xl font-bold text-[#1A1615] mb-2 flex items-center gap-2"><Calendar className="w-5 h-5 text-[#5844A8]" /> Manage Slots</h3>
               <p className="text-[13px] text-[#6E6A66] mb-6">Configure availability for VIP experience <strong className="text-[#1A1615]">{showManageSlots}</strong></p>
               <div className="space-y-3 mb-8">
-                <div className="flex items-center justify-between p-4 border border-[#EFECE6] rounded-xl bg-[#FAF8F5] shadow-sm">
+                <div className="flex items-center justify-between p-4 border border-[#EFECE6] rounded-xl bg-[#FAF8FF] shadow-sm">
                   <div className="flex flex-col">
                     <span className="text-sm font-bold text-[#1A1615]">Friday, Oct 24</span>
                     <span className="text-[11px] text-[#6E6A66]">19:00 - 21:00</span>
                   </div>
-                  <span className="text-[12px] font-bold text-[#D4A753] bg-[#FDF8EB] px-3 py-1 rounded-full border border-[#F3E5C8]">4/4 Booked</span>
+                  <span className="text-[12px] font-bold text-[#5844A8] bg-[#FAF5FF] px-3 py-1 rounded-full border border-[#E9D5FF]">4/4 Booked</span>
                 </div>
                 <div className="flex items-center justify-between p-4 border border-[#EFECE6] rounded-xl bg-white shadow-sm hover:border-[#D1CDC7] transition-colors">
                   <div className="flex flex-col">
@@ -282,21 +282,21 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
             </button>
             <div>
-              <h3 className="text-xl font-bold text-[#1A1615] mb-2 flex items-center gap-2"><Edit2 className="w-5 h-5 text-[#D4A753]" /> Edit Reward</h3>
+              <h3 className="text-xl font-bold text-[#1A1615] mb-2 flex items-center gap-2"><Edit2 className="w-5 h-5 text-[#5844A8]" /> Edit Reward</h3>
               <p className="text-[13px] text-[#6E6A66] mb-6">Modifying details for <strong className="text-[#1A1615]">{showEdit}</strong></p>
               <div className="space-y-5 mb-8">
                 <div>
                   <label className="block text-[11px] font-bold text-[#9E9A93] uppercase tracking-wider mb-2">Title</label>
-                  <input type="text" defaultValue={showEdit} className="w-full px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                  <input type="text" defaultValue={showEdit} className="w-full px-4 py-3 bg-[#FAF8FF] border border-[#EFECE6] rounded-xl text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#5844A8]" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[11px] font-bold text-[#9E9A93] uppercase tracking-wider mb-2">Cost</label>
-                    <input type="text" defaultValue="10 Stamps" className="w-full px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                    <input type="text" defaultValue="10 Stamps" className="w-full px-4 py-3 bg-[#FAF8FF] border border-[#EFECE6] rounded-xl text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#5844A8]" />
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-[#9E9A93] uppercase tracking-wider mb-2">Status</label>
-                    <select className="w-full px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] appearance-none cursor-pointer">
+                    <select className="w-full px-4 py-3 bg-[#FAF8FF] border border-[#EFECE6] rounded-xl text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#5844A8] appearance-none cursor-pointer">
                       <option>Active</option>
                       <option>Draft</option>
                       <option>Paused</option>
@@ -305,8 +305,8 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                 </div>
               </div>
               <div className="flex gap-3">
-                <button onClick={() => setShowEdit(null)} className="flex-1 px-4 py-2 bg-[#FAF8F5] hover:bg-[#EFECE6] text-[#1A1615] border border-[#EFECE6] rounded-lg text-[13px] font-bold transition-colors cursor-pointer">Cancel</button>
-                <button onClick={() => { setShowEdit(null); showToast('Reward updated successfully!'); }} className="flex-1 px-4 py-2 bg-[#D4A753] hover:bg-[#C29541] text-white rounded-lg text-[13px] font-bold transition-colors shadow-sm cursor-pointer">Save Changes</button>
+                <button onClick={() => setShowEdit(null)} className="flex-1 px-4 py-2 bg-[#FAF8FF] hover:bg-[#EFECE6] text-[#1A1615] border border-[#EFECE6] rounded-lg text-[13px] font-bold transition-colors cursor-pointer">Cancel</button>
+                <button onClick={() => { setShowEdit(null); showToast('Reward updated successfully!'); }} className="flex-1 px-4 py-2 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-lg text-[13px] font-bold transition-colors shadow-sm cursor-pointer">Save Changes</button>
               </div>
             </div>
           </div>
@@ -331,7 +331,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
           </div> */}
 
           {/* <div className="flex items-center gap-2 mb-1">
-            <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] text-[10px] font-bold uppercase tracking-widest rounded">
+            <span className="px-2 py-0.5 bg-[#FAF5FF] text-[#5844A8] text-[10px] font-bold uppercase tracking-widest rounded">
               ATELIER LOYALTY ARCHITECTURE
             </span>
             <span className="text-[#9E9A93] text-[10px] font-bold uppercase tracking-widest">• Engine v4.2</span>
@@ -352,10 +352,10 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
           </div>
 
           <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto">
-            <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] text-[#1A1615] text-[13px] font-bold rounded-lg shadow-xs hover:bg-[#FAF8F5] transition-colors cursor-pointer">
+            <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] text-[#1A1615] text-[13px] font-bold rounded-lg shadow-xs hover:bg-[#FAF5FF] transition-colors cursor-pointer">
               <Download className="w-4 h-4" /> Export Matrix (CSV)
             </button>
-            <button onClick={() => onNavigate?.('/rewards/new')} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[13px] font-bold rounded-lg shadow-xs hover:opacity-95 transition-opacity cursor-pointer">
+            <button onClick={() => onNavigate?.('/rewards/new')} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-[#7C3AED] to-[#5844A8] text-white text-[13px] font-bold rounded-lg shadow-xs hover:opacity-95 transition-opacity cursor-pointer">
               <Plus className="w-4 h-4 text-white" /> Create New Reward
             </button>
           </div>
@@ -368,14 +368,14 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
         <div className="bg-white border border-[#EAE6E1] rounded-xl p-5 shadow-2xs">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">ACTIVE REWARD<br />CATALOG</h3>
-            <span className="bg-[#FDF8EB] text-[#9E782F] text-[9px] font-bold uppercase px-2 py-1 rounded">Across 4<br />Tiers</span>
+            <span className="bg-[#FAF5FF] text-[#5844A8] text-[9px] font-bold uppercase px-2 py-1 rounded">Across 4<br />Tiers</span>
           </div>
           <div className="flex items-baseline gap-2 mb-2">
             <span className="text-[32px] font-bold text-[#1A1615] leading-none">18</span>
-            <span className="text-[14px] font-bold text-[#D4A753]">Live Perks</span>
+            <span className="text-[14px] font-bold text-[#5844A8]">Live Perks</span>
           </div>
           <div className="text-[11px] font-bold text-[#6E6A66] flex items-center gap-1.5">
-            <Activity className="w-3.5 h-3.5 text-[#D4A753]" /> 6 auto-replenishing, 12 static
+            <Activity className="w-3.5 h-3.5 text-[#5844A8]" /> 6 auto-replenishing, 12 static
           </div>
         </div>
 
@@ -402,11 +402,11 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
         <div className="bg-white border border-[#EAE6E1] rounded-xl p-5 shadow-2xs">
           <div className="flex justify-between items-start mb-3">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">HIGHEST VELOCITY</h3>
-            <span className="bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] text-[10px] font-bold px-2 py-0.5 rounded">412 claimed</span>
+            <span className="bg-[#FAF8FF] border border-[#EFECE6] text-[#6E6A66] text-[10px] font-bold px-2 py-0.5 rounded">412 claimed</span>
           </div>
           <div className="flex justify-between items-center mb-2">
             <span className="text-[16px] font-bold text-[#1A1615]">Specialty Flight</span>
-            <span className="text-[11px] font-bold text-[#D4A753]">Gold/Obsidian</span>
+            <span className="text-[11px] font-bold text-[#5844A8]">Gold/Obsidian</span>
           </div>
           <div className="text-[11px] font-bold text-[#6E6A66] flex items-center gap-1.5 mt-3">
             <CheckCircle2 className="w-3.5 h-3.5 text-[#0D7A53]" /> 98.2% positive rating
@@ -443,15 +443,15 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-2 text-[13px] font-bold whitespace-nowrap rounded-t-lg transition-colors cursor-pointer ${activeTab === tab
                   ? 'bg-[#1A1615] text-white'
-                  : 'bg-[#FAF8F5] text-[#6E6A66] hover:bg-[#EFECE6]'
+                  : 'bg-[#FAF8FF] text-[#6E6A66] hover:bg-[#EFECE6]'
                   }`}
               >
                 {tab}
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-2 text-[11px] font-bold bg-[#FAF8F5] border border-[#EFECE6] px-3 py-1.5 rounded-full">
-            <Zap className="w-3.5 h-3.5 text-[#D4A753]" />
+          <div className="flex items-center gap-2 text-[11px] font-bold bg-[#FAF8FF] border border-[#EFECE6] px-3 py-1.5 rounded-full">
+            <Zap className="w-3.5 h-3.5 text-[#5844A8]" />
             <span className="text-[#1A1615]">Velocity:</span>
             <span className="text-[#6E6A66]">47 today</span>
             <span className="w-1 h-1 rounded-full bg-[#D1CDC7] mx-1"></span>
@@ -469,7 +469,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search rewards, perks, SKU..."
-              className="w-full pl-9 pr-4 py-2.5 bg-white border border-[#EFECE6] rounded-full text-xs font-bold text-[#1A1615] placeholder:text-[#9E9A93] focus:outline-none focus:border-[#D4A753]"
+              className="w-full pl-9 pr-4 py-2.5 bg-white border border-[#EFECE6] rounded-full text-xs font-bold text-[#1A1615] placeholder:text-[#9E9A93] focus:outline-none focus:border-[#5844A8]"
             />
           </div>
           <div className="flex items-center gap-2 flex-wrap">
@@ -579,27 +579,27 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
           {/* Dynamically created cards */}
           {newCards.filter(c => isVisible(c.id, c.title, [c.tier], 'Beverages', 'Active', ['Vouchers & Items (10)', 'All Rewards (18)'])).map(card => (
             <div key={card.id} className="bg-white border border-[#EFECE6] rounded-xl p-4 flex flex-col md:flex-row gap-5 shadow-sm hover:border-[#D1CDC7] transition-colors group">
-              <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#FAF8F5] flex items-center justify-center border border-[#EFECE6]">
+              <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#FAF8FF] flex items-center justify-center border border-[#EFECE6]">
                 <div className="absolute top-2 left-2 bg-[#1A1615]/80 backdrop-blur-md text-white text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/20 z-10">{card.id}</div>
-                <div className="w-10 h-10 rounded bg-[#FDF8EB] flex items-center justify-center border border-[#F3E5C8]">
-                  <Zap className="w-5 h-5 text-[#9E782F]" />
+                <div className="w-10 h-10 rounded bg-[#FAF5FF] flex items-center justify-center border border-[#E9D5FF]">
+                  <Zap className="w-5 h-5 text-[#5844A8]" />
                 </div>
               </div>
               <div className="flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] text-[10px] font-bold px-2 py-0.5 rounded-full">{card.tier}</span>
+                    <span className="bg-[#FAF8FF] border border-[#EFECE6] text-[#6E6A66] text-[10px] font-bold px-2 py-0.5 rounded-full">{card.tier}</span>
                     <span className="bg-[#E6F4ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#BCE3D1]">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Active
                     </span>
                   </div>
                   <div className="text-right">
-                    <div className="text-[14px] font-bold text-[#D4A753]">{card.cost}</div>
+                    <div className="text-[14px] font-bold text-[#5844A8]">{card.cost}</div>
                   </div>
                 </div>
                 <h3 className="text-lg font-bold text-[#1A1615] mb-1">{card.title}</h3>
                 <p className="text-xs text-[#6E6A66] mb-3 leading-relaxed">Newly created custom voucher reward.</p>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8F5] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8FF] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
                   <span>Availability: <strong className="text-[#1A1615]">{card.availability}</strong></span>
                 </div>
                 <div className="flex items-center justify-between mt-auto">
@@ -607,8 +607,8 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                     <Clock className="w-3.5 h-3.5" /> Just Added
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setShowQRPreview(card.id)} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer"><QrCode className="w-4 h-4" /> QR Preview</button>
-                    <button onClick={() => setShowEdit(card.title)} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => setShowQRPreview(card.id)} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8FF] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer"><QrCode className="w-4 h-4" /> QR Preview</button>
+                    <button onClick={() => setShowEdit(card.title)} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF5FF] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, card.id])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
@@ -627,13 +627,13 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
               <div className="flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="bg-[#FDF8EB] text-[#9E782F] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#F3E5C8]">Gold & Black Tier</span>
+                    <span className="bg-[#FAF5FF] text-[#5844A8] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#E9D5FF]">Gold & Black Tier</span>
                     <span className="bg-[#E6F4ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#BCE3D1]">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Active
                     </span>
                   </div>
                   <div className="text-right">
-                    <div className="text-[14px] font-bold text-[#D4A753]">10 Stamps <span className="text-[#9E9A93] font-medium text-xs">or 500 Pts</span></div>
+                    <div className="text-[14px] font-bold text-[#5844A8]">10 Stamps <span className="text-[#9E9A93] font-medium text-xs">or 500 Pts</span></div>
                   </div>
                 </div>
 
@@ -642,8 +642,8 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                   Signature three-origin pour-over tasting flight paired with any morning bake from...
                 </p>
 
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8F5] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
-                  <span className="flex items-center gap-1"><Zap className="w-3 h-3 text-[#D4A753]" /> Velocity: <strong className="text-[#1A1615]">412 (Hot)</strong></span>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8FF] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
+                  <span className="flex items-center gap-1"><Zap className="w-3 h-3 text-[#5844A8]" /> Velocity: <strong className="text-[#1A1615]">412 (Hot)</strong></span>
                   <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
                   <span>Venues: <strong className="text-[#1A1615]">All 3 Venues</strong></span>
                   <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
@@ -655,10 +655,10 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                     <Clock className="w-3.5 h-3.5" /> 30 Days expiry
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setShowQRPreview('#REV-041')} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
+                    <button onClick={() => setShowQRPreview('#REV-041')} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8FF] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
                       <QrCode className="w-4 h-4" /> QR Preview
                     </button>
-                    <button onClick={() => setShowEdit('Complimentary Specialty Flight & Pastry')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => setShowEdit('Complimentary Specialty Flight & Pastry')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF5FF] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#REV-041'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
@@ -669,7 +669,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
           {/* Card 2 */}
           {isVisible('#REV-108', '₹10 Off Any Roasted Bean Bag (250g)', ['Silver Tier', 'Gold Tier', 'Black Tier', 'Obsidian VIP'], 'Merchandise', 'Active', ['Vouchers & Items (10)', 'All Rewards (18)']) && (
             <div className="bg-white border border-[#EFECE6] rounded-xl p-4 flex flex-col md:flex-row gap-5 shadow-sm hover:border-[#D1CDC7] transition-colors group">
-              <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#FAF8F5] flex items-center justify-center border border-[#EFECE6]">
+              <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#FAF8FF] flex items-center justify-center border border-[#EFECE6]">
                 <div className="absolute top-2 left-2 bg-[#1A1615]/80 backdrop-blur-md text-white text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/20 z-10">#REV-108</div>
                 <img src="https://images.unsplash.com/photo-1559525839-b184a4d698c7?auto=format&fit=crop&q=80&w=300" alt="Bean Bag" className="w-full h-full object-cover" />
               </div>
@@ -677,13 +677,13 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
               <div className="flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] text-[10px] font-bold px-2 py-0.5 rounded-full">All Tiers (Silver+)</span>
+                    <span className="bg-[#FAF8FF] border border-[#EFECE6] text-[#6E6A66] text-[10px] font-bold px-2 py-0.5 rounded-full">All Tiers (Silver+)</span>
                     <span className="bg-[#E0F9ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#BCE3D1]">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Auto-Replenish
                     </span>
                   </div>
                   <div className="text-right">
-                    <div className="text-[14px] font-bold text-[#D4A753]">8 Stamps <span className="text-[#9E9A93] font-medium text-xs">or 400 Pts</span></div>
+                    <div className="text-[14px] font-bold text-[#5844A8]">8 Stamps <span className="text-[#9E9A93] font-medium text-xs">or 400 Pts</span></div>
                   </div>
                 </div>
 
@@ -692,7 +692,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                   Single-Origin Micro-lots or Reserve Geisha. In-store POS barcode scan or pre-order.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8F5] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8FF] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
                   <span>Redemptions: <strong className="text-[#1A1615]">289</strong></span>
                   <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
                   <span>Channel: <strong className="text-[#1A1615]">POS & Mobile</strong></span>
@@ -705,10 +705,10 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                     <Calendar className="w-3.5 h-3.5" /> Continuous Season
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setShowQRPreview('#REV-108')} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
+                    <button onClick={() => setShowQRPreview('#REV-108')} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8FF] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
                       <QrCode className="w-4 h-4" /> QR Preview
                     </button>
-                    <button onClick={() => setShowEdit('₹10 Off Any Roasted Bean Bag (250g)')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => setShowEdit('₹10 Off Any Roasted Bean Bag (250g)')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF5FF] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#REV-108'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
@@ -721,18 +721,18 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
             <div className="bg-white border border-[#EFECE6] rounded-xl p-4 flex flex-col md:flex-row gap-5 shadow-sm hover:border-[#D1CDC7] transition-colors group relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-[#1A1615]"></div>
               <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#1A1615] flex items-center justify-center">
-                <div className="absolute top-2 left-2 bg-[#1A1615]/90 backdrop-blur-md text-[#D4A753] text-[9px] font-bold px-1.5 py-0.5 rounded border border-[#D4A753]/30 z-10">VIP EXCLUSIVE</div>
+                <div className="absolute top-2 left-2 bg-[#1A1615]/90 backdrop-blur-md text-[#5844A8] text-[9px] font-bold px-1.5 py-0.5 rounded border border-[#5844A8]/30 z-10">VIP EXCLUSIVE</div>
                 <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=300" alt="VIP Tour" className="w-full h-full object-cover opacity-70" />
               </div>
 
               <div className="flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="bg-[#1A1615] text-[#D4A753] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#332e2d]">Obsidian VIP Exclusive</span>
-                    <span className="bg-[#FDF8EB] text-[#9E782F] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#F3E5C8]">Milestone Unlock</span>
+                    <span className="bg-[#1A1615] text-[#5844A8] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#332e2d]">Obsidian VIP Exclusive</span>
+                    <span className="bg-[#FAF5FF] text-[#5844A8] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#E9D5FF]">Milestone Unlock</span>
                   </div>
                   <div className="text-right">
-                    <div className="text-[14px] font-bold text-[#D4A753]">Zero Pts</div>
+                    <div className="text-[14px] font-bold text-[#5844A8]">Zero Pts</div>
                   </div>
                 </div>
 
@@ -741,23 +741,23 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                   Private after-hours cupping and sensory flight led by Head of Roasting.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8F5] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8FF] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
                   <span>Quota: <strong className="text-[#1A1615]">4 Guests / Session</strong></span>
                   <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
                   <span>Days: <strong className="text-[#1A1615]">Fri & Sat Only</strong></span>
                   <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
-                  <span>Claimed: <strong className="text-[#D4A753]">18 (8 Left)</strong></span>
+                  <span>Claimed: <strong className="text-[#5844A8]">18 (8 Left)</strong></span>
                 </div>
 
                 <div className="flex items-center justify-between mt-auto">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#D4A753]">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#5844A8]">
                     <Trophy className="w-3.5 h-3.5" /> Concierge RSVP Required
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setShowManageSlots('Revia Obsidian Private Tasting Tour')} className="flex items-center gap-1.5 px-4 py-2 bg-[#1A1615] text-[#D4A753] border border-[#332e2d] text-[13px] font-bold rounded-lg hover:bg-black transition-colors cursor-pointer">
+                    <button onClick={() => setShowManageSlots('Revia Obsidian Private Tasting Tour')} className="flex items-center gap-1.5 px-4 py-2 bg-[#1A1615] text-[#5844A8] border border-[#332e2d] text-[13px] font-bold rounded-lg hover:bg-black transition-colors cursor-pointer">
                       <Calendar className="w-4 h-4" /> Manage Slots
                     </button>
-                    <button onClick={() => setShowEdit('Revia Obsidian Private Tasting Tour')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => setShowEdit('Revia Obsidian Private Tasting Tour')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF5FF] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#VIP-001'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
@@ -768,23 +768,23 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
           {/* Card 4 */}
           {isVisible('#REV-012', 'Artisanal Single-Origin Pour-Over Upgrade', ['Silver Tier', 'Gold Tier', 'Black Tier', 'Obsidian VIP'], 'Beverages', 'Active', ['Vouchers & Items (10)', 'All Rewards (18)']) && (
             <div className="bg-white border border-[#EFECE6] rounded-xl p-4 flex flex-col md:flex-row gap-5 shadow-sm hover:border-[#D1CDC7] transition-colors group">
-              <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#FAF8F5] flex items-center justify-center border border-[#EFECE6]">
+              <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#FAF8FF] flex items-center justify-center border border-[#EFECE6]">
                 <div className="absolute top-2 left-2 bg-[#1A1615]/80 backdrop-blur-md text-white text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/20 z-10">#REV-012</div>
-                <div className="w-10 h-10 rounded bg-[#FDF8EB] flex items-center justify-center border border-[#F3E5C8]">
-                  <svg className="w-5 h-5 text-[#9E782F]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 8h1a4 4 0 1 1 0 8h-1" /><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" /></svg>
+                <div className="w-10 h-10 rounded bg-[#FAF5FF] flex items-center justify-center border border-[#E9D5FF]">
+                  <svg className="w-5 h-5 text-[#5844A8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 8h1a4 4 0 1 1 0 8h-1" /><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" /></svg>
                 </div>
               </div>
 
               <div className="flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] text-[10px] font-bold px-2 py-0.5 rounded-full">Silver Tier & Above</span>
+                    <span className="bg-[#FAF8FF] border border-[#EFECE6] text-[#6E6A66] text-[10px] font-bold px-2 py-0.5 rounded-full">Silver Tier & Above</span>
                     <span className="bg-[#E6F4ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#BCE3D1]">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Active
                     </span>
                   </div>
                   <div className="text-right">
-                    <div className="text-[14px] font-bold text-[#D4A753]">4 Stamps <span className="text-[#9E9A93] font-medium text-xs">or 150 Pts</span></div>
+                    <div className="text-[14px] font-bold text-[#5844A8]">4 Stamps <span className="text-[#9E9A93] font-medium text-xs">or 150 Pts</span></div>
                   </div>
                 </div>
 
@@ -793,7 +793,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                   Upgrade any standard drip brew or Americano to rotating single-origin bar brew.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8F5] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8FF] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
                   <span>Daily Velocity: <strong className="text-[#1A1615]">654</strong></span>
                   <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
                   <span>Venues: <strong className="text-[#1A1615]">Downtown & Roastery</strong></span>
@@ -806,10 +806,10 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                     <Activity className="w-3.5 h-3.5" /> Recurring Weekly
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setShowQRPreview('#REV-012')} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
+                    <button onClick={() => setShowQRPreview('#REV-012')} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8FF] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
                       <QrCode className="w-4 h-4" /> QR Preview
                     </button>
-                    <button onClick={() => setShowEdit('Artisanal Single-Origin Pour-Over Upgrade')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => setShowEdit('Artisanal Single-Origin Pour-Over Upgrade')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF5FF] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#REV-012'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
@@ -820,23 +820,23 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
           {/* Card 5 */}
           {isVisible('#REV-077', 'Reserve Cold Brew Growler Refill (50% Off)', ['Gold Tier', 'Black Tier', 'Obsidian VIP'], 'Beverages', 'Active', ['Flash & Happy Hour (3)', 'All Rewards (18)']) && (
             <div className="bg-white border border-[#EFECE6] rounded-xl p-4 flex flex-col md:flex-row gap-5 shadow-sm hover:border-[#D1CDC7] transition-colors group">
-              <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#FAF8F5] flex items-center justify-center border border-[#EFECE6]">
+              <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#FAF8FF] flex items-center justify-center border border-[#EFECE6]">
                 <div className="absolute top-2 left-2 bg-[#1A1615]/80 backdrop-blur-md text-white text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/20 z-10">#REV-077</div>
-                <div className="w-10 h-10 rounded bg-[#FDF8EB] flex items-center justify-center border border-[#F3E5C8]">
-                  <svg className="w-4 h-5 text-[#9E782F]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="2" width="6" height="4" rx="1" /><path d="M8 6h8" /><path d="M7 6v14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V6" /></svg>
+                <div className="w-10 h-10 rounded bg-[#FAF5FF] flex items-center justify-center border border-[#E9D5FF]">
+                  <svg className="w-4 h-5 text-[#5844A8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="2" width="6" height="4" rx="1" /><path d="M8 6h8" /><path d="M7 6v14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V6" /></svg>
                 </div>
               </div>
 
               <div className="flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F] text-[10px] font-bold px-2 py-0.5 rounded-full">Gold Exclusive</span>
+                    <span className="bg-[#FAF5FF] border border-[#E9D5FF] text-[#5844A8] text-[10px] font-bold px-2 py-0.5 rounded-full">Gold Exclusive</span>
                     <span className="bg-[#E6F4ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#BCE3D1]">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Active
                     </span>
                   </div>
                   <div className="text-right">
-                    <div className="text-[14px] font-bold text-[#D4A753]">6 Stamps</div>
+                    <div className="text-[14px] font-bold text-[#5844A8]">6 Stamps</div>
                   </div>
                 </div>
 
@@ -845,7 +845,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                   Valid for 32oz or 64oz amber glass growler refilled with nitrogen-infused Kyoto style...
                 </p>
 
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8F5] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8FF] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
                   <span>Redemptions: <strong className="text-[#1A1615]">142</strong></span>
                   <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
                   <span>Venues: <strong className="text-[#1A1615]">All 3 Venues</strong></span>
@@ -858,10 +858,10 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                     <Clock className="w-3.5 h-3.5" /> Weekend Refresh
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setShowQRPreview('#REV-077')} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
+                    <button onClick={() => setShowQRPreview('#REV-077')} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8FF] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
                       <QrCode className="w-4 h-4" /> QR Preview
                     </button>
-                    <button onClick={() => setShowEdit('Reserve Cold Brew Growler Refill (50% Off)')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => setShowEdit('Reserve Cold Brew Growler Refill (50% Off)')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF5FF] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#REV-077'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
@@ -874,12 +874,12 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
         <div className="xl:col-span-4 space-y-6">
 
           {/* Tier Privilege Matrix */}
-          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5 relative overflow-hidden shadow-sm">
+          <div className="bg-[#FAF8FF] border border-[#EFECE6] rounded-xl p-5 relative overflow-hidden shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-bold text-[#1A1615] flex items-center gap-2">
-                <Trophy className="w-4 h-4 text-[#D4A753]" /> Tier Privilege Matrix
+                <Trophy className="w-4 h-4 text-[#5844A8]" /> Tier Privilege Matrix
               </h3>
-              <button className="text-[10px] font-bold text-[#D4A753] uppercase tracking-wider hover:text-[#9E782F] transition-colors cursor-pointer">
+              <button className="text-[10px] font-bold text-[#5844A8] uppercase tracking-wider hover:text-[#5844A8] transition-colors cursor-pointer">
                 Reconfigure
               </button>
             </div>
@@ -889,7 +889,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
 
             <div className="space-y-4">
               {/* Silver */}
-              <div onClick={() => setSelectedMatrixTier('Silver')} className={`border rounded-lg p-3 shadow-sm cursor-pointer transition-all ${selectedMatrixTier === 'Silver' ? 'bg-[#FDF8EB] border-[#D4A753]' : 'bg-white border-[#EFECE6] hover:border-[#D1CDC7]'}`}>
+              <div onClick={() => setSelectedMatrixTier('Silver')} className={`border rounded-lg p-3 shadow-sm cursor-pointer transition-all ${selectedMatrixTier === 'Silver' ? 'bg-[#FAF5FF] border-[#5844A8]' : 'bg-white border-[#EFECE6] hover:border-[#D1CDC7]'}`}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#D1CDC7]"></span>
@@ -904,22 +904,22 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
               </div>
 
               {/* Gold */}
-              <div onClick={() => setSelectedMatrixTier('Gold')} className={`border rounded-lg p-3 shadow-sm cursor-pointer transition-all ${selectedMatrixTier === 'Gold' ? 'bg-[#FDF8EB] border-[#D4A753]' : 'bg-white border-[#EFECE6] hover:border-[#D1CDC7]'}`}>
+              <div onClick={() => setSelectedMatrixTier('Gold')} className={`border rounded-lg p-3 shadow-sm cursor-pointer transition-all ${selectedMatrixTier === 'Gold' ? 'bg-[#FAF5FF] border-[#5844A8]' : 'bg-white border-[#EFECE6] hover:border-[#D1CDC7]'}`}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#5844A8]"></span>
                     <span className="text-xs font-bold text-[#1A1615]">Gold Tier</span>
                   </div>
-                  <span className="text-[9px] font-bold text-[#9E782F] uppercase tracking-widest">5+ Visits / mo</span>
+                  <span className="text-[9px] font-bold text-[#5844A8] uppercase tracking-widest">5+ Visits / mo</span>
                 </div>
-                <ul className="space-y-1.5 text-[11px] text-[#9E782F] font-medium ml-4">
+                <ul className="space-y-1.5 text-[11px] text-[#5844A8] font-medium ml-4">
                   <li>10% off bagged beans & merch</li>
                   <li>Priority mobile pickup lane routing</li>
                 </ul>
               </div>
 
               {/* Black */}
-              <div onClick={() => setSelectedMatrixTier('Black')} className={`border rounded-lg p-3 shadow-sm cursor-pointer transition-all ${selectedMatrixTier === 'Black' ? 'bg-[#FDF8EB] border-[#D4A753]' : 'bg-white border-[#EFECE6] hover:border-[#D1CDC7]'}`}>
+              <div onClick={() => setSelectedMatrixTier('Black')} className={`border rounded-lg p-3 shadow-sm cursor-pointer transition-all ${selectedMatrixTier === 'Black' ? 'bg-[#FAF5FF] border-[#5844A8]' : 'bg-white border-[#EFECE6] hover:border-[#D1CDC7]'}`}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#1A1615]"></span>
@@ -934,14 +934,14 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
               </div>
 
               {/* Obsidian */}
-              <div onClick={() => setSelectedMatrixTier('Obsidian')} className={`border rounded-lg p-3 shadow-sm relative overflow-hidden cursor-pointer transition-all ${selectedMatrixTier === 'Obsidian' ? 'bg-[#1A1615] border-[#D4A753]' : 'bg-[#1A1615] border-[#332e2d] hover:border-[#4a4342]'}`}>
-                <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-[#D4A753]/20 to-transparent rounded-bl-full pointer-events-none"></div>
+              <div onClick={() => setSelectedMatrixTier('Obsidian')} className={`border rounded-lg p-3 shadow-sm relative overflow-hidden cursor-pointer transition-all ${selectedMatrixTier === 'Obsidian' ? 'bg-[#1A1615] border-[#5844A8]' : 'bg-[#1A1615] border-[#332e2d] hover:border-[#4a4342]'}`}>
+                <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-[#7C3AED]/20 to-transparent rounded-bl-full pointer-events-none"></div>
                 <div className="flex items-center justify-between mb-2 relative z-10">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span>
-                    <span className="text-xs font-bold text-[#D4A753]">Obsidian VIP</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#5844A8]"></span>
+                    <span className="text-xs font-bold text-[#5844A8]">Obsidian VIP</span>
                   </div>
-                  <span className="text-[9px] font-bold text-[#D4A753] uppercase tracking-widest">₹2.5K / Invite</span>
+                  <span className="text-[9px] font-bold text-[#5844A8] uppercase tracking-widest">₹2.5K / Invite</span>
                 </div>
                 <ul className="space-y-1.5 text-[11px] text-[#D1CDC7] font-medium ml-4 relative z-10">
                   <li>Private cupping with Master Roaster</li>
@@ -988,9 +988,9 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
               </div>
             </div>
 
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-lg p-3 flex items-center justify-between">
+            <div className="bg-[#FAF8FF] border border-[#EFECE6] rounded-lg p-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Wallet className="w-4 h-4 text-[#D4A753]" />
+                <Wallet className="w-4 h-4 text-[#5844A8]" />
                 <div>
                   <div className="text-[11px] font-bold text-[#1A1615]">Apple & Google Wallet</div>
                   <div className="text-[10px] text-[#9E9A93]">Sync badge instant</div>
@@ -1004,9 +1004,9 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
           <div className="bg-white border border-[#EFECE6] rounded-xl p-5 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-[#1A1615] flex items-center gap-2">
-                <Zap className="w-4 h-4 text-[#D4A753]" /> Quick Create Voucher
+                <Zap className="w-4 h-4 text-[#5844A8]" /> Quick Create Voucher
               </h3>
-              <span className="text-[10px] font-bold text-[#9E782F] bg-[#FDF8EB] px-2 py-0.5 rounded border border-[#F3E5C8]">Fast Wizard</span>
+              <span className="text-[10px] font-bold text-[#5844A8] bg-[#FAF5FF] px-2 py-0.5 rounded border border-[#E9D5FF]">Fast Wizard</span>
             </div>
 
             <div className="space-y-4 mb-6">
@@ -1017,7 +1017,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                   value={newVoucherTitle}
                   onChange={(e) => setNewVoucherTitle(e.target.value)}
                   placeholder="e.g. Cascara Fizz Voucher"
-                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                  className="w-full px-3 py-2 bg-[#FAF8FF] border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#5844A8]"
                 />
               </div>
 
@@ -1025,7 +1025,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                 <div>
                   <label className="block text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1.5">Cost</label>
                   <div className="relative">
-                    <select value={newVoucherCost} onChange={(e) => setNewVoucherCost(e.target.value)} className="w-full appearance-none px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] cursor-pointer">
+                    <select value={newVoucherCost} onChange={(e) => setNewVoucherCost(e.target.value)} className="w-full appearance-none px-3 py-2 bg-[#FAF8FF] border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#5844A8] cursor-pointer">
                       <option>4 Stamps</option>
                       <option>10 Stamps</option>
                       <option>Zero Pts</option>
@@ -1036,7 +1036,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                 <div>
                   <label className="block text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1.5">Tier</label>
                   <div className="relative">
-                    <select value={newVoucherTier} onChange={(e) => setNewVoucherTier(e.target.value)} className="w-full appearance-none px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] cursor-pointer">
+                    <select value={newVoucherTier} onChange={(e) => setNewVoucherTier(e.target.value)} className="w-full appearance-none px-3 py-2 bg-[#FAF8FF] border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#5844A8] cursor-pointer">
                       <option>Silver Tier</option>
                       <option>Gold Tier</option>
                       <option>Black Tier</option>
@@ -1049,7 +1049,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
 
               <div>
                 <label className="block text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-2">Availability Window</label>
-                <div className="flex bg-[#FAF8F5] border border-[#EFECE6] rounded-lg p-1">
+                <div className="flex bg-[#FAF8FF] border border-[#EFECE6] rounded-lg p-1">
                   <button onClick={() => setAvailabilityWindow('30 Days')} className={`flex-1 py-1.5 text-[11px] font-bold rounded transition-colors cursor-pointer ${availabilityWindow === '30 Days' ? 'text-[#1A1615] bg-white shadow-sm border border-[#EFECE6]' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>30 Days</button>
                   <button onClick={() => setAvailabilityWindow('60 Days')} className={`flex-1 py-1.5 text-[11px] font-bold rounded transition-colors cursor-pointer ${availabilityWindow === '60 Days' ? 'text-[#1A1615] bg-white shadow-sm border border-[#EFECE6]' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>60 Days</button>
                   <button onClick={() => setAvailabilityWindow('Permanent')} className={`flex-1 py-1.5 text-[11px] font-bold rounded transition-colors cursor-pointer ${availabilityWindow === 'Permanent' ? 'text-[#1A1615] bg-white shadow-sm border border-[#EFECE6]' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>Permanent</button>
@@ -1065,7 +1065,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                 setNewVoucherTitle('');
                 showToast('Voucher created and deployed to wallet!');
               }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white rounded-lg text-[13px] font-bold shadow-md hover:opacity-95 transition-opacity border border-[#9E782F] cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-b from-[#7C3AED] to-[#5844A8] text-white rounded-lg text-[13px] font-bold shadow-md hover:opacity-95 transition-opacity border border-[#5844A8] cursor-pointer"
             >
               <ArrowUpFromWalletIcon className="w-4 h-4" /> Save & Deploy to Wallet
             </button>

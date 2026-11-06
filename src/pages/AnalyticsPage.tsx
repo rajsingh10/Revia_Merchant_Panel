@@ -50,7 +50,7 @@ export const AnalyticsPage: React.FC = () => {
         value: (74.8 * (1 + (dataMultiplier - 1) * 0.05)).toFixed(1) + '%',
         detail: 'Vs Prev. Quarter',
         note: `Benchmark: ${(58.4 * (1 + (dataMultiplier - 1) * 0.05)).toFixed(1)}%`,
-        accent: 'bg-[#9E782F]',
+        accent: 'bg-[#5844A8]',
         tone: 'emerald',
       },
       {
@@ -103,9 +103,9 @@ export const AnalyticsPage: React.FC = () => {
 
   const funnelStages = useMemo(() => [
     { label: '1st QR Counter Scan', value: `100% (${Math.round(2840 * dataMultiplier).toLocaleString()})`, detail: `Avg ${(1.2 * (1 + (dataMultiplier - 1) * 0.05)).toFixed(1)} items per order`, percent: 100, accent: 'bg-[#6E6862]' },
-    { label: 'Privé Member', value: `${(82.0 * (1 + (dataMultiplier - 1) * 0.02)).toFixed(1)}% Conversion`, detail: `Achieved within ${(9.4 * (1 - (dataMultiplier - 1) * 0.05)).toFixed(1)} days of scan`, percent: 82, accent: 'bg-[#D4A753]' },
+    { label: 'Privé Member', value: `${(82.0 * (1 + (dataMultiplier - 1) * 0.02)).toFixed(1)}% Conversion`, detail: `Achieved within ${(9.4 * (1 - (dataMultiplier - 1) * 0.05)).toFixed(1)} days of scan`, percent: 82, accent: 'bg-[#7C3AED]' },
     { label: 'Black Tier', value: `${(34.0 * (1 + (dataMultiplier - 1) * 0.05)).toFixed(1)}% Conversion`, detail: `Avg ${(28 * (1 - (dataMultiplier - 1) * 0.05)).toFixed(0)} days · ${Math.round(15 * dataMultiplier)} roasts logged`, percent: 34, accent: 'bg-[#C39A3D]' },
-    { label: 'Obsidian VIP', value: `${(11.8 * (1 + (dataMultiplier - 1) * 0.08)).toFixed(1)}% Velocity`, detail: `Apex spending tier · ${Math.round(335 * dataMultiplier)} total guests`, percent: 12, accent: 'bg-[#9E782F]' },
+    { label: 'Obsidian VIP', value: `${(11.8 * (1 + (dataMultiplier - 1) * 0.08)).toFixed(1)}% Velocity`, detail: `Apex spending tier · ${Math.round(335 * dataMultiplier)} total guests`, percent: 12, accent: 'bg-[#5844A8]' },
   ], [dataMultiplier]);
 
   const menuItems = useMemo(() => [
@@ -132,7 +132,7 @@ export const AnalyticsPage: React.FC = () => {
 
   const getHeatmapColor = (pct: number) => {
     if (pct === 0) return 'bg-[#F7F5F2] text-[#8F8A84] border border-[#EEE7DD]';
-    if (pct >= 85) return 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white font-bold shadow-[0_6px_16px_rgba(158,120,47,0.25)]';
+    if (pct >= 85) return 'bg-gradient-to-r from-[#7C3AED] to-[#5844A8] text-white font-bold shadow-[0_6px_16px_rgba(158,120,47,0.25)]';
     if (pct >= 75) return 'bg-[#D8B562]/45 text-[#1A1615] font-semibold';
     if (pct >= 65) return 'bg-[#E8D9B4]/60 text-[#1A1615] font-medium';
     return 'bg-[#F7F5F2] text-[#6E6A66]';
@@ -194,12 +194,12 @@ export const AnalyticsPage: React.FC = () => {
         />
 
         <polyline fill="none" stroke="#B78625" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round" points={blackTier} />
-        <polyline fill="none" stroke="#D4A753" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" points={primeMember} />
+        <polyline fill="none" stroke="#7C3AED" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" points={primeMember} />
         <polyline fill="none" stroke="#8C847A" strokeWidth="1.1" strokeDasharray="2 4" points={guestScan} />
 
-        <circle cx={width - 15} cy={height - ((1500 * dataMultiplier - min) / range) * (height - 30) - 15} r="3" fill="#9E782F" />
+        <circle cx={width - 15} cy={height - ((1500 * dataMultiplier - min) / range) * (height - 30) - 15} r="3" fill="#5844A8" />
         <circle cx={width - 15} cy={height - ((1000 * dataMultiplier - min) / range) * (height - 30) - 15} r="2.5" fill="#B78625" />
-        <circle cx={width - 15} cy={height - ((500 * dataMultiplier - min) / range) * (height - 30) - 15} r="2.5" fill="#D4A753" />
+        <circle cx={width - 15} cy={height - ((500 * dataMultiplier - min) / range) * (height - 30) - 15} r="2.5" fill="#7C3AED" />
         <circle cx={width - 15} cy={height - ((95 * dataMultiplier - min) / range) * (height - 30) - 15} r="2.5" fill="#8C847A" />
 
         {data.map((point, index) => (
@@ -235,7 +235,7 @@ export const AnalyticsPage: React.FC = () => {
               <span className="text-[#C8BFB4]">/</span>
               <span>Insights &amp; Config</span>
               <span className="text-[#C8BFB4]">/</span>
-              <span className="text-[#9E782F]">Analytics &amp; Retention</span>
+              <span className="text-[#5844A8]">Analytics &amp; Retention</span>
             </div>
             <div className="inline-flex items-center gap-1.5 rounded-full border border-[#CDE9DB] bg-[#F0FAF4] px-2.5 py-1.5 text-[8px] tracking-[0.1em] text-[#0D7A53]">
               <span className="h-2 w-2 rounded-full bg-[#16A36D]" />
@@ -264,7 +264,7 @@ export const AnalyticsPage: React.FC = () => {
                     <span className="flex min-w-0 flex-1 flex-col"><span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Date horizon</span><span className="mt-0.5 truncate text-[11px] font-semibold text-[#1A1615]">{selectedDateRange}</span></span>
                     <ChevronDown className={`h-3 w-3 shrink-0 text-[#8C847A] transition-transform ${openDropdown === 'date' ? 'rotate-180' : ''}`} />
                   </button>
-                  {openDropdown === 'date' && <div className="absolute left-0 top-full z-20 mt-1 w-full min-w-[230px] rounded-lg border border-[#E7E0D8] bg-white p-1.5 text-left shadow-lg"><div className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#9E782F]">Choose date horizon</div>{['Last 30 Days', 'Last 90 Days (Aug 15 - Nov 14, 2024)', 'Year to date'].map((range) => <button key={range} type="button" onClick={() => { setSelectedDateRange(range); setOpenDropdown(null); }} className={`block w-full rounded-md px-2 py-2 text-left text-[11px] hover:bg-[#FAF5EC] ${selectedDateRange === range ? 'font-semibold text-[#9E782F]' : 'text-[#4F4842]'}`}>{range}</button>)}</div>}
+                  {openDropdown === 'date' && <div className="absolute left-0 top-full z-20 mt-1 w-full min-w-[230px] rounded-lg border border-[#E7E0D8] bg-white p-1.5 text-left shadow-lg"><div className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#5844A8]">Choose date horizon</div>{['Last 30 Days', 'Last 90 Days (Aug 15 - Nov 14, 2024)', 'Year to date'].map((range) => <button key={range} type="button" onClick={() => { setSelectedDateRange(range); setOpenDropdown(null); }} className={`block w-full rounded-md px-2 py-2 text-left text-[11px] hover:bg-[#FAF5FF] ${selectedDateRange === range ? 'font-semibold text-[#5844A8]' : 'text-[#4F4842]'}`}>{range}</button>)}</div>}
                 </div>
 
                 <div className="relative z-50 min-w-[120px] lg:min-w-0 lg:w-full dropdown-container">
@@ -273,15 +273,15 @@ export const AnalyticsPage: React.FC = () => {
                     <span className="flex min-w-0 flex-1 flex-col"><span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Venues</span><span className="mt-0.5 truncate text-[11px] font-semibold text-[#1A1615]">{selectedVenue}</span></span>
                     <ChevronDown className={`h-3 w-3 shrink-0 text-[#8C847A] transition-transform ${openDropdown === 'venue' ? 'rotate-180' : ''}`} />
                   </button>
-                  {openDropdown === 'venue' && <div className="absolute left-0 top-full z-20 mt-1 w-full min-w-[160px] rounded-lg border border-[#E7E0D8] bg-white p-1.5 text-left shadow-lg"><div className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#9E782F]">Choose venue</div>{['All Venues (3)', 'Downtown Flagship', 'Roastery Reserve', 'Northside Pop-up'].map((venue) => <button key={venue} type="button" onClick={() => { setSelectedVenue(venue); setOpenDropdown(null); }} className={`block w-full rounded-md px-2 py-2 text-left text-[11px] hover:bg-[#FAF5EC] ${selectedVenue === venue ? 'font-semibold text-[#9E782F]' : 'text-[#4F4842]'}`}>{venue}</button>)}</div>}
+                  {openDropdown === 'venue' && <div className="absolute left-0 top-full z-20 mt-1 w-full min-w-[160px] rounded-lg border border-[#E7E0D8] bg-white p-1.5 text-left shadow-lg"><div className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#5844A8]">Choose venue</div>{['All Venues (3)', 'Downtown Flagship', 'Roastery Reserve', 'Northside Pop-up'].map((venue) => <button key={venue} type="button" onClick={() => { setSelectedVenue(venue); setOpenDropdown(null); }} className={`block w-full rounded-md px-2 py-2 text-left text-[11px] hover:bg-[#FAF5FF] ${selectedVenue === venue ? 'font-semibold text-[#5844A8]' : 'text-[#4F4842]'}`}>{venue}</button>)}</div>}
                 </div>
 
                 <div className="inline-flex items-center gap-2 rounded-[9px] border border-[#E7E1D8] bg-[#F4F0EA] px-2.5 py-1.5 shadow-[0_2px_8px_rgba(25,20,18,0.02)] lg:w-full">
-                  <BarChart3 className="h-3 w-3 text-[#9E782F]" />
+                  <BarChart3 className="h-3 w-3 text-[#5844A8]" />
                   <span className="flex flex-col text-[10px] font-bold uppercase leading-3 tracking-widest text-[#1A1615]"><span className="text-[#8C847A]">Cohort benchmark</span><span>VIP vs New Guests</span></span>
                 </div>
 
-                <button type="button" onClick={exportDossier} className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-b from-[#D4A753] to-[#9E782F] px-4 py-2 text-[13px] font-bold text-white shadow-[0_3px_10px_rgba(158,120,47,0.2)] transition hover:opacity-95 lg:w-full">
+                <button type="button" onClick={exportDossier} className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-b from-[#7C3AED] to-[#5844A8] px-4 py-2 text-[13px] font-bold text-white shadow-[0_3px_10px_rgba(158,120,47,0.2)] transition hover:opacity-95 lg:w-full">
                   <Download className="w-4 h-4" />
                   {exported ? 'Dossier Ready' : 'Export CSV / PDF Dossier'}
                 </button>
@@ -317,18 +317,18 @@ export const AnalyticsPage: React.FC = () => {
 
                 <div className="mt-3 flex items-center justify-between gap-2 border-t border-[#EAE3D9] pt-3 text-[11px] text-[#6E6A66]">
                   {label.includes('Churn') ? (
-                    <span className="flex items-start gap-1.5 leading-3 text-[9px] text-[#6E6A66]"><span className="text-[12px] text-[#D4A753]">⚡</span><span>18 dormant guests re-engaged<br />via Flash Perk</span></span>
+                    <span className="flex items-start gap-1.5 leading-3 text-[9px] text-[#6E6A66]"><span className="text-[12px] text-[#7C3AED]">⚡</span><span>18 dormant guests re-engaged<br />via Flash Perk</span></span>
                   ) : (
                     <span>{detail}</span>
                   )}
-                  {!label.includes('Churn') && <span className="shrink-0 font-bold text-[11px] text-[#9E782F]">{note}</span>}
+                  {!label.includes('Churn') && <span className="shrink-0 font-bold text-[11px] text-[#5844A8]">{note}</span>}
                 </div>
                 {label.includes('Retention') && (
                   <div className="mt-1 flex items-end justify-between gap-2">
                     <div className="text-[10px] font-semibold text-[#1A1615]">58.4%</div>
                     <svg viewBox="0 0 90 20" className="h-5 w-24" aria-hidden="true">
-                      <polyline points="1,17 15,14 29,14 43,9 56,11 71,5 89,1" fill="none" stroke="#9E782F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      <circle cx="89" cy="1" r="2.2" fill="#9E782F" />
+                      <polyline points="1,17 15,14 29,14 43,9 56,11 71,5 89,1" fill="none" stroke="#5844A8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      <circle cx="89" cy="1" r="2.2" fill="#5844A8" />
                     </svg>
                   </div>
                 )}
@@ -346,10 +346,10 @@ export const AnalyticsPage: React.FC = () => {
                     <p className="mt-0.5 max-w-[230px] text-[11px] font-semibold text-[#6E6A66]">Observed customer return scans over a 12-week longitudinal duration.</p>
                   </div>
 
-                  <div className="flex shrink-0 items-center gap-1.5 rounded-[5px] bg-[#FAF8F5] px-1.5 py-1 text-[6px] font-semibold text-[#6E6A66]">
+                  <div className="flex shrink-0 items-center gap-1.5 rounded-[5px] bg-[#FAF8FF] px-1.5 py-1 text-[6px] font-semibold text-[#6E6A66]">
                     <span className="text-[6px] uppercase text-[#8C847A]">Retention:</span>
-                    <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-gradient-to-r from-[#D4A753] to-[#9E782F]" /> &gt;70%</span>
-                    <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-[#D4A753]/55" /> 50-70%</span>
+                    <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-gradient-to-r from-[#7C3AED] to-[#5844A8]" /> &gt;70%</span>
+                    <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-[#7C3AED]/55" /> 50-70%</span>
                     <span className="inline-flex items-center gap-1 text-[#A39B91]"><span className="h-2 w-2 rounded-sm bg-[#EEEAE4]" /> &lt;50%</span>
                   </div>
                 </div>
@@ -371,7 +371,7 @@ export const AnalyticsPage: React.FC = () => {
                     </thead>
                     <tbody>
                       {RETENTION_COHORT_DATA.map((row) => (
-                        <tr key={row.cohort} className="rounded-xl bg-[#FAF8F5]">
+                        <tr key={row.cohort} className="rounded-xl bg-[#FAF8FF]">
                           <td className="rounded-l-xl px-2 py-1 font-semibold text-[#1A1615]">{row.cohort}</td>
                           <td className="px-1 py-1 font-mono text-[#6E6A66]">{row.members.toLocaleString()}</td>
                           {[100, row.m1, row.m2, row.m3, row.m4, row.m5, row.m6].map((value, index) => (
@@ -387,9 +387,9 @@ export const AnalyticsPage: React.FC = () => {
                   </table>
                 </div>
 
-                <div className="mt-2 flex min-h-[34px] items-start gap-2 rounded-[6px] border border-[#EAE3D9] bg-[#FAF8F5] px-2.5 py-2 text-[12px] leading-4 text-[#6E6A66]">
+                <div className="mt-2 flex min-h-[34px] items-start gap-2 rounded-[6px] border border-[#EAE3D9] bg-[#FAF8FF] px-2.5 py-2 text-[12px] leading-4 text-[#6E6A66]">
                   <span className="mt-0.5 shrink-0 text-[12px] font-bold text-[#B78A2B]">*</span>
-                  <p className="min-w-0 font-bold"><strong className="text-[#1A1615]">Cohort Health Insight:</strong> The introduction of the <strong className="font-bold text-[#9E782F]">Tahini Cruffin pairing perk</strong> on Oct 7 accelerated Week-1 return velocity by <strong className="font-bold text-[#9E782F]">+4.8%</strong> over the autumn baseline.</p>
+                  <p className="min-w-0 font-bold"><strong className="text-[#1A1615]">Cohort Health Insight:</strong> The introduction of the <strong className="font-bold text-[#5844A8]">Tahini Cruffin pairing perk</strong> on Oct 7 accelerated Week-1 return velocity by <strong className="font-bold text-[#5844A8]">+4.8%</strong> over the autumn baseline.</p>
                 </div>
               </section>
 
@@ -401,23 +401,23 @@ export const AnalyticsPage: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-1.5">
-                    <span className="flex h-[48px] w-[82px] flex-col items-center justify-center rounded-[9px] border border-[#EAE3D9] bg-[#FAF8F5] text-center text-[8px] font-bold uppercase leading-3 text-[#8C847A]">Payback<br />Period<b className="mt-0.5 text-[12px] leading-3 text-[#1A1615]">18 Days</b></span>
+                    <span className="flex h-[48px] w-[82px] flex-col items-center justify-center rounded-[9px] border border-[#EAE3D9] bg-[#FAF8FF] text-center text-[8px] font-bold uppercase leading-3 text-[#8C847A]">Payback<br />Period<b className="mt-0.5 text-[12px] leading-3 text-[#1A1615]">18 Days</b></span>
                     <span className="flex h-[48px] w-[82px] flex-col items-center justify-center rounded-[9px] border border-[#BDE8D4] bg-[#F0FBF5] text-center text-[8px] font-bold uppercase leading-3 text-[#8C847A]">Tier<br />Conversion<b className="mt-0.5 text-[12px] leading-3 text-[#0D7A53]">28.4%</b></span>
                   </div>
                 </div>
 
                 <div className="overflow-hidden rounded-[10px] border border-[#F0E9E2] bg-[#FCFAF8] p-1">
-                  {renderLine(revenueSeries, '#9E782F', '#D4A753')}
+                  {renderLine(revenueSeries, '#5844A8', '#7C3AED')}
                 </div>
 
                 <div className="mt-2 grid gap-2 sm:grid-cols-4">
                   {[
-                    { name: 'Obsidian VIP', value: `₹${(1480 * dataMultiplier).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: 'bg-[#9E782F]' },
+                    { name: 'Obsidian VIP', value: `₹${(1480 * dataMultiplier).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: 'bg-[#5844A8]' },
                     { name: 'Black Tier', value: `₹${(820 * dataMultiplier).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: 'bg-[#B29E8F]' },
                     { name: 'Prime Member', value: `₹${(410 * dataMultiplier).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: 'bg-[#1A1615]' },
                     { name: 'Guest Scan', value: `₹${(95 * dataMultiplier).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: 'bg-[#D8C7A2]' },
                   ].map((item) => (
-                    <div key={item.name} className="rounded-[7px] border border-[#EAE3D9] bg-[#FAF8F5] p-2">
+                    <div key={item.name} className="rounded-[7px] border border-[#EAE3D9] bg-[#FAF8FF] p-2">
                       <div className="mb-1 flex items-center gap-1.5">
                         <span className={`h-2 w-2 rounded-full ${item.color}`} />
                         <span className="text-[11px] font-semibold text-[#1A1615]">{item.name}</span>
@@ -435,19 +435,19 @@ export const AnalyticsPage: React.FC = () => {
                     <div>
                       <h3 className="text-[15px] font-bold text-[#1A1615]">Footfall Experience Heatmap</h3>
                     </div>
-                    <span className="rounded-[5px] border border-[#EAE3D9] bg-[#FAF8F5] px-1.5 py-1 text-center text-[6px] font-bold uppercase text-[#6E6A66]">Live<br />Flow</span>
+                    <span className="rounded-[5px] border border-[#EAE3D9] bg-[#FAF8FF] px-1.5 py-1 text-center text-[6px] font-bold uppercase text-[#6E6A66]">Live<br />Flow</span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 text-[10px]">
                     <div className="rounded-[7px] border border-[#EAE3D9] bg-[#FBF9F6] p-2">
                       <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Morning Rush</div>
                       <div className="mt-1 font-bold text-[#1A1615]">7:30 - 10:00 AM</div>
-                      <div className="mt-1 text-[9px] text-[#9E782F]">⚡ Espresso Batch</div>
+                      <div className="mt-1 text-[9px] text-[#5844A8]">⚡ Espresso Batch</div>
                     </div>
                     <div className="rounded-[7px] border border-[#EAE3D9] bg-[#FBF9F6] p-2">
                       <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Salon Tasting</div>
                       <div className="mt-1 font-bold text-[#1A1615]">2:00 - 4:30 PM</div>
-                      <div className="mt-1 text-[9px] text-[#9E782F]">♥ VIP Pour-Overs</div>
+                      <div className="mt-1 text-[9px] text-[#5844A8]">♥ VIP Pour-Overs</div>
                     </div>
                   </div>
                 </section> */}
@@ -464,8 +464,8 @@ export const AnalyticsPage: React.FC = () => {
                   {funnelStages.map((stage, index) => (
                     <div key={stage.label} className={`rounded-[8px] border px-2.5 py-2 ${stage.label === 'Obsidian VIP' ? 'border-[#E4D3A5] bg-[#FBF5E8]' : 'border-[#EAE3D9] bg-[#FBF9F6]'}`}>
                       <div className="flex items-center justify-between gap-2 text-[11px] text-[#1A1615]">
-                        <span className="font-semibold">{stage.label === 'Obsidian VIP' && <span className="mr-1 text-[#9E782F]">✿</span>}{stage.label}</span>
-                        <span className="font-bold text-[#9E782F]">{stage.value}</span>
+                        <span className="font-semibold">{stage.label === 'Obsidian VIP' && <span className="mr-1 text-[#5844A8]">✿</span>}{stage.label}</span>
+                        <span className="font-bold text-[#5844A8]">{stage.value}</span>
                       </div>
                       <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[#E9E3DC]">
                         <div className={`h-full rounded-full ${stage.accent}`} style={{ width: `${stage.percent}%` }} />
@@ -475,8 +475,8 @@ export const AnalyticsPage: React.FC = () => {
                   ))}
                 </div>
 
-                <div className="mx-0.5 mt-3 min-h-[50px] rounded-[8px] border border-[#EAE3D9] bg-[#FAF8F5] px-2.5 py-2 text-[12px] leading-[1.25] text-[#6E6A66]">
-                  <span className="mr-1 align-top text-[13px] text-[#D4A753]">⚡</span><strong className="text-[#1A1615]">Velocity Lever:</strong> Double-stamp happy hours on Thursdays accelerate <strong className="text-[#9E782F]">Black -&gt; Obsidian</strong> migration by 2.3x.
+                <div className="mx-0.5 mt-3 min-h-[50px] rounded-[8px] border border-[#EAE3D9] bg-[#FAF8FF] px-2.5 py-2 text-[12px] leading-[1.25] text-[#6E6A66]">
+                  <span className="mr-1 align-top text-[13px] text-[#7C3AED]">⚡</span><strong className="text-[#1A1615]">Velocity Lever:</strong> Double-stamp happy hours on Thursdays accelerate <strong className="text-[#5844A8]">Black -&gt; Obsidian</strong> migration by 2.3x.
                 </div>
               </section>
 
