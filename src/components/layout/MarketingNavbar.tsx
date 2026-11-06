@@ -70,7 +70,10 @@ export const MarketingNavbar: React.FC<Props> = ({ onNavigate }) => {
                   className="hidden md:flex items-center gap-4 lg:gap-6"
                >
                   <button
-                     onClick={() => onNavigate?.('/login')}
+                     onClick={() => {
+                        localStorage.removeItem('token');
+                        onNavigate?.('/login');
+                     }}
                      className="flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-[#B8862E] transition-colors cursor-pointer"
                   >
                      <Lock className="w-4 h-4" /> Log In
@@ -141,7 +144,11 @@ export const MarketingNavbar: React.FC<Props> = ({ onNavigate }) => {
 
                   <div className="flex flex-col gap-3 mt-auto pb-8 pt-4">
                      <button
-                        onClick={() => { setIsMobileMenuOpen(false); onNavigate?.('/login'); }}
+                        onClick={() => {
+                           localStorage.removeItem('token');
+                           setIsMobileMenuOpen(false);
+                           onNavigate?.('/login');
+                        }}
                         className="w-full bg-[#FAF6EE] text-[#241C15] py-3.5 rounded-xl font-black text-base border border-[#D9A94E]/20 cursor-pointer"
                      >
                         Log In
