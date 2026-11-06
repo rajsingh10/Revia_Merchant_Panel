@@ -135,7 +135,14 @@ export const ProfileScreen = ({ onPrivacy, onNavigateApp }: { onPrivacy: () => v
             </div>
           </div>
 
-          <button onClick={() => { localStorage.removeItem('token'); onNavigateApp?.('/'); }}
+          <button onClick={() => { 
+            localStorage.removeItem('customer_token');
+            localStorage.removeItem('customer');
+            if (!localStorage.getItem('user')) {
+              localStorage.removeItem('token');
+            }
+            onNavigateApp?.('/'); 
+          }}
             className="cursor-pointer w-full flex items-center justify-center gap-2 py-4 rounded-2xl border-2 border-rose-100 text-rose-500 text-xs font-black hover:bg-rose-50 hover:border-rose-200 transition-all shadow-sm bg-white active:scale-95 group">
             <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Sign Out
           </button>

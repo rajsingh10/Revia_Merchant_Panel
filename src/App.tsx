@@ -76,14 +76,30 @@ const VALID_ROUTES = [
 
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const token = localStorage.getItem('token');
-  if (!token) return <Navigate to="/login" replace />;
+  const token = localStorage.getItem('token') || localStorage.getItem('merchant_token');
+  const userStr = localStorage.getItem('user');
+  let isMerchant = false;
+  if (userStr) {
+    try {
+      const u = JSON.parse(userStr);
+      if (u.role === 'merchant') isMerchant = true;
+    } catch (e) {}
+  }
+  if (!token || !isMerchant) return <Navigate to="/login" replace />;
   return <>{children}</>;
 };
 
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
-  const token = localStorage.getItem('token');
-  if (token) return <Navigate to="/dashboard" replace />;
+  const token = localStorage.getItem('token') || localStorage.getItem('merchant_token');
+  const userStr = localStorage.getItem('user');
+  let isMerchant = false;
+  if (userStr) {
+    try {
+      const u = JSON.parse(userStr);
+      if (u.role === 'merchant') isMerchant = true;
+    } catch (e) {}
+  }
+  if (token && isMerchant) return <Navigate to="/dashboard" replace />;
   return <>{children}</>;
 };
 
@@ -209,7 +225,7 @@ export default function App() {
                 if (role.startsWith('/')) {
                   handleNavigate(role as NavRoute);
                 } else if (role === 'customer') {
-                  handleNavigate('/customer/identify');
+                  handleNavigate('/customer' as NavRoute);
                 } else {
                   handleNavigate('/dashboard');
                 }
@@ -224,6 +240,7 @@ export default function App() {
             onCancel={() => handleNavigate('/')}
           />
         } />
+        <Route path="/customer" element={<CustomerRouter currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />} />
         <Route path="/customer/*" element={<CustomerRouter currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />} />
         <Route path="/c/:campaignId" element={<CampaignLandingWrapper onNavigate={(route: any) => handleNavigate(route as NavRoute)} />} />
         <Route path="*" element={<NotFoundPage onNavigate={(route) => handleNavigate(route as NavRoute)} />} />

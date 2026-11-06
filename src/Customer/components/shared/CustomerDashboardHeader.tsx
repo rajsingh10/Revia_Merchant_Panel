@@ -216,7 +216,11 @@ export const CustomerDashboardHeader: React.FC<Props> = ({
             <div className="h-[1px] bg-[#E6E6E6] my-1" />
             <button 
               onClick={() => {
-                // Temporary logout bypass for static demo
+                localStorage.removeItem('customer_token');
+                localStorage.removeItem('customer');
+                if (!localStorage.getItem('user')) {
+                  localStorage.removeItem('token');
+                }
                 window.location.href = '/';
               }}
               className="cursor-pointer w-full px-4 py-2.5 rounded-xl text-sm font-bold text-[#D32F2F] hover:bg-[#FFF0F0] transition-colors flex items-center gap-3"
