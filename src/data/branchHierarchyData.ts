@@ -108,9 +108,9 @@ export const BRANCH_HIERARCHY_DATA: StateData[] = [
     inactiveCount: 3,
     revenue: 724500,
     revenueFormatted: '₹7,24,500',
-    morningOrders: 560,
-    afternoonOrders: 630,
-    eveningOrders: 630,
+    morningOrders: 480,
+    afternoonOrders: 570,
+    eveningOrders: 570,
     genderRatio: { male: 46, female: 49, other: 5 },
     topCampaigns: [
       { id: 'c1', name: 'Welcome Special', redemptions: 245, discount: '20% Off', impact: '+14% vs avg', barColor: '#8B5CF6' },
@@ -122,21 +122,21 @@ export const BRANCH_HIERARCHY_DATA: StateData[] = [
         id: 'noida',
         name: 'Noida',
         state: 'Uttar Pradesh',
-        branchesCount: 3,
-        activeCount: 2,
-        inactiveCount: 1,
-        revenue: 324500,
-        revenueFormatted: '₹3,24,500',
-        totalOrders: 600,
-        avgOrdersPerBranch: 200,
-        morningOrders: 240,
-        afternoonOrders: 290,
-        eveningOrders: 290,
+        branchesCount: 8,
+        activeCount: 5,
+        inactiveCount: 3,
+        revenue: 724500,
+        revenueFormatted: '₹7,24,500',
+        totalOrders: 1620,
+        avgOrdersPerBranch: 202,
+        morningOrders: 560,
+        afternoonOrders: 630,
+        eveningOrders: 630,
         genderRatio: { male: 46, female: 49, other: 5 },
         topCampaigns: [
-          { id: 'c1', name: 'Welcome Special', redemptions: 161, discount: '20% Off', impact: '+14% vs avg', barColor: '#8B5CF6' },
-          { id: 'c2', name: 'Weekend Treat', redemptions: 120, discount: 'Flat ₹150', impact: 'Consistent', barColor: '#F43F5E' },
-          { id: 'c3', name: 'Happy Hours', redemptions: 80, discount: '1+1 Drinks', impact: '+8% weekly', barColor: '#8B5CF6' }
+          { id: 'c1', name: 'Welcome Special', redemptions: 245, discount: '20% Off', impact: '+14% vs avg', barColor: '#8B5CF6' },
+          { id: 'c2', name: 'Weekend Treat', redemptions: 182, discount: 'Flat ₹150', impact: 'Consistent', barColor: '#F43F5E' },
+          { id: 'c3', name: 'Happy Hours', redemptions: 124, discount: '1+1 Drinks', impact: '+8% weekly', barColor: '#8B5CF6' }
         ],
         branches: [
           {
@@ -364,7 +364,7 @@ export const BRANCH_HIERARCHY_DATA: StateData[] = [
       },
       {
         id: 'bareilly',
-        name: 'Bareilly',
+        name: 'Bareily',
         state: 'Uttar Pradesh',
         branchesCount: 4,
         activeCount: 4,
@@ -425,6 +425,50 @@ export const BRANCH_HIERARCHY_DATA: StateData[] = [
           { id: 'c8', name: 'South Indian Fest', redemptions: 102, barColor: '#8B5CF6' },
           { id: 'c9', name: 'Combo Meals', redemptions: 86, barColor: '#F43F5E' },
           { id: 'c10', name: 'Student Special', redemptions: 61, barColor: '#8B5CF6' }
+        ],
+        branches: []
+      },
+      {
+        id: 'varanasi',
+        name: 'Varanasi',
+        state: 'Uttar Pradesh',
+        branchesCount: 3,
+        activeCount: 3,
+        inactiveCount: 0,
+        revenue: 180000,
+        revenueFormatted: '₹1,80,000',
+        totalOrders: 340,
+        avgOrdersPerBranch: 113,
+        morningOrders: 140,
+        afternoonOrders: 160,
+        eveningOrders: 140,
+        genderRatio: { male: 50, female: 45, other: 5 },
+        topCampaigns: [
+          { id: 'c11', name: 'Ghat Special', redemptions: 90, barColor: '#8B5CF6' },
+          { id: 'c12', name: 'Banarasi Treat', redemptions: 75, barColor: '#F43F5E' },
+          { id: 'c13', name: 'Evening Tea', redemptions: 55, barColor: '#8B5CF6' }
+        ],
+        branches: []
+      },
+      {
+        id: 'agra',
+        name: 'Agra',
+        state: 'Uttar Pradesh',
+        branchesCount: 3,
+        activeCount: 3,
+        inactiveCount: 0,
+        revenue: 150000,
+        revenueFormatted: '₹1,50,000',
+        totalOrders: 300,
+        avgOrdersPerBranch: 100,
+        morningOrders: 120,
+        afternoonOrders: 150,
+        eveningOrders: 130,
+        genderRatio: { male: 45, female: 50, other: 5 },
+        topCampaigns: [
+          { id: 'c14', name: 'Taj Delight', redemptions: 85, barColor: '#8B5CF6' },
+          { id: 'c15', name: 'Mughal Feast', redemptions: 70, barColor: '#F43F5E' },
+          { id: 'c16', name: 'Weekend Pass', redemptions: 50, barColor: '#8B5CF6' }
         ],
         branches: []
       }
