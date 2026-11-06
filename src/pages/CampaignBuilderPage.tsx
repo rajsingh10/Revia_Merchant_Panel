@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useWallet } from '../context/WalletContext';
+import { TabletCampaignView } from '../components/campaigns/TabletCampaignView';
+import { MobileCampaignView } from '../components/campaigns/MobileCampaignView';
 import {
   Clock,
   Wifi,
@@ -1675,7 +1677,7 @@ export interface CampaignBuilderPageProps {
   onToggleMobileMenu?: () => void;
 }
 
-export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initialViewMode = 'dashboard', onNavigate, onToggleMobileMenu }) => {
+const DesktopCampaignBuilderView: React.FC<CampaignBuilderPageProps> = ({ initialViewMode = 'dashboard', onNavigate, onToggleMobileMenu }) => {
   const { id: routeCampaignId } = useParams();
   const { wallet, checkAndDeductCredit } = useWallet();
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -8958,3 +8960,55 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     </div>
   );
 };
+
+export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = (props) => {
+  // Device detection: Desktop (>= 1024px) vs Tablet (640px-1023px) vs Mobile (< 640px)
+  const [deviceMode, setDeviceMode] = useState<'desktop' | 'tablet' | 'mobile'>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('device') === 'mobile' || params.get('view') === 'mobile') {
+        return 'mobile';
+      }
+      if (params.get('view') === 'tablet' || params.get('device') === 'tablet') {
+        return 'tablet';
+      }
+      if (window.innerWidth < 640) {
+        return 'mobile';
+      }
+      if (window.innerWidth < 1024) {
+        return 'tablet';
+      }
+      return 'desktop';
+    }
+    return 'desktop';
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      const params = new URLSearchParams(window.location.search);
+      if (!params.get('view') && !params.get('device')) {
+        if (window.innerWidth < 640) {
+          setDeviceMode('mobile');
+        } else if (window.innerWidth < 1024) {
+          setDeviceMode('tablet');
+        } else {
+          setDeviceMode('desktop');
+        }
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (deviceMode === 'mobile') {
+    return <MobileCampaignView {...props} />;
+  }
+
+  if (deviceMode === 'tablet') {
+    return <TabletCampaignView {...props} />;
+  }
+
+  return <DesktopCampaignBuilderView {...props} />;
+};
+
+export default CampaignBuilderPage;
