@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Upload,
   Search,
@@ -10,17 +11,12 @@ import {
   Send,
   UtensilsCrossed,
   Menu,
-  Store,
-  Bell,
   LayoutGrid,
   Package,
   Image as ImageIcon,
   Camera,
   Video,
   ArrowRight,
-  Signal,
-  Wifi,
-  BatteryMedium,
 } from 'lucide-react';
 
 // ── Types ───────────────────────────────────────────────────────────────────
@@ -154,9 +150,22 @@ const badgeStyles: Record<RecentUpdate['badge'], string> = {
 
 // ── Main Component ───────────────────────────────────────────────────────────
 
-export const TabletMenuView: React.FC = () => {
+export interface TabletMenuViewProps {
+  onNavigate?: (route: string) => void;
+}
+
+export const TabletMenuView: React.FC<TabletMenuViewProps> = ({ onNavigate }) => {
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+
+  const handleNav = (path: string) => {
+    if (onNavigate) {
+      onNavigate(path);
+    } else {
+      navigate(path);
+    }
+  };
 
   const filteredCategories = CATEGORIES.filter((cat) => {
     if (activeFilter !== 'All' && !cat.name.toLowerCase().includes(activeFilter.toLowerCase())) return false;
@@ -165,118 +174,81 @@ export const TabletMenuView: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-[#FAF8FF] font-sans pb-28 text-[#1A1615]">
-      {/* ── Status Bar Mock ── */}
-      <div className="flex items-center justify-between px-6 pt-3 pb-1 text-xs font-semibold text-gray-800 select-none">
-        <span>9:41</span>
-        <div className="flex items-center gap-1.5 text-gray-700">
-          <Signal className="w-3.5 h-3.5" />
-          <Wifi className="w-3.5 h-3.5" />
-          <BatteryMedium className="w-4 h-4" />
-        </div>
-      </div>
-
-      {/* ── App Top Navigation Header ── */}
-      <div className="flex items-center justify-between px-5 py-2.5">
-        {/* Left: Brand Logo */}
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#5844A8] to-[#E11D48] flex items-center justify-center text-white shadow-xs">
-            <Sparkles className="w-4 h-4 fill-white" />
-          </div>
+    <div className="min-h-screen bg-[#FAF8FF] font-sans pb-36 text-[#1A1615]">
+      {/* ── Page Header Row ── */}
+      <div className="px-5 pt-4 pb-4 max-w-[1280px] mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <div className="text-base font-black text-gray-900 tracking-tight leading-none">Loyaltics</div>
-            <div className="text-[10px] text-gray-400 font-semibold leading-none mt-1">The Food Plaza</div>
+            <h1 className="text-2xl sm:text-3xl font-black text-[#1E1548] tracking-tight">Menu</h1>
+            <p className="text-xs text-gray-500 mt-0.5 leading-snug">
+              Manage your digital menu, update items and keep your offerings fresh.
+            </p>
           </div>
-        </div>
-
-        {/* Right: Branch Selector, Notification Bell, User Avatar */}
-        <div className="flex items-center gap-2">
-          <button className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200/90 rounded-full text-xs font-semibold text-gray-700 shadow-2xs hover:border-gray-300 transition-colors cursor-pointer">
-            <Store className="w-3.5 h-3.5 text-gray-500" />
-            <span className="truncate max-w-[130px]">Noida - Sector 18</span>
-            <ChevronDown className="w-3 h-3 text-gray-400" />
+          <button className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold shadow-md shadow-[#5844A8]/20 transition-all shrink-0 cursor-pointer self-start sm:self-auto">
+            <Upload className="w-3.5 h-3.5" />
+            <span>Upload / Update Menu</span>
           </button>
-
-          <button className="w-8 h-8 rounded-full bg-white border border-gray-200/90 flex items-center justify-center relative shadow-2xs text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer">
-            <Bell className="w-4 h-4" />
-            <span className="w-2 h-2 rounded-full bg-rose-500 absolute top-1.5 right-1.5 ring-2 ring-white" />
-          </button>
-
-          <div className="hidden md:flex w-8 h-8 rounded-full bg-purple-100 border border-purple-200 items-center justify-center text-xs font-black text-[#5844A8]">
-            RM
-          </div>
         </div>
-      </div>
-
-      {/* ── Page Title Row ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 pt-3 pb-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#1E1548] tracking-tight">Menu</h1>
-          <p className="text-xs text-gray-500 mt-0.5 leading-snug">
-            Manage your digital menu, update items and keep your offerings fresh.
-          </p>
-        </div>
-        <button className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold shadow-md shadow-[#5844A8]/20 transition-all shrink-0 cursor-pointer self-start sm:self-auto">
-          <Upload className="w-3.5 h-3.5" />
-          <span>Upload / Update Menu</span>
-        </button>
       </div>
 
       <div className="px-5 space-y-4 max-w-[1280px] mx-auto">
         {/* ── Status Section ── */}
-        {/* Tablet View: 4-card row */}
-        <div className="hidden md:grid md:grid-cols-12 gap-3.5">
-          {/* Outlet status card */}
+        {/* Tablet View (md+): 4 Cards in 1 balanced horizontal row */}
+        <div className="hidden md:grid md:grid-cols-12 gap-3 items-stretch">
+          {/* Card 1: Outlet status card (approx 38% width) */}
           <div className="col-span-5 lg:col-span-4 bg-white rounded-3xl p-3.5 border border-gray-100/90 shadow-2xs flex items-center gap-3.5">
-            <div className="relative w-28 h-20 rounded-2xl overflow-hidden shrink-0">
+            <div className="relative w-24 h-20 rounded-2xl overflow-hidden shrink-0">
               <img
                 src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=300"
                 alt="The Urban Kitchen"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-2">
-                <span className="text-[10px] font-bold text-white leading-tight">The Urban Kitchen</span>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-1.5">
+                <span className="text-[9px] font-bold text-white leading-tight">The Urban Kitchen</span>
               </div>
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-bold mb-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 <span>Menu Active</span>
               </div>
               <p className="text-[10px] text-gray-400 font-medium">Last updated</p>
-              <p className="text-xs font-bold text-gray-800">12 Apr 2025, 2:30 PM</p>
+              <p className="text-xs font-bold text-gray-800 truncate">12 Apr 2025, 2:30 PM</p>
             </div>
           </div>
 
-          {/* 3 KPI Cards */}
+          {/* Cards 2, 3, 4: KPI Metric Cards (approx 62% width evenly split in 3 columns) */}
           <div className="col-span-7 lg:col-span-8 grid grid-cols-3 gap-3">
-            <div className="bg-white rounded-3xl p-4 border border-gray-100/90 shadow-2xs flex flex-col justify-between">
-              <div className="flex items-center gap-1.5 text-gray-500 text-[11px] font-bold">
-                <LayoutGrid className="w-3.5 h-3.5 text-[#5844A8]" />
-                <span>Total Categories</span>
+            {/* Card 2: Total Categories */}
+            <div className="bg-white rounded-3xl p-3.5 border border-gray-100/90 shadow-2xs flex flex-col justify-between">
+              <div className="flex items-center gap-1.5 text-gray-500 text-[10px] sm:text-[11px] font-bold truncate">
+                <LayoutGrid className="w-3.5 h-3.5 text-[#5844A8] shrink-0" />
+                <span className="truncate">Total Categories</span>
               </div>
               <span className="text-2xl font-black text-gray-900 mt-2">8</span>
             </div>
 
-            <div className="bg-white rounded-3xl p-4 border border-gray-100/90 shadow-2xs flex flex-col justify-between">
-              <div className="flex items-center gap-1.5 text-gray-500 text-[11px] font-bold">
-                <Package className="w-3.5 h-3.5 text-[#5844A8]" />
-                <span>Total Items</span>
+            {/* Card 3: Total Items */}
+            <div className="bg-white rounded-3xl p-3.5 border border-gray-100/90 shadow-2xs flex flex-col justify-between">
+              <div className="flex items-center gap-1.5 text-gray-500 text-[10px] sm:text-[11px] font-bold truncate">
+                <Package className="w-3.5 h-3.5 text-[#5844A8] shrink-0" />
+                <span className="truncate">Total Items</span>
               </div>
               <span className="text-2xl font-black text-gray-900 mt-2">48</span>
             </div>
 
-            <div className="bg-white rounded-3xl p-4 border border-gray-100/90 shadow-2xs flex flex-col justify-between">
-              <div className="flex items-center gap-1.5 text-gray-500 text-[11px] font-bold">
-                <ImageIcon className="w-3.5 h-3.5 text-rose-500" />
-                <span>Media Added</span>
+            {/* Card 4: Media Added */}
+            <div className="bg-white rounded-3xl p-3.5 border border-gray-100/90 shadow-2xs flex flex-col justify-between">
+              <div className="flex items-center gap-1.5 text-gray-500 text-[10px] sm:text-[11px] font-bold truncate">
+                <ImageIcon className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                <span className="truncate">Media Added</span>
               </div>
               <span className="text-2xl font-black text-gray-900 mt-2">12</span>
             </div>
           </div>
         </div>
 
-        {/* Mobile View: Single consolidated card */}
+        {/* Mobile View (< md): Single consolidated card matching mobile screenshot */}
         <div className="md:hidden bg-white rounded-3xl p-3.5 border border-gray-100/90 shadow-2xs">
           <div className="flex items-center gap-3">
             <div className="relative w-24 h-24 rounded-2xl overflow-hidden shrink-0">
@@ -434,13 +406,13 @@ export const TabletMenuView: React.FC = () => {
           </div>
 
           {/* ── Recent Updates ── */}
-          <div>
+          <div className="mb-8">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-base sm:text-lg font-black text-gray-900">Recent Updates</h2>
               <button className="text-xs font-bold text-[#5844A8] cursor-pointer hover:underline">View All</button>
             </div>
 
-            <div className="space-y-2.5 mb-6">
+            <div className="space-y-2.5">
               {RECENT_UPDATES.map((update) => (
                 <div
                   key={update.id}
@@ -487,43 +459,58 @@ export const TabletMenuView: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Fixed Bottom Navigation Bar ── */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 z-40 px-6 py-2 shadow-lg">
-        <div className="max-w-md mx-auto flex items-center justify-between relative">
+      {/* ── Fixed Bottom Navigation Bar (Matching iPad Pro & Mobile specs) ── */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-[#F1EFEA] z-40 px-6 py-2.5 shadow-lg">
+        <div className="max-w-md mx-auto flex items-center justify-around relative">
           {/* Home */}
-          <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
+          <button
+            onClick={() => handleNav('/dashboard')}
+            className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-700 cursor-pointer transition-colors"
+          >
             <Home className="w-5 h-5" />
             <span className="text-[10px] font-semibold">Home</span>
           </button>
 
           {/* Campaigns */}
-          <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
+          <button
+            onClick={() => handleNav('/campaigns')}
+            className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-700 cursor-pointer transition-colors"
+          >
             <Send className="w-5 h-5 -rotate-45 -translate-y-0.5" />
             <span className="text-[10px] font-semibold">Campaigns</span>
           </button>
 
           {/* Floating Center Circle Menu Button */}
           <div className="relative -top-5">
-            <button className="w-13 h-13 rounded-full bg-[#2D124D] hover:bg-[#5844A8] text-white flex items-center justify-center shadow-lg shadow-purple-900/30 ring-4 ring-white cursor-pointer active:scale-95 transition-all">
+            <button
+              onClick={() => handleNav('/item-catalog')}
+              className="w-12 h-12 rounded-full bg-[#5844A8] text-white flex items-center justify-center shadow-lg shadow-[#5844A8]/30 hover:bg-[#47368E] ring-4 ring-white cursor-pointer active:scale-95 transition-all"
+            >
               <Menu className="w-6 h-6 stroke-[2.5]" />
             </button>
           </div>
 
-          {/* Menu (Active) */}
-          <button className="flex flex-col items-center gap-1 text-[#5844A8] cursor-pointer">
-            <UtensilsCrossed className="w-5 h-5" />
+          {/* Menu (Active Tab) */}
+          <button
+            onClick={() => handleNav('/item-catalog')}
+            className="flex flex-col items-center gap-1 text-[#5844A8] cursor-pointer"
+          >
+            <UtensilsCrossed className="w-5 h-5 text-[#5844A8]" />
             <span className="text-[10px] font-black">Menu</span>
           </button>
 
           {/* More */}
-          <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
+          <button
+            onClick={() => handleNav('/control-panel')}
+            className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-700 cursor-pointer transition-colors"
+          >
             <Menu className="w-5 h-5" />
             <span className="text-[10px] font-semibold">More</span>
           </button>
         </div>
 
-        {/* iOS Home Indicator Bar */}
-        <div className="w-32 h-1 bg-gray-300 rounded-full mx-auto mt-2" />
+        {/* Home Indicator */}
+        <div className="w-28 h-1 bg-gray-200 rounded-full mx-auto mt-2" />
       </div>
     </div>
   );

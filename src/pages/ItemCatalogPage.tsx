@@ -2522,7 +2522,11 @@ export const WebItemCatalogView: React.FC = () => {
   );
 };
 
-export const ItemCatalogPage: React.FC = () => {
+export interface ItemCatalogPageProps {
+  onNavigate?: (route: any) => void;
+}
+
+export const ItemCatalogPage: React.FC<ItemCatalogPageProps> = (props) => {
   const [isTabletOrMobile, setIsTabletOrMobile] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -2544,7 +2548,7 @@ export const ItemCatalogPage: React.FC = () => {
   }, []);
 
   if (isTabletOrMobile) {
-    return <TabletMenuView />;
+    return <TabletMenuView onNavigate={props.onNavigate} />;
   }
 
   return <WebItemCatalogView />;
