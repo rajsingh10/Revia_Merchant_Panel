@@ -58,8 +58,8 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
       className={cn(
         "absolute left-1/2 top-1/2 cursor-pointer border-2 p-8 transition-all duration-500 ease-in-out",
         isCenter 
-          ? "z-10 bg-[#241C15] text-white border-[#D9A94E]" 
-          : "z-0 bg-white text-[#241C15] border-gray-200 hover:border-[#D9A94E]/50"
+          ? "z-10 bg-[#2D1A47] text-white border-[#7C3AED]" 
+          : "z-0 bg-white text-[#1E1548] border-purple-100 hover:border-[#7C3AED]/50"
       )}
       style={{
         width: cardSize,
@@ -71,11 +71,11 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
           translateY(${isCenter ? -65 : position % 2 ? 15 : -15}px)
           rotate(${isCenter ? 0 : position % 2 ? 2.5 : -2.5}deg)
         `,
-        boxShadow: isCenter ? "0px 8px 0px 4px rgba(217,169,78,0.2)" : "0px 0px 0px 0px transparent"
+        boxShadow: isCenter ? "0px 8px 24px 0px rgba(124,58,237,0.3)" : "0px 0px 0px 0px transparent"
       }}
     >
       <span
-        className={cn("absolute block origin-top-right rotate-45", isCenter ? "bg-[#D9A94E]" : "bg-gray-200")}
+        className={cn("absolute block origin-top-right rotate-45", isCenter ? "bg-[#FF4E8D]" : "bg-purple-100")}
         style={{
           right: -2,
           top: 48,
@@ -88,18 +88,18 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
         alt={`${testimonial.by.split(',')[0]}`}
         className="mb-4 h-14 w-12 bg-gray-100 object-cover object-top rounded-tl-lg rounded-br-lg"
         style={{
-          boxShadow: isCenter ? "3px 3px 0px #D9A94E" : "3px 3px 0px #F3F4F6"
+          boxShadow: isCenter ? "3px 3px 0px #FF4E8D" : "3px 3px 0px #F3E8FF"
         }}
       />
       <h3 className={cn(
         "text-base sm:text-xl font-medium leading-relaxed italic",
-        isCenter ? "text-white" : "text-[#241C15]"
+        isCenter ? "text-white" : "text-[#1E1548]"
       )}>
         "{testimonial.testimonial}"
       </h3>
       <p className={cn(
         "absolute bottom-8 left-8 right-8 mt-2 text-sm font-bold tracking-wide",
-        isCenter ? "text-[#D9A94E]" : "text-gray-500"
+        isCenter ? "text-pink-300" : "text-gray-500"
       )}>
         - {testimonial.by}
       </p>
@@ -169,9 +169,9 @@ export const StaggerTestimonials: React.FC<{ testimonials?: typeof defaultTestim
         <button
           onClick={() => handleMove(-1)}
           className={cn(
-            "flex h-12 w-12 items-center justify-center text-xl rounded-full transition-colors shadow-sm",
-            "bg-white border-2 border-gray-200 hover:border-[#D9A94E] hover:text-[#D9A94E]",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A94E]"
+            "flex h-12 w-12 items-center justify-center text-xl rounded-full transition-colors shadow-sm cursor-pointer",
+            "bg-white border-2 border-purple-100 hover:border-[#7C3AED] hover:text-[#7C3AED] text-[#1E1548]",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
           )}
           aria-label="Previous testimonial"
         >
@@ -180,9 +180,9 @@ export const StaggerTestimonials: React.FC<{ testimonials?: typeof defaultTestim
         <button
           onClick={() => handleMove(1)}
           className={cn(
-            "flex h-12 w-12 items-center justify-center text-xl rounded-full transition-colors shadow-sm",
-            "bg-white border-2 border-gray-200 hover:border-[#D9A94E] hover:text-[#D9A94E]",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A94E]"
+            "flex h-12 w-12 items-center justify-center text-xl rounded-full transition-colors shadow-sm cursor-pointer",
+            "bg-white border-2 border-purple-100 hover:border-[#7C3AED] hover:text-[#7C3AED] text-[#1E1548]",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
           )}
           aria-label="Next testimonial"
         >

@@ -59,11 +59,23 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
   >('role_select');
 
   // Customer Welcome & OTP States
+  const [isMobileScreen, setIsMobileScreen] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 640 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileScreen(window.innerWidth < 640);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [customerAuthTab, setCustomerAuthTab] = useState<'phone' | 'email'>('phone');
   const [customerPhone, setCustomerPhone] = useState('98765 43210');
   const [customerEmail, setCustomerEmail] = useState('');
-  const [customerOtp, setCustomerOtp] = useState(['4', '8', '7', '2', '6', '1']);
-  const [customerTimer, setCustomerTimer] = useState(45);
+  const [customerOtp, setCustomerOtp] = useState(['5', '2', '8', '4']);
+  const [customerTimer, setCustomerTimer] = useState(42);
 
   // Customer Registration / Sign Up States (Desktop Adaptation)
   // Step 1: Tell us about yourself
@@ -189,6 +201,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
   // Complete Merchant Login
   const completeMerchantLogin = () => {
     localStorage.setItem('token', 'mock_merchant_token_' + Date.now());
+    localStorage.setItem('merchant_token', 'mock_merchant_token_' + Date.now());
     localStorage.setItem(
       'user',
       JSON.stringify({
@@ -199,12 +212,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
         businessName: wizardCompanyName || 'Revia Café & Roastery'
       })
     );
+    localStorage.removeItem('customer');
+    localStorage.removeItem('customer_token');
     onLoginSuccess('merchant');
   };
 
-  // Complete Customer Login
+  // Complete Customer Login (Keeps customer strictly separate from merchant)
   const completeCustomerLogin = () => {
-    localStorage.setItem('token', 'mock_customer_token_' + Date.now());
+    localStorage.setItem('customer_token', 'mock_customer_token_' + Date.now());
     localStorage.setItem(
       'customer',
       JSON.stringify({
@@ -223,6 +238,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
         partnerMobile: custPartnerMobile
       })
     );
+    // Remove merchant user so customer does not get routed to merchant panel
+    localStorage.removeItem('user');
     onLoginSuccess('customer');
   };
 
@@ -290,6 +307,640 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
       </div>
     );
   };
+
+  // =========================================================================
+  // MOBILE CUSTOMER AUTHENTICATION FLOW (Exact match to 4 Mobile Reference Screens)
+  // =========================================================================
+  if (isMobileScreen && ['role_select', 'customer_welcome', 'customer_otp', 'customer_signup_step1', 'customer_signup_step2'].includes(viewState)) {
+    return (
+      <div className="min-h-screen bg-[#FAF8FF] text-[#2D1A47] font-sans antialiased flex flex-col justify-between select-none max-w-md mx-auto w-full relative">
+        {/* MOBILE ROLE SELECT (Clean mobile gateway) */}
+        {viewState === 'role_select' && (
+          <div className="flex-1 flex flex-col justify-between p-6">
+            <div className="pt-6">
+              <div className="flex items-center gap-2 mb-8">
+                <div className="w-10 h-10 rounded-2xl bg-[#5844A8] text-white flex items-center justify-center font-black text-lg shadow-sm">
+                  R
+                </div>
+                <div>
+                  <h1 className="text-base font-black text-[#2D1A47]">Revia</h1>
+                  <span className="text-[10px] font-bold text-rose-500 uppercase tracking-widest block">Loyalty</span>
+                </div>
+              </div>
+
+              <h2 className="text-2xl font-black text-[#2D1A47] leading-tight mb-2">
+                Are you a customer <br />or a merchant?
+              </h2>
+              <p className="text-xs text-gray-500 font-medium mb-6">
+                Choose how you&apos;d like to continue
+              </p>
+
+              <div className="space-y-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCustomerTab('login');
+                    setViewState('customer_welcome');
+                  }}
+                  className="w-full text-left p-5 rounded-3xl bg-white border-2 border-purple-100 hover:border-[#5844A8] shadow-xs flex items-center justify-between cursor-pointer transition active:scale-[0.99]"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-2xl bg-pink-50 text-[#E11D48] flex items-center justify-center shrink-0">
+                      <User className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-black text-[#2D1A47]">I&apos;m a Customer</h3>
+                      <p className="text-xs text-gray-400 font-medium mt-0.5">Discover offers, earn rewards</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-300" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setViewState('merchant_access')}
+                  className="w-full text-left p-5 rounded-3xl bg-white border-2 border-purple-100 hover:border-[#5844A8] shadow-xs flex items-center justify-between cursor-pointer transition active:scale-[0.99]"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-2xl bg-purple-100 text-[#5844A8] flex items-center justify-center shrink-0">
+                      <Store className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-black text-[#2D1A47]">I&apos;m a Merchant</h3>
+                      <p className="text-xs text-gray-400 font-medium mt-0.5">Manage branch loyalty &amp; staff</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-300" />
+                </button>
+              </div>
+            </div>
+
+            <div className="text-center text-[11px] text-gray-400 pt-8 pb-4">
+              Powered by <span className="font-bold text-gray-600">Analytix Data</span>
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 1: MOBILE WELCOME BACK */}
+        {viewState === 'customer_welcome' && (
+          <div className="flex-1 flex flex-col justify-between">
+            <div>
+              {/* Mascot & Brand Header */}
+              <div className="pt-8 pb-3 px-6 flex items-center justify-center gap-2.5">
+                <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#FF4E8D] to-[#7C3AED] p-0.5 shadow-sm flex items-center justify-center">
+                  <div className="w-full h-full bg-[#2D1A47] rounded-[14px] flex items-center justify-center text-xl">
+                    👵
+                  </div>
+                </div>
+                <div>
+                  <h1 className="text-base font-black text-[#2D1A47] tracking-tight leading-none">
+                    Sly Granny
+                  </h1>
+                  <span className="text-[10px] font-bold text-pink-600 block mt-0.5">— Cafe —</span>
+                </div>
+              </div>
+
+              {/* Wavy Hero Image of Coffee & Pastry */}
+              <div className="relative w-full h-44 overflow-hidden bg-purple-50">
+                <img
+                  src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&auto=format&fit=crop&q=80"
+                  alt="Pastries & Coffee"
+                  className="w-full h-full object-cover"
+                />
+                <svg
+                  className="absolute -bottom-1 inset-x-0 w-full"
+                  viewBox="0 0 375 28"
+                  fill="none"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M0,18 C90,28 160,4 250,18 C310,26 350,10 375,14 L375,28 L0,28 Z"
+                    fill="#FAF8FF"
+                  />
+                </svg>
+              </div>
+
+              {/* Welcome Back Headings */}
+              <div className="px-6 pt-4 pb-2 text-left">
+                <h2 className="text-2xl font-black text-[#2D1A47] leading-tight">
+                  Welcome Back!
+                </h2>
+                <p className="text-xs text-gray-500 font-medium mt-1 leading-relaxed">
+                  Enter your mobile number or email to get OTP and continue to Sly Granny Cafe.
+                </p>
+              </div>
+
+              {/* Segmented Tab: Mobile Number vs Email */}
+              <div className="px-6 py-2">
+                <div className="bg-purple-100/50 p-1 rounded-2xl flex items-center">
+                  <button
+                    type="button"
+                    onClick={() => setCustomerAuthTab('phone')}
+                    className={`flex-1 py-2 text-xs font-bold rounded-xl transition cursor-pointer ${
+                      customerAuthTab === 'phone'
+                        ? 'bg-[#EDE9FE] text-[#2D1A47] shadow-xs'
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    Mobile Number
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCustomerAuthTab('email')}
+                    className={`flex-1 py-2 text-xs font-bold rounded-xl transition cursor-pointer ${
+                      customerAuthTab === 'email'
+                        ? 'bg-[#EDE9FE] text-[#2D1A47] shadow-xs'
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    Email
+                  </button>
+                </div>
+              </div>
+
+              {/* Input Field */}
+              <div className="px-6 py-2">
+                {customerAuthTab === 'phone' ? (
+                  <div className="flex items-center bg-white border border-purple-100 rounded-2xl px-3.5 py-3 shadow-2xs focus-within:border-[#5844A8]">
+                    <div className="flex items-center gap-1 pr-3 border-r border-gray-200 text-xs font-bold text-[#2D1A47]">
+                      <span>+91</span>
+                      <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                    </div>
+                    <input
+                      type="tel"
+                      value={customerPhone}
+                      onChange={(e) => setCustomerPhone(e.target.value)}
+                      placeholder="Enter your mobile number"
+                      className="w-full pl-3 text-xs font-bold text-[#2D1A47] placeholder:text-gray-300 focus:outline-none"
+                    />
+                  </div>
+                ) : (
+                  <input
+                    type="email"
+                    value={customerEmail}
+                    onChange={(e) => setCustomerEmail(e.target.value)}
+                    placeholder="Enter your email address"
+                    className="w-full bg-white border border-purple-100 rounded-2xl px-4 py-3 text-xs font-bold text-[#2D1A47] placeholder:text-gray-300 shadow-2xs focus:border-[#5844A8] focus:outline-none"
+                  />
+                )}
+              </div>
+
+              {/* Get OTP Button */}
+              <div className="px-6 pt-3 pb-2">
+                <button
+                  type="button"
+                  onClick={() => setViewState('customer_otp')}
+                  className="w-full py-3.5 rounded-2xl bg-[#2D1A47] hover:bg-[#3D2261] text-white text-xs font-bold shadow-md cursor-pointer transition active:scale-[0.99]"
+                >
+                  Get OTP
+                </button>
+              </div>
+
+              {/* Register Link */}
+              <div className="text-center pt-2 pb-4">
+                <span className="text-xs text-gray-500 font-medium">New here? </span>
+                <button
+                  type="button"
+                  onClick={() => setViewState('customer_signup_step1')}
+                  className="text-xs font-bold text-[#2D1A47] hover:underline cursor-pointer"
+                >
+                  Register
+                </button>
+              </div>
+            </div>
+
+            {/* Line-art Cafe Patio Illustration at Bottom */}
+            <div className="mt-auto px-6 pb-6 pt-2 opacity-40 flex justify-center pointer-events-none">
+              <svg className="w-64 h-24 text-purple-400" viewBox="0 0 260 90" fill="none" stroke="currentColor" strokeWidth="1.2">
+                {/* Cafe Canopy */}
+                <path d="M40 30 L220 30 L230 46 L30 46 Z" fill="#F3E8FF" />
+                <path d="M30 46 Q45 52 60 46 Q75 52 90 46 Q105 52 120 46 Q135 52 150 46 Q165 52 180 46 Q195 52 210 46 Q220 52 230 46" />
+                {/* Hanging sign */}
+                <rect x="70" y="52" width="28" height="18" rx="4" fill="white" />
+                <path d="M80 62 Q84 57 88 62" />
+                {/* Patio Table & Chairs */}
+                <ellipse cx="160" cy="74" rx="18" ry="4" fill="#EDE9FE" />
+                <line x1="160" y1="56" x2="160" y2="74" strokeWidth="1.5" />
+                <line x1="145" y1="56" x2="175" y2="56" strokeWidth="2" />
+                <path d="M135 60 L135 78 M135 68 L142 68" />
+                <path d="M185 60 L185 78 M185 68 L178 68" />
+                {/* Potted Plant */}
+                <path d="M210 68 L218 68 L216 78 L212 78 Z" fill="#DDD6FE" />
+                <circle cx="214" cy="62" r="5" fill="#C4B5FD" />
+              </svg>
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 2: MOBILE VERIFY PHONE */}
+        {viewState === 'customer_otp' && (
+          <div className="flex-1 flex flex-col justify-between py-2">
+            <div>
+              {/* Header with Back Arrow and Logo */}
+              <div className="px-4 py-3 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setViewState('customer_welcome')}
+                  className="w-9 h-9 rounded-full bg-white border border-purple-100 flex items-center justify-center text-[#2D1A47] shadow-xs cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-7 h-7 rounded-xl bg-[#2D1A47] flex items-center justify-center text-xs text-white">
+                    👵
+                  </div>
+                  <div className="text-center">
+                    <span className="text-xs font-black text-[#2D1A47] block leading-none">
+                      Sly Granny
+                    </span>
+                    <span className="text-[8px] font-bold text-pink-600 block mt-0.5">— Cafe —</span>
+                  </div>
+                </div>
+                <div className="w-9" />
+              </div>
+
+              {/* Coffee Badge */}
+              <div className="flex justify-center pt-8 pb-3">
+                <div className="relative w-16 h-16 rounded-2xl bg-purple-100/70 border border-purple-200/50 flex items-center justify-center shadow-xs">
+                  <Coffee className="w-7 h-7 text-[#2D1A47]" />
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center text-[10px] shadow-xs">
+                    🍪
+                  </div>
+                </div>
+              </div>
+
+              {/* Title & Sent-to Pill */}
+              <div className="text-center px-6">
+                <h2 className="text-xl font-black text-[#2D1A47]">Verify Phone</h2>
+                <p className="text-xs text-gray-500 font-medium mt-1">
+                  Please enter the 4-digit code sent to
+                </p>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 border border-purple-100 text-xs font-bold text-[#2D1A47] mt-2 shadow-2xs">
+                  <span>+91 {customerPhone || '98765 43210'}</span>
+                  <button
+                    type="button"
+                    onClick={() => setViewState('customer_welcome')}
+                    className="text-[#E11D48] text-[11px] hover:underline cursor-pointer"
+                  >
+                    Change ✏️
+                  </button>
+                </div>
+              </div>
+
+              {/* 4 OTP Digit Boxes */}
+              <div className="flex justify-center gap-3 px-6 py-6">
+                {customerOtp.slice(0, 4).map((digit, idx) => (
+                  <input
+                    key={idx}
+                    id={`cust-mobile-otp-${idx}`}
+                    type="text"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) =>
+                      handleOtpBoxChange(idx, e.target.value, customerOtp, setCustomerOtp, 'cust-mobile-otp')
+                    }
+                    onKeyDown={(e) => handleOtpKeyDown(idx, e, customerOtp, 'cust-mobile-otp')}
+                    className="w-13 h-14 text-center text-xl font-black bg-white border-2 border-purple-200 focus:border-[#2D1A47] focus:ring-2 focus:ring-purple-200/50 rounded-2xl text-[#2D1A47] shadow-sm transition"
+                  />
+                ))}
+              </div>
+
+              {/* Resend Code Countdown */}
+              <div className="text-center px-6 space-y-1.5">
+                <div className="text-xs text-gray-500 flex items-center justify-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full border border-gray-400 inline-block" />
+                  <span>
+                    Resend code in{' '}
+                    <strong className="text-[#2D1A47]">
+                      00:{customerTimer < 10 ? `0${customerTimer}` : customerTimer}
+                    </strong>
+                  </span>
+                </div>
+                <div className="text-xs text-gray-400">
+                  Didn&apos;t receive the SMS?{' '}
+                  <button
+                    type="button"
+                    onClick={() => setCustomerTimer(42)}
+                    className="font-bold text-[#2D1A47] hover:underline cursor-pointer"
+                  >
+                    Resend OTP
+                  </button>
+                </div>
+              </div>
+
+              {/* Verify & Proceed Button */}
+              <div className="px-6 pt-6 pb-3">
+                <button
+                  type="button"
+                  onClick={completeCustomerLogin}
+                  className="w-full py-3.5 rounded-2xl bg-[#2D1A47] hover:bg-[#3D2261] text-white text-xs font-bold shadow-md cursor-pointer flex items-center justify-center gap-2 transition active:scale-[0.99]"
+                >
+                  <span>Verify &amp; Proceed</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* 256-bit Security Note */}
+            <div className="text-center text-[10px] text-gray-400 flex items-center justify-center gap-1 pb-4">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Safe &amp; Encrypted 256-bit login</span>
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 3: MOBILE CUSTOMER SIGNUP STEP 1 - TELL US ABOUT YOURSELF */}
+        {viewState === 'customer_signup_step1' && (
+          <div className="flex-1 flex flex-col justify-between py-2">
+            <div>
+              {/* Top Header */}
+              <div className="px-4 py-3 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setViewState('customer_welcome')}
+                  className="w-9 h-9 rounded-full bg-white border border-purple-100 flex items-center justify-center text-[#2D1A47] shadow-xs cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-7 h-7 rounded-xl bg-[#2D1A47] flex items-center justify-center text-xs text-white">
+                    👵
+                  </div>
+                  <div className="text-center">
+                    <span className="text-xs font-black text-[#2D1A47] block leading-none">
+                      Sly Granny
+                    </span>
+                    <span className="text-[8px] font-bold text-pink-600 block mt-0.5">— Cafe —</span>
+                  </div>
+                </div>
+                <div className="w-9" />
+              </div>
+
+              {/* Title & Subtitle */}
+              <div className="px-6 pt-3 pb-4">
+                <h2 className="text-xl font-black text-[#2D1A47] leading-tight">
+                  Tell us about yourself
+                </h2>
+                <p className="text-xs text-gray-500 font-medium mt-1">
+                  Help us know you better for personalized treats and surprises.
+                </p>
+              </div>
+
+              {/* Form Fields */}
+              <div className="px-6 space-y-4">
+                {/* Full Name */}
+                <div>
+                  <label className="text-xs font-bold text-[#2D1A47] block mb-1">Full Name</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={custFirstName}
+                      onChange={(e) => setCustFirstName(e.target.value)}
+                      placeholder="First Name"
+                      className="flex-1 bg-white border border-purple-100 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-[#2D1A47] focus:border-[#2D1A47] focus:outline-none shadow-2xs"
+                    />
+                    <input
+                      type="text"
+                      value={custLastName}
+                      onChange={(e) => setCustLastName(e.target.value)}
+                      placeholder="Last Name"
+                      className="flex-1 bg-white border border-purple-100 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-[#2D1A47] focus:border-[#2D1A47] focus:outline-none shadow-2xs"
+                    />
+                  </div>
+                </div>
+
+                {/* Gender Chips */}
+                <div>
+                  <label className="text-xs font-bold text-[#2D1A47] block mb-1">Gender</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { id: 'female', label: '♀ Female' },
+                      { id: 'male', label: '♂ Male' },
+                      { id: 'other', label: '••• Other' }
+                    ].map((g) => (
+                      <button
+                        key={g.id}
+                        type="button"
+                        onClick={() => setCustGender(g.id as any)}
+                        className={`py-2 px-3 text-xs font-bold rounded-2xl border transition cursor-pointer text-center ${
+                          custGender === g.id
+                            ? 'bg-[#2D1A47] text-white border-[#2D1A47] shadow-xs'
+                            : 'bg-white border-purple-100 text-gray-600 hover:bg-purple-50'
+                        }`}
+                      >
+                        {g.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Date of Birth & Age */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold text-[#2D1A47] block mb-1">Date of Birth</label>
+                    <input
+                      type="date"
+                      value={custDob}
+                      onChange={(e) => setCustDob(e.target.value)}
+                      className="w-full bg-white border border-purple-100 rounded-2xl px-3 py-2 text-xs font-bold text-[#2D1A47] focus:border-[#2D1A47] focus:outline-none shadow-2xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-[#2D1A47] block mb-1">Age</label>
+                    <div className="relative">
+                      <select
+                        value={custAge}
+                        onChange={(e) => setCustAge(e.target.value)}
+                        className="w-full bg-white border border-purple-100 rounded-2xl px-3.5 py-2 text-xs font-bold text-[#2D1A47] focus:border-[#2D1A47] focus:outline-none shadow-2xs appearance-none"
+                      >
+                        {[18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 35, 40, 50].map((a) => (
+                          <option key={a} value={a}>
+                            {a} yrs
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-3 top-3 pointer-events-none" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mobile Number */}
+                <div>
+                  <label className="text-xs font-bold text-[#2D1A47] block mb-1">Mobile Number</label>
+                  <div className="flex items-center bg-white border border-purple-100 rounded-2xl px-3 py-2.5 shadow-2xs">
+                    <span className="text-xs font-bold text-gray-500 pr-2 border-r border-gray-200">+91</span>
+                    <input
+                      type="tel"
+                      value={custMobile}
+                      onChange={(e) => setCustMobile(e.target.value)}
+                      className="w-full pl-2 text-xs font-bold text-[#2D1A47] focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* WhatsApp Checkbox */}
+                <label className="flex items-center gap-2 cursor-pointer pt-1">
+                  <input
+                    type="checkbox"
+                    checked={custSameWhatsapp}
+                    onChange={(e) => setCustSameWhatsapp(e.target.checked)}
+                    className="w-4 h-4 rounded text-[#2D1A47] focus:ring-[#2D1A47]"
+                  />
+                  <span className="text-xs font-medium text-gray-600">
+                    My WhatsApp number is same as above
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            {/* Next Button */}
+            <div className="px-6 pt-6 pb-4">
+              <button
+                type="button"
+                onClick={() => setViewState('customer_signup_step2')}
+                className="w-full py-3.5 rounded-2xl bg-[#2D1A47] hover:bg-[#3D2261] text-white text-xs font-bold shadow-md cursor-pointer flex items-center justify-center gap-2 transition active:scale-[0.99]"
+              >
+                <span>Next</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 4: MOBILE CUSTOMER SIGNUP STEP 2 - A FEW MORE DETAILS */}
+        {viewState === 'customer_signup_step2' && (
+          <div className="flex-1 flex flex-col justify-between py-2">
+            <div>
+              {/* Top Header */}
+              <div className="px-4 py-3 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setViewState('customer_signup_step1')}
+                  className="w-9 h-9 rounded-full bg-white border border-purple-100 flex items-center justify-center text-[#2D1A47] shadow-xs cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-7 h-7 rounded-xl bg-[#2D1A47] flex items-center justify-center text-xs text-white">
+                    👵
+                  </div>
+                  <div className="text-center">
+                    <span className="text-xs font-black text-[#2D1A47] block leading-none">
+                      Sly Granny
+                    </span>
+                    <span className="text-[8px] font-bold text-pink-600 block mt-0.5">— Cafe —</span>
+                  </div>
+                </div>
+                <div className="w-9" />
+              </div>
+
+              {/* Title & Subtitle */}
+              <div className="px-6 pt-3 pb-4">
+                <h2 className="text-xl font-black text-[#2D1A47] leading-tight">
+                  A few more details (optional)
+                </h2>
+                <p className="text-xs text-gray-500 font-medium mt-1">
+                  We celebrate your special days with exclusive discounts and complimentary treats.
+                </p>
+              </div>
+
+              {/* Form Content */}
+              <div className="px-6 space-y-4">
+                {/* Marital Status Dropdown */}
+                <div>
+                  <label className="text-xs font-bold text-[#2D1A47] block mb-1">Marital Status</label>
+                  <div className="relative">
+                    <select
+                      value={custMaritalStatus}
+                      onChange={(e) => setCustMaritalStatus(e.target.value)}
+                      className="w-full bg-white border border-purple-100 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-[#2D1A47] focus:border-[#2D1A47] focus:outline-none shadow-2xs appearance-none"
+                    >
+                      <option value="Single">Single</option>
+                      <option value="Married">Married</option>
+                      <option value="Unspecified">Prefer not to say</option>
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-3 top-3.5 pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* If Married Card */}
+                {custMaritalStatus === 'Married' && (
+                  <div className="bg-purple-50/70 border border-purple-100 rounded-3xl p-4 space-y-3.5">
+                    <span className="text-[10px] font-bold text-[#5844A8] uppercase tracking-wider block">
+                      💍 Anniversary &amp; Partner Details
+                    </span>
+
+                    {/* Anniversary Date */}
+                    <div>
+                      <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                        Anniversary Date
+                      </label>
+                      <input
+                        type="date"
+                        value={custAnniversary}
+                        onChange={(e) => setCustAnniversary(e.target.value)}
+                        className="w-full bg-white border border-purple-100 rounded-2xl px-3 py-2 text-xs font-bold text-[#2D1A47] focus:border-[#2D1A47] focus:outline-none"
+                      />
+                    </div>
+
+                    {/* Partner's Name */}
+                    <div>
+                      <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                        Partner&apos;s Name
+                      </label>
+                      <input
+                        type="text"
+                        value={custPartnerName}
+                        onChange={(e) => setCustPartnerName(e.target.value)}
+                        placeholder="Partner's full name"
+                        className="w-full bg-white border border-purple-100 rounded-2xl px-3 py-2 text-xs font-bold text-[#2D1A47] focus:border-[#2D1A47] focus:outline-none"
+                      />
+                    </div>
+
+                    {/* Partner's Mobile */}
+                    <div>
+                      <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                        Partner&apos;s Mobile Number
+                      </label>
+                      <div className="flex items-center bg-white border border-purple-100 rounded-2xl px-3 py-2">
+                        <span className="text-xs font-bold text-gray-400 pr-2 border-r border-gray-200">+91</span>
+                        <input
+                          type="tel"
+                          value={custPartnerMobile}
+                          onChange={(e) => setCustPartnerMobile(e.target.value)}
+                          placeholder="Partner's mobile number"
+                          className="w-full pl-2 text-xs font-bold text-[#2D1A47] focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Skip for now & Complete Buttons */}
+            <div className="px-6 pt-6 pb-4 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={completeCustomerLogin}
+                className="flex-1 py-3.5 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 text-xs font-bold cursor-pointer transition text-center"
+              >
+                Skip for now
+              </button>
+              <button
+                type="button"
+                onClick={completeCustomerLogin}
+                className="flex-1 py-3.5 rounded-2xl bg-[#2D1A47] hover:bg-[#3D2261] text-white text-xs font-bold shadow-md cursor-pointer flex items-center justify-center gap-2 transition active:scale-[0.99]"
+              >
+                <span>Complete</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#FAF5FF] via-[#FAF8FF] to-[#FFF5F7] flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans antialiased text-[#1E1548] select-none">
