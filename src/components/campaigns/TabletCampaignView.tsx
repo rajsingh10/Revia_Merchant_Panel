@@ -361,7 +361,6 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
         <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#F1EFEA] px-3 sm:px-6 py-3.5 shadow-2xs">
           <div className="max-w-xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-xs sm:text-sm font-bold text-[#1A1615]">9:41</span>
             </div>
             <button
               onClick={() => setViewMode('dashboard')}

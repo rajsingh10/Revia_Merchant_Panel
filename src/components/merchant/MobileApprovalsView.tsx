@@ -147,7 +147,7 @@ export const MobileApprovalsView: React.FC<Props> = ({ onNavigate, onRequestActi
       )}
 
       {/* Mobile Status Bar Simulation */}
-      <div className="pt-2 px-6 pb-1 flex items-center justify-between text-xs font-semibold text-gray-700 bg-transparent shrink-0">
+      {/* <div className="pt-2 px-6 pb-1 flex items-center justify-between text-xs font-semibold text-gray-700 bg-transparent shrink-0">
         <span className="font-bold text-sm tracking-tight">9:41</span>
         <div className="flex items-center gap-1.5 text-gray-700">
           <span className="text-[11px]">📶</span>
@@ -156,7 +156,7 @@ export const MobileApprovalsView: React.FC<Props> = ({ onNavigate, onRequestActi
             <div className="h-full w-3 bg-gray-700 rounded-2xs" />
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Scrollable Content */}
       <div className="flex-1 min-h-0 overflow-y-auto px-4 pt-2 pb-24 space-y-4">

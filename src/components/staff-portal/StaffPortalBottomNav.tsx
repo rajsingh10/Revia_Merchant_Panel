@@ -21,7 +21,7 @@ export const StaffPortalBottomNav: React.FC<Props> = ({
 }) => {
   const effectiveRequestsCount = requestsCount !== undefined ? requestsCount : (pendingRequestsCount ?? 4);
   return (
-    <nav className="fixed bottom-0 inset-x-0 h-16 bg-white/95 backdrop-blur-md border-t border-purple-100/80 px-6 flex items-center justify-between z-40 shadow-lg select-none">
+    <nav className="fixed bottom-0 inset-x-0 sm:bottom-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[480px] h-16 bg-white/95 backdrop-blur-md border-t sm:border border-purple-100/80 sm:rounded-3xl px-4 sm:px-6 flex items-center justify-between z-40 shadow-lg sm:shadow-2xl select-none lg:hidden">
       {/* 1. Home */}
       <button
         type="button"

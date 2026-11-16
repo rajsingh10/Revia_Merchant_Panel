@@ -148,7 +148,7 @@ export const MobileQrCodesView: React.FC<Props> = ({ onNavigate, onClose }) => {
       )}
 
       {/* Top Status Bar & Dismiss Button */}
-      <div className="pt-2 px-5 pb-1 flex items-center justify-between text-xs font-semibold text-gray-700 bg-transparent shrink-0">
+      {/* <div className="pt-2 px-5 pb-1 flex items-center justify-between text-xs font-semibold text-gray-700 bg-transparent shrink-0">
         <span className="font-bold text-sm tracking-tight">9:41</span>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1 text-gray-700">
@@ -171,7 +171,7 @@ export const MobileQrCodesView: React.FC<Props> = ({ onNavigate, onClose }) => {
             </button>
           )}
         </div>
-      </div>
+      </div> */}
 
       {/* =========================================================================
           SCREEN 1: INTRO / OVERVIEW (media_1793962161252_050e04e0.png)

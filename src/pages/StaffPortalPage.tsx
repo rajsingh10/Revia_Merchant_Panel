@@ -295,14 +295,19 @@ export const StaffPortalPage: React.FC<StaffPortalPageProps> = ({ onNavigate }) 
 
   // Unhandled / Home Tab Fallback
   const pendingRequestsCount = requests.filter(r => r.status !== 'completed').length;
+  const readyOrdersCount = orders.filter(o => o.status === 'ready_to_serve' || o.status === 'Ready to Serve').length;
 
   return (
     <div className="min-h-screen bg-[#F4F4F6] text-gray-900 font-sans flex flex-col justify-between selection:bg-[#4A154B]/20 selection:text-[#4A154B]">
-      {/* Tablet Canvas Container */}
-      <div className="w-full max-w-6xl mx-auto min-h-screen flex flex-col bg-[#F9F9FB] shadow-xl relative pb-24 border-x border-gray-200/60">
-        {/* Sticky Tablet Header with iOS bar and Profile */}
+      {/* Responsive Canvas Container (Mobile, Tablet, Desktop) */}
+      <div className="w-full max-w-7xl mx-auto min-h-screen flex flex-col bg-[#F9F9FB] shadow-xl relative pb-24 lg:pb-10 border-x border-gray-200/60">
+        {/* Sticky Header with Desktop Navigation */}
         <StaffPortalHeader 
           branchName="Noida - Sector 18" 
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          pendingRequestsCount={pendingRequestsCount}
+          readyOrdersCount={readyOrdersCount}
           onOpenNotifications={() => setSubView('notifications')}
           onOpenProfile={() => setSubView('staff_menu')}
         />
@@ -586,7 +591,7 @@ export const StaffPortalPage: React.FC<StaffPortalPageProps> = ({ onNavigate }) 
 
           {/* 17. HOME TAB / WELCOME DASHBOARD */}
           {activeTab === 'home' && subView === 'list' && (
-            <div className="p-8 max-w-4xl mx-auto space-y-6">
+            <div className="px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-5xl mx-auto space-y-6">
               <div className="bg-[#4A154B] text-white rounded-3xl p-8 space-y-4 shadow-lg">
                 <span className="px-3 py-1 bg-white/20 rounded-full text-xs font-semibold uppercase tracking-wider">
                   Loyaltics Waiter Portal

@@ -8109,25 +8109,25 @@ const DesktopCampaignBuilderView: React.FC<CampaignBuilderPageProps> = ({ initia
       {/* Phone Screen */}
       <div className="bg-[#FAF8FF] rounded-[38px] overflow-hidden text-[#1E1548] font-sans pb-4 shadow-inner">
         {/* Status Bar */}
-        <div className="flex items-center justify-between px-6 pt-3 pb-2 text-[11px] font-bold text-gray-900">
+        {/* <div className="flex items-center justify-between px-6 pt-3 pb-2 text-[11px] font-bold text-gray-900">
           <span className="font-semibold tracking-tight">9:41</span>
           <div className="flex items-center gap-1.5 text-gray-900">
-            {/* Cellular Signal Icon */}
+            
             <div className="flex items-end gap-[1.5px] h-2.5">
               <span className="w-[2.5px] h-1 bg-gray-900 rounded-[0.5px]" />
               <span className="w-[2.5px] h-1.5 bg-gray-900 rounded-[0.5px]" />
               <span className="w-[2.5px] h-2 bg-gray-900 rounded-[0.5px]" />
               <span className="w-[2.5px] h-2.5 bg-gray-900 rounded-[0.5px]" />
             </div>
-            {/* Wifi Icon */}
+            
             <Wifi className="w-3 h-3 text-gray-900" />
-            {/* Battery Icon */}
+            
             <div className="w-4 h-2 rounded-[2px] border border-gray-900 flex items-center p-[1px] relative">
               <div className="w-2.5 h-full bg-gray-900 rounded-[1px]" />
               <div className="w-[1px] h-1 bg-gray-900 absolute -right-[2px] rounded-r-[0.5px]" />
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Banner Graphic Card */}
         <div className="p-3 pt-1">
