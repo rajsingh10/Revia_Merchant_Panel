@@ -52,6 +52,7 @@ import { RedemptionTerminalPage } from './pages/RedemptionTerminalPage';
 import { BillingPage } from './pages/BillingPage';
 import { NotificationPage } from './pages/NotificationPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { StaffPortalPage } from './pages/StaffPortalPage';
 // Marketing Pages
 import { AboutUsPage } from './pages/AboutUsPage';
 import { ContactPage } from './pages/ContactPage';
@@ -70,7 +71,7 @@ const VALID_ROUTES = [
   '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
   '/terminal', '/rewards', '/rewards/new', '/analytics', '/billing', '/notifications',
   '/settings/audit', '/settings/branding', '/login', '/onboarding',
-  '/customer/landing', '/customer', '/customer/identify', '/',
+  '/customer/landing', '/customer', '/customer/identify', '/staff-portal', '/',
   '/about', '/contact', '/privacy', '/terms'
 ];
 
@@ -165,6 +166,7 @@ export default function App() {
       currentRoute === '/login' ||
       currentRoute === '/onboarding' ||
       (currentRoute === '/customer' || currentRoute.startsWith('/customer/')) ||
+      (currentRoute === '/staff-portal' || currentRoute.startsWith('/staff-portal/')) ||
       currentRoute.startsWith('/c/') ||
       ['/about', '/contact', '/privacy', '/terms'].includes(currentRoute)
     );
@@ -198,7 +200,7 @@ export default function App() {
     }
   }, [currentRoute]);
 
-  const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/') || currentRoute.startsWith('/customerlist/detail') || currentRoute.startsWith('/c/') || currentRoute.startsWith('/campaigns/edit');
+  const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/') || currentRoute.startsWith('/customerlist/detail') || currentRoute.startsWith('/c/') || currentRoute.startsWith('/campaigns/edit') || currentRoute.startsWith('/staff-portal');
 
   const isMerchantPanelRoute = !(
     currentRoute === '/' ||
@@ -206,6 +208,8 @@ export default function App() {
     currentRoute === '/onboarding' ||
     currentRoute === '/customer' ||
     currentRoute.startsWith('/customer/') ||
+    currentRoute === '/staff-portal' ||
+    currentRoute.startsWith('/staff-portal/') ||
     currentRoute.startsWith('/c/') ||
     ['/about', '/contact', '/privacy', '/terms'].includes(currentRoute)
   );
@@ -242,6 +246,8 @@ export default function App() {
         } />
         <Route path="/customer" element={<CustomerRouter currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />} />
         <Route path="/customer/*" element={<CustomerRouter currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />} />
+        <Route path="/staff-portal" element={<StaffPortalPage onNavigate={(route) => handleNavigate(route as NavRoute)} />} />
+        <Route path="/staff-portal/*" element={<StaffPortalPage onNavigate={(route) => handleNavigate(route as NavRoute)} />} />
         <Route path="/c/:campaignId" element={<CampaignLandingWrapper onNavigate={(route: any) => handleNavigate(route as NavRoute)} />} />
         <Route path="*" element={<NotFoundPage onNavigate={(route) => handleNavigate(route as NavRoute)} />} />
       </Routes>
@@ -324,6 +330,8 @@ export default function App() {
                 <Route path="/settings/audit" element={<ProtectedRoute><AuditLogPage logs={auditLogs} /></ProtectedRoute>} />
                 <Route path="/settings/branding" element={<ProtectedRoute><BrandingPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/catalog" element={<ProtectedRoute><CatalogPage catalog={catalog} onUpdateItem={(updatedItem) => setCatalog((c) => c.map((item) => (item.id === updatedItem.id ? updatedItem : item)))} onAddItem={(newItem) => setCatalog((c) => [newItem, ...c])} /></ProtectedRoute>} />
+                <Route path="/staff-portal" element={<StaffPortalPage onNavigate={handleNavigate as any} />} />
+                <Route path="/staff-portal/*" element={<StaffPortalPage onNavigate={handleNavigate as any} />} />
                 <Route path="*" element={<NotFoundPage onNavigate={(route) => handleNavigate(route as NavRoute)} />} />
               </Routes>
             )}

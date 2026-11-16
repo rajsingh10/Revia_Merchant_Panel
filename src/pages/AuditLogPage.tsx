@@ -161,11 +161,10 @@ const AccessControlSettings: React.FC = () => {
                             {mod.actions.map(action => {
                               const hasPermission = role.permissions[`${mod.name}_${action}`];
                               return (
-                                <span key={action} className={`px-1 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider whitespace-nowrap border ${
-                                  hasPermission 
-                                    ? 'bg-[#EBF7F0] text-[#0D7A53] border-[#0D7A53]/20' 
+                                <span key={action} className={`px-1 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider whitespace-nowrap border ${hasPermission
+                                    ? 'bg-[#EBF7F0] text-[#0D7A53] border-[#0D7A53]/20'
                                     : 'bg-transparent text-[#9E9A93] border-[#E5E0D8] opacity-60'
-                                }`}>
+                                  }`}>
                                   {action}
                                 </span>
                               );

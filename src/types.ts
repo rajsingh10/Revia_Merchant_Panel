@@ -157,6 +157,7 @@ export type NavRoute =
   | '/masters/reward-types'
   | '/masters/asset-types'
   | '/masters/placement-types'
+  | '/staff-portal'
   | '/catalog'
   | '/orders'
   | '/invoices'
