@@ -319,8 +319,8 @@ export default function App() {
                 <Route path="/insights-config" element={<ProtectedRoute><InsightsConfigPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/transactions" element={<ProtectedRoute><TransactionsPage /></ProtectedRoute>} />
                 <Route path="/campaigns" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="dashboard" onNavigate={(route) => handleNavigate(route as NavRoute)} onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)} /></ProtectedRoute>} />
-                <Route path="/campaigns/new" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="builder" onNavigate={(route) => handleNavigate(route as NavRoute)} /></ProtectedRoute>} />
-                <Route path="/campaigns/edit/:id" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="builder" onNavigate={(route) => handleNavigate(route as NavRoute)} /></ProtectedRoute>} />
+                <Route path="/campaigns/new" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="builder" onNavigate={(route) => handleNavigate(route as NavRoute)} onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)} /></ProtectedRoute>} />
+                <Route path="/campaigns/edit/:id" element={<ProtectedRoute><CampaignBuilderPage initialViewMode="builder" onNavigate={(route) => handleNavigate(route as NavRoute)} onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)} /></ProtectedRoute>} />
                 <Route path="/rewards" element={<ProtectedRoute><RewardsPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/rewards/new" element={<ProtectedRoute><CreateRewardPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/terminal" element={<ProtectedRoute><RedemptionTerminalPage /></ProtectedRoute>} />

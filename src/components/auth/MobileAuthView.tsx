@@ -4,6 +4,7 @@ import {
   Store,
   ChevronRight,
   ArrowLeft,
+  ArrowRight,
   Mail,
   Phone,
   Scissors,
@@ -128,7 +129,7 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           <Sparkles className="w-4 h-4 fill-white" />
         </div>
         <div className="text-left">
-          <span className="text-lg font-black text-[#1E1548] leading-none tracking-tight block">Loyalitycs</span>
+          <span className="text-lg font-black text-[#1E1548] leading-none tracking-tight block">Loyaltics</span>
           <span className="text-[8px] font-bold text-gray-400 tracking-widest uppercase block mt-0.5">
             EARN • REDEEM • GROW
           </span>
@@ -204,41 +205,33 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
       {screen === 'role_select' && (
         <div className="flex-1 flex flex-col justify-between">
           {/* Top Hero Barista Image */}
-          <div className="relative w-full h-[40vh] sm:h-[44vh] min-h-[320px] max-h-[420px] overflow-hidden bg-purple-100">
+          <div className="relative w-full h-[46vh] sm:h-[48vh] min-h-[350px] max-h-[440px] flex items-end justify-center overflow-hidden bg-[#F3EBF7]">
             <img
               src="/assets/login/barista-hero.png"
               alt="Barista at cafe"
-              className="w-full h-full object-cover object-top"
+              className="w-full h-full object-cover object-bottom"
             />
-            {/* Status bar overlaid at top */}
-            <div className="absolute top-0 inset-x-0 z-10">
-              
-            </div>
-            {/* Status bar overlaid at top */}
-            <div className="absolute top-0 inset-x-0 z-10">
-              
-            </div>
           </div>
 
           {/* Bottom Sheet Card */}
-          <div className="-mt-8 rounded-t-[36px] bg-[#FAF8FF] px-5 pt-4 pb-5 flex-1 flex flex-col justify-between shadow-2xl relative z-20 border-t border-purple-100/60">
-            <div>
+          <div className="-mt-7 rounded-t-[32px] sm:rounded-t-[36px] bg-[#FAF8FF] px-5 sm:px-6 pt-5 pb-5 flex-1 flex flex-col justify-between shadow-2xl relative z-20 border-t border-purple-100/60">
+            <div className="max-w-sm mx-auto w-full">
               {renderBrandHeader()}
 
-              <div className="text-center mt-2 mb-4">
+              <div className="text-center mt-1.5 mb-4">
                 <h1 className="text-xl sm:text-2xl font-black text-[#1E1548] tracking-tight">Choose your role</h1>
                 <p className="text-xs text-gray-500 font-medium mt-0.5">Pick what describes you the best.</p>
               </div>
 
               {/* Cards */}
-              <div className="space-y-3">
+              <div className="space-y-3 sm:space-y-3.5">
                 {/* Option 1: Customer */}
                 <button
                   type="button"
                   onClick={() => setScreen('customer_welcome')}
-                  className="w-full p-3.5 rounded-2xl bg-white border border-gray-100 shadow-2xs hover:border-pink-200 flex items-center justify-between transition-all cursor-pointer group active:scale-[0.99]"
+                  className="w-full p-4 rounded-2xl bg-white border border-gray-100 shadow-xs hover:border-pink-200 flex items-center justify-between transition-all cursor-pointer group active:scale-[0.99]"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3.5">
                     <div className="w-11 h-11 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center shrink-0">
                       <User className="w-5 h-5" />
                     </div>
@@ -256,9 +249,9 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setScreen('merchant_login')}
-                  className="w-full p-3.5 rounded-2xl bg-white border border-gray-100 shadow-2xs hover:border-purple-200 flex items-center justify-between transition-all cursor-pointer group active:scale-[0.99]"
+                  className="w-full p-4 rounded-2xl bg-white border border-gray-100 shadow-xs hover:border-purple-200 flex items-center justify-between transition-all cursor-pointer group active:scale-[0.99]"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3.5">
                     <div className="w-11 h-11 rounded-xl bg-purple-100 text-[#5844A8] flex items-center justify-center shrink-0">
                       <Store className="w-5 h-5" />
                     </div>
@@ -274,7 +267,7 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
               </div>
             </div>
 
-            <div className="text-center text-[10px] sm:text-[11px] text-gray-400 pt-4">
+            <div className="text-center text-[10px] sm:text-[11px] text-gray-400 pt-4 pb-1">
               Powered by <span className="font-bold text-gray-700">Analytix Data</span>
             </div>
           </div>
@@ -285,24 +278,35 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           SCREEN 2: MERCHANT LOGIN (Login screen.png & Login screen-1.png)
          ===================================================================== */}
       {screen === 'merchant_login' && (
-        <div className="flex-1 flex flex-col justify-between px-6 pb-6">
+        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
           <div>
-           
-            <div className="text-center mt-3 mb-6">
-              <h1 className="text-2xl font-black text-[#1E1548] tracking-tight">Welcome Back!</h1>
+            {/* Top Bar with Back Navigation */}
+            <div className="flex items-center justify-between mb-2">
+              <button
+                type="button"
+                onClick={() => setScreen('role_select')}
+                className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 font-medium py-1 cursor-pointer transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Change Role</span>
+              </button>
+            </div>
+
+            <div className="text-center mt-1 mb-5">
+              <h1 className="text-2xl sm:text-[26px] font-black text-[#1E1548] tracking-tight">Welcome Back!</h1>
               <p className="text-xs text-gray-500 font-medium mt-1 leading-snug">
                 Enter your mobile number or email to get OTP and continue
               </p>
             </div>
 
             {/* Segmented Tab: Mobile Number vs Email */}
-            <div className="bg-purple-100/50 p-1 rounded-2xl flex items-center mb-4">
+            <div className="bg-purple-100/60 p-1 rounded-2xl flex items-center mb-4 sm:mb-5">
               <button
                 type="button"
                 onClick={() => setLoginTab('mobile')}
                 className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition cursor-pointer ${
                   loginTab === 'mobile'
-                    ? 'bg-purple-200/60 text-[#1E1548] shadow-xs'
+                    ? 'bg-white text-[#1E1548] shadow-xs'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
@@ -313,7 +317,7 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
                 onClick={() => setLoginTab('email')}
                 className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition cursor-pointer ${
                   loginTab === 'email'
-                    ? 'bg-purple-200/60 text-[#1E1548] shadow-xs'
+                    ? 'bg-white text-[#1E1548] shadow-xs'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
@@ -324,8 +328,8 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
             {/* Input field */}
             {loginTab === 'mobile' ? (
               <div className="mb-4">
-                <div className="flex items-center bg-white border border-gray-200/90 rounded-2xl px-4 py-3 shadow-2xs focus-within:border-[#5844A8]">
-                  <span className="text-xs font-bold text-gray-700 pr-2 border-r border-gray-200 flex items-center gap-1">
+                <div className="flex items-center h-12 bg-white border border-gray-200/90 rounded-2xl px-4 shadow-2xs focus-within:border-[#5844A8] focus-within:ring-2 focus-within:ring-purple-100 transition-all">
+                  <span className="text-xs font-bold text-gray-700 pr-2 border-r border-gray-200 flex items-center gap-1 select-none">
                     +91 <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
                   </span>
                   <input
@@ -333,20 +337,20 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
                     value={mobileNumber}
                     onChange={(e) => setMobileNumber(e.target.value)}
                     placeholder="Enter your mobile number"
-                    className="w-full pl-3 text-xs font-medium text-gray-900 bg-transparent outline-none placeholder:text-gray-400"
+                    className="w-full pl-3 text-xs sm:text-sm font-medium text-gray-900 bg-transparent outline-none placeholder:text-gray-400"
                   />
                 </div>
               </div>
             ) : (
               <div className="mb-4">
-                <div className="flex items-center bg-white border border-gray-200/90 rounded-2xl px-4 py-3 shadow-2xs focus-within:border-[#5844A8]">
+                <div className="flex items-center h-12 bg-white border border-gray-200/90 rounded-2xl px-4 shadow-2xs focus-within:border-[#5844A8] focus-within:ring-2 focus-within:ring-purple-100 transition-all">
                   <Mail className="w-4 h-4 text-gray-400 mr-2.5 shrink-0" />
                   <input
                     type="email"
                     value={emailAddress}
                     onChange={(e) => setEmailAddress(e.target.value)}
                     placeholder="Enter your email address"
-                    className="w-full text-xs font-medium text-gray-900 bg-transparent outline-none placeholder:text-gray-400"
+                    className="w-full text-xs sm:text-sm font-medium text-gray-900 bg-transparent outline-none placeholder:text-gray-400"
                   />
                 </div>
               </div>
@@ -359,7 +363,7 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
                 setOtpTimer(45);
                 setScreen('merchant_otp');
               }}
-              className="w-full py-3.5 rounded-2xl bg-[#2D124D] hover:bg-[#5844A8] text-white font-bold text-xs tracking-wide shadow-md transition-all cursor-pointer"
+              className="w-full h-12 rounded-2xl bg-[#2D124D] hover:bg-[#5844A8] text-white font-bold text-xs sm:text-sm tracking-wide shadow-md transition-all cursor-pointer flex items-center justify-center"
             >
               Get OTP
             </button>
@@ -370,22 +374,22 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
               <button
                 type="button"
                 onClick={() => setScreen('business_details')}
-                className="font-bold text-[#2D124D] hover:underline cursor-pointer"
+                className="font-bold text-[#5844A8] hover:underline cursor-pointer"
               >
                 Sign Up
               </button>
             </div>
           </div>
 
-          {/* Switch to Business / Customer Card at Bottom */}
-          <div className="mt-8">
+          {/* Switch to Customer Card at Bottom */}
+          <div className="mt-6">
             <button
               type="button"
               onClick={() => setScreen('role_select')}
-              className="w-full p-4 rounded-3xl bg-white border border-gray-100 shadow-2xs flex items-center justify-between transition-all cursor-pointer hover:border-purple-200 text-left"
+              className="w-full p-3.5 rounded-2xl bg-white border border-gray-100 shadow-2xs flex items-center justify-between transition-all cursor-pointer hover:border-purple-200 text-left active:scale-[0.99]"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-purple-50 text-[#5844A8] flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-purple-50 text-[#5844A8] flex items-center justify-center shrink-0">
                   <Store className="w-5 h-5" />
                 </div>
                 <div>
@@ -403,19 +407,28 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           SCREEN 3: OTP VERIFICATION (Login OTP.png)
          ===================================================================== */}
       {screen === 'merchant_otp' && (
-        <div className="flex-1 flex flex-col justify-between px-6 pb-6">
+        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
           <div>
-            
+            <div className="flex items-center justify-between mb-2">
+              <button
+                type="button"
+                onClick={() => setScreen('merchant_login')}
+                className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 font-medium py-1 cursor-pointer transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+            </div>
 
-            <div className="text-center mt-3 mb-6">
-              <h1 className="text-2xl font-black text-[#1E1548] tracking-tight">Verify Your Account</h1>
+            <div className="text-center mt-1 mb-5">
+              <h1 className="text-2xl sm:text-[26px] font-black text-[#1E1548] tracking-tight">Verify Your Account</h1>
               <p className="text-xs text-gray-500 font-medium mt-1">
                 We&apos;ve sent a 6 digit OTP to <span className="font-bold text-gray-800">+ 91 {mobileNumber}</span>
               </p>
             </div>
 
             {/* 6 OTP Boxes */}
-            <div className="flex items-center justify-center gap-2.5 mb-4">
+            <div className="flex items-center justify-center gap-2 sm:gap-2.5 mb-4">
               {otpValues.map((digit, idx) => (
                 <input
                   key={idx}
@@ -469,20 +482,15 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
             <button
               type="button"
               onClick={handleCompleteMerchantAuth}
-              className="w-full py-3.5 rounded-2xl bg-[#2D124D] hover:bg-[#5844A8] text-white font-bold text-xs tracking-wide shadow-md transition-all cursor-pointer"
+              className="w-full h-12 rounded-2xl bg-[#2D124D] hover:bg-[#5844A8] text-white font-bold text-xs sm:text-sm tracking-wide shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
             >
-              Next
+              <span>Next</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="text-center pt-6">
-            <button
-              type="button"
-              onClick={() => setScreen('merchant_login')}
-              className="text-xs font-bold text-gray-500 hover:text-gray-800 flex items-center justify-center gap-1 mx-auto cursor-pointer"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" /> Back to Login
-            </button>
+          <div className="text-center text-[10px] sm:text-[11px] text-gray-400 pt-4">
+            Powered by <span className="font-bold text-gray-700">Analytix Data</span>
           </div>
         </div>
       )}
@@ -491,12 +499,22 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           SCREEN 4: ONBOARDING STEP 1 - BUSINESS DETAILS (Business Detials.png)
          ===================================================================== */}
       {screen === 'business_details' && (
-        <div className="flex-1 flex flex-col justify-between px-6 pb-6">
+        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
           <div>
-           
+            <div className="flex items-center justify-between mb-1">
+              <button
+                type="button"
+                onClick={() => setScreen('merchant_login')}
+                className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 font-medium py-1 cursor-pointer transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+            </div>
+
             {renderStepper(1)}
 
-            <div className="mb-5">
+            <div className="mb-4">
               <h1 className="text-2xl font-black text-[#1E1548] tracking-tight">Business Details</h1>
               <p className="text-xs text-gray-500 font-medium mt-1">
                 Tell us about your business so we can set up your account.
@@ -646,12 +664,22 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           SCREEN 5: ONBOARDING STEP 2 - COMPANY DETAILS (Company Detailss.png)
          ===================================================================== */}
       {screen === 'company_details' && (
-        <div className="flex-1 flex flex-col justify-between px-6 pb-6">
+        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
           <div>
-        
+            <div className="flex items-center justify-between mb-1">
+              <button
+                type="button"
+                onClick={() => setScreen('business_details')}
+                className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 font-medium py-1 cursor-pointer transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+            </div>
+
             {renderStepper(2)}
 
-            <div className="mb-5">
+            <div className="mb-4">
               <h1 className="text-2xl font-black text-[#1E1548] tracking-tight">Company Details</h1>
               <p className="text-xs text-gray-500 font-medium mt-1">
                 Tell us about your business so we can personalize your experience.
@@ -659,7 +687,7 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
             </div>
 
             {/* Company Name */}
-            <div className="mb-4">
+            <div className="mb-3.5">
               <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
                 Company Name <span className="text-rose-500">*</span>
               </label>
@@ -668,12 +696,12 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
                 placeholder="e.g. The Coffee House"
-                className="w-full px-4 py-3 bg-white border border-gray-200/90 rounded-2xl text-xs font-medium text-gray-900 shadow-2xs focus:outline-none focus:border-[#5844A8]"
+                className="w-full h-12 px-4 bg-white border border-gray-200/90 rounded-2xl text-xs font-medium text-gray-900 shadow-2xs focus:outline-none focus:border-[#5844A8]"
               />
             </div>
 
             {/* GST Number */}
-            <div className="mb-4">
+            <div className="mb-3.5">
               <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
                 GST Number <span className="text-rose-500">*</span>
               </label>
@@ -682,27 +710,27 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
                 value={gstNumber}
                 onChange={(e) => setGstNumber(e.target.value.toUpperCase())}
                 placeholder="ENTER 15 DIGIT GST NUMBER"
-                className="w-full px-4 py-3 bg-white border border-gray-200/90 rounded-2xl text-xs font-medium text-gray-900 shadow-2xs focus:outline-none focus:border-[#5844A8] uppercase tracking-wider"
+                className="w-full h-12 px-4 bg-white border border-gray-200/90 rounded-2xl text-xs font-medium text-gray-900 shadow-2xs focus:outline-none focus:border-[#5844A8] uppercase tracking-wider"
               />
             </div>
 
             {/* Business Address */}
-            <div className="mb-4">
+            <div className="mb-3.5">
               <label className="block text-xs font-bold text-[#1E1548] mb-1.5">
                 Business Address <span className="text-rose-500">*</span>
               </label>
               <textarea
-                rows={4}
+                rows={3.5}
                 value={businessAddress}
                 onChange={(e) => setBusinessAddress(e.target.value)}
                 placeholder="House/Flat No., Building, Street, Area, City, State, Pincode"
-                className="w-full p-4 bg-white border border-gray-200/90 rounded-2xl text-xs font-medium text-gray-900 shadow-2xs focus:outline-none focus:border-[#5844A8] resize-none"
+                className="w-full p-3.5 bg-white border border-gray-200/90 rounded-2xl text-xs font-medium text-gray-900 shadow-2xs focus:outline-none focus:border-[#5844A8] resize-none"
               />
             </div>
           </div>
 
           {/* Bottom Actions */}
-          <div className="flex items-center justify-between pt-4">
+          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
             <button
               type="button"
               onClick={() => setScreen('business_details')}
@@ -725,21 +753,31 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           SCREEN 6: ONBOARDING STEP 3 - BRANCH QUESTION (Branch Detailss.png)
          ===================================================================== */}
       {screen === 'branch_question' && (
-        <div className="flex-1 flex flex-col justify-between px-6 pb-6">
+        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
           <div>
-            
+            <div className="flex items-center justify-between mb-1">
+              <button
+                type="button"
+                onClick={() => setScreen('company_details')}
+                className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 font-medium py-1 cursor-pointer transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+            </div>
+
             {renderStepper(3)}
 
             {/* Storefront Illustration */}
-            <div className="flex justify-center my-4">
+            <div className="flex justify-center my-3">
               <img
                 src="/assets/login/cafe-branch.png"
                 alt="Cafe storefront"
-                className="w-64 max-w-full object-contain"
+                className="w-56 max-w-full object-contain"
               />
             </div>
 
-            <div className="text-center mb-6">
+            <div className="text-center mb-5">
               <h1 className="text-2xl font-black text-[#1E1548] tracking-tight">Do you have branches?</h1>
               <p className="text-xs text-gray-500 font-medium mt-1 leading-snug">
                 Let us know if you operate multiple branches for your business.
@@ -810,9 +848,19 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           SCREEN 7: ONBOARDING STEP 4 - ADD BRANCHES (Branch Details(No/Yes).png)
          ===================================================================== */}
       {screen === 'branch_details' && (
-        <div className="flex-1 flex flex-col justify-between px-6 pb-6">
+        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
           <div>
-            
+            <div className="flex items-center justify-between mb-1">
+              <button
+                type="button"
+                onClick={() => setScreen('branch_question')}
+                className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 font-medium py-1 cursor-pointer transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+            </div>
+
             {renderStepper(3)}
 
             <div className="mb-4">
@@ -979,19 +1027,29 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           CUSTOMER FLOW FALLBACK
          ===================================================================== */}
       {screen === 'customer_welcome' && (
-        <div className="flex-1 flex flex-col justify-between p-6">
+        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
           <div>
-          
+            <div className="flex items-center justify-between mb-2">
+              <button
+                type="button"
+                onClick={() => setScreen('role_select')}
+                className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 font-medium py-1 cursor-pointer transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Change Role</span>
+              </button>
+            </div>
+
             {renderBrandHeader()}
 
-            <div className="text-center mt-4 mb-6">
+            <div className="text-center mt-2 mb-5">
               <h1 className="text-2xl font-black text-[#1E1548]">Customer Login</h1>
               <p className="text-xs text-gray-500 font-medium mt-1">Enter your phone number to continue</p>
             </div>
 
             <div className="mb-4">
-              <div className="flex items-center bg-white border border-gray-200/90 rounded-2xl px-4 py-3 shadow-2xs">
-                <span className="text-xs font-bold text-gray-700 pr-2 border-r border-gray-200 flex items-center gap-1">
+              <div className="flex items-center h-12 bg-white border border-gray-200/90 rounded-2xl px-4 shadow-2xs focus-within:border-[#5844A8] focus-within:ring-2 focus-within:ring-purple-100 transition-all">
+                <span className="text-xs font-bold text-gray-700 pr-2 border-r border-gray-200 flex items-center gap-1 select-none">
                   +91 <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
                 </span>
                 <input
@@ -999,7 +1057,7 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
                   value={mobileNumber}
                   onChange={(e) => setMobileNumber(e.target.value)}
                   placeholder="Enter your mobile number"
-                  className="w-full pl-3 text-xs font-medium text-gray-900 bg-transparent outline-none"
+                  className="w-full pl-3 text-xs sm:text-sm font-medium text-gray-900 bg-transparent outline-none placeholder:text-gray-400"
                 />
               </div>
             </div>
@@ -1007,40 +1065,44 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
             <button
               type="button"
               onClick={() => setScreen('customer_otp')}
-              className="w-full py-3.5 rounded-2xl bg-[#5844A8] hover:bg-[#47368E] text-white font-bold text-xs shadow-md transition-all cursor-pointer"
+              className="w-full h-12 rounded-2xl bg-[#5844A8] hover:bg-[#47368E] text-white font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center"
             >
               Get OTP
             </button>
           </div>
 
-          <div className="text-center pt-6">
-            <button
-              type="button"
-              onClick={() => setScreen('role_select')}
-              className="text-xs font-bold text-gray-500 hover:text-gray-800"
-            >
-              ← Back to Role Select
-            </button>
+          <div className="text-center text-[10px] sm:text-[11px] text-gray-400 pt-4">
+            Powered by <span className="font-bold text-gray-700">Analytix Data</span>
           </div>
         </div>
       )}
 
       {screen === 'customer_otp' && (
-        <div className="flex-1 flex flex-col justify-between p-6">
+        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
           <div>
-          
+            <div className="flex items-center justify-between mb-2">
+              <button
+                type="button"
+                onClick={() => setScreen('customer_welcome')}
+                className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 font-medium py-1 cursor-pointer transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+            </div>
+
             {renderBrandHeader()}
 
-            <div className="text-center mt-4 mb-6">
+            <div className="text-center mt-2 mb-5">
               <h1 className="text-2xl font-black text-[#1E1548]">Verify OTP</h1>
               <p className="text-xs text-gray-500 font-medium mt-1">Sent to +91 {mobileNumber}</p>
             </div>
 
-            <div className="flex items-center justify-center gap-2.5 mb-6">
+            <div className="flex items-center justify-center gap-2.5 mb-5">
               {['5', '2', '8', '4'].map((d, i) => (
                 <div
                   key={i}
-                  className="w-12 h-12 rounded-2xl bg-white border border-gray-200 flex items-center justify-center text-lg font-black"
+                  className="w-12 h-12 rounded-2xl bg-white border border-gray-200/90 flex items-center justify-center text-lg font-black text-[#1E1548] shadow-2xs"
                 >
                   {d}
                 </div>
@@ -1053,20 +1115,14 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
                 localStorage.setItem('customer_token', 'mock_cust_' + Date.now());
                 onLoginSuccess('customer');
               }}
-              className="w-full py-3.5 rounded-2xl bg-[#5844A8] text-white font-bold text-xs shadow-md"
+              className="w-full h-12 rounded-2xl bg-[#5844A8] hover:bg-[#47368E] text-white font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center"
             >
               Verify &amp; Continue
             </button>
           </div>
 
-          <div className="text-center pt-6">
-            <button
-              type="button"
-              onClick={() => setScreen('customer_welcome')}
-              className="text-xs font-bold text-gray-500 hover:text-gray-800"
-            >
-              ← Back
-            </button>
+          <div className="text-center text-[10px] sm:text-[11px] text-gray-400 pt-4">
+            Powered by <span className="font-bold text-gray-700">Analytix Data</span>
           </div>
         </div>
       )}

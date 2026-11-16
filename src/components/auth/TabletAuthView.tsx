@@ -235,16 +235,16 @@ export const TabletAuthView: React.FC<TabletAuthViewProps> = ({
   const isWomanIllustration = screen === 'merchant_login' || screen === 'merchant_otp';
 
   return (
-    <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-gradient-to-br from-[#FAF5FF] via-[#FDF8FD] to-[#F5EEFB] flex items-center justify-center p-3 sm:p-5 md:p-6 font-sans antialiased text-[#1E1548]">
+    <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-gradient-to-br from-[#FAF5FF] via-[#FDF8FD] to-[#F5EEFB] flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-10 font-sans antialiased text-[#1E1548]">
       {/* Centered Tablet & Desktop Card */}
-      <div className="w-full max-w-5xl bg-white rounded-[24px] sm:rounded-[32px] shadow-[0_15px_40px_rgba(88,68,168,0.08)] border border-[#EDE8FD] flex flex-col md:flex-row h-auto lg:h-[88vh] lg:max-h-[640px] overflow-hidden transition-all">
+      <div className="w-full max-w-5xl lg:max-w-6xl bg-white rounded-[24px] sm:rounded-[32px] shadow-[0_15px_40px_rgba(88,68,168,0.08)] border border-[#EDE8FD] flex flex-col md:flex-row md:min-h-[580px] md:max-h-[820px] md:h-[86vh] lg:h-[88vh] lg:max-h-[720px] lg:min-h-[600px] overflow-hidden transition-all">
         
         {/* =====================================================================
             LEFT COLUMN: BRAND, HEADLINE & DYNAMIC ILLUSTRATION
            ===================================================================== */}
-        <div className="w-full md:w-5/12 lg:w-5/12 bg-white p-5 sm:p-6 lg:p-7 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#EDE8FD] relative select-none h-auto md:h-full shrink-0 overflow-hidden">
+        <div className="w-full md:w-5/12 lg:w-5/12 bg-white p-6 sm:p-7 md:p-8 lg:p-9 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#EDE8FD] relative select-none h-auto md:h-full shrink-0 overflow-hidden">
           {/* Top Brand Logo */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#5844A8] to-[#E11D48] flex items-center justify-center text-white shadow-xs shrink-0">
               <Sparkles className="w-3.5 h-3.5 fill-white" />
             </div>
@@ -257,14 +257,14 @@ export const TabletAuthView: React.FC<TabletAuthViewProps> = ({
           </div>
 
           {/* Typography Hero */}
-          <div className="my-auto py-2 lg:py-3">
-            <h1 className="text-2xl sm:text-3xl lg:text-[30px] font-extrabold text-[#1E1548] leading-[1.12] tracking-tight">
+          <div className="my-auto py-3 lg:py-4">
+            <h1 className="text-2xl sm:text-3xl lg:text-[32px] font-extrabold text-[#1E1548] leading-[1.14] tracking-tight">
               Stronger <br />
               Customer <br />
               Relationships <br />
               <span className="text-[#EE4370]">Start Here</span>
             </h1>
-            <p className="text-xs text-gray-500 font-normal leading-relaxed mt-2.5 max-w-xs">
+            <p className="text-xs sm:text-[13px] text-gray-500 font-normal leading-relaxed mt-3 max-w-xs">
               Build loyalty, boost sales and create lasting connections with your customers through rewards and offers.
             </p>
           </div>
@@ -275,13 +275,13 @@ export const TabletAuthView: React.FC<TabletAuthViewProps> = ({
               <img
                 src="/assets/login/woman-laptop.png"
                 alt="Merchant working happily"
-                className="max-h-36 sm:max-h-40 lg:max-h-44 object-contain select-none"
+                className="max-h-36 sm:max-h-40 md:max-h-44 lg:max-h-48 object-contain select-none"
               />
             ) : (
               <img
                 src="/assets/login/card-stack-hero.png"
                 alt="Loyalty cards stack"
-                className="max-h-32 sm:max-h-36 lg:max-h-40 object-contain select-none"
+                className="max-h-32 sm:max-h-36 md:max-h-40 lg:max-h-44 object-contain select-none"
               />
             )}
           </div>
@@ -290,7 +290,7 @@ export const TabletAuthView: React.FC<TabletAuthViewProps> = ({
         {/* =====================================================================
             RIGHT COLUMN: ACTIVE FORM VIEW (Scrollable internally if fields overflow)
            ===================================================================== */}
-        <div className="w-full md:w-7/12 lg:w-7/12 p-5 sm:p-6 lg:p-8 flex flex-col justify-between bg-white relative overflow-y-auto h-full max-h-[85vh] lg:max-h-full">
+        <div className="w-full md:w-7/12 lg:w-7/12 p-6 sm:p-7 md:p-8 lg:p-10 flex flex-col justify-between bg-white relative overflow-y-auto h-full max-h-[85vh] lg:max-h-full">
           
           {/* ─────────────────────────────────────────────────────────────
               VIEW 1: ROLE SELECTION (Are you a customer or a merchant?)
@@ -298,21 +298,21 @@ export const TabletAuthView: React.FC<TabletAuthViewProps> = ({
           {screen === 'role_select' && (
             <div className="flex-1 flex flex-col justify-between max-w-md mx-auto w-full py-2 my-auto">
               <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-[#1E1548] tracking-tight">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1E1548] tracking-tight leading-tight">
                   Are you a customer <br />
                   or a merchant?
                 </h2>
-                <p className="text-xs text-gray-500 mt-0.5 font-medium">Choose how you&apos;d like to continue</p>
+                <p className="text-xs sm:text-[13px] text-gray-500 mt-1 font-medium">Choose how you&apos;d like to continue</p>
 
-                <div className="mt-5 sm:mt-6 space-y-3">
+                <div className="mt-5 sm:mt-6 space-y-3.5 sm:space-y-4">
                   {/* Option 1: Customer */}
                   <button
                     type="button"
                     onClick={() => setScreen('customer_login')}
-                    className="w-full p-3.5 sm:p-4 rounded-2xl bg-white border border-gray-200 hover:border-pink-300 hover:shadow-xs transition-all flex items-center justify-between group cursor-pointer text-left"
+                    className="w-full p-4 sm:p-5 rounded-2xl bg-white border border-gray-200 hover:border-pink-300 hover:shadow-xs transition-all flex items-center justify-between group cursor-pointer text-left"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center shrink-0">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-11 h-11 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center shrink-0">
                         <User className="w-5 h-5" />
                       </div>
                       <div>
@@ -331,10 +331,10 @@ export const TabletAuthView: React.FC<TabletAuthViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setScreen('merchant_login')}
-                    className="w-full p-3.5 sm:p-4 rounded-2xl bg-white border-2 border-[#5844A8] shadow-xs hover:shadow-md transition-all flex items-center justify-between group cursor-pointer text-left"
+                    className="w-full p-4 sm:p-5 rounded-2xl bg-white border-2 border-[#5844A8] shadow-xs hover:shadow-md transition-all flex items-center justify-between group cursor-pointer text-left"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-purple-100 text-[#5844A8] flex items-center justify-center shrink-0">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-11 h-11 rounded-xl bg-purple-100 text-[#5844A8] flex items-center justify-center shrink-0">
                         <Store className="w-5 h-5" />
                       </div>
                       <div>

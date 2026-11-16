@@ -6,6 +6,7 @@ import {
   Filter,
   Check,
   X,
+  Menu,
   ChevronRight,
   ChevronLeft,
   ChevronDown,
@@ -177,6 +178,7 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
   onToggleMobileMenu
 }) => {
   const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>(initialViewMode);
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
 
   // ---------------------------------------------------------------------------
   // DASHBOARD STATE
@@ -440,7 +442,20 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
         {/* Mobile Header Bar */}
         <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#F0EBF5] px-4 py-3 shadow-2xs">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  if (onToggleMobileMenu) {
+                    onToggleMobileMenu();
+                  }
+                }}
+                className="w-8 h-8 -ml-1 flex items-center justify-center rounded-xl text-[#1A102F] hover:bg-purple-100/60 active:scale-95 transition-all cursor-pointer"
+                aria-label="Open sidebar menu"
+                title="Open menu"
+              >
+                <Menu className="w-5 h-5 text-[#1A102F]" />
+              </button>
               <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#6366F1] to-[#EC4899] flex items-center justify-center text-white font-black text-sm shadow-xs">
                 ★
               </div>
@@ -761,6 +776,25 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
   if (creationSetupStep === 'choose_type') {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#FDF8FD] via-[#FFF9FA] to-[#FAF8FD] flex flex-col justify-between p-6 font-sans text-[#1A102F]">
+        {/* Top Header with Menu & Exit */}
+        <div className="flex items-center justify-between -mt-1 pb-1 max-w-sm mx-auto w-full">
+          <button
+            type="button"
+            onClick={() => onToggleMobileMenu && onToggleMobileMenu()}
+            className="w-9 h-9 -ml-1 flex items-center justify-center rounded-xl text-[#1A102F] hover:bg-purple-100/60 active:scale-95 transition-all cursor-pointer"
+            aria-label="Open sidebar menu"
+          >
+            <Menu className="w-5 h-5 text-[#1A102F]" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode('dashboard')}
+            className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-black hover:bg-gray-100 transition-colors cursor-pointer"
+            aria-label="Back to dashboard"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
         {/* Center Illustration & Options */}
         <div className="space-y-6 my-auto pt-4 pb-6 max-w-sm mx-auto w-full">
           <div className="text-center space-y-2">
@@ -927,6 +961,26 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#FDF8FD] via-[#FFF9FA] to-[#FAF8FD] flex flex-col justify-between p-6 font-sans text-[#1A102F]">
         <div className="space-y-4 max-w-sm mx-auto w-full">
+          {/* Top Header with Menu & Exit */}
+          <div className="flex items-center justify-between -mt-1 pb-1">
+            <button
+              type="button"
+              onClick={() => onToggleMobileMenu && onToggleMobileMenu()}
+              className="w-9 h-9 -ml-1 flex items-center justify-center rounded-xl text-[#1A102F] hover:bg-purple-100/60 active:scale-95 transition-all cursor-pointer"
+              aria-label="Open sidebar menu"
+            >
+              <Menu className="w-5 h-5 text-[#1A102F]" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('dashboard')}
+              className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-black hover:bg-gray-100 transition-colors cursor-pointer"
+              aria-label="Back to dashboard"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
           {/* Top Title with 3D Megaphone Graphic */}
           <div className="flex items-start justify-between pt-1">
             <div className="space-y-1">
@@ -6292,10 +6346,30 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
               <button
                 type="button"
                 onClick={() => {
-                  alert('Campaign posted successfully!');
-                  setViewMode('dashboard');
+                  const newCamp: MobileCampaignItem = {
+                    id: `camp-${Date.now()}`,
+                    number: campaignsList.length + 1,
+                    name: campaignName.trim() || 'Summer Special',
+                    subtitle: audienceDesc.trim() || 'Exclusive rewards for our customers',
+                    status: 'ACTIVE',
+                    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&auto=format&fit=crop&q=80',
+                    scannedCount: 0,
+                    redeemedCount: 0,
+                    totalSales: 0,
+                    type: rewardType === 'cashback' ? 'Cashback' : rewardType === 'discount' ? 'Discount' : rewardType === 'free_item' ? 'Free Item' : 'Special Offer',
+                    targetAudience: audienceCategory === 'new' ? 'New Customers' : audienceCategory === 'existing' ? 'Existing Customers' : 'All Customers',
+                    validity: `${startDate} - ${endDate}`,
+                    condition: conditionType === 'visit' ? `Visits >= ${visitQualifyingCount}` : 'Special Condition',
+                    offer: rewardType === 'cashback' ? `${cashbackPercent}% Cashback` : rewardType === 'discount' ? `${discountRewardPercent}% Off` : 'Special Reward',
+                    expiryDate: endDate,
+                    branches: [
+                      { name: 'Indiranagar', location: 'Bangalore', scan: 0, redeem: 0, sales: 0 }
+                    ]
+                  };
+                  setCampaignsList((prev) => [newCamp, ...prev]);
+                  setShowSuccessModal(true);
                 }}
-                className="w-full py-4 bg-[#2D0F55] hover:bg-[#3D1472] text-white rounded-2xl text-xs font-black shadow-lg shadow-purple-950/20 hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-4 bg-[#2D0F55] hover:bg-[#3D1472] text-white rounded-2xl text-xs font-black shadow-lg shadow-purple-950/20 hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
               >
                 <Send className="w-4 h-4" />
                 <span>Post Campaign</span>
@@ -6367,6 +6441,131 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
           ) : (
             <div />
           )}
+        </div>
+      )}
+
+      {/* Campaign Published Success Modal */}
+      {showSuccessModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+          onClick={() => {
+            setShowSuccessModal(false);
+            setViewMode('dashboard');
+            setCurrentStep(1);
+          }}
+        >
+          <div
+            className="relative w-full max-w-xs sm:max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-purple-100 text-center animate-in zoom-in-95 duration-200 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Background Decorative Glow */}
+            <div className="absolute -top-10 -right-10 w-28 h-28 bg-[#EC4899]/15 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-10 -left-10 w-28 h-28 bg-[#6366F1]/15 rounded-full blur-2xl pointer-events-none" />
+
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => {
+                setShowSuccessModal(false);
+                setViewMode('dashboard');
+                setCurrentStep(1);
+              }}
+              className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+              aria-label="Close modal"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {/* Glowing Success Badge Icon */}
+            <div className="relative mx-auto w-16 h-16 mb-4 flex items-center justify-center">
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-[#6366F1] to-[#EC4899] opacity-30 blur-md animate-pulse" />
+              <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#5844A8] via-[#7C3AED] to-[#EC4899] flex items-center justify-center shadow-lg shadow-purple-500/30 text-white">
+                <CheckCircle2 className="w-8 h-8 text-white" />
+              </div>
+            </div>
+
+            {/* Header */}
+            <h3 className="text-xl font-black text-[#1A102F] tracking-tight">Campaign Posted!</h3>
+            <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">
+              Your campaign is now live and will start reaching your target audience immediately.
+            </p>
+
+            {/* Campaign Summary Card */}
+            <div className="my-4 p-3.5 bg-gradient-to-b from-[#FAF8FD] to-[#F5F0FF] rounded-2xl border border-[#EDE4F8] text-left space-y-2">
+              <div className="flex items-center justify-between pb-2 border-b border-[#E8DEF2]">
+                <div className="flex items-center gap-1.5 min-w-0 pr-2">
+                  <Sparkles className="w-4 h-4 text-[#7C3AED] shrink-0" />
+                  <span className="text-xs font-black text-[#1A102F] truncate">
+                    {campaignName || 'Summer Special'}
+                  </span>
+                </div>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200 shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Active
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-[11px]">
+                <div>
+                  <span className="text-gray-400 block text-[10px] font-medium">Audience</span>
+                  <span className="font-bold text-[#1A102F]">
+                    {audienceCategory === 'all'
+                      ? 'All Customers'
+                      : audienceCategory === 'new'
+                      ? 'New Customers'
+                      : 'Existing Customers'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-400 block text-[10px] font-medium">Offer</span>
+                  <span className="font-bold text-[#7C3AED]">
+                    {rewardType === 'cashback'
+                      ? `${cashbackPercent}% Cashback`
+                      : rewardType === 'discount'
+                      ? `${discountRewardPercent}% Off`
+                      : rewardType === 'free_item'
+                      ? 'Free Item'
+                      : 'Special Reward'}
+                  </span>
+                </div>
+                <div className="col-span-2">
+                  <span className="text-gray-400 block text-[10px] font-medium">Duration</span>
+                  <span className="font-bold text-[#1A102F]">
+                    {startDate} – {endDate}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-2 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  setViewMode('dashboard');
+                  setCurrentStep(1);
+                }}
+                className="w-full py-3.5 bg-[#2D0F55] hover:bg-[#3D1472] text-white rounded-2xl text-xs font-black shadow-md shadow-purple-950/20 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <span>Go to Dashboard</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  setCurrentStep(1);
+                  setCreationSetupStep('choose_type');
+                }}
+                className="w-full py-3 bg-white border border-[#E9D5FF] text-[#2D0F55] hover:bg-purple-50/50 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Create Another Campaign</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
