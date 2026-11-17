@@ -532,7 +532,7 @@ export interface StaffPageProps {
   onNavigate?: (route: any) => void;
 }
 
-const WebStaffView: React.FC<StaffPageProps> = () => {
+const WebStaffView: React.FC<StaffPageProps> = ({ onNavigate }) => {
   const { checkAndDeductCredit } = useWallet();
   const dispatch = useDispatch<AppDispatch>();
   const { staffList: reduxStaffList } = useSelector((state: RootState) => state.staff);
@@ -1121,6 +1121,15 @@ const WebStaffView: React.FC<StaffPageProps> = () => {
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Invite Staff</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate?.('/staff-portal')}
+                    className="px-3 py-1.5 rounded-xl bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                    title="Launch Waiter & Floor Table Service Portal"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Floor Service Portal</span>
                   </button>
                 </div>
               </div>

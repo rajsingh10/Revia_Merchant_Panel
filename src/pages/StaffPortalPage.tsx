@@ -42,6 +42,7 @@ export const StaffPortalPage: React.FC<StaffPortalPageProps> = ({ onNavigate }) 
   // Navigation State
   const [activeTab, setActiveTab] = useState<StaffPortalTab>('tables');
   const [subView, setSubView] = useState<StaffPortalSubView>('list');
+  const [selectedBranch, setSelectedBranch] = useState<string>('Downtown Flagship');
 
   // Live Data State
   const [tables, setTables] = useState<DiningTable[]>(MOCK_TABLES);
@@ -298,18 +299,21 @@ export const StaffPortalPage: React.FC<StaffPortalPageProps> = ({ onNavigate }) 
   const readyOrdersCount = orders.filter(o => o.status === 'ready_to_serve' || o.status === 'Ready to Serve').length;
 
   return (
-    <div className="min-h-screen bg-[#F4F4F6] text-gray-900 font-sans flex flex-col justify-between selection:bg-[#4A154B]/20 selection:text-[#4A154B]">
+    <div className="min-h-screen bg-[#FAF8F5] text-[#1A1615] font-sans flex flex-col justify-between selection:bg-[#5844A8]/20 selection:text-[#5844A8]">
       {/* Responsive Canvas Container (Mobile, Tablet, Desktop) */}
-      <div className="w-full max-w-7xl mx-auto min-h-screen flex flex-col bg-[#F9F9FB] shadow-xl relative pb-24 lg:pb-10 border-x border-gray-200/60">
+      <div className="w-full max-w-[1600px] mx-auto min-h-screen flex flex-col relative pb-24 lg:pb-12">
         {/* Sticky Header with Desktop Navigation */}
         <StaffPortalHeader 
-          branchName="Noida - Sector 18" 
+          branchName={selectedBranch}
+          branches={['Downtown Flagship', 'Northside Mall', 'West End Kiosk', 'Noida - Sector 18']}
+          onSelectBranch={setSelectedBranch}
           activeTab={activeTab}
           onTabChange={handleTabChange}
           pendingRequestsCount={pendingRequestsCount}
           readyOrdersCount={readyOrdersCount}
           onOpenNotifications={() => setSubView('notifications')}
           onOpenProfile={() => setSubView('staff_menu')}
+          onExitToMerchant={() => onNavigate ? onNavigate('/dashboard') : (window.location.href = '/dashboard')}
         />
 
         {/* Main Dynamic View Router */}

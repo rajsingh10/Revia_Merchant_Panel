@@ -354,6 +354,15 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
             <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
           </button>
           <button
+            type="button"
+            onClick={() => onNavigate?.('/staff-portal' as any)}
+            className="px-3 py-2 rounded-xl border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] text-xs font-bold text-[#5844A8] flex items-center gap-1.5 shadow-2xs hover:border-[#5844A8]/40 transition cursor-pointer"
+            title="Launch Waiter & Floor Table Service Portal"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#5844A8]" />
+            <span className="hidden sm:inline">Floor Portal</span>
+          </button>
+          <button
             onClick={() => {
               setIsAddStaffOpen(true);
               setAddStaffStep(1);

@@ -58,7 +58,7 @@ export const FoodOrdersView: React.FC<FoodOrdersViewProps> = ({
   });
 
   return (
-    <div className="px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-7xl mx-auto space-y-6">
+    <div className="px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-[1600px] w-full mx-auto space-y-6">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -68,8 +68,8 @@ export const FoodOrdersView: React.FC<FoodOrdersViewProps> = ({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="px-3 py-1 bg-purple-50 text-purple-900 text-xs font-bold rounded-xl border border-purple-200">
-            MY BRANCH
+          <span className="px-3 py-1 bg-[#5844A8]/10 text-[#5844A8] text-xs font-bold rounded-xl border border-[#5844A8]/20">
+            LIVE KITCHEN FEED
           </span>
         </div>
       </div>
