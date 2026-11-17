@@ -85,6 +85,19 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
       mql.removeEventListener?.('change', handleMedia);
     };
   }, []);
+
+  // Listen for bottom bar add action to open wizard
+  useEffect(() => {
+    const handleBottomBarAdd = (e: any) => {
+      if (!e.detail || e.detail.type === 'qrcode' || !e.detail.type) {
+        setPageMode('wizard');
+      }
+    };
+    window.addEventListener('revia:add-action', handleBottomBarAdd);
+    return () => {
+      window.removeEventListener('revia:add-action', handleBottomBarAdd);
+    };
+  }, []);
   const dispatch = useDispatch<AppDispatch>();
   const { qrCodes, currentQrCode, currentHistory, isLoading, error } = useSelector((state: RootState) => state.qrCode);
   const { branches } = useSelector((state: RootState) => state.branch);
@@ -109,9 +122,10 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [selectedActionAsset, setSelectedActionAsset] = useState<any>(null);
+  const [isMobilePreviewOpen, setIsMobilePreviewOpen] = useState(false);
 
   // 5-Step QR Generator Wizard State (Images 4 & 5)
-  const [pageMode, setPageMode] = useState<'wizard' | 'library'>('wizard');
+  const [pageMode, setPageMode] = useState<'wizard' | 'library'>('library');
   const [qrStep, setQrStep] = useState<number>(1);
   const [selectedCampaignId, setSelectedCampaignId] = useState<string>('first-visit');
   const [campaignSearch, setCampaignSearch] = useState<string>('');
@@ -181,7 +195,146 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
     status: 'Active'
   });
 
-  const [assets, setAssets] = useState<any[]>([]);
+  const STATIC_QR_ASSETS = [
+    {
+      id: '8',
+      title: 'Downtown Flagship • Chef Table Stand #08',
+      status: 'Active',
+      inspecting: false,
+      location: 'Downtown Flagship - Open Kitchen Counter Stand',
+      material: 'Clear Cast Acrylic (Walnut Base & NFC)',
+      destination: 'Revia Privé Member Perks & Secret Tasting Menu',
+      scans: '5,210',
+      tag: 'CHEF-TABLE',
+      raw: {
+        id: '8',
+        stand_name: 'Chef Table Stand #08',
+        branch: { name: 'Downtown Flagship', address: 'Connaught Place, New Delhi' },
+        qr_image_url: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://revia.club/stand/8'
+      }
+    },
+    {
+      id: '1',
+      title: 'Downtown Flagship • Tabletop Stand #01',
+      status: 'Active',
+      inspecting: false,
+      location: 'Downtown Flagship - Main Dining, Table 01',
+      material: 'Clear Cast Acrylic (Champagne Gold Foil)',
+      destination: 'Revia Black Tier VIP Welcome + Instant Table Perk',
+      scans: '4,820',
+      tag: 'TABLE-01',
+      raw: {
+        id: '1',
+        stand_name: 'Tabletop Stand #01',
+        branch: { name: 'Downtown Flagship', address: 'Connaught Place, New Delhi' },
+        qr_image_url: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://revia.club/stand/1'
+      }
+    },
+    {
+      id: '2',
+      title: 'Downtown Flagship • Bar Counter Stand #02',
+      status: 'Active',
+      inspecting: false,
+      location: 'Downtown Flagship - Espresso & Brew Bar Counter',
+      material: 'Milled Solid Brass (Walnut Base)',
+      destination: 'Loyalty App Install & Instant 100 Reward Points',
+      scans: '8,940',
+      tag: 'COUNTER-01',
+      raw: {
+        id: '2',
+        stand_name: 'Bar Counter Stand #02',
+        branch: { name: 'Downtown Flagship', address: 'Connaught Place, New Delhi' },
+        qr_image_url: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://revia.club/stand/2'
+      }
+    },
+    {
+      id: '3',
+      title: 'Northside Mall • Window Table Stand #03',
+      status: 'Active',
+      inspecting: true,
+      location: 'Northside Mall - Level 2 Atrium, Table 05',
+      material: 'Clear Cast Acrylic (Frosted Edge)',
+      destination: 'VIP Double Stamp Promo & Summer Menu Pass',
+      scans: '3,150',
+      tag: 'TABLE-05',
+      raw: {
+        id: '3',
+        stand_name: 'Window Table Stand #03',
+        branch: { name: 'Northside Mall', address: 'Select Citywalk, Saket' },
+        qr_image_url: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://revia.club/stand/3'
+      }
+    },
+    {
+      id: '4',
+      title: 'Northside Mall • Order Counter #04',
+      status: 'Active',
+      inspecting: false,
+      location: 'Northside Mall - Express POS Terminal 1',
+      material: 'Clear Cast Acrylic (Matte Black Base)',
+      destination: 'Scan to Pay & Digital Stamp Check-in',
+      scans: '6,430',
+      tag: 'COUNTER-02',
+      raw: {
+        id: '4',
+        stand_name: 'Order Counter #04',
+        branch: { name: 'Northside Mall', address: 'Select Citywalk, Saket' },
+        qr_image_url: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://revia.club/stand/4'
+      }
+    },
+    {
+      id: '5',
+      title: 'Eastside Hub • Outdoor Patio Stand #05',
+      status: 'Active',
+      inspecting: false,
+      location: 'Eastside Hub - Garden Terrace, Table 12',
+      material: 'Weatherproof Acrylic + UV Coating',
+      destination: 'Weekend Brunch Boost & 20% Off Appetizers',
+      scans: '2,870',
+      tag: 'TABLE-12',
+      raw: {
+        id: '5',
+        stand_name: 'Outdoor Patio Stand #05',
+        branch: { name: 'Eastside Hub', address: 'Indiranagar 100ft Road' },
+        qr_image_url: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://revia.club/stand/5'
+      }
+    },
+    {
+      id: '6',
+      title: 'Downtown Flagship • VIP Lounge Stand #06',
+      status: 'Active',
+      inspecting: false,
+      location: 'Downtown Flagship - Private Prive Salon Mezzanine',
+      material: 'Milled Solid Brass (Gold Mirror Finish)',
+      destination: 'Artisanal Tasting Flight Reservation Pass',
+      scans: '1,940',
+      tag: 'LOUNGE-01',
+      raw: {
+        id: '6',
+        stand_name: 'VIP Lounge Stand #06',
+        branch: { name: 'Downtown Flagship', address: 'Connaught Place, New Delhi' },
+        qr_image_url: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://revia.club/stand/6'
+      }
+    },
+    {
+      id: '7',
+      title: 'West End Kiosk • Takeout Pick-up #07',
+      status: 'Inactive',
+      inspecting: false,
+      location: 'West End Kiosk - Dispatch Window',
+      material: 'Recycled Acrylic Puck (NFC Embedded)',
+      destination: 'Takeout Stamp Collect & Mobile Re-order',
+      scans: '980',
+      tag: 'PICKUP-01',
+      raw: {
+        id: '7',
+        stand_name: 'Takeout Pick-up #07',
+        branch: { name: 'West End Kiosk', address: 'Cyber Hub, Gurugram' },
+        qr_image_url: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://revia.club/stand/7'
+      }
+    }
+  ];
+
+  const [assets, setAssets] = useState<any[]>(STATIC_QR_ASSETS);
 
   useEffect(() => {
     if (qrCodes && qrCodes.length > 0) {
@@ -224,8 +377,10 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
       if (mapped.length > 0 && !activeAsset) {
         setActiveAsset(mapped[0].id);
       }
+    } else {
+      setAssets(STATIC_QR_ASSETS);
     }
-  }, [qrCodes]);
+  }, [qrCodes, assetTypes]);
 
   const [isAssetTypeModalOpen, setIsAssetTypeModalOpen] = useState(false);
   const [assetTypeName, setAssetTypeName] = useState('');
@@ -1546,13 +1701,12 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
   // -------------------------------------------------------------
   // MAIN RENDER CONTROLLER
   // -------------------------------------------------------------
-  if (isMobile) {
-    return <MobileQrCodesView onNavigate={onNavigate} onClose={() => setIsMobile(false)} />;
-  }
-
   if (pageMode === 'wizard') {
+    if (isMobile) {
+      return <MobileQrCodesView onNavigate={onNavigate} onClose={() => setPageMode('library')} />;
+    }
     return (
-      <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
+      <div className="p-4 sm:p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
         {feedbackToast && (
           <div className="fixed bottom-6 right-6 z-50 bg-[#1A1615] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-semibold border border-[#3D3732] animate-in slide-in-from-bottom-5 fade-in">
             <CheckCircle2 className="w-5 h-5 text-[#15803D]" />
@@ -1561,6 +1715,18 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
         )}
 
         <div className="max-w-[1200px] mx-auto space-y-6">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => setPageMode('library')}
+              className="flex items-center gap-1.5 text-xs font-bold text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] px-3.5 py-2 rounded-xl shadow-2xs cursor-pointer transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" /> Back to Asset Hub
+            </button>
+            <span className="text-xs font-bold text-[#5844A8] bg-purple-50 px-3 py-1 rounded-full border border-purple-100">
+              Step {qrStep} of 5
+            </span>
+          </div>
+
           {renderQrDesktopStepper()}
 
           {qrStep === 1 && renderQrStep1()}
@@ -1575,7 +1741,7 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
 
   return (
     <>
-      <div className="p-4 lg:p-6 bg-[#FAF8F5] min-h-[calc(100vh-4rem)] space-y-6 max-w-[1600px] mx-auto w-full">
+      <div className="p-3.5 sm:p-6 bg-[#FAF8F5] min-h-[calc(100vh-4rem)] space-y-5 sm:space-y-6 max-w-[1600px] mx-auto w-full">
         {/* Bottom Toast Feedback */}
         {feedbackToast && (
           <div className="fixed bottom-6 right-6 z-50 bg-[#1A1615] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-semibold border border-[#3D3732] animate-in slide-in-from-bottom-5 fade-in">
@@ -1588,24 +1754,24 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-1.5">
-              <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">
+              <h1 className="text-xl sm:text-2xl lg:text-[28px] font-bold text-[#1A1615] tracking-tight">
                 QR Codes &amp; Physical Asset Hub
               </h1>
             </div>
-            <p className="text-sm text-[#6E6A66] max-w-3xl">
+            <p className="text-xs sm:text-sm text-[#6E6A66] max-w-3xl leading-relaxed">
               Manage contactless tabletop stands, counter acrylics, digital pass enrollment codes, and multi-venue scan routing with instantaneous cloud redirect dispatch.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 shrink-0">
             <button
               onClick={() => setPageMode('wizard')}
-              className="flex items-center gap-2 px-4 py-2 text-[13px] font-bold text-white bg-[#5844A8] hover:bg-[#47368E] rounded-lg transition-all shadow-xs cursor-pointer"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 text-[13px] font-bold text-white bg-[#5844A8] hover:bg-[#47368E] rounded-xl transition-all shadow-xs cursor-pointer active:scale-98"
             >
               <Plus className="w-4 h-4 text-white" />
               Generate QR Code (Wizard)
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-xs cursor-pointer">
+            <button className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-xl transition-colors shadow-xs cursor-pointer active:scale-98">
               <Download className="w-4 h-4" />
               Download Print PDF Pack
             </button>
@@ -1613,60 +1779,60 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
         </div>
 
         {/* 3. TOP KPI METRICS CARDS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Metric 1 */}
-          <div className="bg-white rounded-xl border border-[#EFECE6] p-5 shadow-xs flex flex-col justify-between">
-            <div className="flex justify-between items-start mb-2">
-              <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">Total Active Stands</div>
-              <span className="px-2 py-0.5 text-[10px] font-bold bg-[#FDF8EB] text-[#D4A753] border border-[#F3E5C8] rounded">
-                +3 this month
+          <div className="bg-white rounded-2xl border border-[#EFECE6] p-3.5 sm:p-5 shadow-xs flex flex-col justify-between">
+            <div className="flex justify-between items-start gap-1 mb-2">
+              <div className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider sm:tracking-widest text-[#9E9A93] truncate">Total Active Stands</div>
+              <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold bg-[#FDF8EB] text-[#D4A753] border border-[#F3E5C8] rounded shrink-0">
+                +3 mo
               </span>
             </div>
             <div>
-              <div className="text-2xl font-bold text-[#1A1615] mb-1">18 Stands</div>
-              <div className="text-[11px] font-semibold text-[#6E6A66]">16 Acrylic • 2 Milled Brass</div>
+              <div className="text-xl sm:text-2xl font-bold text-[#1A1615] mb-0.5 sm:mb-1">18 Stands</div>
+              <div className="text-[10px] sm:text-[11px] font-semibold text-[#6E6A66] truncate">16 Acrylic • 2 Brass</div>
             </div>
           </div>
 
           {/* Metric 2 */}
-          <div className="bg-white rounded-xl border border-[#EFECE6] p-5 shadow-xs flex flex-col justify-between">
-            <div className="flex justify-between items-start mb-2">
-              <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">30-Day Physical Scans</div>
-              <span className="px-2 py-0.5 text-[10px] font-bold bg-[#E6F4ED] text-[#0D7A53] border border-[#BCE3D1] rounded flex items-center gap-0.5">
-                <TrendingUp className="w-3 h-3" /> +21.4%
+          <div className="bg-white rounded-2xl border border-[#EFECE6] p-3.5 sm:p-5 shadow-xs flex flex-col justify-between">
+            <div className="flex justify-between items-start gap-1 mb-2">
+              <div className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider sm:tracking-widest text-[#9E9A93] truncate">30D Scans</div>
+              <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold bg-[#E6F4ED] text-[#0D7A53] border border-[#BCE3D1] rounded flex items-center gap-0.5 shrink-0">
+                <TrendingUp className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> +21%
               </span>
             </div>
             <div>
-              <div className="text-2xl font-bold text-[#1A1615] mb-1">42,890 scans</div>
-              <div className="text-[11px] font-semibold text-[#6E6A66]">Table &amp; Counter combined</div>
+              <div className="text-xl sm:text-2xl font-bold text-[#1A1615] mb-0.5 sm:mb-1">42,890</div>
+              <div className="text-[10px] sm:text-[11px] font-semibold text-[#6E6A66] truncate">Table &amp; Counter</div>
             </div>
           </div>
 
           {/* Metric 3 */}
-          <div className="bg-white rounded-xl border border-[#EFECE6] p-5 shadow-xs flex flex-col justify-between">
-            <div className="flex justify-between items-start mb-2">
-              <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">Scan-to-Pass Enrolled</div>
-              <span className="px-2 py-0.5 text-[10px] font-bold bg-[#E0F2FE] text-[#0369A1] border border-[#BAE6FD] rounded">
+          <div className="bg-white rounded-2xl border border-[#EFECE6] p-3.5 sm:p-5 shadow-xs flex flex-col justify-between">
+            <div className="flex justify-between items-start gap-1 mb-2">
+              <div className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider sm:tracking-widest text-[#9E9A93] truncate">Scan-to-Pass</div>
+              <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold bg-[#E0F2FE] text-[#0369A1] border border-[#BAE6FD] rounded shrink-0">
                 High Yield
               </span>
             </div>
             <div>
-              <div className="text-2xl font-bold text-[#1A1615] mb-1">68.2% conversion</div>
-              <div className="text-[11px] font-semibold text-[#6E6A66]">Guest to Wallet Member</div>
+              <div className="text-xl sm:text-2xl font-bold text-[#1A1615] mb-0.5 sm:mb-1">68.2%</div>
+              <div className="text-[10px] sm:text-[11px] font-semibold text-[#6E6A66] truncate">Guest to Member</div>
             </div>
           </div>
 
           {/* Metric 4 */}
-          <div className="bg-white rounded-xl border border-[#EFECE6] p-5 shadow-xs flex flex-col justify-between">
-            <div className="flex justify-between items-start mb-2">
-              <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">Routing Health</div>
-              <span className="px-2 py-0.5 text-[10px] font-bold bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB] rounded uppercase">
-                28ms LATENCY
+          <div className="bg-white rounded-2xl border border-[#EFECE6] p-3.5 sm:p-5 shadow-xs flex flex-col justify-between">
+            <div className="flex justify-between items-start gap-1 mb-2">
+              <div className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider sm:tracking-widest text-[#9E9A93] truncate">Routing Health</div>
+              <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB] rounded uppercase shrink-0">
+                28ms
               </span>
             </div>
             <div>
-              <div className="text-2xl font-bold text-[#1A1615] mb-1">99.9% Online</div>
-              <div className="text-[11px] font-semibold text-[#6E6A66]">Zero 404 dead links</div>
+              <div className="text-xl sm:text-2xl font-bold text-[#1A1615] mb-0.5 sm:mb-1">99.9%</div>
+              <div className="text-[10px] sm:text-[11px] font-semibold text-[#6E6A66] truncate">Online • 0 dead links</div>
             </div>
           </div>
         </div>
@@ -1735,31 +1901,43 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
                 return (
                   <div
                     key={asset.id}
-                    onClick={() => setActiveAsset(asset.id)}
-                    className={`bg-white rounded-xl border-2 p-5 transition-all cursor-pointer shadow-xs hover:shadow-sm ${isActive ? 'border-[#D4A753]' : 'border-[#EFECE6] hover:border-[#D1CDC7]'
+                    onClick={() => {
+                      setActiveAsset(asset.id);
+                      if (window.innerWidth < 1024) {
+                        setIsMobilePreviewOpen(true);
+                      }
+                    }}
+                    className={`bg-white rounded-2xl border-2 p-4 sm:p-5 transition-all cursor-pointer shadow-xs hover:shadow-sm ${isActive ? 'border-[#5844A8]' : 'border-[#EFECE6] hover:border-[#D1CDC7]'
                       }`}
                   >
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-start gap-3 sm:gap-4">
                       {/* Checkbox mock */}
                       <div className="shrink-0 mt-1">
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${isActive ? 'bg-[#D4A753] border-[#D4A753] text-white' : 'bg-[#FAF8F5] border-[#D1CDC7]'}`}>
+                        <div className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-colors ${isActive ? 'bg-[#5844A8] border-[#5844A8] text-white' : 'bg-[#FAF8F5] border-[#D1CDC7]'}`}>
                           {isActive && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
                         </div>
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-4 mb-2">
-                          <h3 className="text-[15px] font-bold text-[#1A1615] truncate">{asset.title}</h3>
-                          <div className="flex items-center gap-2 shrink-0 relative">
+                        <div className="flex items-start justify-between gap-2 sm:gap-4 mb-2">
+                          <h3 className="text-sm sm:text-[15px] font-bold text-[#1A1615] truncate">{asset.title}</h3>
+                          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 relative">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setActiveAsset(asset.id); setIsMobilePreviewOpen(true); }}
+                              className="p-1.5 text-[#9E9A93] hover:text-[#5844A8] rounded-lg bg-[#FAF8F5] transition-colors cursor-pointer lg:hidden"
+                              title="Preview Stand"
+                            >
+                              <Smartphone className="w-3.5 h-3.5" />
+                            </button>
                             <button
                               onClick={(e) => { e.stopPropagation(); setSelectedActionAsset(asset); setIsEditModalOpen(true); }}
-                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded bg-[#FAF8F5] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded-lg bg-[#FAF8F5] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                             <button
                               onClick={(e) => { e.stopPropagation(); setSelectedActionAsset(asset); setIsDownloadModalOpen(true); }}
-                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded bg-[#FAF8F5] transition-colors cursor-pointer"><Download className="w-3.5 h-3.5" /></button>
+                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded-lg bg-[#FAF8F5] transition-colors cursor-pointer"><Download className="w-3.5 h-3.5" /></button>
                             <button
                               onClick={(e) => { e.stopPropagation(); setOpenDropdown(openDropdown === asset.id ? null : asset.id); }}
-                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded bg-[#FAF8F5] transition-colors cursor-pointer"><MoreHorizontal className="w-3.5 h-3.5" /></button>
+                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded-lg bg-[#FAF8F5] transition-colors cursor-pointer"><MoreHorizontal className="w-3.5 h-3.5" /></button>
 
                             {/* Dropdown Menu */}
                             {openDropdown === asset.id && (
@@ -1820,7 +1998,7 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
           </div>
 
           {/* 5. RIGHT SECTION: LIVE VECTOR PREVIEW & ASSET CUSTOMIZER */}
-          <div className="lg:col-span-5 sticky top-6 space-y-4">
+          <div className="hidden lg:block lg:col-span-5 sticky top-6 space-y-4">
             {!selectedAssetDetails ? (
               <div className="bg-white rounded-xl border border-[#EFECE6] shadow-sm flex items-center justify-center h-[calc(100vh-8rem)] text-[#9E9A93] font-semibold text-sm">
                 Select an asset to view details
@@ -1988,6 +2166,117 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Asset Preview Modal / Bottom Sheet */}
+      {isMobilePreviewOpen && selectedAssetDetails && (
+        <div className="lg:hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 animate-in fade-in duration-200">
+          <div
+            className="fixed inset-0"
+            onClick={() => setIsMobilePreviewOpen(false)}
+          />
+          <div className="relative bg-white w-full sm:max-w-md max-h-[90vh] rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl border-t sm:border border-gray-100 overflow-y-auto z-10 animate-in slide-in-from-bottom duration-200 flex flex-col pb-[max(env(safe-area-inset-bottom,0px),20px)]">
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
+              <div className="min-w-0 pr-2">
+                <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">Stand Preview</div>
+                <h3 className="text-base font-bold text-[#1A1615] truncate">
+                  {selectedAssetDetails.title}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobilePreviewOpen(false)}
+                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center shrink-0 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Realistic Printable Stand Mockup Box */}
+            <div className="flex justify-center my-2">
+              <div className="w-[230px] bg-white rounded-t-[16px] shadow-xl border border-[#EFECE6] relative overflow-hidden flex flex-col items-center pt-5 pb-4">
+                <div className="absolute top-0 left-0 right-0 h-full bg-gradient-to-br from-white/80 to-transparent pointer-events-none" />
+                <div className="text-[9px] font-bold uppercase tracking-widest text-[#9E9A93] mb-1.5 z-10">
+                  • {selectedAssetDetails.title.split(' • ')[0].toUpperCase()}
+                </div>
+                <h4 className="text-center text-[13px] font-black text-[#1A1615] leading-tight px-4 z-10">
+                  SCAN TO JOIN REVIA PRIVÉ
+                </h4>
+                <p className="text-center text-[9px] font-semibold text-[#6E6A66] px-4 mt-1 mb-4 z-10 leading-snug">
+                  Unlock complimentary artisanal pour-over on your next reservation.
+                </p>
+
+                {/* Vector QR Code */}
+                <div className="w-28 h-28 bg-white border border-[#EFECE6] rounded-lg p-2 shadow-xs mb-3 z-10 relative flex items-center justify-center">
+                  {selectedAssetDetails.raw?.qr_image_url ? (
+                    <img src={selectedAssetDetails.raw.qr_image_url} alt="QR Code" className="w-full h-full object-contain" />
+                  ) : (
+                    <QrCode className="w-full h-full text-[#1A1615]" strokeWidth={1} />
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1.5 text-[8.5px] font-bold text-[#1A1615] uppercase tracking-widest mb-4 z-10">
+                  <Smartphone className="w-3 h-3" /> OR TAP PHONE HERE (NFC)
+                </div>
+
+                <div className="w-full flex items-center justify-between px-4 text-[8px] font-bold text-[#9E9A93] tracking-widest uppercase z-10">
+                  <span>{selectedAssetDetails.location.toUpperCase()}</span>
+                  <span>ROUTING {selectedAssetDetails.id}</span>
+                </div>
+
+                {/* Wood Base */}
+                <div className="absolute bottom-0 left-0 right-0 h-3 bg-[#4A3B2C] border-t-2 border-[#33281E] shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]" />
+              </div>
+            </div>
+
+            {/* Stand Specs */}
+            <div className="mt-4 space-y-2 bg-[#FAF8F5] p-3.5 rounded-2xl border border-[#EFECE6] text-xs">
+              <div className="flex items-center justify-between text-[#6E6A66]">
+                <span className="font-medium">Venue & Location</span>
+                <span className="font-bold text-[#1A1615]">{selectedAssetDetails.location}</span>
+              </div>
+              <div className="flex items-center justify-between text-[#6E6A66]">
+                <span className="font-medium">Material Type</span>
+                <span className="font-bold text-[#1A1615]">{selectedAssetDetails.material}</span>
+              </div>
+              <div className="flex items-center justify-between text-[#6E6A66]">
+                <span className="font-medium">Cloud Target</span>
+                <span className="font-bold text-[#1A1615] truncate max-w-[180px]">{selectedAssetDetails.destination}</span>
+              </div>
+              <div className="flex items-center justify-between text-[#6E6A66]">
+                <span className="font-medium">30D Scan Count</span>
+                <span className="font-bold text-[#0D7A53]">{selectedAssetDetails.scans} scans</span>
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex items-center gap-2 mt-4 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedActionAsset(selectedAssetDetails);
+                  setIsDownloadModalOpen(true);
+                  setIsMobilePreviewOpen(false);
+                }}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white border border-[#EAE6E1] text-xs font-bold text-[#1A1615] hover:bg-gray-50 cursor-pointer"
+              >
+                <Download className="w-4 h-4" /> Download QR
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedActionAsset(selectedAssetDetails);
+                  setIsEditModalOpen(true);
+                  setIsMobilePreviewOpen(false);
+                }}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#5844A8] text-white text-xs font-bold hover:bg-[#47368E] cursor-pointer"
+              >
+                <Edit2 className="w-4 h-4" /> Edit Stand
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Edit Modal */}
       {isEditModalOpen && selectedActionAsset && (

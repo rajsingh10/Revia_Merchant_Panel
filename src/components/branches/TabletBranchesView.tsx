@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Store,
   Building2,
@@ -151,6 +151,19 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
   const [isAddBranchModalOpen, setIsAddBranchModalOpen] = useState(false);
   const [isEditBranchModalOpen, setIsEditBranchModalOpen] = useState(false);
   const [reportDownloaded, setReportDownloaded] = useState(false);
+
+  // Listen for bottom bar add action
+  useEffect(() => {
+    const handleBottomBarAdd = (e: any) => {
+      if (!e.detail || e.detail.type === 'branch' || !e.detail.type) {
+        setIsAddBranchModalOpen(true);
+      }
+    };
+    window.addEventListener('revia:add-action', handleBottomBarAdd);
+    return () => {
+      window.removeEventListener('revia:add-action', handleBottomBarAdd);
+    };
+  }, []);
 
   // New Branch Form state
   const [newBranchForm, setNewBranchForm] = useState({
@@ -1728,50 +1741,7 @@ export const TabletBranchesView: React.FC<TabletBranchesViewProps> = ({
         )}
       </div>
 
-      {/* ======================================================== */}
-      {/* TABLET BOTTOM NAVIGATION BAR (Matching iPad Pro) */}
-      {/* ======================================================== */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-[#F1EFEA] px-6 py-2.5 z-40 flex items-center justify-around shadow-lg">
-        <button
-          onClick={() => onNavigate?.('/dashboard' as any)}
-          className="flex flex-col items-center gap-1 text-[10px] font-bold text-[#8C877D] hover:text-[#1A1615] transition-colors cursor-pointer"
-        >
-          <Store className="w-5 h-5" />
-          <span>Overview</span>
-        </button>
 
-        <button
-          onClick={() => setLevel('states')}
-          className="flex flex-col items-center gap-1 text-[10px] font-bold text-[#5844A8] cursor-pointer"
-        >
-          <Building2 className="w-5 h-5 text-[#5844A8]" />
-          <span>Branches</span>
-        </button>
-
-        {/* Center Floating Plus Button */}
-        <button
-          onClick={() => setIsAddBranchModalOpen(true)}
-          className="w-12 h-12 -mt-5 rounded-full bg-[#5844A8] text-white flex items-center justify-center shadow-lg shadow-[#5844A8]/30 hover:bg-[#47368E] transition-all cursor-pointer"
-        >
-          <Plus className="w-6 h-6 stroke-[2.5]" />
-        </button>
-
-        <button
-          onClick={() => onNavigate?.('/campaigns' as any)}
-          className="flex flex-col items-center gap-1 text-[10px] font-bold text-[#8C877D] hover:text-[#1A1615] transition-colors cursor-pointer"
-        >
-          <Trophy className="w-5 h-5" />
-          <span>Campaigns</span>
-        </button>
-
-        <button
-          onClick={() => onNavigate?.('/analytics' as any)}
-          className="flex flex-col items-center gap-1 text-[10px] font-bold text-[#8C877D] hover:text-[#1A1615] transition-colors cursor-pointer"
-        >
-          <BarChart2 className="w-5 h-5" />
-          <span>Reports</span>
-        </button>
-      </div>
 
       {/* ======================================================== */}
       {/* MODAL: ADD NEW BRANCH (z-[100] backdrop) */}

@@ -459,59 +459,7 @@ export const TabletMenuView: React.FC<TabletMenuViewProps> = ({ onNavigate }) =>
         </div>
       </div>
 
-      {/* ── Fixed Bottom Navigation Bar (Matching iPad Pro & Mobile specs) ── */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-[#F1EFEA] z-40 px-6 py-2.5 shadow-lg">
-        <div className="max-w-md mx-auto flex items-center justify-around relative">
-          {/* Home */}
-          <button
-            onClick={() => handleNav('/dashboard')}
-            className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-700 cursor-pointer transition-colors"
-          >
-            <Home className="w-5 h-5" />
-            <span className="text-[10px] font-semibold">Home</span>
-          </button>
 
-          {/* Campaigns */}
-          <button
-            onClick={() => handleNav('/campaigns')}
-            className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-700 cursor-pointer transition-colors"
-          >
-            <Send className="w-5 h-5 -rotate-45 -translate-y-0.5" />
-            <span className="text-[10px] font-semibold">Campaigns</span>
-          </button>
-
-          {/* Floating Center Circle Menu Button */}
-          <div className="relative -top-5">
-            <button
-              onClick={() => handleNav('/item-catalog')}
-              className="w-12 h-12 rounded-full bg-[#5844A8] text-white flex items-center justify-center shadow-lg shadow-[#5844A8]/30 hover:bg-[#47368E] ring-4 ring-white cursor-pointer active:scale-95 transition-all"
-            >
-              <Menu className="w-6 h-6 stroke-[2.5]" />
-            </button>
-          </div>
-
-          {/* Menu (Active Tab) */}
-          <button
-            onClick={() => handleNav('/item-catalog')}
-            className="flex flex-col items-center gap-1 text-[#5844A8] cursor-pointer"
-          >
-            <UtensilsCrossed className="w-5 h-5 text-[#5844A8]" />
-            <span className="text-[10px] font-black">Menu</span>
-          </button>
-
-          {/* More */}
-          <button
-            onClick={() => handleNav('/control-panel')}
-            className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-700 cursor-pointer transition-colors"
-          >
-            <Menu className="w-5 h-5" />
-            <span className="text-[10px] font-semibold">More</span>
-          </button>
-        </div>
-
-        {/* Home Indicator */}
-        <div className="w-28 h-1 bg-gray-200 rounded-full mx-auto mt-2" />
-      </div>
     </div>
   );
 };

@@ -13,6 +13,7 @@ import { INITIAL_OUTLETS } from './data/outletsData';
 // Shell components
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
+import { MobileBottomNav } from './components/layout/MobileBottomNav';
 import { CommandPalette } from './components/common/CommandPalette';
 import { PendingApprovalModal } from './components/common/PendingApprovalModal';
 import apiClient from './api/apiClient';
@@ -292,7 +293,7 @@ export default function App() {
               onNavigate={handleNavigate as any}
             />
           )}
-          <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-0'} ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
+          <main className={`flex-1 pb-20 lg:pb-0 ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
             {!isValidRoute ? (
               <NotFoundPage onNavigate={(route) => handleNavigate(route as NavRoute)} />
             ) : (
@@ -337,6 +338,12 @@ export default function App() {
             )}
           </main>
         </div>
+
+        {/* Common Bottom Navigation Bar for Mobile and Tablet */}
+        <MobileBottomNav
+          currentRoute={currentRoute}
+          onNavigate={handleNavigate as any}
+        />
       </div>
     </WalletProvider>
   );

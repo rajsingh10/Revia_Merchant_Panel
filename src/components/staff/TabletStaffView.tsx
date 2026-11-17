@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Users,
   UserPlus,
@@ -299,6 +299,20 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
   const [isAddRoleOpen, setIsAddRoleOpen] = useState(false);
   const [addRoleStep, setAddRoleStep] = useState<1 | 2 | 3 | 4>(2);
 
+  // Listen for bottom bar add action
+  useEffect(() => {
+    const handleBottomBarAdd = (e: any) => {
+      if (!e.detail || e.detail.type === 'staff' || !e.detail.type) {
+        setIsAddStaffOpen(true);
+        setAddStaffStep(1);
+      }
+    };
+    window.addEventListener('revia:add-action', handleBottomBarAdd);
+    return () => {
+      window.removeEventListener('revia:add-action', handleBottomBarAdd);
+    };
+  }, []);
+
   // Directory filter state
   const [directoryFilter, setDirectoryFilter] = useState<'all' | 'active' | 'pending' | 'disabled' | 'managers'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -350,6 +364,37 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
             <span>+ Invite Staff</span>
           </button>
         </div>
+      </div>
+
+      {/* Staff View Sub-Tabs for Tablet/Mobile */}
+      <div className="bg-white border-b border-[#F1EFEA] px-4 sm:px-8 py-2.5 flex items-center gap-2 overflow-x-auto no-scrollbar">
+        {[
+          { id: 'staff', label: 'Staff', icon: Users },
+          { id: 'permissions', label: 'Permissions', icon: Shield },
+          { id: 'activity', label: 'Activity', icon: Clock },
+          { id: 'reports', label: 'Reports', icon: FileText },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => {
+              setCurrentTab(tab.id as any);
+              if (tab.id === 'staff') setStaffSubView('insights');
+              if (tab.id === 'activity') setActivitySubView('list');
+              if (tab.id === 'reports') setReportsSubView('audit');
+              setSelectedStaffId(null);
+              setIsAddStaffOpen(false);
+              setIsAddRoleOpen(false);
+            }}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              currentTab === tab.id
+                ? 'bg-[#5844A8] text-white shadow-xs'
+                : 'bg-gray-50 text-[#8C877D] hover:text-[#1A1615] hover:bg-gray-100'
+            }`}
+          >
+            <tab.icon className="w-3.5 h-3.5" />
+            <span>{tab.label}</span>
+          </button>
+        ))}
       </div>
 
       {/* Main Container */}
@@ -1901,88 +1946,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
         )}
       </div>
 
-      {/* ======================================================== */}
-      {/* TABLET BOTTOM NAVIGATION BAR (Matching iPad Pro Mockup)   */}
-      {/* ======================================================== */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-[#F1EFEA] px-4 sm:px-8 md:px-12 py-3 z-40 flex items-center justify-around shadow-lg">
-        {/* 1. Staff Tab */}
-        <button
-          onClick={() => {
-            setCurrentTab('staff');
-            setStaffSubView('insights');
-            setSelectedStaffId(null);
-            setIsAddStaffOpen(false);
-            setIsAddRoleOpen(false);
-          }}
-          className={`flex flex-col items-center gap-1 text-[11px] font-black cursor-pointer transition-colors ${
-            currentTab === 'staff' ? 'text-[#5844A8]' : 'text-[#8C877D] hover:text-[#1A1615]'
-          }`}
-        >
-          <Users className="w-5 h-5" />
-          <span>Staff</span>
-        </button>
 
-        {/* 2. Permissions Tab */}
-        <button
-          onClick={() => {
-            setCurrentTab('permissions');
-            setSelectedStaffId(null);
-            setIsAddStaffOpen(false);
-            setIsAddRoleOpen(false);
-          }}
-          className={`flex flex-col items-center gap-1 text-[11px] font-black cursor-pointer transition-colors ${
-            currentTab === 'permissions' ? 'text-[#5844A8]' : 'text-[#8C877D] hover:text-[#1A1615]'
-          }`}
-        >
-          <Shield className="w-5 h-5" />
-          <span>Permissions</span>
-        </button>
-
-        {/* Center Floating Plus Action */}
-        <button
-          onClick={() => {
-            setIsAddStaffOpen(true);
-            setAddStaffStep(1);
-          }}
-          className="w-13 h-13 -mt-6 rounded-full bg-[#5844A8] text-white flex items-center justify-center shadow-lg hover:bg-[#47368E] transition-all cursor-pointer"
-        >
-          <Plus className="w-7 h-7 stroke-[2.5]" />
-        </button>
-
-        {/* 3. Activity Tab */}
-        <button
-          onClick={() => {
-            setCurrentTab('activity');
-            setActivitySubView('list');
-            setSelectedStaffId(null);
-            setIsAddStaffOpen(false);
-            setIsAddRoleOpen(false);
-          }}
-          className={`flex flex-col items-center gap-1 text-[11px] font-black cursor-pointer transition-colors ${
-            currentTab === 'activity' ? 'text-[#5844A8]' : 'text-[#8C877D] hover:text-[#1A1615]'
-          }`}
-        >
-          <Clock className="w-5 h-5" />
-          <span>Activity</span>
-        </button>
-
-        {/* 4. Reports Tab */}
-        <button
-          onClick={() => {
-            setCurrentTab('reports');
-            setReportsSubView('audit');
-            setSelectedStaffId(null);
-            setIsAddStaffOpen(false);
-            setIsAddRoleOpen(false);
-          }}
-          className={`flex flex-col items-center gap-1 text-[11px] font-black cursor-pointer transition-colors ${
-            currentTab === 'reports' ? 'text-[#5844A8]' : 'text-[#8C877D] hover:text-[#1A1615]'
-          }`}
-        >
-          <FileText className="w-5 h-5" />
-          <span>Reports</span>
-        </button>
-      </div>
     </div>
   );
 };

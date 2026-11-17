@@ -97,6 +97,19 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
   const [isWebEditModalOpen, setIsWebEditModalOpen] = useState(false);
   const [webMenuOpenId, setWebMenuOpenId] = useState<string | null>(null);
 
+  // Listen for bottom bar add action
+  useEffect(() => {
+    const handleBottomBarAdd = (e: any) => {
+      if (!e.detail || e.detail.type === 'customer' || !e.detail.type) {
+        setIsWebAddModalOpen(true);
+      }
+    };
+    window.addEventListener('revia:add-action', handleBottomBarAdd);
+    return () => {
+      window.removeEventListener('revia:add-action', handleBottomBarAdd);
+    };
+  }, []);
+
   // Web Add Customer Form
   const [newWebName, setNewWebName] = useState('');
   const [newWebEmail, setNewWebEmail] = useState('');

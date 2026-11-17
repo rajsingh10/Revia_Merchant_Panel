@@ -180,6 +180,20 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
   const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>(initialViewMode);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
 
+  // Listen for bottom bar add action
+  React.useEffect(() => {
+    const handleBottomBarAdd = (e: any) => {
+      if (!e.detail || e.detail.type === 'campaign' || !e.detail.type) {
+        setCreationSetupStep('choose_type');
+        setViewMode('builder');
+      }
+    };
+    window.addEventListener('revia:add-action', handleBottomBarAdd);
+    return () => {
+      window.removeEventListener('revia:add-action', handleBottomBarAdd);
+    };
+  }, []);
+
   // ---------------------------------------------------------------------------
   // DASHBOARD STATE
   // ---------------------------------------------------------------------------
@@ -702,65 +716,7 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
           </div>
         </div>
 
-        {/* Mobile Fixed Bottom Navigation Bar */}
-        <div className="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-[#F0EBF5] px-4 py-2 z-50 flex items-center justify-between shadow-lg">
-          <button
-            onClick={() => setBottomNavTab('home')}
-            className={`flex flex-col items-center gap-0.5 text-[10px] font-bold ${
-              bottomNavTab === 'home' ? 'text-[#2D0F55]' : 'text-gray-400'
-            }`}
-          >
-            <Home className="w-4 h-4" />
-            <span>Home</span>
-          </button>
 
-          <button
-            onClick={() => {
-              setBottomNavTab('create');
-              setCreationSetupStep('choose_type');
-              setViewMode('builder');
-            }}
-            className={`flex flex-col items-center gap-0.5 text-[10px] font-bold ${
-              bottomNavTab === 'create' ? 'text-[#2D0F55]' : 'text-gray-400'
-            }`}
-          >
-            <Megaphone className="w-4 h-4" />
-            <span>Campaign</span>
-          </button>
-
-          {/* Elevated Center Menu Button */}
-          <div className="-mt-6">
-            <button
-              onClick={() => {
-                setCreationSetupStep('choose_type');
-                setViewMode('builder');
-              }}
-              className="w-12 h-12 rounded-full bg-[#2D0F55] text-white flex items-center justify-center shadow-lg shadow-purple-950/30 hover:bg-[#3D1472] transition-all cursor-pointer"
-            >
-              <Plus className="w-6 h-6" />
-            </button>
-          </div>
-
-          <button
-            onClick={() => setBottomNavTab('report')}
-            className={`flex flex-col items-center gap-0.5 text-[10px] font-bold ${
-              bottomNavTab === 'report' ? 'text-[#2D0F55]' : 'text-gray-400'
-            }`}
-          >
-            <BarChart2 className="w-4 h-4" />
-            <span>Report</span>
-          </button>
-
-          <button
-            onClick={() => setBottomNavTab('approve')}
-            className={`flex flex-col items-center gap-0.5 text-[10px] font-bold ${
-              bottomNavTab === 'approve' ? 'text-[#2D0F55]' : 'text-gray-400'
-            }`}
-          >
-            <Award className="w-4 h-4" />
-            <span>Approve</span>
-          </button>
-        </div>
       </div>
     );
   }

@@ -306,7 +306,7 @@ export const CreateRewardPage: React.FC<{ onNavigate?: (route: string) => void }
       </div>
 
       {/* Sticky Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 lg:left-[240px] right-0 bg-white border-t border-[#EFECE6] p-4 z-50">
+      <div className="fixed bottom-16 lg:bottom-0 left-0 lg:left-[240px] right-0 bg-white border-t border-[#EFECE6] p-4 z-30 lg:z-50 shadow-lg lg:shadow-none">
         <div className="max-w-[1200px] mx-auto flex items-center justify-between">
           <button
             onClick={() => onNavigate?.('/rewards')}

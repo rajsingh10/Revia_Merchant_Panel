@@ -372,63 +372,7 @@ export const MobileApprovalsView: React.FC<Props> = ({ onNavigate, onRequestActi
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation Bar (5 Items matching mockup) */}
-      <nav className="fixed bottom-0 inset-x-0 h-16 bg-white/95 backdrop-blur-md border-t border-purple-100/80 px-4 flex items-center justify-between z-[110] shadow-lg">
-        {/* Home */}
-        <button
-          type="button"
-          onClick={() => onNavigate?.('/dashboard')}
-          className="flex flex-col items-center justify-center gap-0.5 text-gray-400 hover:text-gray-600 flex-1 cursor-pointer"
-        >
-          <Home className="w-4 h-4" />
-          <span className="text-[10px] font-semibold">Home</span>
-        </button>
 
-        {/* Campaigns */}
-        <button
-          type="button"
-          onClick={() => onNavigate?.('/campaigns')}
-          className="flex flex-col items-center justify-center gap-0.5 text-gray-400 hover:text-gray-600 flex-1 cursor-pointer"
-        >
-          <Calendar className="w-4 h-4" />
-          <span className="text-[10px] font-semibold">Campaigns</span>
-        </button>
-
-        {/* Center Circular FAB */}
-        <div className="flex-1 flex justify-center -mt-5">
-          <button
-            type="button"
-            onClick={() => onNavigate?.('/qr-codes')}
-            className="w-12 h-12 rounded-full bg-[#1E1548] text-white flex items-center justify-center shadow-lg shadow-purple-950/30 cursor-pointer active:scale-95 transition"
-            title="Generate QR Codes"
-          >
-            <MenuIcon className="w-5 h-5 text-white" />
-          </button>
-        </div>
-
-        {/* Approvals (Active) */}
-        <button
-          type="button"
-          onClick={() => setActiveTab('pending')}
-          className="flex flex-col items-center justify-center gap-0.5 text-[#5844A8] font-bold flex-1 cursor-pointer relative"
-        >
-          <div className="relative">
-            <ShoppingBag className="w-4 h-4 text-[#5844A8]" />
-            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
-          </div>
-          <span className="text-[10px] font-black">Approvals</span>
-        </button>
-
-        {/* More */}
-        <button
-          type="button"
-          onClick={() => onNavigate?.('/branches')}
-          className="flex flex-col items-center justify-center gap-0.5 text-gray-400 hover:text-gray-600 flex-1 cursor-pointer"
-        >
-          <MenuIcon className="w-4 h-4" />
-          <span className="text-[10px] font-semibold">More</span>
-        </button>
-      </nav>
     </div>
   );
 };
