@@ -379,14 +379,20 @@ export const TabletMenuView: React.FC<TabletMenuViewProps> = ({ onNavigate }) =>
   const [menuVisibility, setMenuVisibility] = useState(true);
   const [autoUpdate, setAutoUpdate] = useState(false);
 
-  // Coordinate with MobileBottomNav: hide bottom nav when in a subview/flow
+  // Coordinate with MobileBottomNav: only hide on mobile (< 768px) when in a subview;
+  // keep the 1 common bottom bar always visible on tablet!
   useEffect(() => {
-    if (currentView !== 'overview') {
-      document.body.classList.add('hide-mobile-bottom-nav');
-    } else {
-      document.body.classList.remove('hide-mobile-bottom-nav');
-    }
+    const syncBottomNav = () => {
+      if (currentView !== 'overview' && window.innerWidth < 768) {
+        document.body.classList.add('hide-mobile-bottom-nav');
+      } else {
+        document.body.classList.remove('hide-mobile-bottom-nav');
+      }
+    };
+    syncBottomNav();
+    window.addEventListener('resize', syncBottomNav);
     return () => {
+      window.removeEventListener('resize', syncBottomNav);
       document.body.classList.remove('hide-mobile-bottom-nav');
     };
   }, [currentView]);
@@ -541,7 +547,7 @@ export const TabletMenuView: React.FC<TabletMenuViewProps> = ({ onNavigate }) =>
   });
 
   return (
-    <div className="min-h-screen bg-[#FAF8FF] font-sans pb-32 text-[#1A1615]">
+    <div className="bg-[#FAF8FF] font-sans pb-4 text-[#1A1615]">
       {/* ── Toast Notification Banner ── */}
       {toastMessage && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[130] bg-[#1E1548] text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-semibold animate-in fade-in slide-in-from-top-3 duration-200 border border-purple-500/30 max-w-[92vw]">
@@ -913,7 +919,7 @@ export const TabletMenuView: React.FC<TabletMenuViewProps> = ({ onNavigate }) =>
           )}
 
           {/* Sticky Footer Actions with Save and Next */}
-          <div className="fixed bottom-0 inset-x-0 z-[70] bg-white border-t border-gray-100 p-3.5 sm:p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] pb-[max(env(safe-area-inset-bottom,0px),16px)]">
+          <div className="fixed bottom-0 md:bottom-16 lg:bottom-0 inset-x-0 z-[35] bg-white border-t border-gray-100 p-3.5 sm:p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] pb-[max(env(safe-area-inset-bottom,0px),16px)] md:pb-3.5">
             <div className="max-w-md mx-auto flex items-center justify-between gap-2.5">
               <button
                 onClick={goBack}
@@ -1177,7 +1183,7 @@ export const TabletMenuView: React.FC<TabletMenuViewProps> = ({ onNavigate }) =>
           </div>
 
           {/* Bottom Button */}
-          <div className="fixed bottom-0 inset-x-0 z-[70] bg-white border-t border-gray-100 p-3.5 sm:p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] pb-[max(env(safe-area-inset-bottom,0px),16px)]">
+          <div className="fixed bottom-0 md:bottom-16 lg:bottom-0 inset-x-0 z-[35] bg-white border-t border-gray-100 p-3.5 sm:p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] pb-[max(env(safe-area-inset-bottom,0px),16px)] md:pb-3.5">
             <div className="max-w-md mx-auto">
               <button
                 onClick={() => {
@@ -1270,7 +1276,7 @@ export const TabletMenuView: React.FC<TabletMenuViewProps> = ({ onNavigate }) =>
           </div>
 
           {/* Bottom Next Button */}
-          <div className="fixed bottom-0 inset-x-0 z-[70] bg-white border-t border-gray-100 p-3.5 sm:p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] pb-[max(env(safe-area-inset-bottom,0px),16px)]">
+          <div className="fixed bottom-0 md:bottom-16 lg:bottom-0 inset-x-0 z-[35] bg-white border-t border-gray-100 p-3.5 sm:p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] pb-[max(env(safe-area-inset-bottom,0px),16px)] md:pb-3.5">
             <div className="max-w-md mx-auto flex items-center justify-between gap-2.5">
               <button
                 onClick={goBack}
@@ -1384,7 +1390,7 @@ export const TabletMenuView: React.FC<TabletMenuViewProps> = ({ onNavigate }) =>
           </div>
 
           {/* Bottom Actions with Save and Next */}
-          <div className="fixed bottom-0 inset-x-0 z-[70] bg-white border-t border-gray-100 p-3.5 sm:p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] pb-[max(env(safe-area-inset-bottom,0px),16px)]">
+          <div className="fixed bottom-0 md:bottom-16 lg:bottom-0 inset-x-0 z-[35] bg-white border-t border-gray-100 p-3.5 sm:p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] pb-[max(env(safe-area-inset-bottom,0px),16px)] md:pb-3.5">
             <div className="max-w-md mx-auto flex items-center justify-between gap-2.5">
               <button
                 onClick={goBack}
@@ -1542,7 +1548,7 @@ export const TabletMenuView: React.FC<TabletMenuViewProps> = ({ onNavigate }) =>
           </div>
 
           {/* Bottom Save Item Button */}
-          <div className="fixed bottom-0 inset-x-0 z-[70] bg-white border-t border-gray-100 p-3.5 sm:p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] pb-[max(env(safe-area-inset-bottom,0px),16px)]">
+          <div className="fixed bottom-0 md:bottom-16 lg:bottom-0 inset-x-0 z-[35] bg-white border-t border-gray-100 p-3.5 sm:p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] pb-[max(env(safe-area-inset-bottom,0px),16px)] md:pb-3.5">
             <div className="max-w-md mx-auto">
               <button
                 onClick={handleSaveItem}
@@ -1718,7 +1724,7 @@ export const TabletMenuView: React.FC<TabletMenuViewProps> = ({ onNavigate }) =>
           </div>
 
           {/* Bottom Save Menu Button */}
-          <div className="fixed bottom-0 inset-x-0 z-[70] bg-white border-t border-gray-100 p-3.5 sm:p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] pb-[max(env(safe-area-inset-bottom,0px),16px)]">
+          <div className="fixed bottom-0 md:bottom-16 lg:bottom-0 inset-x-0 z-[35] bg-white border-t border-gray-100 p-3.5 sm:p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] pb-[max(env(safe-area-inset-bottom,0px),16px)] md:pb-3.5">
             <div className="max-w-md mx-auto">
               <button
                 onClick={() => {
@@ -1834,7 +1840,7 @@ export const TabletMenuView: React.FC<TabletMenuViewProps> = ({ onNavigate }) =>
           </div>
 
           {/* Bottom Save Button */}
-          <div className="fixed bottom-0 inset-x-0 z-[70] bg-white border-t border-gray-100 p-3.5 sm:p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] pb-[max(env(safe-area-inset-bottom,0px),16px)]">
+          <div className="fixed bottom-0 md:bottom-16 lg:bottom-0 inset-x-0 z-[35] bg-white border-t border-gray-100 p-3.5 sm:p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] pb-[max(env(safe-area-inset-bottom,0px),16px)] md:pb-3.5">
             <div className="max-w-md mx-auto">
               <button
                 onClick={() => {

@@ -531,17 +531,17 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
     <div className="relative" ref={openDropdown === id ? dropdownRef : null}>
       <button
         onClick={() => setOpenDropdown(openDropdown === id ? null : id)}
-        className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] rounded-md hover:bg-[#EFECE6] transition-colors whitespace-nowrap shrink-0"
+        className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider bg-[#FAF8FF] border border-[#EFEAF7] text-[#1E1548] rounded-lg hover:bg-[#F3EFFB] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
       >
-        {value} <ChevronDown className="w-3.5 h-3.5" />
+        {value} <ChevronDown className="w-3.5 h-3.5 text-[#8C84A0]" />
       </button>
       {openDropdown === id && (
-        <div className="absolute top-full mt-1 left-0 min-w-[200px] bg-white border border-[#EFECE6] rounded-lg shadow-lg z-50 py-1 overflow-hidden">
+        <div className="absolute top-full mt-1 left-0 min-w-[200px] bg-white border border-[#EFEAF7] rounded-xl shadow-lg z-50 py-1 overflow-hidden">
           {options.map(opt => (
             <button
               key={opt}
               onClick={() => { onChange(opt); setOpenDropdown(null); }}
-              className={`w-full text-left px-3 py-2 text-xs hover:bg-[#FAF8F5] transition-colors ${value === opt ? 'font-bold text-[#1A1615] bg-[#FAF8F5]' : 'font-medium text-[#6E6A66]'}`}
+              className={`w-full text-left px-3 py-2 text-xs hover:bg-[#FAF8FF] transition-colors cursor-pointer ${value === opt ? 'font-bold text-[#5844A8] bg-[#F4EEFF]/60' : 'font-medium text-[#6B657E]'}`}
             >
               {opt}
             </button>
@@ -1741,11 +1741,11 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
 
   return (
     <>
-      <div className="p-3.5 sm:p-6 bg-[#FAF8F5] min-h-[calc(100vh-4rem)] space-y-5 sm:space-y-6 max-w-[1600px] mx-auto w-full">
+      <div className="p-3.5 sm:p-6 bg-[#FAF8FF] min-h-[calc(100vh-4rem)] space-y-5 sm:space-y-6 max-w-[1600px] mx-auto w-full">
         {/* Bottom Toast Feedback */}
         {feedbackToast && (
-          <div className="fixed bottom-6 right-6 z-50 bg-[#1A1615] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-semibold border border-[#3D3732] animate-in slide-in-from-bottom-5 fade-in">
-            <CheckCircle2 className="w-5 h-5 text-[#15803D]" />
+          <div className="fixed bottom-6 right-6 z-50 bg-[#1E1548] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-semibold border border-[#3B2E73] animate-in slide-in-from-bottom-5 fade-in">
+            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
             <span>{feedbackToast}</span>
           </div>
         )}
@@ -1754,11 +1754,11 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-1.5">
-              <h1 className="text-xl sm:text-2xl lg:text-[28px] font-bold text-[#1A1615] tracking-tight">
+              <h1 className="text-xl sm:text-2xl lg:text-[28px] font-black text-[#1E1548] tracking-tight">
                 QR Codes &amp; Physical Asset Hub
               </h1>
             </div>
-            <p className="text-xs sm:text-sm text-[#6E6A66] max-w-3xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#6B657E] max-w-3xl leading-relaxed">
               Manage contactless tabletop stands, counter acrylics, digital pass enrollment codes, and multi-venue scan routing with instantaneous cloud redirect dispatch.
             </p>
           </div>
@@ -1766,13 +1766,13 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 shrink-0">
             <button
               onClick={() => setPageMode('wizard')}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 text-[13px] font-bold text-white bg-[#5844A8] hover:bg-[#47368E] rounded-xl transition-all shadow-xs cursor-pointer active:scale-98"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 text-[13px] font-bold text-white bg-[#5844A8] hover:bg-[#47368E] rounded-xl transition-all shadow-sm shadow-[#5844A8]/20 cursor-pointer active:scale-98"
             >
               <Plus className="w-4 h-4 text-white" />
               Generate QR Code (Wizard)
             </button>
-            <button className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-xl transition-colors shadow-xs cursor-pointer active:scale-98">
-              <Download className="w-4 h-4" />
+            <button className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 text-[13px] font-bold text-[#1E1548] bg-white border border-[#EFEAF7] hover:bg-[#F4F0FA] rounded-xl transition-colors shadow-2xs cursor-pointer active:scale-98">
+              <Download className="w-4 h-4 text-[#5844A8]" />
               Download Print PDF Pack
             </button>
           </div>
@@ -1781,58 +1781,58 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
         {/* 3. TOP KPI METRICS CARDS */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Metric 1 */}
-          <div className="bg-white rounded-2xl border border-[#EFECE6] p-3.5 sm:p-5 shadow-xs flex flex-col justify-between">
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EFEAF7] p-3.5 sm:p-5 shadow-2xs flex flex-col justify-between">
             <div className="flex justify-between items-start gap-1 mb-2">
-              <div className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider sm:tracking-widest text-[#9E9A93] truncate">Total Active Stands</div>
-              <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold bg-[#FDF8EB] text-[#D4A753] border border-[#F3E5C8] rounded shrink-0">
+              <div className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider sm:tracking-widest text-[#8C84A0] truncate">Total Active Stands</div>
+              <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold bg-[#F4EEFF] text-[#5844A8] border border-[#E6DBFF] rounded-md shrink-0">
                 +3 mo
               </span>
             </div>
             <div>
-              <div className="text-xl sm:text-2xl font-bold text-[#1A1615] mb-0.5 sm:mb-1">18 Stands</div>
-              <div className="text-[10px] sm:text-[11px] font-semibold text-[#6E6A66] truncate">16 Acrylic • 2 Brass</div>
+              <div className="text-xl sm:text-2xl font-black text-[#1E1548] mb-0.5 sm:mb-1">18 Stands</div>
+              <div className="text-[10px] sm:text-[11px] font-semibold text-[#6B657E] truncate">16 Acrylic • 2 Brass</div>
             </div>
           </div>
 
           {/* Metric 2 */}
-          <div className="bg-white rounded-2xl border border-[#EFECE6] p-3.5 sm:p-5 shadow-xs flex flex-col justify-between">
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EFEAF7] p-3.5 sm:p-5 shadow-2xs flex flex-col justify-between">
             <div className="flex justify-between items-start gap-1 mb-2">
-              <div className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider sm:tracking-widest text-[#9E9A93] truncate">30D Scans</div>
-              <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold bg-[#E6F4ED] text-[#0D7A53] border border-[#BCE3D1] rounded flex items-center gap-0.5 shrink-0">
+              <div className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider sm:tracking-widest text-[#8C84A0] truncate">30D Scans</div>
+              <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold bg-[#E6F4ED] text-[#0D7A53] border border-[#BCE3D1] rounded-md flex items-center gap-0.5 shrink-0">
                 <TrendingUp className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> +21%
               </span>
             </div>
             <div>
-              <div className="text-xl sm:text-2xl font-bold text-[#1A1615] mb-0.5 sm:mb-1">42,890</div>
-              <div className="text-[10px] sm:text-[11px] font-semibold text-[#6E6A66] truncate">Table &amp; Counter</div>
+              <div className="text-xl sm:text-2xl font-black text-[#1E1548] mb-0.5 sm:mb-1">42,890</div>
+              <div className="text-[10px] sm:text-[11px] font-semibold text-[#6B657E] truncate">Table &amp; Counter</div>
             </div>
           </div>
 
           {/* Metric 3 */}
-          <div className="bg-white rounded-2xl border border-[#EFECE6] p-3.5 sm:p-5 shadow-xs flex flex-col justify-between">
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EFEAF7] p-3.5 sm:p-5 shadow-2xs flex flex-col justify-between">
             <div className="flex justify-between items-start gap-1 mb-2">
-              <div className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider sm:tracking-widest text-[#9E9A93] truncate">Scan-to-Pass</div>
-              <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold bg-[#E0F2FE] text-[#0369A1] border border-[#BAE6FD] rounded shrink-0">
+              <div className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider sm:tracking-widest text-[#8C84A0] truncate">Scan-to-Pass</div>
+              <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold bg-[#E0F2FE] text-[#0369A1] border border-[#BAE6FD] rounded-md shrink-0">
                 High Yield
               </span>
             </div>
             <div>
-              <div className="text-xl sm:text-2xl font-bold text-[#1A1615] mb-0.5 sm:mb-1">68.2%</div>
-              <div className="text-[10px] sm:text-[11px] font-semibold text-[#6E6A66] truncate">Guest to Member</div>
+              <div className="text-xl sm:text-2xl font-black text-[#1E1548] mb-0.5 sm:mb-1">68.2%</div>
+              <div className="text-[10px] sm:text-[11px] font-semibold text-[#6B657E] truncate">Guest to Member</div>
             </div>
           </div>
 
           {/* Metric 4 */}
-          <div className="bg-white rounded-2xl border border-[#EFECE6] p-3.5 sm:p-5 shadow-xs flex flex-col justify-between">
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EFEAF7] p-3.5 sm:p-5 shadow-2xs flex flex-col justify-between">
             <div className="flex justify-between items-start gap-1 mb-2">
-              <div className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider sm:tracking-widest text-[#9E9A93] truncate">Routing Health</div>
-              <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB] rounded uppercase shrink-0">
+              <div className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider sm:tracking-widest text-[#8C84A0] truncate">Routing Health</div>
+              <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold bg-[#F3EFFB] text-[#5844A8] border border-[#E6DBFF] rounded-md uppercase shrink-0">
                 28ms
               </span>
             </div>
             <div>
-              <div className="text-xl sm:text-2xl font-bold text-[#1A1615] mb-0.5 sm:mb-1">99.9%</div>
-              <div className="text-[10px] sm:text-[11px] font-semibold text-[#6E6A66] truncate">Online • 0 dead links</div>
+              <div className="text-xl sm:text-2xl font-black text-[#1E1548] mb-0.5 sm:mb-1">99.9%</div>
+              <div className="text-[10px] sm:text-[11px] font-semibold text-[#6B657E] truncate">Online • 0 dead links</div>
             </div>
           </div>
         </div>
@@ -1842,23 +1842,23 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
           <div className="lg:col-span-7 space-y-4">
 
             {/* Filter & Search Toolbar */}
-            <div className="bg-white rounded-xl border border-[#EFECE6] p-4 shadow-xs space-y-4">
-              <div className="flex items-center gap-3">
+            <div className="bg-white rounded-2xl border border-[#EFEAF7] p-3.5 sm:p-4 shadow-2xs space-y-4">
+              <div className="flex items-center gap-2.5 sm:gap-3">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93]" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8C84A0]" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search stand ID, venue, table or zone..."
-                    className="w-full pl-9 pr-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753]/20 transition-all text-[#1A1615] font-semibold"
+                    className="w-full pl-9 pr-4 py-2.5 bg-[#FAF8FF] border border-[#EFEAF7] rounded-xl text-sm focus:outline-none focus:border-[#5844A8] focus:ring-1 focus:ring-[#5844A8]/20 transition-all text-[#1E1548] placeholder:text-[#9890A8] font-semibold"
                   />
                 </div>
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className={`flex items-center gap-2 px-4 py-2 text-[13px] font-semibold transition-colors cursor-pointer shrink-0 rounded-lg border ${showFilters
-                    ? 'bg-[#FAF8F5] border-[#D4A753] text-[#D4A753]'
-                    : 'bg-white border-[#EFECE6] hover:bg-[#FAF8F5] text-[#1A1615]'
+                  className={`flex items-center gap-2 px-3.5 sm:px-4 py-2.5 text-[13px] font-bold transition-colors cursor-pointer shrink-0 rounded-xl border ${showFilters
+                    ? 'bg-[#F4EEFF] border-[#5844A8] text-[#5844A8]'
+                    : 'bg-white border-[#EFEAF7] hover:bg-[#FAF8FF] text-[#1E1548]'
                     }`}>
                   <Filter className="w-4 h-4" />
                   More Filters
@@ -1866,7 +1866,7 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
               </div>
 
               {showFilters && (
-                <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#EFECE6]">
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#EFEAF7]">
                   <div className="flex flex-wrap items-center gap-2">
                     <DropdownSelect
                       id="venue"
@@ -1887,7 +1887,7 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
                       onChange={setDestinationFilter}
                     />
                   </div>
-                  <div className="text-[11px] font-bold tracking-widest uppercase text-[#9E9A93]">
+                  <div className="text-[11px] font-bold tracking-widest uppercase text-[#8C84A0]">
                     Showing {filteredAssets.length} of {assets.length}
                   </div>
                 </div>
@@ -1907,44 +1907,44 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
                         setIsMobilePreviewOpen(true);
                       }
                     }}
-                    className={`bg-white rounded-2xl border-2 p-4 sm:p-5 transition-all cursor-pointer shadow-xs hover:shadow-sm ${isActive ? 'border-[#5844A8]' : 'border-[#EFECE6] hover:border-[#D1CDC7]'
+                    className={`bg-white rounded-2xl sm:rounded-3xl border-2 p-4 sm:p-5 transition-all cursor-pointer shadow-2xs hover:shadow-sm ${isActive ? 'border-[#5844A8]' : 'border-[#EFEAF7] hover:border-[#D6CBF2]'
                       }`}
                   >
                     <div className="flex items-start gap-3 sm:gap-4">
                       {/* Checkbox mock */}
                       <div className="shrink-0 mt-1">
-                        <div className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-colors ${isActive ? 'bg-[#5844A8] border-[#5844A8] text-white' : 'bg-[#FAF8F5] border-[#D1CDC7]'}`}>
+                        <div className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-colors ${isActive ? 'bg-[#5844A8] border-[#5844A8] text-white' : 'bg-[#FAF8FF] border-[#D6CBF2]'}`}>
                           {isActive && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
                         </div>
                       </div>
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 sm:gap-4 mb-2">
-                          <h3 className="text-sm sm:text-[15px] font-bold text-[#1A1615] truncate">{asset.title}</h3>
+                          <h3 className="text-sm sm:text-[15px] font-bold text-[#1E1548] truncate">{asset.title}</h3>
                           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 relative">
                             <button
                               onClick={(e) => { e.stopPropagation(); setActiveAsset(asset.id); setIsMobilePreviewOpen(true); }}
-                              className="p-1.5 text-[#9E9A93] hover:text-[#5844A8] rounded-lg bg-[#FAF8F5] transition-colors cursor-pointer lg:hidden"
+                              className="p-1.5 text-[#8C84A0] hover:text-[#5844A8] rounded-lg bg-[#FAF8FF] hover:bg-[#F3EFFB] transition-colors cursor-pointer lg:hidden"
                               title="Preview Stand"
                             >
                               <Smartphone className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={(e) => { e.stopPropagation(); setSelectedActionAsset(asset); setIsEditModalOpen(true); }}
-                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded-lg bg-[#FAF8F5] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                              className="p-1.5 text-[#8C84A0] hover:text-[#5844A8] rounded-lg bg-[#FAF8FF] hover:bg-[#F3EFFB] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                             <button
                               onClick={(e) => { e.stopPropagation(); setSelectedActionAsset(asset); setIsDownloadModalOpen(true); }}
-                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded-lg bg-[#FAF8F5] transition-colors cursor-pointer"><Download className="w-3.5 h-3.5" /></button>
+                              className="p-1.5 text-[#8C84A0] hover:text-[#5844A8] rounded-lg bg-[#FAF8FF] hover:bg-[#F3EFFB] transition-colors cursor-pointer"><Download className="w-3.5 h-3.5" /></button>
                             <button
                               onClick={(e) => { e.stopPropagation(); setOpenDropdown(openDropdown === asset.id ? null : asset.id); }}
-                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded-lg bg-[#FAF8F5] transition-colors cursor-pointer"><MoreHorizontal className="w-3.5 h-3.5" /></button>
+                              className="p-1.5 text-[#8C84A0] hover:text-[#5844A8] rounded-lg bg-[#FAF8FF] hover:bg-[#F3EFFB] transition-colors cursor-pointer"><MoreHorizontal className="w-3.5 h-3.5" /></button>
 
                             {/* Dropdown Menu */}
                             {openDropdown === asset.id && (
                               <>
                                 <div className="fixed inset-0 z-[50]" onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); }} />
-                                <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-[#EFECE6] rounded-xl shadow-xl z-[60] overflow-hidden">
-                                  <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); showToast('Viewing detailed analytics...'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5]">View Analytics</button>
+                                <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-[#EFEAF7] rounded-xl shadow-xl z-[60] overflow-hidden">
+                                  <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); showToast('Viewing detailed analytics...'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-[#1E1548] hover:bg-[#FAF8FF]">View Analytics</button>
                                   {asset.status.toLowerCase() === 'active' ? (
                                     <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); handleUpdateStatus(asset.id, 'inactive'); }} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-[#DC2626] hover:bg-[#FEE2E2]">Deactivate</button>
                                   ) : (
@@ -1957,35 +1957,35 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
                         </div>
 
                         <div className="flex items-center gap-2 mb-3">
-                          <span className="flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-bold bg-[#E6F4ED] text-[#0D7A53] rounded uppercase tracking-wider">
+                          <span className="flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-bold bg-[#E6F4ED] text-[#0D7A53] rounded-md uppercase tracking-wider">
                             <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> {asset.status}
                           </span>
                           {asset.inspecting && (
-                            <span className="px-2 py-0.5 text-[10px] font-bold bg-[#FEF3C7] text-[#B45309] rounded uppercase tracking-wider">
+                            <span className="px-2 py-0.5 text-[10px] font-bold bg-[#FEF3C7] text-[#B45309] rounded-md uppercase tracking-wider">
                               Inspecting
                             </span>
                           )}
-                          <span className="text-[11px] font-bold text-[#9E9A93] px-2 py-0.5 bg-[#FAF8F5] rounded border border-[#EFECE6]">{asset.tag}</span>
+                          <span className="text-[11px] font-bold text-[#7A738D] px-2 py-0.5 bg-[#FAF8FF] rounded-md border border-[#EFEAF7]">{asset.tag}</span>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-1.5">
-                            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#6E6A66]">
-                              <MapPin className="w-3.5 h-3.5 text-[#9E9A93]" /> {asset.location}
+                            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#6B657E]">
+                              <MapPin className="w-3.5 h-3.5 text-[#8C84A0]" /> {asset.location}
                             </div>
-                            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#6E6A66]">
-                              <Layers className="w-3.5 h-3.5 text-[#9E9A93]" /> {asset.material}
+                            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#6B657E]">
+                              <Layers className="w-3.5 h-3.5 text-[#8C84A0]" /> {asset.material}
                             </div>
                           </div>
 
-                          <div className="space-y-1.5 bg-[#FAF8F5] p-2.5 rounded-lg border border-[#EFECE6]">
+                          <div className="space-y-1.5 bg-[#FAF8FF] p-2.5 rounded-xl border border-[#EFEAF7]">
                             <div className="flex items-center justify-between">
-                              <span className="text-[9px] font-bold uppercase tracking-widest text-[#9E9A93]">Cloud Destination</span>
-                              <ChevronDown className="w-3 h-3 text-[#9E9A93]" />
+                              <span className="text-[9px] font-bold uppercase tracking-widest text-[#8C84A0]">Cloud Destination</span>
+                              <ChevronDown className="w-3 h-3 text-[#8C84A0]" />
                             </div>
-                            <div className="text-xs font-bold text-[#1A1615] truncate">{asset.destination}</div>
-                            <div className="text-[10px] font-semibold text-[#6E6A66] pt-1 border-t border-[#EFECE6] flex items-center gap-1.5">
-                              <Activity className="w-3 h-3 text-[#0D7A53]" /> 30D SCANS: <span className="text-[#1A1615]">{asset.scans}</span>
+                            <div className="text-xs font-bold text-[#1E1548] truncate">{asset.destination}</div>
+                            <div className="text-[10px] font-semibold text-[#6B657E] pt-1 border-t border-[#EFEAF7] flex items-center gap-1.5">
+                              <Activity className="w-3 h-3 text-[#0D7A53]" /> 30D SCANS: <span className="text-[#1E1548] font-bold">{asset.scans}</span>
                             </div>
                           </div>
                         </div>
@@ -2000,73 +2000,73 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
           {/* 5. RIGHT SECTION: LIVE VECTOR PREVIEW & ASSET CUSTOMIZER */}
           <div className="hidden lg:block lg:col-span-5 sticky top-6 space-y-4">
             {!selectedAssetDetails ? (
-              <div className="bg-white rounded-xl border border-[#EFECE6] shadow-sm flex items-center justify-center h-[calc(100vh-8rem)] text-[#9E9A93] font-semibold text-sm">
+              <div className="bg-white rounded-3xl border border-[#EFEAF7] shadow-2xs flex items-center justify-center h-[calc(100vh-8rem)] text-[#8C84A0] font-semibold text-sm">
                 Select an asset to view details
               </div>
             ) : (
-              <div className="bg-white rounded-xl border border-[#EFECE6] shadow-sm overflow-hidden flex flex-col h-[calc(100vh-8rem)]">
+              <div className="bg-white rounded-3xl border border-[#EFEAF7] shadow-2xs overflow-hidden flex flex-col h-[calc(100vh-8rem)]">
 
               {/* Card Header & Toggle */}
-              <div className="px-5 py-4 border-b border-[#EFECE6] bg-[#FAF8F5] shrink-0">
+              <div className="px-5 py-4 border-b border-[#EFEAF7] bg-[#FAF8FF] shrink-0">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-[#1A1615] truncate max-w-[250px]">{selectedAssetDetails.title.split(' • ')[1] || selectedAssetDetails.title}</h3>
+                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-[#1E1548] truncate max-w-[250px]">{selectedAssetDetails.title.split(' • ')[1] || selectedAssetDetails.title}</h3>
                   {/* <span className="px-2 py-0.5 text-[10px] font-bold bg-[#E0E7FF] text-[#4338CA] border border-[#C7D2FE] rounded uppercase tracking-wider flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#4338CA] animate-pulse"></span> LIVE VECTOR PREVIEW
                   </span> */}
                 </div>
 
-                {/* <div className="flex p-0.5 bg-[#EFECE6] rounded-lg">
+                {/* <div className="flex p-0.5 bg-[#EFEAF7] rounded-lg">
                   <button
                     onClick={() => setActiveTab('front')}
-                    className={`flex-1 px-3 py-1.5 text-xs font-bold rounded-md transition-all ${activeTab === 'front' ? 'bg-white shadow-xs text-[#1A1615]' : 'text-[#6E6A66] hover:text-[#1A1615]'} cursor-pointer`}>
+                    className={`flex-1 px-3 py-1.5 text-xs font-bold rounded-md transition-all ${activeTab === 'front' ? 'bg-white shadow-xs text-[#1E1548]' : 'text-[#6B657E] hover:text-[#1E1548]'} cursor-pointer`}>
                     Front Side
                   </button>
                   <button
                     onClick={() => setActiveTab('back')}
-                    className={`flex-1 px-3 py-1.5 text-xs font-bold rounded-md transition-all ${activeTab === 'back' ? 'bg-white shadow-xs text-[#1A1615]' : 'text-[#6E6A66] hover:text-[#1A1615]'} cursor-pointer`}>
+                    className={`flex-1 px-3 py-1.5 text-xs font-bold rounded-md transition-all ${activeTab === 'back' ? 'bg-white shadow-xs text-[#1E1548]' : 'text-[#6B657E] hover:text-[#1E1548]'} cursor-pointer`}>
                     Back Side
                   </button>
                 </div> */}
               </div>
 
               {/* Scrollable Configuration Area */}
-              <div className="flex-1 overflow-y-auto p-5 bg-[#FDFBF7]">
+              <div className="flex-1 overflow-y-auto p-5 bg-[#FAF8FF]/60">
 
                 {/* Realistic Printable Stand Mockup Box */}
                 <div className="flex justify-center mb-8">
-                  <div className="w-[240px] bg-white rounded-t-[16px] shadow-2xl border border-[#EFECE6] relative overflow-hidden flex flex-col items-center pt-6 pb-4">
+                  <div className="w-[240px] bg-white rounded-t-[16px] shadow-2xl border border-[#EFEAF7] relative overflow-hidden flex flex-col items-center pt-6 pb-4">
                     {/* Acrylic Gloss Highlight */}
                     <div className="absolute top-0 left-0 right-0 h-full bg-gradient-to-br from-white/80 to-transparent pointer-events-none"></div>
 
-                    <div className="text-[9px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2 z-10">• {selectedAssetDetails.title.split(' • ')[0].toUpperCase()}</div>
-                    <h4 className="text-center text-[15px] font-black text-[#1A1615] leading-tight px-6 z-10">
+                    <div className="text-[9px] font-bold uppercase tracking-widest text-[#8C84A0] mb-2 z-10">• {selectedAssetDetails.title.split(' • ')[0].toUpperCase()}</div>
+                    <h4 className="text-center text-[15px] font-black text-[#1E1548] leading-tight px-6 z-10">
                       {activeTab === 'front' ? 'SCAN TO JOIN REVIA PRIVÉ' : 'REVIA PRIVÉ MEMBER PERKS'}
                     </h4>
-                    <p className="text-center text-[10px] font-semibold text-[#6E6A66] px-8 mt-2 mb-6 z-10 leading-snug">
+                    <p className="text-center text-[10px] font-semibold text-[#6B657E] px-8 mt-2 mb-6 z-10 leading-snug">
                       {activeTab === 'front' ? 'Unlock complimentary artisanal pour-over on your next reservation.' : 'Tap or scan to access your digital wallet pass and current tier benefits.'}
                     </p>
 
                     {/* Vector QR Code Core */}
-                    <div className="w-32 h-32 bg-white border border-[#EFECE6] rounded-lg p-2 shadow-sm mb-4 z-10 relative flex items-center justify-center">
+                    <div className="w-32 h-32 bg-white border border-[#EFEAF7] rounded-xl p-2 shadow-xs mb-4 z-10 relative flex items-center justify-center">
                       {selectedAssetDetails.raw?.qr_image_url ? (
                         <img src={selectedAssetDetails.raw.qr_image_url} alt="QR Code" className="w-full h-full object-contain" />
                       ) : (
-                        <QrCode className="w-full h-full text-[#1A1615]" strokeWidth={1} />
+                        <QrCode className="w-full h-full text-[#1E1548]" strokeWidth={1} />
                       )}
 
                     </div>
 
-                    <div className="flex items-center gap-1.5 text-[9px] font-bold text-[#1A1615] uppercase tracking-widest mb-6 z-10">
-                      <Smartphone className="w-3.5 h-3.5" /> OR TAP PHONE HERE (NFC)
+                    <div className="flex items-center gap-1.5 text-[9px] font-bold text-[#1E1548] uppercase tracking-widest mb-6 z-10">
+                      <Smartphone className="w-3.5 h-3.5 text-[#5844A8]" /> OR TAP PHONE HERE (NFC)
                     </div>
 
-                    <div className="w-full flex items-center justify-between px-6 text-[8px] font-bold text-[#9E9A93] tracking-widest uppercase z-10">
+                    <div className="w-full flex items-center justify-between px-6 text-[8px] font-bold text-[#8C84A0] tracking-widest uppercase z-10">
                       <span>{selectedAssetDetails.location.toUpperCase()}</span>
                       <span>DYNAMIC ROUTING {selectedAssetDetails.id.split('-')[1]}</span>
                     </div>
 
                     {/* Bottom Wood Base Representation */}
-                    <div className="absolute bottom-0 left-0 right-0 h-3 bg-[#4A3B2C] border-t-2 border-[#33281E] shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-3 bg-[#2D1E5F] border-t-2 border-[#1E1548] shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]"></div>
                   </div>
                 </div>
 
@@ -2146,18 +2146,18 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
               </div>
 
               {/* Action Controls Footer */}
-              <div className="p-4 bg-white border-t border-[#EFECE6] shrink-0">
+              <div className="p-4 bg-white border-t border-[#EFEAF7] shrink-0">
                 <div className="flex items-center gap-3 mb-3">
-                  <button className="flex-1 flex justify-center items-center gap-2 px-4 py-2 text-[13px] font-bold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer">
-                    <Download className="w-4 h-4" />
+                  <button className="flex-1 flex justify-center items-center gap-2 px-4 py-2 text-[13px] font-bold text-[#1E1548] bg-white border border-[#EFEAF7] hover:bg-[#FAF8FF] rounded-xl transition-colors shadow-2xs cursor-pointer">
+                    <Download className="w-4 h-4 text-[#5844A8]" />
                     Download Vector
                   </button>
-                  <button className="flex-1 flex justify-center items-center gap-2 px-4 py-2 text-[13px] font-bold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 rounded-lg transition-opacity shadow-sm cursor-pointer">
+                  <button className="flex-1 flex justify-center items-center gap-2 px-4 py-2 text-[13px] font-bold text-white bg-[#5844A8] hover:bg-[#47368E] rounded-xl transition-colors shadow-sm cursor-pointer">
                     <Save className="w-4 h-4" /> Save &amp; Push Live
                   </button>
                 </div>
-                <div className="text-center flex justify-center items-center gap-1.5 text-[10px] font-semibold text-[#6E6A66]">
-                  <Info className="w-3.5 h-3.5" />Changes update cloud redirect without reprinting physical stand!
+                <div className="text-center flex justify-center items-center gap-1.5 text-[10px] font-semibold text-[#6B657E]">
+                  <Info className="w-3.5 h-3.5 text-[#5844A8]" />Changes update cloud redirect without reprinting physical stand!
                 </div>
               </div>
 
@@ -2169,24 +2169,24 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
 
       {/* Mobile Asset Preview Modal / Bottom Sheet */}
       {isMobilePreviewOpen && selectedAssetDetails && (
-        <div className="lg:hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 animate-in fade-in duration-200">
+        <div className="lg:hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-[#160C2E]/50 backdrop-blur-xs p-0 sm:p-4 animate-in fade-in duration-200">
           <div
             className="fixed inset-0"
             onClick={() => setIsMobilePreviewOpen(false)}
           />
-          <div className="relative bg-white w-full sm:max-w-md max-h-[90vh] rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl border-t sm:border border-gray-100 overflow-y-auto z-10 animate-in slide-in-from-bottom duration-200 flex flex-col pb-[max(env(safe-area-inset-bottom,0px),20px)]">
+          <div className="relative bg-white w-full sm:max-w-md max-h-[90vh] rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl border-t sm:border border-[#EFEAF7] overflow-y-auto z-10 animate-in slide-in-from-bottom duration-200 flex flex-col pb-[max(env(safe-area-inset-bottom,0px),20px)]">
             {/* Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EFEAF7] mb-4">
               <div className="min-w-0 pr-2">
-                <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">Stand Preview</div>
-                <h3 className="text-base font-bold text-[#1A1615] truncate">
+                <div className="text-[10px] uppercase font-bold tracking-wider text-[#8C84A0]">Stand Preview</div>
+                <h3 className="text-base font-black text-[#1E1548] truncate">
                   {selectedAssetDetails.title}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsMobilePreviewOpen(false)}
-                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center shrink-0 cursor-pointer"
+                className="w-8 h-8 rounded-full bg-[#F3EFFB] hover:bg-[#E7DCFF] text-[#1E1548] flex items-center justify-center shrink-0 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -2194,56 +2194,56 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
 
             {/* Realistic Printable Stand Mockup Box */}
             <div className="flex justify-center my-2">
-              <div className="w-[230px] bg-white rounded-t-[16px] shadow-xl border border-[#EFECE6] relative overflow-hidden flex flex-col items-center pt-5 pb-4">
+              <div className="w-[230px] bg-white rounded-t-[16px] shadow-xl border border-[#EFEAF7] relative overflow-hidden flex flex-col items-center pt-5 pb-4">
                 <div className="absolute top-0 left-0 right-0 h-full bg-gradient-to-br from-white/80 to-transparent pointer-events-none" />
-                <div className="text-[9px] font-bold uppercase tracking-widest text-[#9E9A93] mb-1.5 z-10">
+                <div className="text-[9px] font-bold uppercase tracking-widest text-[#8C84A0] mb-1.5 z-10">
                   • {selectedAssetDetails.title.split(' • ')[0].toUpperCase()}
                 </div>
-                <h4 className="text-center text-[13px] font-black text-[#1A1615] leading-tight px-4 z-10">
+                <h4 className="text-center text-[13px] font-black text-[#1E1548] leading-tight px-4 z-10">
                   SCAN TO JOIN REVIA PRIVÉ
                 </h4>
-                <p className="text-center text-[9px] font-semibold text-[#6E6A66] px-4 mt-1 mb-4 z-10 leading-snug">
+                <p className="text-center text-[9px] font-semibold text-[#6B657E] px-4 mt-1 mb-4 z-10 leading-snug">
                   Unlock complimentary artisanal pour-over on your next reservation.
                 </p>
 
                 {/* Vector QR Code */}
-                <div className="w-28 h-28 bg-white border border-[#EFECE6] rounded-lg p-2 shadow-xs mb-3 z-10 relative flex items-center justify-center">
+                <div className="w-28 h-28 bg-white border border-[#EFEAF7] rounded-xl p-2 shadow-xs mb-3 z-10 relative flex items-center justify-center">
                   {selectedAssetDetails.raw?.qr_image_url ? (
                     <img src={selectedAssetDetails.raw.qr_image_url} alt="QR Code" className="w-full h-full object-contain" />
                   ) : (
-                    <QrCode className="w-full h-full text-[#1A1615]" strokeWidth={1} />
+                    <QrCode className="w-full h-full text-[#1E1548]" strokeWidth={1} />
                   )}
                 </div>
 
-                <div className="flex items-center gap-1.5 text-[8.5px] font-bold text-[#1A1615] uppercase tracking-widest mb-4 z-10">
-                  <Smartphone className="w-3 h-3" /> OR TAP PHONE HERE (NFC)
+                <div className="flex items-center gap-1.5 text-[8.5px] font-bold text-[#1E1548] uppercase tracking-widest mb-4 z-10">
+                  <Smartphone className="w-3 h-3 text-[#5844A8]" /> OR TAP PHONE HERE (NFC)
                 </div>
 
-                <div className="w-full flex items-center justify-between px-4 text-[8px] font-bold text-[#9E9A93] tracking-widest uppercase z-10">
+                <div className="w-full flex items-center justify-between px-4 text-[8px] font-bold text-[#8C84A0] tracking-widest uppercase z-10">
                   <span>{selectedAssetDetails.location.toUpperCase()}</span>
                   <span>ROUTING {selectedAssetDetails.id}</span>
                 </div>
 
-                {/* Wood Base */}
-                <div className="absolute bottom-0 left-0 right-0 h-3 bg-[#4A3B2C] border-t-2 border-[#33281E] shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]" />
+                {/* Base */}
+                <div className="absolute bottom-0 left-0 right-0 h-3 bg-[#2D1E5F] border-t-2 border-[#1E1548] shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]" />
               </div>
             </div>
 
             {/* Stand Specs */}
-            <div className="mt-4 space-y-2 bg-[#FAF8F5] p-3.5 rounded-2xl border border-[#EFECE6] text-xs">
-              <div className="flex items-center justify-between text-[#6E6A66]">
+            <div className="mt-4 space-y-2 bg-[#FAF8FF] p-3.5 rounded-2xl border border-[#EFEAF7] text-xs">
+              <div className="flex items-center justify-between text-[#6B657E]">
                 <span className="font-medium">Venue & Location</span>
-                <span className="font-bold text-[#1A1615]">{selectedAssetDetails.location}</span>
+                <span className="font-bold text-[#1E1548]">{selectedAssetDetails.location}</span>
               </div>
-              <div className="flex items-center justify-between text-[#6E6A66]">
+              <div className="flex items-center justify-between text-[#6B657E]">
                 <span className="font-medium">Material Type</span>
-                <span className="font-bold text-[#1A1615]">{selectedAssetDetails.material}</span>
+                <span className="font-bold text-[#1E1548]">{selectedAssetDetails.material}</span>
               </div>
-              <div className="flex items-center justify-between text-[#6E6A66]">
+              <div className="flex items-center justify-between text-[#6B657E]">
                 <span className="font-medium">Cloud Target</span>
-                <span className="font-bold text-[#1A1615] truncate max-w-[180px]">{selectedAssetDetails.destination}</span>
+                <span className="font-bold text-[#1E1548] truncate max-w-[180px]">{selectedAssetDetails.destination}</span>
               </div>
-              <div className="flex items-center justify-between text-[#6E6A66]">
+              <div className="flex items-center justify-between text-[#6B657E]">
                 <span className="font-medium">30D Scan Count</span>
                 <span className="font-bold text-[#0D7A53]">{selectedAssetDetails.scans} scans</span>
               </div>
@@ -2258,9 +2258,9 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
                   setIsDownloadModalOpen(true);
                   setIsMobilePreviewOpen(false);
                 }}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white border border-[#EAE6E1] text-xs font-bold text-[#1A1615] hover:bg-gray-50 cursor-pointer"
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white border border-[#EFEAF7] text-xs font-bold text-[#1E1548] hover:bg-[#FAF8FF] cursor-pointer"
               >
-                <Download className="w-4 h-4" /> Download QR
+                <Download className="w-4 h-4 text-[#5844A8]" /> Download QR
               </button>
               <button
                 type="button"
@@ -2280,23 +2280,23 @@ export const QrCodesPage: React.FC<QrCodesPageProps> = ({ onNavigate }) => {
 
       {/* Edit Modal */}
       {isEditModalOpen && selectedActionAsset && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={() => setIsEditModalOpen(false)}>
-          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
-            <div className="p-5 border-b border-[#EFECE6] flex justify-between items-center bg-[#FAF8F5]">
-              <h2 className="text-[15px] font-bold text-[#1A1615]">Edit Asset Details</h2>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#160C2E]/45 backdrop-blur-sm animate-in fade-in" onClick={() => setIsEditModalOpen(false)}>
+          <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl border border-[#EFEAF7] animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+            <div className="p-5 border-b border-[#EFEAF7] flex justify-between items-center bg-[#FAF8FF]">
+              <h2 className="text-[15px] font-black text-[#1E1548]">Edit Asset Details</h2>
             </div>
             <div className="p-5 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Asset Title</label>
-                <input type="text" defaultValue={selectedActionAsset.title} className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                <label className="text-[11px] font-bold uppercase tracking-widest text-[#8C84A0]">Asset Title</label>
+                <input type="text" defaultValue={selectedActionAsset.title} className="w-full px-3 py-2 bg-[#FAF8FF] border border-[#EFEAF7] rounded-xl text-sm font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Location</label>
-                <input type="text" defaultValue={selectedActionAsset.location} className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                <label className="text-[11px] font-bold uppercase tracking-widest text-[#8C84A0]">Location</label>
+                <input type="text" defaultValue={selectedActionAsset.location} className="w-full px-3 py-2 bg-[#FAF8FF] border border-[#EFEAF7] rounded-xl text-sm font-semibold text-[#1E1548] focus:outline-none focus:border-[#5844A8]" />
               </div>
               <button
                 onClick={() => { setIsEditModalOpen(false); showToast('Asset updated successfully.'); }}
-                className="w-full px-4 py-2 bg-[#1A1615] text-white rounded-lg text-[13px] font-bold shadow-sm mt-2 hover:bg-black transition-colors"
+                className="w-full px-4 py-2.5 bg-[#5844A8] text-white rounded-xl text-[13px] font-bold shadow-sm mt-2 hover:bg-[#47368E] transition-colors cursor-pointer"
               >
                 Save Changes
               </button>

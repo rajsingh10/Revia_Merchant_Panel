@@ -348,7 +348,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
   // -------------------------------------------------------------
   if (viewMode === 'builder') {
     return (
-      <div className="min-h-screen bg-[#FAF8FF] font-sans pb-28 text-[#1A1615]">
+      <div className="bg-[#FAF8FF] font-sans pb-4 text-[#1A1615]">
         {/* Toast */}
         {toastMessage && (
           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] bg-[#5844A8] text-white px-5 py-2.5 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2 animate-in fade-in">
@@ -1686,7 +1686,7 @@ export const TabletCampaignView: React.FC<TabletCampaignViewProps> = ({
   // RENDER: DASHBOARD VIEW (Campaign Dashboard.png on Mobile & Tablet)
   // -------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-[#FAF8FF] font-sans pb-28 text-[#1A1615] overflow-x-hidden">
+    <div className="bg-[#FAF8FF] font-sans pb-4 text-[#1A1615] overflow-x-hidden">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] bg-[#5844A8] text-white px-5 py-2.5 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2 animate-in fade-in">

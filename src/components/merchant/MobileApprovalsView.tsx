@@ -137,7 +137,7 @@ export const MobileApprovalsView: React.FC<Props> = ({ onNavigate, onRequestActi
   );
 
   return (
-    <div className="w-full min-h-[calc(100vh-4rem)] bg-[#FAF8FF] text-[#1A1615] font-sans flex flex-col px-3.5 sm:px-6 py-3.5 sm:py-5 pb-28 space-y-4 select-none max-w-4xl mx-auto">
+    <div className="w-full bg-[#FAF8FF] text-[#1A1615] font-sans flex flex-col px-3.5 sm:px-6 py-3.5 sm:py-5 pb-4 space-y-4 select-none max-w-4xl mx-auto">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-16 left-1/2 -translate-x-1/2 z-[60] bg-[#1A1615] text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 border border-purple-500/30 animate-in fade-in slide-in-from-top-4">

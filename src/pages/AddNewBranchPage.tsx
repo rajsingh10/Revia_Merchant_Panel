@@ -184,19 +184,19 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
   ];
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] pb-16 font-sans text-[#1A1615]">
+    <div className="bg-[#FAF8FF] pb-8 font-sans text-[#1E1548]">
       <div className="max-w-4xl mx-auto px-6 pt-6 space-y-6">
         {/* Header Bar */}
         <div>
           <button
             onClick={() => onNavigate('/branches')}
-            className="flex items-center gap-1.5 text-xs font-semibold text-[#8C877D] hover:text-[#1A1615] transition-colors mb-1.5 cursor-pointer"
+            className="flex items-center gap-1.5 text-xs font-semibold text-[#8C84A0] hover:text-[#1E1548] transition-colors mb-1.5 cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Branches</span>
           </button>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">Add New Branch</h1>
-          <p className="text-xs text-[#6E6A66] font-medium mt-0.5">
+          <h1 className="text-2xl font-bold tracking-tight text-[#1E1548]">Add New Branch</h1>
+          <p className="text-xs text-[#6B657E] font-medium mt-0.5">
             Set up your new branch by providing the basic details.
           </p>
         </div>
@@ -205,7 +205,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
         <div className="py-4">
           <div className="flex items-center justify-between relative max-w-xl mx-auto">
             {/* Connecting line */}
-            <div className="absolute left-6 right-6 top-4 -translate-y-1/2 h-0.5 bg-[#E5E0D8] -z-0" />
+            <div className="absolute left-6 right-6 top-4 -translate-y-1/2 h-0.5 bg-[#E5DEF5] -z-0" />
             <div
               className="absolute left-6 top-4 -translate-y-1/2 h-0.5 bg-[#2D124D] transition-all duration-300 -z-0"
               style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 90}%` }}
@@ -222,14 +222,14 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                         ? 'bg-[#2D124D] text-white ring-4 ring-[#FAF5FF] shadow-xs'
                         : isPassed
                         ? 'bg-[#2D124D] text-white'
-                        : 'bg-white border-2 border-[#E5E0D8] text-[#8C877D]'
+                        : 'bg-white border-2 border-[#E5DEF5] text-[#8C84A0]'
                     }`}
                   >
                     {isPassed ? <Check className="w-4 h-4 stroke-[2.5]" /> : s.num}
                   </div>
                   <span
                     className={`text-[11px] font-bold ${
-                      isCurrent ? 'text-[#2D124D]' : isPassed ? 'text-[#1A1615]' : 'text-[#8C877D]'
+                      isCurrent ? 'text-[#2D124D]' : isPassed ? 'text-[#1E1548]' : 'text-[#8C84A0]'
                     }`}
                   >
                     {s.label}
@@ -244,14 +244,14 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
         {/* STEP 1: BASIC INFO */}
         {/* ======================================================== */}
         {currentStep === 1 && (
-          <div className="bg-white border border-[#EBE7DF] rounded-2xl shadow-2xs p-6 space-y-6">
-            <div className="flex items-start gap-3 pb-4 border-b border-[#F1EFEA]">
+          <div className="bg-white border border-[#EFEAF7] rounded-2xl shadow-2xs p-6 space-y-6">
+            <div className="flex items-start gap-3 pb-4 border-b border-[#F2ECF9]">
               <div className="w-10 h-10 rounded-xl bg-[#FAF5FF] border border-[#F3E8FF] flex items-center justify-center text-[#8B5CF6] shrink-0">
                 <Store className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-base font-bold text-[#1A1615]">Branch Identity</h2>
-                <p className="text-xs text-[#6E6A66] mt-0.5">
+                <h2 className="text-base font-bold text-[#1E1548]">Branch Identity</h2>
+                <p className="text-xs text-[#6B657E] mt-0.5">
                   Start by adding the basic details and brand positioning of your new branch.
                 </p>
               </div>
@@ -261,7 +261,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
               {/* Left Column */}
               <div className="space-y-4">
                 <div>
-                  <label className="block font-bold text-[#1A1615] mb-1.5">
+                  <label className="block font-bold text-[#1E1548] mb-1.5">
                     Branch Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -272,9 +272,9 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                       if (errors.branchName) setErrors({ ...errors, branchName: '' });
                     }}
                     placeholder="e.g. Downtown Flagship"
-                    className={`w-full px-3.5 py-2.5 bg-[#FAF8F5] border ${
-                      errors.branchName ? 'border-red-500' : 'border-[#E5E0D8]'
-                    } rounded-xl text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]`}
+                    className={`w-full px-3.5 py-2.5 bg-[#FAF8FF] border ${
+                      errors.branchName ? 'border-red-500' : 'border-[#E5DEF5]'
+                    } rounded-xl text-xs font-medium text-[#1E1548] focus:outline-hidden focus:border-[#2D124D]`}
                   />
                   {errors.branchName && (
                     <p className="text-red-500 text-[10px] mt-1 font-semibold">{errors.branchName}</p>
@@ -282,13 +282,13 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block font-bold text-[#1A1615] mb-1.5">
+                  <label className="block font-bold text-[#1E1548] mb-1.5">
                     Branch Type <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={branchType}
                     onChange={(e) => setBranchType(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                    className="w-full px-3 py-2.5 bg-[#FAF8FF] border border-[#E5DEF5] rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-hidden focus:border-[#2D124D]"
                   >
                     <option value="Café">Café</option>
                     <option value="Dine-in & Takeaway">Dine-in & Takeaway</option>
@@ -301,17 +301,17 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
 
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="font-bold text-[#1A1615]">Branch Code</label>
-                    <span className="text-[10px] text-[#8C877D]">Optional</span>
+                    <label className="font-bold text-[#1E1548]">Branch Code</label>
+                    <span className="text-[10px] text-[#8C84A0]">Optional</span>
                   </div>
                   <div className="relative">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8C877D] font-mono">#</span>
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8C84A0] font-mono">#</span>
                     <input
                       type="text"
                       value={branchCode}
                       onChange={(e) => setBranchCode(e.target.value)}
                       placeholder="e.g. BR001"
-                      className="w-full pl-8 pr-3.5 py-2.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-mono font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                      className="w-full pl-8 pr-3.5 py-2.5 bg-[#FAF8FF] border border-[#E5DEF5] rounded-xl text-xs font-mono font-medium text-[#1E1548] focus:outline-hidden focus:border-[#2D124D]"
                     />
                   </div>
                 </div>
@@ -321,8 +321,8 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
               <div className="space-y-4 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="font-bold text-[#1A1615]">Description</label>
-                    <span className="text-[10px] text-[#8C877D]">{description.length}/500</span>
+                    <label className="font-bold text-[#1E1548]">Description</label>
+                    <span className="text-[10px] text-[#8C84A0]">{description.length}/500</span>
                   </div>
                   <textarea
                     rows={4}
@@ -330,7 +330,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Tell us a bit about this branch..."
-                    className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                    className="w-full px-3.5 py-2.5 bg-[#FAF8FF] border border-[#E5DEF5] rounded-xl text-xs font-medium text-[#1E1548] focus:outline-hidden focus:border-[#2D124D]"
                   />
                 </div>
 
@@ -341,7 +341,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                   </div>
                   <div>
                     <div className="text-[11px] font-bold text-[#2D124D]">Pro Tip</div>
-                    <div className="text-[11px] text-[#6E6A66] mt-0.5 leading-relaxed">
+                    <div className="text-[11px] text-[#6B657E] mt-0.5 leading-relaxed">
                       Unique branch codes help link regional inventory trackers and staff roster automatically.
                     </div>
                   </div>
@@ -355,14 +355,14 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
         {/* STEP 2: LOCATION */}
         {/* ======================================================== */}
         {currentStep === 2 && (
-          <div className="bg-white border border-[#EBE7DF] rounded-2xl shadow-2xs p-6 space-y-6">
-            <div className="flex items-start gap-3 pb-4 border-b border-[#F1EFEA]">
+          <div className="bg-white border border-[#EFEAF7] rounded-2xl shadow-2xs p-6 space-y-6">
+            <div className="flex items-start gap-3 pb-4 border-b border-[#F2ECF9]">
               <div className="w-10 h-10 rounded-xl bg-[#FAF5FF] border border-[#F3E8FF] flex items-center justify-center text-[#8B5CF6] shrink-0">
                 <MapPin className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-base font-bold text-[#1A1615]">Location Details</h2>
-                <p className="text-xs text-[#6E6A66] mt-0.5">
+                <h2 className="text-base font-bold text-[#1E1548]">Location Details</h2>
+                <p className="text-xs text-[#6B657E] mt-0.5">
                   Enter the address and contact information for your branch.
                 </p>
               </div>
@@ -372,7 +372,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
               {/* Left Column: Form Fields */}
               <div className="lg:col-span-7 space-y-3.5">
                 <div>
-                  <label className="block font-bold text-[#1A1615] mb-1">
+                  <label className="block font-bold text-[#1E1548] mb-1">
                     Address Line 1 <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -383,9 +383,9 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                       if (errors.addressLine1) setErrors({ ...errors, addressLine1: '' });
                     }}
                     placeholder="428 S Spring St"
-                    className={`w-full px-3.5 py-2.5 bg-[#FAF8F5] border ${
-                      errors.addressLine1 ? 'border-red-500' : 'border-[#E5E0D8]'
-                    } rounded-xl text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]`}
+                    className={`w-full px-3.5 py-2.5 bg-[#FAF8FF] border ${
+                      errors.addressLine1 ? 'border-red-500' : 'border-[#E5DEF5]'
+                    } rounded-xl text-xs font-medium text-[#1E1548] focus:outline-hidden focus:border-[#2D124D]`}
                   />
                   {errors.addressLine1 && (
                     <p className="text-red-500 text-[10px] mt-1 font-semibold">{errors.addressLine1}</p>
@@ -394,21 +394,21 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="font-bold text-[#1A1615]">Address Line 2</label>
-                    <span className="text-[10px] text-[#8C877D]">Optional</span>
+                    <label className="font-bold text-[#1E1548]">Address Line 2</label>
+                    <span className="text-[10px] text-[#8C84A0]">Optional</span>
                   </div>
                   <input
                     type="text"
                     value={addressLine2}
                     onChange={(e) => setAddressLine2(e.target.value)}
                     placeholder="Apartment, Building, suite, etc."
-                    className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                    className="w-full px-3.5 py-2.5 bg-[#FAF8FF] border border-[#E5DEF5] rounded-xl text-xs font-medium text-[#1E1548] focus:outline-hidden focus:border-[#2D124D]"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-bold text-[#1A1615] mb-1">
+                    <label className="block font-bold text-[#1E1548] mb-1">
                       City <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -416,11 +416,11 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
                       placeholder="e.g. Los Angeles"
-                      className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                      className="w-full px-3.5 py-2.5 bg-[#FAF8FF] border border-[#E5DEF5] rounded-xl text-xs font-medium text-[#1E1548] focus:outline-hidden focus:border-[#2D124D]"
                     />
                   </div>
                   <div>
-                    <label className="block font-bold text-[#1A1615] mb-1">
+                    <label className="block font-bold text-[#1E1548] mb-1">
                       State <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -428,14 +428,14 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                       value={state}
                       onChange={(e) => setState(e.target.value)}
                       placeholder="e.g. California"
-                      className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                      className="w-full px-3.5 py-2.5 bg-[#FAF8FF] border border-[#E5DEF5] rounded-xl text-xs font-medium text-[#1E1548] focus:outline-hidden focus:border-[#2D124D]"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-bold text-[#1A1615] mb-1">
+                    <label className="block font-bold text-[#1E1548] mb-1">
                       Postal / Zip Code <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -443,15 +443,15 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                       value={zipCode}
                       onChange={(e) => setZipCode(e.target.value)}
                       placeholder="90013"
-                      className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                      className="w-full px-3.5 py-2.5 bg-[#FAF8FF] border border-[#E5DEF5] rounded-xl text-xs font-medium text-[#1E1548] focus:outline-hidden focus:border-[#2D124D]"
                     />
                   </div>
                   <div>
-                    <label className="block font-bold text-[#1A1615] mb-1">Country</label>
+                    <label className="block font-bold text-[#1E1548] mb-1">Country</label>
                     <select
                       value={country}
                       onChange={(e) => setCountry(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                      className="w-full px-3 py-2.5 bg-[#FAF8FF] border border-[#E5DEF5] rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-hidden focus:border-[#2D124D]"
                     >
                       <option value="United States">United States</option>
                       <option value="India">India</option>
@@ -463,7 +463,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="font-bold text-[#1A1615]">Latitude &amp; Longitude</label>
+                    <label className="font-bold text-[#1E1548]">Latitude &amp; Longitude</label>
                     <button
                       type="button"
                       onClick={handleAutoDetect}
@@ -477,7 +477,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                     value={latLng}
                     onChange={(e) => setLatLng(e.target.value)}
                     placeholder="34.0488° N, 118.2518° W"
-                    className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-mono font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                    className="w-full px-3.5 py-2.5 bg-[#FAF8FF] border border-[#E5DEF5] rounded-xl text-xs font-mono font-medium text-[#1E1548] focus:outline-hidden focus:border-[#2D124D]"
                   />
                 </div>
               </div>
@@ -485,13 +485,13 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
               {/* Right Column: Visual Map Card */}
               <div className="lg:col-span-5 space-y-3">
                 <div>
-                  <div className="font-bold text-[#1A1615]">Select Location on Map</div>
-                  <p className="text-[11px] text-[#8C877D]">Drag the pin to set the exact location of your branch.</p>
+                  <div className="font-bold text-[#1E1548]">Select Location on Map</div>
+                  <p className="text-[11px] text-[#8C84A0]">Drag the pin to set the exact location of your branch.</p>
                 </div>
 
-                <div className="border border-[#E5E0D8] rounded-2xl overflow-hidden bg-[#FAF8F5] relative shadow-2xs">
+                <div className="border border-[#E5DEF5] rounded-2xl overflow-hidden bg-[#FAF8FF] relative shadow-2xs">
                   {/* Stylized Simulated Map Container */}
-                  <div className="h-48 relative flex items-center justify-center overflow-hidden bg-gradient-to-tr from-[#F1EFEA] via-[#E8E4DC] to-[#FBF9F5]">
+                  <div className="h-48 relative flex items-center justify-center overflow-hidden bg-gradient-to-tr from-[#F3EEFA] via-[#EAE2FB] to-[#FAF8FF]">
                     {/* SVG Street Grid Lines Simulation */}
                     <svg className="absolute inset-0 w-full h-full opacity-40" xmlns="http://www.w3.org/2000/svg">
                       <line x1="0" y1="40" x2="100%" y2="80" stroke="#CBD5E1" strokeWidth="4" />
@@ -514,27 +514,27 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                       <div className="w-8 h-8 rounded-full bg-[#2D124D] text-white flex items-center justify-center shadow-lg border-2 border-white animate-bounce">
                         <MapPin className="w-4 h-4 fill-white" />
                       </div>
-                      <span className="mt-1 bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded-md text-[10px] font-bold text-[#1A1615] shadow-xs">
+                      <span className="mt-1 bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded-md text-[10px] font-bold text-[#1E1548] shadow-xs">
                         {city || 'Location Pin'}
                       </span>
                     </div>
 
                     {/* Zoom controls on map */}
-                    <div className="absolute right-3 top-3 flex flex-col bg-white border border-[#E5E0D8] rounded-lg shadow-xs overflow-hidden">
-                      <button type="button" className="p-1 hover:bg-[#FAF8F5] text-[#6E6A66]">
+                    <div className="absolute right-3 top-3 flex flex-col bg-white border border-[#E5DEF5] rounded-lg shadow-xs overflow-hidden">
+                      <button type="button" className="p-1 hover:bg-[#FAF8FF] text-[#6B657E]">
                         +
                       </button>
-                      <button type="button" className="p-1 border-t border-[#E5E0D8] hover:bg-[#FAF8F5] text-[#6E6A66]">
+                      <button type="button" className="p-1 border-t border-[#E5DEF5] hover:bg-[#FAF8FF] text-[#6B657E]">
                         −
                       </button>
                     </div>
                   </div>
 
                   {/* Selected Location Pill */}
-                  <div className="p-3 bg-white border-t border-[#E5E0D8] flex items-center justify-between gap-2 text-xs">
+                  <div className="p-3 bg-white border-t border-[#E5DEF5] flex items-center justify-between gap-2 text-xs">
                     <div className="flex items-center gap-1.5 min-w-0">
                       <MapPin className="w-3.5 h-3.5 text-[#8B5CF6] shrink-0" />
-                      <span className="font-semibold text-[#1A1615] truncate">
+                      <span className="font-semibold text-[#1E1548] truncate">
                         {addressLine1}, {city}, {state} {zipCode}
                       </span>
                     </div>
@@ -557,14 +557,14 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
         {currentStep === 3 && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Left Card: POS Integration */}
-            <div className="lg:col-span-6 bg-white border border-[#EBE7DF] rounded-2xl shadow-2xs p-6 space-y-5">
-              <div className="flex items-start gap-3 pb-3 border-b border-[#F1EFEA]">
+            <div className="lg:col-span-6 bg-white border border-[#EFEAF7] rounded-2xl shadow-2xs p-6 space-y-5">
+              <div className="flex items-start gap-3 pb-3 border-b border-[#F2ECF9]">
                 <div className="w-9 h-9 rounded-xl bg-[#FAF5FF] border border-[#F3E8FF] flex items-center justify-center text-[#8B5CF6] shrink-0">
                   <Layers className="w-4 h-4" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-[#1A1615]">POS Integration</h2>
-                  <p className="text-[11px] text-[#6E6A66]">
+                  <h2 className="text-sm font-bold text-[#1E1548]">POS Integration</h2>
+                  <p className="text-[11px] text-[#6B657E]">
                     Configure your POS system to sync orders and menu items.
                   </p>
                 </div>
@@ -572,14 +572,14 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
 
               <div className="space-y-4 text-xs">
                 <div>
-                  <label className="block font-bold text-[#1A1615] mb-1.5">
+                  <label className="block font-bold text-[#1E1548] mb-1.5">
                     Select POS Provider <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <select
                       value={posProvider}
                       onChange={(e) => setPosProvider(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                      className="w-full px-3 py-2.5 bg-[#FAF8FF] border border-[#E5DEF5] rounded-xl text-xs font-semibold text-[#1E1548] focus:outline-hidden focus:border-[#2D124D]"
                     >
                       <option value="Square / Toast / Others">Square / Toast / Others</option>
                       <option value="Clover POS">Clover POS</option>
@@ -595,27 +595,27 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
 
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="font-bold text-[#1A1615]">POS Terminal ID</label>
-                    <span className="text-[10px] text-[#8C877D]">Optional</span>
+                    <label className="font-bold text-[#1E1548]">POS Terminal ID</label>
+                    <span className="text-[10px] text-[#8C84A0]">Optional</span>
                   </div>
                   <input
                     type="text"
                     value={posTerminalId}
                     onChange={(e) => setPosTerminalId(e.target.value)}
                     placeholder="e.g. POS-001"
-                    className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl text-xs font-mono font-medium text-[#1A1615] focus:outline-hidden focus:border-[#2D124D]"
+                    className="w-full px-3.5 py-2.5 bg-[#FAF8FF] border border-[#E5DEF5] rounded-xl text-xs font-mono font-medium text-[#1E1548] focus:outline-hidden focus:border-[#2D124D]"
                   />
                 </div>
 
                 {/* Sync Menu with POS Toggle Card */}
-                <div className="p-3.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl flex items-center justify-between gap-3">
+                <div className="p-3.5 bg-[#FAF8FF] border border-[#E5DEF5] rounded-xl flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white border border-[#E5E0D8] flex items-center justify-center text-[#8B5CF6]">
+                    <div className="w-8 h-8 rounded-lg bg-white border border-[#E5DEF5] flex items-center justify-center text-[#8B5CF6]">
                       <Calendar className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-[#1A1615]">Sync Menu with POS</div>
-                      <div className="text-[10px] text-[#6E6A66] leading-tight">
+                      <div className="text-xs font-bold text-[#1E1548]">Sync Menu with POS</div>
+                      <div className="text-[10px] text-[#6B657E] leading-tight">
                         Automatically sync menu items, prices and categories from your POS system.
                       </div>
                     </div>
@@ -625,7 +625,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                     type="button"
                     onClick={() => setSyncMenuWithPos(!syncMenuWithPos)}
                     className={`w-10 h-5 rounded-full transition-colors relative cursor-pointer shrink-0 ${
-                      syncMenuWithPos ? 'bg-[#2D124D]' : 'bg-[#E5E0D8]'
+                      syncMenuWithPos ? 'bg-[#2D124D]' : 'bg-[#E5DEF5]'
                     }`}
                   >
                     <span
@@ -639,26 +639,26 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
             </div>
 
             {/* Right Card: Menu Upload */}
-            <div className="lg:col-span-6 bg-white border border-[#EBE7DF] rounded-2xl shadow-2xs p-6 space-y-4">
-              <div className="flex items-start justify-between pb-3 border-b border-[#F1EFEA]">
+            <div className="lg:col-span-6 bg-white border border-[#EFEAF7] rounded-2xl shadow-2xs p-6 space-y-4">
+              <div className="flex items-start justify-between pb-3 border-b border-[#F2ECF9]">
                 <div className="flex items-start gap-3">
                   <div className="w-9 h-9 rounded-xl bg-[#FAF5FF] border border-[#F3E8FF] flex items-center justify-center text-[#8B5CF6] shrink-0">
                     <FileText className="w-4 h-4" />
                   </div>
                   <div>
-                    <h2 className="text-sm font-bold text-[#1A1615]">Menu Upload</h2>
-                    <p className="text-[11px] text-[#6E6A66]">
+                    <h2 className="text-sm font-bold text-[#1E1548]">Menu Upload</h2>
+                    <p className="text-[11px] text-[#6B657E]">
                       Upload your menu from your POS system or manually.
                     </p>
                   </div>
                 </div>
-                <span className="bg-[#FAF8F5] text-[#8C877D] border border-[#E5E0D8] px-2 py-0.5 rounded text-[9px] font-bold">
+                <span className="bg-[#FAF8FF] text-[#8C84A0] border border-[#E5DEF5] px-2 py-0.5 rounded text-[9px] font-bold">
                   Optional Backup
                 </span>
               </div>
 
               {/* Upload Drag & Drop Area */}
-              <div className="border-2 border-dashed border-[#D4CFC6] hover:border-[#2D124D] rounded-2xl p-5 text-center bg-[#FAF8F5] transition-colors relative">
+              <div className="border-2 border-dashed border-[#D9CEF2] hover:border-[#2D124D] rounded-2xl p-5 text-center bg-[#FAF8FF] transition-colors relative">
                 <input
                   type="file"
                   accept=".pdf,image/*"
@@ -668,11 +668,11 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                 <div className="w-10 h-10 rounded-full bg-[#EDE9FE] text-[#8B5CF6] flex items-center justify-center mx-auto mb-2">
                   <UploadCloud className="w-5 h-5" />
                 </div>
-                <div className="text-xs font-bold text-[#1A1615]">Upload Menu</div>
-                <div className="text-[10px] text-[#8C877D] mt-0.5">Image or PDF (Max 10MB)</div>
+                <div className="text-xs font-bold text-[#1E1548]">Upload Menu</div>
+                <div className="text-[10px] text-[#8C84A0] mt-0.5">Image or PDF (Max 10MB)</div>
                 <button
                   type="button"
-                  className="mt-3 px-3.5 py-1.5 bg-white border border-[#E5E0D8] hover:bg-[#FAF8F5] rounded-lg text-[11px] font-bold text-[#1A1615] shadow-2xs cursor-pointer"
+                  className="mt-3 px-3.5 py-1.5 bg-white border border-[#E5DEF5] hover:bg-[#FAF8FF] rounded-lg text-[11px] font-bold text-[#1E1548] shadow-2xs cursor-pointer"
                 >
                   Browse Files
                 </button>
@@ -680,20 +680,20 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
 
               {/* Uploaded File Preview */}
               {uploadedFileName && (
-                <div className="p-3 bg-white border border-[#E5E0D8] rounded-xl flex items-center justify-between text-xs">
+                <div className="p-3 bg-white border border-[#E5DEF5] rounded-xl flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-lg bg-[#FAF5FF] text-[#8B5CF6] flex items-center justify-center font-bold">
                       <File className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="font-bold text-[#1A1615]">{uploadedFileName}</div>
-                      <div className="text-[10px] text-[#8C877D]">{uploadedFileSize} • Ready to sync</div>
+                      <div className="font-bold text-[#1E1548]">{uploadedFileName}</div>
+                      <div className="text-[10px] text-[#8C84A0]">{uploadedFileSize} • Ready to sync</div>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => setUploadedFileName(null)}
-                    className="text-[#8C877D] hover:text-[#1A1615] p-1 cursor-pointer"
+                    className="text-[#8C84A0] hover:text-[#1E1548] p-1 cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -707,7 +707,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                 </div>
                 <div>
                   <div className="text-[11px] font-bold text-[#2D124D]">Instant AI Menu Digitalization</div>
-                  <div className="text-[11px] text-[#6E6A66] mt-0.5 leading-snug">
+                  <div className="text-[11px] text-[#6B657E] mt-0.5 leading-snug">
                     Uploaded menus are parsed automatically into modifiers, categories, and allergens for fast onboarding.
                   </div>
                 </div>
@@ -725,11 +725,11 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
               {/* Left Column: Basic Info & POS Review Cards */}
               <div className="lg:col-span-6 space-y-6">
                 {/* 1. Basic Information Review */}
-                <div className="bg-white border border-[#EBE7DF] rounded-2xl shadow-2xs p-5 space-y-3.5">
-                  <div className="flex items-center justify-between pb-2.5 border-b border-[#F1EFEA]">
+                <div className="bg-white border border-[#EFEAF7] rounded-2xl shadow-2xs p-5 space-y-3.5">
+                  <div className="flex items-center justify-between pb-2.5 border-b border-[#F2ECF9]">
                     <div className="flex items-center gap-2">
                       <Store className="w-4 h-4 text-[#8B5CF6]" />
-                      <h3 className="text-sm font-bold text-[#1A1615]">Basic Information</h3>
+                      <h3 className="text-sm font-bold text-[#1E1548]">Basic Information</h3>
                     </div>
                     <button
                       type="button"
@@ -741,31 +741,31 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                   </div>
 
                   <div className="space-y-2 text-xs">
-                    <div className="flex justify-between py-1 border-b border-[#F1EFEA]">
-                      <span className="text-[#8C877D]">Branch Name</span>
-                      <span className="font-bold text-[#1A1615]">{branchName}</span>
+                    <div className="flex justify-between py-1 border-b border-[#F2ECF9]">
+                      <span className="text-[#8C84A0]">Branch Name</span>
+                      <span className="font-bold text-[#1E1548]">{branchName}</span>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-[#F1EFEA]">
-                      <span className="text-[#8C877D]">Branch Type</span>
-                      <span className="font-bold text-[#1A1615]">{branchType}</span>
+                    <div className="flex justify-between py-1 border-b border-[#F2ECF9]">
+                      <span className="text-[#8C84A0]">Branch Type</span>
+                      <span className="font-bold text-[#1E1548]">{branchType}</span>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-[#F1EFEA]">
-                      <span className="text-[#8C877D]">Branch Code</span>
-                      <span className="font-mono font-bold text-[#1A1615]">{branchCode || 'BR001'}</span>
+                    <div className="flex justify-between py-1 border-b border-[#F2ECF9]">
+                      <span className="text-[#8C84A0]">Branch Code</span>
+                      <span className="font-mono font-bold text-[#1E1548]">{branchCode || 'BR001'}</span>
                     </div>
                     <div className="py-1">
-                      <span className="text-[#8C877D] block mb-0.5">Description</span>
-                      <span className="text-[#6E6A66] leading-relaxed">{description}</span>
+                      <span className="text-[#8C84A0] block mb-0.5">Description</span>
+                      <span className="text-[#6B657E] leading-relaxed">{description}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* 2. POS & Menu Setup Review */}
-                <div className="bg-white border border-[#EBE7DF] rounded-2xl shadow-2xs p-5 space-y-3.5">
-                  <div className="flex items-center justify-between pb-2.5 border-b border-[#F1EFEA]">
+                <div className="bg-white border border-[#EFEAF7] rounded-2xl shadow-2xs p-5 space-y-3.5">
+                  <div className="flex items-center justify-between pb-2.5 border-b border-[#F2ECF9]">
                     <div className="flex items-center gap-2">
                       <Layers className="w-4 h-4 text-[#8B5CF6]" />
-                      <h3 className="text-sm font-bold text-[#1A1615]">POS &amp; Menu Setup</h3>
+                      <h3 className="text-sm font-bold text-[#1E1548]">POS &amp; Menu Setup</h3>
                     </div>
                     <button
                       type="button"
@@ -777,29 +777,29 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                   </div>
 
                   <div className="space-y-2 text-xs">
-                    <div className="flex justify-between py-1 border-b border-[#F1EFEA]">
-                      <span className="text-[#8C877D]">POS Provider</span>
-                      <span className="font-bold text-[#1A1615]">{posProvider}</span>
+                    <div className="flex justify-between py-1 border-b border-[#F2ECF9]">
+                      <span className="text-[#8C84A0]">POS Provider</span>
+                      <span className="font-bold text-[#1E1548]">{posProvider}</span>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-[#F1EFEA]">
-                      <span className="text-[#8C877D]">POS Terminal ID</span>
-                      <span className="font-mono font-bold text-[#1A1615]">{posTerminalId}</span>
+                    <div className="flex justify-between py-1 border-b border-[#F2ECF9]">
+                      <span className="text-[#8C84A0]">POS Terminal ID</span>
+                      <span className="font-mono font-bold text-[#1E1548]">{posTerminalId}</span>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-[#F1EFEA]">
-                      <span className="text-[#8C877D]">Sync Menu with POS</span>
+                    <div className="flex justify-between py-1 border-b border-[#F2ECF9]">
+                      <span className="text-[#8C84A0]">Sync Menu with POS</span>
                       <span className="font-bold text-[#15803D]">
                         {syncMenuWithPos ? 'Enabled' : 'Disabled'}
                       </span>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-[#F1EFEA]">
-                      <span className="text-[#8C877D]">Menu File</span>
-                      <span className="font-semibold text-[#1A1615]">
+                    <div className="flex justify-between py-1 border-b border-[#F2ECF9]">
+                      <span className="text-[#8C84A0]">Menu File</span>
+                      <span className="font-semibold text-[#1E1548]">
                         {uploadedFileName || 'Digital Menu'}
                       </span>
                     </div>
                     <div className="flex justify-between py-1">
-                      <span className="text-[#8C877D]">Total Menu Items</span>
-                      <span className="font-bold text-[#1A1615]">42 items</span>
+                      <span className="text-[#8C84A0]">Total Menu Items</span>
+                      <span className="font-bold text-[#1E1548]">42 items</span>
                     </div>
                   </div>
                 </div>
@@ -807,11 +807,11 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
 
               {/* Right Column: Location Details Review with Mini Map */}
               <div className="lg:col-span-6 space-y-6">
-                <div className="bg-white border border-[#EBE7DF] rounded-2xl shadow-2xs p-5 space-y-3.5">
-                  <div className="flex items-center justify-between pb-2.5 border-b border-[#F1EFEA]">
+                <div className="bg-white border border-[#EFEAF7] rounded-2xl shadow-2xs p-5 space-y-3.5">
+                  <div className="flex items-center justify-between pb-2.5 border-b border-[#F2ECF9]">
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-[#8B5CF6]" />
-                      <h3 className="text-sm font-bold text-[#1A1615]">Location Details</h3>
+                      <h3 className="text-sm font-bold text-[#1E1548]">Location Details</h3>
                     </div>
                     <button
                       type="button"
@@ -823,32 +823,32 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                   </div>
 
                   <div className="space-y-2 text-xs">
-                    <div className="flex justify-between py-1 border-b border-[#F1EFEA]">
-                      <span className="text-[#8C877D]">Address Line 1</span>
-                      <span className="font-bold text-[#1A1615]">{addressLine1}</span>
+                    <div className="flex justify-between py-1 border-b border-[#F2ECF9]">
+                      <span className="text-[#8C84A0]">Address Line 1</span>
+                      <span className="font-bold text-[#1E1548]">{addressLine1}</span>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-[#F1EFEA]">
-                      <span className="text-[#8C877D]">City &amp; State</span>
-                      <span className="font-bold text-[#1A1615]">
+                    <div className="flex justify-between py-1 border-b border-[#F2ECF9]">
+                      <span className="text-[#8C84A0]">City &amp; State</span>
+                      <span className="font-bold text-[#1E1548]">
                         {city}, {state}
                       </span>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-[#F1EFEA]">
-                      <span className="text-[#8C877D]">Postal / Zip Code</span>
-                      <span className="font-mono font-bold text-[#1A1615]">{zipCode}</span>
+                    <div className="flex justify-between py-1 border-b border-[#F2ECF9]">
+                      <span className="text-[#8C84A0]">Postal / Zip Code</span>
+                      <span className="font-mono font-bold text-[#1E1548]">{zipCode}</span>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-[#F1EFEA]">
-                      <span className="text-[#8C877D]">Country</span>
-                      <span className="font-bold text-[#1A1615]">{country}</span>
+                    <div className="flex justify-between py-1 border-b border-[#F2ECF9]">
+                      <span className="text-[#8C84A0]">Country</span>
+                      <span className="font-bold text-[#1E1548]">{country}</span>
                     </div>
                     <div className="flex justify-between py-1">
-                      <span className="text-[#8C877D]">Latitude &amp; Longitude</span>
-                      <span className="font-mono text-[11px] text-[#6E6A66]">{latLng}</span>
+                      <span className="text-[#8C84A0]">Latitude &amp; Longitude</span>
+                      <span className="font-mono text-[11px] text-[#6B657E]">{latLng}</span>
                     </div>
                   </div>
 
                   {/* Visual Mini Map Preview */}
-                  <div className="h-32 rounded-xl overflow-hidden border border-[#E5E0D8] relative flex items-center justify-center bg-gradient-to-tr from-[#F1EFEA] via-[#E8E4DC] to-[#FBF9F5]">
+                  <div className="h-32 rounded-xl overflow-hidden border border-[#E5DEF5] relative flex items-center justify-center bg-gradient-to-tr from-[#F3EEFA] via-[#EAE2FB] to-[#FAF8FF]">
                     <svg className="absolute inset-0 w-full h-full opacity-40" xmlns="http://www.w3.org/2000/svg">
                       <line x1="0" y1="30" x2="100%" y2="70" stroke="#CBD5E1" strokeWidth="4" />
                       <line x1="0" y1="90" x2="100%" y2="80" stroke="#CBD5E1" strokeWidth="6" />
@@ -858,7 +858,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                       <div className="w-7 h-7 rounded-full bg-[#2D124D] text-white flex items-center justify-center shadow-md border-2 border-white">
                         <MapPin className="w-3.5 h-3.5 fill-white" />
                       </div>
-                      <span className="mt-1 bg-white/95 px-2 py-0.5 rounded text-[9px] font-bold text-[#1A1615] shadow-xs">
+                      <span className="mt-1 bg-white/95 px-2 py-0.5 rounded text-[9px] font-bold text-[#1E1548] shadow-xs">
                         {addressLine1}, {city}
                       </span>
                     </div>
@@ -872,7 +872,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                   </div>
                   <div>
                     <div className="text-xs font-bold text-[#2D124D]">Instant Provisioning</div>
-                    <div className="text-[11px] text-[#6E6A66] mt-0.5">
+                    <div className="text-[11px] text-[#6B657E] mt-0.5">
                       Your branch, menu and POS settings will be synced automatically after submission.
                     </div>
                   </div>
@@ -883,11 +883,11 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
         )}
 
         {/* Bottom Actions Row */}
-        <div className="flex items-center justify-between pt-4 border-t border-[#E8E4DD]">
+        <div className="flex items-center justify-between pt-4 border-t border-[#EFEAF7]">
           <button
             type="button"
             onClick={handleBack}
-            className="px-5 py-2.5 rounded-xl border border-[#E5E0D8] bg-white hover:bg-[#FAF8F5] text-xs font-bold text-[#6E6A66] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+            className="px-5 py-2.5 rounded-xl border border-[#E5DEF5] bg-white hover:bg-[#FAF8FF] text-xs font-bold text-[#6B657E] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>{currentStep === 1 ? 'Cancel' : 'Back'}</span>
@@ -919,13 +919,13 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
       {/* Success Modal */}
       {isSuccessModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 text-center space-y-4 border border-[#E5E0D8] animate-in fade-in zoom-in-95">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 text-center space-y-4 border border-[#E5DEF5] animate-in fade-in zoom-in-95">
             <div className="w-14 h-14 rounded-2xl bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-[#1A1615]">Branch Created Successfully!</h3>
-              <p className="text-xs text-[#6E6A66] mt-1">
+              <h3 className="text-lg font-bold text-[#1E1548]">Branch Created Successfully!</h3>
+              <p className="text-xs text-[#6B657E] mt-1">
                 <strong>{branchName}</strong> has been provisioned and added to your active branches.
               </p>
             </div>

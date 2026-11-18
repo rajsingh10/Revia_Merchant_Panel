@@ -22,7 +22,7 @@ export const StaffMenuHubView: React.FC<StaffMenuHubViewProps> = ({
   onNavigateTo,
 }) => {
   return (
-    <div className="px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-5xl mx-auto space-y-6">
+    <div className="px-4 sm:px-6 lg:px-8 xl:px-10 py-5 sm:py-6 lg:py-8 pb-28 sm:pb-32 lg:pb-12 max-w-5xl w-full mx-auto space-y-5 sm:space-y-6 lg:space-y-7">
       {/* Header */}
       <div className="flex items-center gap-3">
         <button

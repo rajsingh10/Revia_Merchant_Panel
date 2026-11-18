@@ -45,6 +45,7 @@ import {
   TabletCustomerItem,
   TabletCustomerCampaign
 } from '../data/customerTabletData';
+import { TabletCustomersView } from '../components/customers/TabletCustomersView';
 
 interface CustomersPageProps {
   customers?: Customer[];
@@ -56,14 +57,14 @@ interface CustomersPageProps {
 export const CustomersPage: React.FC<CustomersPageProps> = ({
   onViewCustomer
 }) => {
-  // Device mode switcher: automatically 'web' for Desktop and 'tablet' for Tablet screens
+  // Device mode switcher: automatically 'web' for Desktop and 'tablet' for Tablet/Mobile screens (< 1280px)
   const [deviceView, setDeviceView] = useState<'web' | 'tablet'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       if (params.get('view') === 'tablet' || params.get('device') === 'tablet') {
         return 'tablet';
       }
-      return window.innerWidth < 1024 ? 'tablet' : 'web';
+      return window.innerWidth < 1280 ? 'tablet' : 'web';
     }
     return 'web';
   });
@@ -72,7 +73,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
     const handleResize = () => {
       const params = new URLSearchParams(window.location.search);
       if (!params.get('view') && !params.get('device')) {
-        setDeviceView(window.innerWidth < 1024 ? 'tablet' : 'web');
+        setDeviceView(window.innerWidth < 1280 ? 'tablet' : 'web');
       }
     };
     window.addEventListener('resize', handleResize);
@@ -355,6 +356,13 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
         );
     }
   };
+
+  /* =========================================================================
+     VIEW: TABLET & MOBILE CUSTOMER FLOW (iPad Pro 12.9_ - 65..70, 76..79)
+     ========================================================================= */
+  if (deviceView === 'tablet') {
+    return <TabletCustomersView initialCustomerId={selectedCustomerId} />;
+  }
 
   /* =========================================================================
      VIEW: CUSTOMER DETAILS (Web or Tablet Mode)
@@ -1169,115 +1177,6 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* 2. TABLET FLOW (d:\New folder (3)\UI - iPad Pro 12.9_ - 65.png) */}
-        {/* ========================================================================= */}
-        {deviceView === 'tablet' && (
-          <div className="space-y-4 animate-in fade-in duration-150">
-            {/* Tablet Search */}
-            <div className="flex items-center gap-3">
-              <div className="relative flex-1">
-                <Search className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={tabletSearchQuery}
-                  onChange={(e) => setTabletSearchQuery(e.target.value)}
-                  placeholder="Search by name, phone, email or loyalty ID..."
-                  className="w-full pl-11 pr-4 py-3 text-xs bg-white border border-[#EAE6E1] focus:border-[#7C3AED] rounded-2xl outline-none shadow-2xs transition-all font-medium"
-                />
-              </div>
-              <button
-                type="button"
-                className="w-11 h-11 rounded-2xl bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors shadow-2xs cursor-pointer"
-              >
-                <Filter className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Tablet Tier Filter Tabs */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1">
-              {[
-                { label: 'All', count: '2,482' },
-                { label: 'VVIP', count: '120' },
-                { label: 'VIP', count: '310' },
-                { label: 'Gold', count: '620' },
-                { label: 'Silver', count: '820' },
-                { label: 'Bronze', count: '612' }
-              ].map((item) => (
-                <button
-                  key={item.label}
-                  onClick={() => setTabletTierFilter(item.label as any)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                    tabletTierFilter === item.label
-                      ? 'bg-[#2D124D] text-white shadow-2xs'
-                      : 'bg-white text-gray-700 border border-[#EAE6E1] hover:bg-gray-50'
-                  }`}
-                >
-                  {item.label} ({item.count})
-                </button>
-              ))}
-            </div>
-
-            {/* Tablet 2-Column Customer Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-              {filteredTabletCustomers.map((cust) => (
-                <div
-                  key={cust.id}
-                  onClick={() => handleViewCustomer(cust.id)}
-                  className="bg-white rounded-3xl border border-[#F1EFEA] p-5 shadow-2xs hover:border-[#7C3AED]/40 transition-all cursor-pointer flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-12 h-12 rounded-full ${cust.avatarBg} ${cust.avatarColor} font-black text-sm flex items-center justify-center shrink-0 border-2 border-white shadow-2xs`}
-                        >
-                          {cust.initials}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="text-sm font-black text-[#1A1615]">{cust.name}</h3>
-                            {renderTabletTierBadge(cust.tier)}
-                          </div>
-                          <div className="text-xs text-gray-400 font-medium mt-0.5">{cust.phone}</div>
-                        </div>
-                      </div>
-                      <span className="text-[11px] font-medium text-gray-400 shrink-0">
-                        Last visit: {cust.lastVisit}
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-4 gap-2 mt-4 pt-3.5 border-t border-gray-50 text-left">
-                      <div>
-                        <div className="text-[10px] text-gray-400 font-semibold uppercase">Visits</div>
-                        <div className="text-sm font-black text-[#1A1615] mt-0.5">{cust.visits}</div>
-                      </div>
-                      <div>
-                        <div className="text-[10px] text-gray-400 font-semibold uppercase">Lifetime Spend</div>
-                        <div className="text-sm font-black text-[#1A1615] mt-0.5">₹{cust.lifetimeSpend.toLocaleString()}</div>
-                      </div>
-                      <div>
-                        <div className="text-[10px] text-gray-400 font-semibold uppercase">Points</div>
-                        <div className="text-sm font-black text-[#1A1615] mt-0.5">{cust.points.toLocaleString()}</div>
-                      </div>
-                      <div>
-                        <div className="text-[10px] text-gray-400 font-semibold uppercase">Cashback</div>
-                        <div className="text-sm font-black text-[#1A1615] mt-0.5">₹{cust.cashback}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 pt-2.5 border-t border-gray-50 flex justify-end">
-                    <span className="inline-flex items-center gap-1 text-xs font-bold text-[#7C3AED] hover:text-[#2D124D]">
-                      View Profile &gt;
-                    </span>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         )}

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { StaffPortalHeader } from '../components/staff-portal/StaffPortalHeader';
 import { StaffPortalBottomNav } from '../components/staff-portal/StaffPortalBottomNav';
+import { MobileMenuSheet } from '../components/layout/MobileMenuSheet';
+import { MobileBottomNav } from '../components/layout/MobileBottomNav';
 import { TableServiceView } from '../components/staff-portal/TableServiceView';
 import { ServiceRequestsView } from '../components/staff-portal/ServiceRequestsView';
 import { CreateRequestView } from '../components/staff-portal/CreateRequestView';
@@ -43,6 +45,7 @@ export const StaffPortalPage: React.FC<StaffPortalPageProps> = ({ onNavigate }) 
   const [activeTab, setActiveTab] = useState<StaffPortalTab>('tables');
   const [subView, setSubView] = useState<StaffPortalSubView>('list');
   const [selectedBranch, setSelectedBranch] = useState<string>('Downtown Flagship');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   // Live Data State
   const [tables, setTables] = useState<DiningTable[]>(MOCK_TABLES);
@@ -299,11 +302,32 @@ export const StaffPortalPage: React.FC<StaffPortalPageProps> = ({ onNavigate }) 
   const readyOrdersCount = orders.filter(o => o.status === 'ready_to_serve' || o.status === 'Ready to Serve').length;
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-[#1A1615] font-sans flex flex-col justify-between selection:bg-[#5844A8]/20 selection:text-[#5844A8]">
+    <div className="min-h-screen bg-[#FAF8FF] text-[#1E1548] font-sans flex flex-col justify-between selection:bg-[#5844A8]/20 selection:text-[#5844A8]">
+      {/* Mobile Menu Backdrop + Sheet */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-[#160C2E]/45 z-[75] md:hidden backdrop-blur-xs transition-opacity cursor-pointer animate-in fade-in duration-200"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+      <MobileMenuSheet
+        isOpen={isMobileMenuOpen}
+        currentRoute="/staff-portal"
+        onClose={() => setIsMobileMenuOpen(false)}
+        onNavigate={(route) => {
+          setIsMobileMenuOpen(false);
+          if (onNavigate) {
+            onNavigate(route);
+          } else {
+            window.location.href = route;
+          }
+        }}
+      />
+
       {/* Responsive Canvas Container (Mobile, Tablet, Desktop) */}
-      <div className="w-full max-w-[1600px] mx-auto min-h-screen flex flex-col relative pb-24 lg:pb-12">
-        {/* Sticky Header with Desktop Navigation */}
-        <StaffPortalHeader 
+      <div className="w-full min-h-screen flex flex-col relative pb-24 sm:pb-28 lg:pb-12">
+        {/* Sticky Header matching Merchant Panel */}
+        <StaffPortalHeader
           branchName={selectedBranch}
           branches={['Downtown Flagship', 'Northside Mall', 'West End Kiosk', 'Noida - Sector 18']}
           onSelectBranch={setSelectedBranch}
@@ -314,6 +338,7 @@ export const StaffPortalPage: React.FC<StaffPortalPageProps> = ({ onNavigate }) 
           onOpenNotifications={() => setSubView('notifications')}
           onOpenProfile={() => setSubView('staff_menu')}
           onExitToMerchant={() => onNavigate ? onNavigate('/dashboard') : (window.location.href = '/dashboard')}
+          onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         />
 
         {/* Main Dynamic View Router */}
@@ -661,11 +686,24 @@ export const StaffPortalPage: React.FC<StaffPortalPageProps> = ({ onNavigate }) 
           )}
         </main>
 
-        {/* Bottom Floating/Pinned iPad Navigation Bar */}
+        {/* Mobile-only Staff Portal Bottom Bar */}
         <StaffPortalBottomNav
           activeTab={activeTab}
           onTabChange={handleTabChange}
           requestsCount={pendingRequestsCount}
+        />
+
+        {/* Common Tablet Bottom Bar (matching all Merchant Panel screens on Tablet) */}
+        <MobileBottomNav
+          currentRoute="/staff-portal"
+          onNavigate={(route) => {
+            if (onNavigate) {
+              onNavigate(route);
+            } else {
+              window.location.href = route;
+            }
+          }}
+          className="hidden md:block lg:hidden"
         />
 
         {/* MODALS */}

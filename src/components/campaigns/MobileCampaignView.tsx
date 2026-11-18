@@ -452,7 +452,7 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
   // ===========================================================================
   if (viewMode === 'dashboard') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#FDF9FE] via-[#FFFDFE] to-[#FBF8FD] pb-24 font-sans text-[#1A102F]">
+      <div className="bg-gradient-to-b from-[#FDF9FE] via-[#FFFDFE] to-[#FBF8FD] pb-4 font-sans text-[#1A102F]">
         {/* Dashboard Main Content */}
         <div className="p-4 space-y-4">
           {/* Top Title */}

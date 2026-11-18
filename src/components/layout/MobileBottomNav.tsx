@@ -16,6 +16,7 @@ import { NavRoute } from '../../types';
 interface MobileBottomNavProps {
   currentRoute: string;
   onNavigate: (route: NavRoute) => void;
+  className?: string;
 }
 
 interface NavItem {
@@ -92,6 +93,13 @@ const getModuleAddConfig = (route: string): ModuleAddConfig => {
       shortLabel: 'Generate',
     };
   }
+  if (route.startsWith('/staff-portal')) {
+    return {
+      type: 'general',
+      label: 'Quick Actions',
+      shortLabel: 'Create',
+    };
+  }
   if (route.startsWith('/staff')) {
     return {
       type: 'staff',
@@ -132,6 +140,7 @@ const getModuleAddConfig = (route: string): ModuleAddConfig => {
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   currentRoute,
   onNavigate,
+  className = '',
 }) => {
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const addConfig = getModuleAddConfig(currentRoute);
@@ -207,9 +216,9 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     <>
       <nav
         aria-label="Mobile Bottom Navigation"
-        className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#EAE6E1] shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-[max(env(safe-area-inset-bottom,0px),0px)] select-none"
+        className={`${className || 'lg:hidden'} fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#EAE6E1] shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-[max(env(safe-area-inset-bottom,0px),0px)] select-none`}
       >
-        <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-1 sm:px-3">
+        <div className="flex items-center justify-around h-16 max-w-lg md:max-w-2xl mx-auto px-1 sm:px-3">
           {/* Left Nav: Dashboard & Branches */}
           {LEFT_NAV_ITEMS.map((item) => {
             const active = item.isActive(currentRoute);

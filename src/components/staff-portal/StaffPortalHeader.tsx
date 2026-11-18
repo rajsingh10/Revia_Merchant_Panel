@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bell, ChevronDown, Sparkles, LayoutGrid, ShoppingBag, UtensilsCrossed, ArrowLeft, Check, Store } from 'lucide-react';
+import { Bell, ChevronDown, LayoutGrid, ShoppingBag, UtensilsCrossed, ArrowLeft, Check, Store, Menu } from 'lucide-react';
 import { StaffPortalTab } from './types';
 
 interface Props {
@@ -13,6 +13,7 @@ interface Props {
   onOpenBranchPicker?: () => void;
   onOpenProfile?: () => void;
   onExitToMerchant?: () => void;
+  onToggleMobileMenu?: () => void;
   branches?: string[];
   onSelectBranch?: (branch: string) => void;
 }
@@ -28,6 +29,7 @@ export const StaffPortalHeader: React.FC<Props> = ({
   onOpenBranchPicker,
   onOpenProfile,
   onExitToMerchant,
+  onToggleMobileMenu,
   branches = ['Downtown Flagship', 'Northside Mall', 'West End Kiosk', 'Noida - Sector 18'],
   onSelectBranch
 }) => {
@@ -45,51 +47,47 @@ export const StaffPortalHeader: React.FC<Props> = ({
   }, []);
 
   return (
-    <header className="bg-white border-b border-[#EAE6E1] select-none shrink-0 sticky top-0 z-30 shadow-xs">
-      {/* Main Navigation Header */}
-      <div className="px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-4 max-w-[1600px] mx-auto w-full">
-        {/* Brand & Exit to Merchant Panel */}
-        <div className="flex items-center gap-3 shrink-0">
+    <header className="bg-white border-b border-[#EFEAF7] select-none shrink-0 sticky top-0 z-30">
+      {/* Main Navigation Header matching Merchant Panel Header */}
+      <div className="px-4 sm:px-6 lg:px-8 xl:px-10 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-4 max-w-[1600px] mx-auto w-full">
+        {/* Left: Mobile Menu Button + Merchant Suite Back Action */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {onToggleMobileMenu && (
+            <button
+              type="button"
+              onClick={onToggleMobileMenu}
+              className="md:hidden p-1.5 rounded-lg border border-[#EAE6E1] text-[#6E6A66] hover:bg-[#FAF8FF] cursor-pointer"
+              aria-label="Open Navigation Menu"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+          )}
+
           {onExitToMerchant && (
             <button
               type="button"
               onClick={onExitToMerchant}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#EAE6E1] bg-[#FAF8F5] hover:bg-white hover:border-[#5844A8]/40 text-xs font-bold text-[#1A1615] transition shadow-2xs cursor-pointer group"
+              className="hidden md:flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[#EFEAF7] bg-[#FAF8FF] hover:bg-white hover:border-[#5844A8]/40 text-xs font-bold text-[#1E1548] transition shadow-2xs cursor-pointer group"
               title="Return to Merchant Panel Dashboard"
             >
-              <ArrowLeft className="w-3.5 h-3.5 text-[#8C877D] group-hover:text-[#5844A8] transition-colors" />
-              <span className="hidden sm:inline">Merchant Suite</span>
+              <ArrowLeft className="w-3.5 h-3.5 text-[#8C84A0] group-hover:text-[#5844A8] transition-colors" />
+              <span>Merchant Suite</span>
             </button>
           )}
-
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#7C3AED] to-[#5844A8] text-white flex items-center justify-center font-black text-lg shadow-md shadow-[#5844A8]/20 ring-2 ring-white">
-              R
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <h1 className="text-base font-extrabold text-[#1A1615] tracking-tight leading-none">Revia</h1>
-                <span className="text-[10px] font-black uppercase tracking-wider text-[#5844A8] bg-[#5844A8]/10 px-2 py-0.5 rounded-md border border-[#5844A8]/20">
-                  Staff
-                </span>
-              </div>
-              <p className="text-[11px] text-[#8C877D] font-medium mt-0.5">Floor &amp; Table Service</p>
-            </div>
-          </div>
         </div>
 
-        {/* Center: Desktop Navigation Bar (Visible on Desktop >= 1024px) */}
-        <div className="hidden lg:flex items-center gap-1.5 bg-[#FAF8F5] p-1.5 rounded-2xl border border-[#EAE6E1] shadow-2xs">
+        {/* Center: Tablet & Desktop Navigation Bar (Visible on >= 768px) */}
+        <div className="hidden md:flex items-center gap-1 lg:gap-1.5 bg-[#FAF8FF] p-1 lg:p-1.5 rounded-2xl border border-[#EFEAF7] shadow-2xs">
           <button
             type="button"
             onClick={() => onTabChange?.('tables')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+            className={`flex items-center gap-1.5 lg:gap-2 px-2.5 lg:px-4 py-1.5 lg:py-2 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
               activeTab === 'tables'
                 ? 'bg-[#5844A8] text-white shadow-sm'
-                : 'text-[#6E6A66] hover:text-[#1A1615] hover:bg-white'
+                : 'text-[#6B657E] hover:text-[#1E1548] hover:bg-white'
             }`}
           >
-            <LayoutGrid className="w-4 h-4" />
+            <LayoutGrid className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
             <span>Tables</span>
             <span className={`w-2 h-2 rounded-full ${activeTab === 'tables' ? 'bg-pink-300' : 'bg-gray-300'}`} />
           </button>
@@ -97,13 +95,13 @@ export const StaffPortalHeader: React.FC<Props> = ({
           <button
             type="button"
             onClick={() => onTabChange?.('requests')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer relative ${
+            className={`flex items-center gap-1.5 lg:gap-2 px-2.5 lg:px-4 py-1.5 lg:py-2 rounded-xl text-xs font-bold transition cursor-pointer relative whitespace-nowrap ${
               activeTab === 'requests'
                 ? 'bg-[#5844A8] text-white shadow-sm'
-                : 'text-[#6E6A66] hover:text-[#1A1615] hover:bg-white'
+                : 'text-[#6B657E] hover:text-[#1E1548] hover:bg-white'
             }`}
           >
-            <Bell className="w-4 h-4" />
+            <Bell className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
             <span>Requests</span>
             {pendingRequestsCount > 0 && (
               <span className="px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black leading-none">
@@ -115,13 +113,13 @@ export const StaffPortalHeader: React.FC<Props> = ({
           <button
             type="button"
             onClick={() => onTabChange?.('orders')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer relative ${
+            className={`flex items-center gap-1.5 lg:gap-2 px-2.5 lg:px-4 py-1.5 lg:py-2 rounded-xl text-xs font-bold transition cursor-pointer relative whitespace-nowrap ${
               activeTab === 'orders'
                 ? 'bg-[#5844A8] text-white shadow-sm'
-                : 'text-[#6E6A66] hover:text-[#1A1615] hover:bg-white'
+                : 'text-[#6B657E] hover:text-[#1E1548] hover:bg-white'
             }`}
           >
-            <ShoppingBag className="w-4 h-4" />
+            <ShoppingBag className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
             <span>Orders</span>
             {readyOrdersCount > 0 && (
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -131,34 +129,35 @@ export const StaffPortalHeader: React.FC<Props> = ({
           <button
             type="button"
             onClick={() => onTabChange?.('menu')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+            className={`flex items-center gap-1.5 lg:gap-2 px-2.5 lg:px-4 py-1.5 lg:py-2 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
               activeTab === 'menu'
                 ? 'bg-[#5844A8] text-white shadow-sm'
-                : 'text-[#6E6A66] hover:text-[#1A1615] hover:bg-white'
+                : 'text-[#6B657E] hover:text-[#1E1548] hover:bg-white'
             }`}
           >
-            <UtensilsCrossed className="w-4 h-4" />
-            <span>Staff Menu</span>
+            <UtensilsCrossed className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+            <span className="hidden lg:inline">Staff Menu</span>
+            <span className="lg:hidden">Menu</span>
           </button>
         </div>
 
         {/* Right controls */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-2.5 lg:gap-3 shrink-0 ml-auto md:ml-0">
           {/* Branch Selector Dropdown */}
           <div className="relative" ref={branchDropdownRef}>
             <button
               type="button"
               onClick={() => setIsBranchDropdownOpen(!isBranchDropdownOpen)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF8F5] border border-[#EAE6E1] hover:border-[#5844A8]/40 text-xs font-bold text-[#1A1615] shadow-2xs transition cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#FAF8FF] border border-[#EFEAF7] hover:border-[#5844A8]/40 text-xs font-bold text-[#1E1548] shadow-2xs transition cursor-pointer"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-              <span className="truncate max-w-[110px] sm:max-w-none">{branchName}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+              <span className="truncate max-w-[120px] sm:max-w-[180px]">{branchName}</span>
+              <ChevronDown className="w-3.5 h-3.5 text-[#8C84A0] shrink-0" />
             </button>
 
             {isBranchDropdownOpen && (
-              <div className="absolute right-0 mt-1.5 w-56 bg-white rounded-2xl shadow-xl border border-[#EAE6E1] py-1.5 z-50 animate-in fade-in duration-100">
-                <div className="px-3 py-1.5 border-b border-gray-100 text-[10px] font-bold text-[#8C877D] uppercase tracking-wider">
+              <div className="absolute right-0 mt-1.5 w-56 bg-white rounded-2xl shadow-xl border border-[#EFEAF7] py-1.5 z-50 animate-in fade-in duration-100">
+                <div className="px-3 py-1.5 border-b border-[#EFEAF7] text-[10px] font-bold text-[#8C84A0] uppercase tracking-wider">
                   Select Floor Venue
                 </div>
                 {branches.map((b) => (
@@ -169,12 +168,12 @@ export const StaffPortalHeader: React.FC<Props> = ({
                       onSelectBranch?.(b);
                       setIsBranchDropdownOpen(false);
                     }}
-                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-left transition hover:bg-[#FAF8F5] cursor-pointer ${
-                      b === branchName ? 'text-[#5844A8] bg-[#5844A8]/5 font-black' : 'text-[#1A1615]'
+                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-left transition hover:bg-[#FAF8FF] cursor-pointer ${
+                      b === branchName ? 'text-[#5844A8] bg-[#5844A8]/5 font-black' : 'text-[#1E1548]'
                     }`}
                   >
                     <div className="flex items-center gap-2 truncate">
-                      <Store className="w-3.5 h-3.5 text-gray-400" />
+                      <Store className="w-3.5 h-3.5 text-[#8C84A0]" />
                       <span className="truncate">{b}</span>
                     </div>
                     {b === branchName && <Check className="w-3.5 h-3.5 text-[#5844A8]" />}
@@ -188,7 +187,7 @@ export const StaffPortalHeader: React.FC<Props> = ({
           <button
             type="button"
             onClick={onOpenNotifications}
-            className="w-9 h-9 rounded-full bg-white border border-[#EAE6E1] hover:border-[#5844A8]/40 text-[#6E6A66] flex items-center justify-center relative shadow-2xs cursor-pointer transition hover:text-[#5844A8]"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white border border-[#EFEAF7] hover:border-[#5844A8]/40 text-[#6B657E] flex items-center justify-center relative shadow-2xs cursor-pointer transition hover:text-[#5844A8] shrink-0"
             title="Service Alerts & Notifications"
           >
             <Bell className="w-4 h-4" />
@@ -203,14 +202,14 @@ export const StaffPortalHeader: React.FC<Props> = ({
           <button
             type="button"
             onClick={onOpenProfile}
-            className="flex items-center gap-2 pl-2 border-l border-gray-200/80 hover:opacity-85 transition cursor-pointer text-left"
+            className="flex items-center gap-2 pl-2 border-l border-[#EFEAF7] hover:opacity-85 transition cursor-pointer text-left shrink-0"
           >
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#5844A8] to-[#7C3AED] text-white font-black text-xs flex items-center justify-center shadow-xs shrink-0">
               RS
             </div>
             <div className="hidden md:block text-left">
-              <span className="text-xs font-black text-[#1A1615] block leading-tight">{waiterName}</span>
-              <span className="text-[10px] text-[#8C877D] font-semibold block leading-tight">Floor Waiter</span>
+              <span className="text-xs font-black text-[#1E1548] block leading-tight">{waiterName}</span>
+              <span className="text-[10px] text-[#8C84A0] font-semibold block leading-tight">Floor Waiter</span>
             </div>
           </button>
         </div>

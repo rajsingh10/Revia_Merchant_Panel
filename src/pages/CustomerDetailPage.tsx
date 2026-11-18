@@ -39,6 +39,7 @@ import {
   INITIAL_WEB_CUSTOMERS,
   WebCustomerItem
 } from '../data/customersWebData';
+import { TabletCustomersView } from '../components/customers/TabletCustomersView';
 
 interface CustomerDetailPageProps {
   onNavigate: (route: NavRoute) => void;
@@ -49,14 +50,14 @@ export const CustomerDetailPage: React.FC<CustomerDetailPageProps> = ({ onNaviga
   const searchParams = new URLSearchParams(window.location.search);
   const targetId = searchParams.get('id');
 
-  // Device mode detection: Web desktop vs Tablet iPad Pro
+  // Device mode detection: Web desktop vs Tablet/Mobile (< 1280px)
   const [isTablet, setIsTablet] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       if (params.get('view') === 'tablet' || params.get('device') === 'tablet') {
         return true;
       }
-      return window.innerWidth < 1024;
+      return window.innerWidth < 1280;
     }
     return false;
   });
@@ -65,7 +66,7 @@ export const CustomerDetailPage: React.FC<CustomerDetailPageProps> = ({ onNaviga
     const handleResize = () => {
       const params = new URLSearchParams(window.location.search);
       if (!params.get('view') && !params.get('device')) {
-        setIsTablet(window.innerWidth < 1024);
+        setIsTablet(window.innerWidth < 1280);
       }
     };
     window.addEventListener('resize', handleResize);
@@ -683,6 +684,15 @@ export const CustomerDetailPage: React.FC<CustomerDetailPageProps> = ({ onNaviga
     if (activitySubFilter === 'Rewards') return a.title.toLowerCase().includes('reward') || a.title.toLowerCase().includes('points');
     return true;
   });
+
+  if (isTablet) {
+    return (
+      <TabletCustomersView
+        initialCustomerId={targetId || INITIAL_TABLET_CUSTOMERS[0].id}
+        onBackToList={() => onNavigate('/customerlist' as any)}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FBF9FD] pb-24 font-sans text-[#1A1615]">
