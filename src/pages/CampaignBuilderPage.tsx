@@ -4267,13 +4267,6 @@ const DesktopCampaignBuilderView: React.FC<CampaignBuilderPageProps> = ({ initia
     return (
       <div className="p-6 lg:p-8 space-y-6 font-sans text-[#1A1615] bg-[#FAF8FF] min-h-screen">
         <div className="max-w-[1500px] mx-auto space-y-6">
-          
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
-            <span>Home</span>
-            <span>&gt;</span>
-            <span className="text-gray-700 font-bold">Campaign &amp; Loyalty Management</span>
-          </div>
 
           {/* Page Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -4689,12 +4682,6 @@ const DesktopCampaignBuilderView: React.FC<CampaignBuilderPageProps> = ({ initia
   const renderDesktopStepper = () => {
     return (
       <div className="space-y-6">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
-          <span>&gt; Home</span>
-          <span className="text-gray-700 font-bold">Campaign &amp; Loyalty Management</span>
-        </div>
-
         {/* Page Title */}
         <div>
           <h1 className="text-2xl lg:text-3xl font-black text-[#1E1548] tracking-tight flex items-center gap-2">
@@ -8918,7 +8905,7 @@ const DesktopCampaignBuilderView: React.FC<CampaignBuilderPageProps> = ({ initia
   return renderDashboard();
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex flex-col font-sans text-[#1A1615] relative">
+    <div className="min-h-screen bg-[#FAF8FF] flex flex-col font-sans text-[#1E1548] relative">
 
       {/* Add Item Modal */}
       <AddItemModal

@@ -240,7 +240,7 @@ export const CustomerDetailPage: React.FC<CustomerDetailPageProps> = ({ onNaviga
   // =========================================================================
   if (!isTablet) {
     return (
-      <div className="min-h-screen bg-[#FAF8F5] pb-16 font-sans text-[#1A1615]">
+      <div className="min-h-screen bg-[#FAF8FF] pb-16 font-sans text-[#1E1548]">
         {/* Main Web Header */}
         <div className="bg-white border-b border-[#EAE6E1] px-6 py-4">
           <div className="max-w-[1400px] mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">

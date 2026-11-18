@@ -11,7 +11,7 @@ const MobileBillingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#FBF6F1] px-4 pb-7 pt-3 text-[#211C19] sm:px-5">
+    <div className="min-h-screen overflow-x-hidden bg-[#FAF8FF] px-4 pb-7 pt-3 text-[#1E1548] sm:px-5">
       <div className="mx-auto w-full max-w-[430px]">
 
 

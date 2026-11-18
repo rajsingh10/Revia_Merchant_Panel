@@ -123,6 +123,15 @@ export const Header: React.FC<HeaderProps> = ({
 
   // Dynamic breadcrumb matching current route and Figma specs
   const getBreadcrumbs = () => {
+    if (currentRoute.startsWith('/campaigns/edit')) {
+      return {
+        category: 'Growth & Automation',
+        parentPage: 'Campaigns',
+        parentRoute: '/campaigns' as NavRoute,
+        page: 'Edit Campaign'
+      };
+    }
+
     switch (currentRoute) {
       case '/branches/new':
         return {

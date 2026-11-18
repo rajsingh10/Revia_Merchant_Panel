@@ -161,7 +161,7 @@ export const OrderQueuePage: React.FC<{ onNavigate?: (route: NavRoute) => void }
   ];
 
   return (
-    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6 flex flex-col min-h-full bg-[#FAF8F5] w-full">
+    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6 flex flex-col min-h-full bg-[#FAF8FF] w-full">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

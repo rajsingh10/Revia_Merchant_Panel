@@ -298,7 +298,6 @@ export default function App() {
             onOpenSearch={() => setIsSearchOpen(true)}
             onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             onNavigate={handleNavigate as any}
-            className={currentRoute.startsWith('/campaigns') ? 'sm:hidden' : ''}
           />
           <main className={`flex-1 pb-20 lg:pb-0 ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
             {!isValidRoute ? (
