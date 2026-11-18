@@ -204,7 +204,7 @@ export const CustomerOfferPassView: React.FC<CustomerOfferPassViewProps> = ({
       : 'bg-[#5B218D] hover:bg-[#471770]';
 
   return (
-    <div className="max-w-lg mx-auto space-y-4 sm:space-y-5 animate-in fade-in duration-200">
+    <div className="max-w-lg lg:max-w-5xl mx-auto space-y-4 sm:space-y-5 animate-in fade-in duration-200">
       {/* Top Bar + Greeting */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
@@ -245,6 +245,9 @@ export const CustomerOfferPassView: React.FC<CustomerOfferPassViewProps> = ({
           );
         })}
       </div>
+
+      <div className="space-y-4 lg:grid lg:grid-cols-12 lg:gap-8 lg:space-y-0 lg:items-start">
+        <div className="lg:col-span-6 space-y-4">
 
       {/* ─── PASS 1: TEAL LOYALTY PROGRAM STAMP CARD (offer card.png) ─── */}
       {variant === 'stamp_teal' && (
@@ -586,12 +589,76 @@ export const CustomerOfferPassView: React.FC<CustomerOfferPassViewProps> = ({
         <button
           type="button"
           onClick={() => setShowQrSheet(true)}
-          className={`w-full h-13 rounded-2xl ${ctaColor} text-white text-sm font-black shadow-xl flex items-center justify-center gap-2 cursor-pointer transition active:scale-[0.99]`}
+          className={`lg:hidden w-full h-13 rounded-2xl ${ctaColor} text-white text-sm font-black shadow-xl flex items-center justify-center gap-2 cursor-pointer transition active:scale-[0.99]`}
         >
           <QrCode className="w-5 h-5" />
           <span>Show My Card</span>
         </button>
       )}
+        </div>
+
+        {/* Right 6 Cols on Desktop: Instant Redemption & Terms Panel */}
+        <div className="hidden lg:flex lg:col-span-6 flex-col gap-5">
+          <div className="bg-white rounded-3xl p-6 border border-[#EFEAF7] shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase tracking-wider text-[#58258B]">
+                Instant Counter Redemption
+              </span>
+              <span className="px-2.5 py-1 rounded-full bg-[#DCFCE7] text-[#15803D] text-[11px] font-black">
+                Valid till {offer.validTill}
+              </span>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-[#FAF8FF] border border-[#EFEAF7] flex items-center gap-5">
+              <div className="w-28 h-28 rounded-2xl bg-white border border-[#E5DEF5] flex items-center justify-center shrink-0 shadow-xs">
+                <QrCode className="w-22 h-22 text-[#240B4C]" />
+              </div>
+              <div className="space-y-1.5 min-w-0">
+                <div className="text-base font-black text-[#1E1548]">{offer.title}</div>
+                <p className="text-xs text-[#6B657E] leading-relaxed">{offer.subtitle}</p>
+                <div className="text-xs font-black tracking-widest text-[#58258B] font-mono pt-1">
+                  {offer.code}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2 text-xs text-[#6B657E]">
+              <div className="font-black text-[#1E1548]">How to Redeem</div>
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Present this QR code or TapCard barcode to your server before billing.</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Valid for dine-in and takeaway orders at {offer.merchantName}.</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Cashback and loyalty stamps credit automatically to your wallet.</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => onNotify('Offer pass saved to your Loyaltics Wallet!')}
+                className="h-12 rounded-2xl bg-[#FAF8FF] hover:bg-[#F3EEFA] border border-[#E5DEF5] text-[#240B4C] text-xs font-black flex items-center justify-center gap-2 cursor-pointer transition"
+              >
+                <CreditCard className="w-4 h-4" />
+                <span>Save to Wallet</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowQrSheet(true)}
+                className={`h-12 rounded-2xl ${ctaColor} text-white text-xs font-black flex items-center justify-center gap-2 shadow-md cursor-pointer transition`}
+              >
+                <QrCode className="w-4 h-4" />
+                <span>Show Fullscreen Pass</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Redemption QR / Barcode Sheet Modal */}
       {showQrSheet && (

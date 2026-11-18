@@ -745,10 +745,10 @@ export const CustomerMenuItemDetailView: React.FC<CustomerMenuItemDetailViewProp
   const total = unitPrice * qty;
 
   return (
-    <div className="max-w-3xl mx-auto animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl overflow-hidden border border-[#EFEAF7] shadow-xl">
-        {/* Top Espresso / Plum Curved Hero Showcase */}
-        <div className="bg-gradient-to-b from-[#2B1206] via-[#3F1B0A] to-[#1D0A03] text-white p-5 sm:p-7 rounded-b-[36px] relative">
+    <div className="max-w-3xl lg:max-w-5xl mx-auto animate-in fade-in duration-200">
+      <div className="bg-white rounded-3xl overflow-hidden border border-[#EFEAF7] shadow-xl lg:grid lg:grid-cols-12">
+        {/* Top / Left Espresso / Plum Curved Hero Showcase */}
+        <div className="lg:col-span-5 bg-gradient-to-b from-[#2B1206] via-[#3F1B0A] to-[#1D0A03] text-white p-5 sm:p-7 rounded-b-[36px] lg:rounded-b-none lg:rounded-r-[36px] relative flex flex-col justify-between">
           <div className="flex items-center justify-between mb-4">
             <button
               type="button"
@@ -789,7 +789,7 @@ export const CustomerMenuItemDetailView: React.FC<CustomerMenuItemDetailViewProp
         </div>
 
         {/* Customization Body */}
-        <div className="p-5 sm:p-7 space-y-6 bg-gradient-to-b from-white to-[#FAF6FF]">
+        <div className="lg:col-span-7 p-5 sm:p-7 lg:p-8 space-y-6 bg-gradient-to-b from-white to-[#FAF6FF] flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-lg sm:text-xl font-black text-[#1E1548]">Made just for you</h2>
@@ -1522,108 +1522,116 @@ export const CustomerOrderCompletedView: React.FC<CustomerOrderCompletedViewProp
   const [comment, setComment] = useState('');
 
   return (
-    <div className="max-w-xl mx-auto space-y-5 animate-in fade-in duration-200">
-      <div className="text-center space-y-2 pt-2">
-        <div className="w-24 h-24 rounded-full bg-[#F3EEFA] border border-[#E5DEF5] flex flex-col items-center justify-center mx-auto relative shadow-sm">
-          <span className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md mb-1">
-            <Check className="w-5 h-5 stroke-[3]" />
-          </span>
-          <span className="text-[10px] font-black text-[#240B4C]">Order Completed!</span>
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-black text-[#240B4C]">Thank You!</h1>
-        <p className="text-xs sm:text-sm text-[#7B748C]">
-          Your order is completed and the bill has been given.
-        </p>
-      </div>
-
-      {/* Bill Details Pill Card */}
-      <div className="bg-white rounded-3xl p-4 border border-[#EFEAF7] shadow-2xs flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-[#F3EEFA] text-[#58258B] flex items-center justify-center shrink-0">
-            <Receipt className="w-5 h-5" />
+    <div className="max-w-xl lg:max-w-5xl mx-auto animate-in fade-in duration-200">
+      <div className="space-y-5 lg:grid lg:grid-cols-12 lg:gap-6 lg:space-y-0 lg:items-start">
+        {/* Left Column on Desktop: Celebration + Bill Details */}
+        <div className="lg:col-span-5 space-y-5">
+          <div className="text-center space-y-2 pt-2 lg:bg-white lg:rounded-3xl lg:p-6 lg:border lg:border-[#EFEAF7] lg:shadow-2xs">
+            <div className="w-24 h-24 rounded-full bg-[#F3EEFA] border border-[#E5DEF5] flex flex-col items-center justify-center mx-auto relative shadow-sm">
+              <span className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md mb-1">
+                <Check className="w-5 h-5 stroke-[3]" />
+              </span>
+              <span className="text-[10px] font-black text-[#240B4C]">Order Completed!</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-[#240B4C]">Thank You!</h1>
+            <p className="text-xs sm:text-sm text-[#7B748C]">
+              Your order is completed and the bill has been given.
+            </p>
           </div>
-          <div>
-            <div className="text-sm font-black text-[#1E1548]">Bill Details</div>
-            <div className="text-xs text-[#7B748C]">Order #SG1045</div>
-          </div>
-        </div>
-        <div className="px-4 py-2 rounded-2xl bg-[#F6F2FC] text-center">
-          <div className="text-[9px] font-bold uppercase tracking-wider text-[#7B748C]">
-            Total Paid
-          </div>
-          <div className="text-base font-black text-[#1E1548]">₹{totalPaid || 753}</div>
-        </div>
-      </div>
 
-      {/* Star Rating Card */}
-      <div className="bg-white rounded-3xl p-5 border border-[#EFEAF7] shadow-2xs space-y-4">
-        <div>
-          <h2 className="text-base font-black text-[#1E1548]">How was your experience?</h2>
-          <p className="text-xs text-[#7B748C]">Your feedback helps us serve you better!</p>
-        </div>
-
-        <div className="divide-y divide-[#F4F0FA]">
-          {(
-            [
-              { key: 'service', title: 'Service', sub: 'Rate the service quality' },
-              { key: 'food', title: 'Quality of Food', sub: 'Rate the taste and freshness' },
-              { key: 'ambience', title: 'Ambience', sub: 'Rate the overall atmosphere' }
-            ] as const
-          ).map((row) => (
-            <div key={row.key} className="py-3 first:pt-1 last:pb-0 flex items-center justify-between gap-3">
-              <div>
-                <div className="text-sm font-black text-[#1E1548]">{row.title}</div>
-                <div className="text-[11px] text-[#7B748C]">{row.sub}</div>
+          {/* Bill Details Pill Card */}
+          <div className="bg-white rounded-3xl p-4 border border-[#EFEAF7] shadow-2xs flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-[#F3EEFA] text-[#58258B] flex items-center justify-center shrink-0">
+                <Receipt className="w-5 h-5" />
               </div>
-              <div className="flex items-center gap-1">
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => setRatings((p) => ({ ...p, [row.key]: n }))}
-                    className="p-0.5 cursor-pointer transition-transform hover:scale-110"
-                  >
-                    <Star
-                      className={`w-5 h-5 ${
-                        n <= ratings[row.key]
-                          ? 'text-[#58258B] fill-[#58258B]'
-                          : 'text-[#C4B5FD]'
-                      }`}
-                    />
-                  </button>
-                ))}
+              <div>
+                <div className="text-sm font-black text-[#1E1548]">Bill Details</div>
+                <div className="text-xs text-[#7B748C]">Order #SG1045</div>
               </div>
             </div>
-          ))}
+            <div className="px-4 py-2 rounded-2xl bg-[#F6F2FC] text-center">
+              <div className="text-[9px] font-bold uppercase tracking-wider text-[#7B748C]">
+                Total Paid
+              </div>
+              <div className="text-base font-black text-[#1E1548]">₹{totalPaid || 753}</div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="bg-white rounded-3xl p-4 border border-[#EFEAF7] shadow-2xs flex items-start gap-2.5">
-        <MessageSquare className="w-4 h-4 text-[#8C84A0] mt-1 shrink-0" />
-        <textarea
-          rows={3}
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="Share your thoughts (optional)..."
-          className="w-full text-xs sm:text-sm text-[#1E1548] placeholder:text-[#9890A8] bg-transparent outline-none resize-none"
-        />
-      </div>
+        {/* Right Column on Desktop: Star Rating + Comment + CTAs */}
+        <div className="lg:col-span-7 space-y-5">
+          {/* Star Rating Card */}
+          <div className="bg-white rounded-3xl p-5 border border-[#EFEAF7] shadow-2xs space-y-4">
+            <div>
+              <h2 className="text-base font-black text-[#1E1548]">How was your experience?</h2>
+              <p className="text-xs text-[#7B748C]">Your feedback helps us serve you better!</p>
+            </div>
 
-      <div className="space-y-3">
-        <button
-          type="button"
-          onClick={() => onSubmitReview(comment)}
-          className="w-full h-13 rounded-full bg-gradient-to-r from-[#58258B] via-[#381263] to-[#240B4C] text-white text-sm font-black shadow-lg cursor-pointer hover:opacity-95 transition"
-        >
-          Submit Review
-        </button>
-        <button
-          type="button"
-          onClick={onSkip}
-          className="w-full h-12 rounded-full bg-white border border-[#240B4C]/35 text-[#240B4C] text-sm font-bold cursor-pointer hover:bg-[#FAF8FF] transition"
-        >
-          Maybe Later
-        </button>
+            <div className="divide-y divide-[#F4F0FA]">
+              {(
+                [
+                  { key: 'service', title: 'Service', sub: 'Rate the service quality' },
+                  { key: 'food', title: 'Quality of Food', sub: 'Rate the taste and freshness' },
+                  { key: 'ambience', title: 'Ambience', sub: 'Rate the overall atmosphere' }
+                ] as const
+              ).map((row) => (
+                <div key={row.key} className="py-3 first:pt-1 last:pb-0 flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-black text-[#1E1548]">{row.title}</div>
+                    <div className="text-[11px] text-[#7B748C]">{row.sub}</div>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => setRatings((p) => ({ ...p, [row.key]: n }))}
+                        className="p-0.5 cursor-pointer transition-transform hover:scale-110"
+                      >
+                        <Star
+                          className={`w-5 h-5 ${
+                            n <= ratings[row.key]
+                              ? 'text-[#58258B] fill-[#58258B]'
+                              : 'text-[#C4B5FD]'
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl p-4 border border-[#EFEAF7] shadow-2xs flex items-start gap-2.5">
+            <MessageSquare className="w-4 h-4 text-[#8C84A0] mt-1 shrink-0" />
+            <textarea
+              rows={3}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Share your thoughts (optional)..."
+              className="w-full text-xs sm:text-sm text-[#1E1548] placeholder:text-[#9890A8] bg-transparent outline-none resize-none"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={onSkip}
+              className="w-full h-12 rounded-full bg-white border border-[#240B4C]/35 text-[#240B4C] text-sm font-bold cursor-pointer hover:bg-[#FAF8FF] transition order-2 sm:order-1"
+            >
+              Maybe Later
+            </button>
+            <button
+              type="button"
+              onClick={() => onSubmitReview(comment)}
+              className="w-full h-12 rounded-full bg-gradient-to-r from-[#58258B] via-[#381263] to-[#240B4C] text-white text-sm font-black shadow-lg cursor-pointer hover:opacity-95 transition order-1 sm:order-2"
+            >
+              Submit Review
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -1975,7 +1983,7 @@ export const CustomerProfileHubView: React.FC<CustomerProfileHubViewProps> = ({
     );
 
     return (
-      <div className="max-w-2xl mx-auto space-y-5 animate-in fade-in duration-200">
+      <div className="max-w-2xl lg:max-w-5xl mx-auto space-y-5 animate-in fade-in duration-200">
         {/* Top Bar */}
         <div className="flex items-center justify-between gap-2">
           <button
@@ -1995,140 +2003,147 @@ export const CustomerProfileHubView: React.FC<CustomerProfileHubViewProps> = ({
           </button>
         </div>
 
-        {/* Deep Purple My Wallet Card (wallet.png) */}
-        <div className="rounded-3xl p-5 bg-gradient-to-br from-[#3B125E] via-[#2B0C47] to-[#1D0733] text-white shadow-xl space-y-4">
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#7C3AED] to-[#9333EA] text-white flex items-center justify-center shadow-md relative">
-              <Wallet className="w-6 h-6" />
-              <span className="w-5 h-5 rounded-full bg-amber-400 text-[#240B4C] text-[10px] font-black flex items-center justify-center absolute -top-1.5 -right-1 shadow-xs">
-                ₹
-              </span>
-            </div>
-            <div>
-              <div className="text-xs text-purple-200 font-semibold">My Wallet</div>
-              <div className="text-2xl sm:text-3xl font-black tracking-tight">₹1,250.00</div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 pt-3.5 border-t border-white/15">
-            <div className="flex items-center gap-2.5">
-              <span className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                <Clock className="w-4 h-4 text-purple-200" />
-              </span>
-              <div>
-                <div className="text-[11px] text-purple-200/80">Total Cashback</div>
-                <div className="text-sm font-black">₹200.00</div>
-              </div>
-            </div>
-            <div className="border-l border-white/15 pl-3 flex items-center gap-2.5">
-              <span className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                <ArrowLeftRight className="w-4 h-4 text-purple-200" />
-              </span>
-              <div>
-                <div className="text-[11px] text-purple-200/80">Total Transactions</div>
-                <div className="text-sm font-black">12</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Filter Pills: All | Orders | Rewards | Offers */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-          {(['All', 'Orders', 'Rewards', 'Offers'] as const).map((tab) => {
-            const active = walletFilter === tab;
-            return (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setWalletFilter(tab)}
-                className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer border shrink-0 ${
-                  active
-                    ? 'bg-[#3B1161] text-white border-[#3B1161] shadow-sm'
-                    : 'bg-white text-[#240B4C] border-[#EFEAF7] hover:border-[#C4B5FD]'
-                }`}
-              >
-                {tab}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Transaction Cards List (wallet.png) */}
-        <div className="space-y-3">
-          {visibleWallet.map((tx) => (
-            <button
-              key={tx.id}
-              type="button"
-              onClick={() =>
-                tx.category === 'Orders'
-                  ? onOpenOrders()
-                  : tx.category === 'Offers'
-                  ? onOpenOffers()
-                  : onNotify(`${tx.title} • ${tx.date}`)
-              }
-              className="w-full bg-white hover:bg-[#FDFBFF] rounded-3xl p-4 border border-[#EFEAF7] hover:border-[#C4B5FD] shadow-2xs flex items-center justify-between gap-3 text-left transition-all cursor-pointer group"
-            >
-              <div className="flex items-center gap-3.5 min-w-0">
-                <div className="w-11 h-11 rounded-full bg-[#F5F0FC] text-[#58258B] flex items-center justify-center shrink-0">
-                  {tx.icon}
+        <div className="space-y-5 lg:grid lg:grid-cols-12 lg:gap-6 lg:space-y-0 lg:items-start">
+          {/* Left 5 Cols on Desktop: Deep Purple My Wallet Card */}
+          <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-4">
+            <div className="rounded-3xl p-5 bg-gradient-to-br from-[#3B125E] via-[#2B0C47] to-[#1D0733] text-white shadow-xl space-y-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#7C3AED] to-[#9333EA] text-white flex items-center justify-center shadow-md relative">
+                  <Wallet className="w-6 h-6" />
+                  <span className="w-5 h-5 rounded-full bg-amber-400 text-[#240B4C] text-[10px] font-black flex items-center justify-center absolute -top-1.5 -right-1 shadow-xs">
+                    ₹
+                  </span>
                 </div>
-                <div className="min-w-0">
-                  <div className="text-sm font-black text-[#1E1548] truncate">{tx.title}</div>
-                  <div
-                    className={`text-xs font-semibold truncate mt-0.5 ${
-                      tx.subtitlePurple ? 'text-[#6D28D9]' : 'text-[#6B657E]'
+                <div>
+                  <div className="text-xs text-purple-200 font-semibold">My Wallet</div>
+                  <div className="text-2xl sm:text-3xl font-black tracking-tight">₹1,250.00</div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-3.5 border-t border-white/15">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                    <Clock className="w-4 h-4 text-purple-200" />
+                  </span>
+                  <div>
+                    <div className="text-[11px] text-purple-200/80">Total Cashback</div>
+                    <div className="text-sm font-black">₹200.00</div>
+                  </div>
+                </div>
+                <div className="border-l border-white/15 pl-3 flex items-center gap-2.5">
+                  <span className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                    <ArrowLeftRight className="w-4 h-4 text-purple-200" />
+                  </span>
+                  <div>
+                    <div className="text-[11px] text-purple-200/80">Total Transactions</div>
+                    <div className="text-sm font-black">12</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right 7 Cols on Desktop: Filters + Transaction Cards */}
+          <div className="lg:col-span-7 space-y-4">
+            {/* Filter Pills: All | Orders | Rewards | Offers */}
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+              {(['All', 'Orders', 'Rewards', 'Offers'] as const).map((tab) => {
+                const active = walletFilter === tab;
+                return (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setWalletFilter(tab)}
+                    className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer border shrink-0 ${
+                      active
+                        ? 'bg-[#3B1161] text-white border-[#3B1161] shadow-sm'
+                        : 'bg-white text-[#240B4C] border-[#EFEAF7] hover:border-[#C4B5FD]'
                     }`}
                   >
-                    {tx.subtitle}
-                  </div>
-                  <div className="text-[11px] text-[#9890A8] flex items-center gap-1 mt-1">
-                    <Calendar className="w-3 h-3 text-[#8C84A0]" />
-                    <span>{tx.date}</span>
-                  </div>
-                </div>
-              </div>
+                    {tab}
+                  </button>
+                );
+              })}
+            </div>
 
-              <div className="flex items-center gap-2 shrink-0">
-                {tx.rightType === 'stamp_star' && (
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm font-black text-[#1E1548]">{tx.rightVal}</span>
-                    <span className="w-6 h-6 rounded-lg bg-[#F3EEFA] text-[#7C3AED] flex items-center justify-center">
-                      <Star className="w-3.5 h-3.5 fill-[#7C3AED]" />
-                    </span>
+            {/* Transaction Cards List (wallet.png) */}
+            <div className="space-y-3">
+              {visibleWallet.map((tx) => (
+                <button
+                  key={tx.id}
+                  type="button"
+                  onClick={() =>
+                    tx.category === 'Orders'
+                      ? onOpenOrders()
+                      : tx.category === 'Offers'
+                      ? onOpenOffers()
+                      : onNotify(`${tx.title} • ${tx.date}`)
+                  }
+                  className="w-full bg-white hover:bg-[#FDFBFF] rounded-3xl p-4 border border-[#EFEAF7] hover:border-[#C4B5FD] shadow-2xs flex items-center justify-between gap-3 text-left transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-11 h-11 rounded-full bg-[#F5F0FC] text-[#58258B] flex items-center justify-center shrink-0">
+                      {tx.icon}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-sm font-black text-[#1E1548] truncate">{tx.title}</div>
+                      <div
+                        className={`text-xs font-semibold truncate mt-0.5 ${
+                          tx.subtitlePurple ? 'text-[#6D28D9]' : 'text-[#6B657E]'
+                        }`}
+                      >
+                        {tx.subtitle}
+                      </div>
+                      <div className="text-[11px] text-[#9890A8] flex items-center gap-1 mt-1">
+                        <Calendar className="w-3 h-3 text-[#8C84A0]" />
+                        <span>{tx.date}</span>
+                      </div>
+                    </div>
                   </div>
-                )}
 
-                {tx.rightType === 'stamp_award' && (
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm font-black text-[#1E1548]">{tx.rightVal}</span>
-                    <span className="w-6 h-6 rounded-lg bg-[#F3EEFA] text-[#7C3AED] flex items-center justify-center">
-                      <Award className="w-3.5 h-3.5" />
-                    </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {tx.rightType === 'stamp_star' && (
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-black text-[#1E1548]">{tx.rightVal}</span>
+                        <span className="w-6 h-6 rounded-lg bg-[#F3EEFA] text-[#7C3AED] flex items-center justify-center">
+                          <Star className="w-3.5 h-3.5 fill-[#7C3AED]" />
+                        </span>
+                      </div>
+                    )}
+
+                    {tx.rightType === 'stamp_award' && (
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-black text-[#1E1548]">{tx.rightVal}</span>
+                        <span className="w-6 h-6 rounded-lg bg-[#F3EEFA] text-[#7C3AED] flex items-center justify-center">
+                          <Award className="w-3.5 h-3.5" />
+                        </span>
+                      </div>
+                    )}
+
+                    {tx.rightType === 'order' && (
+                      <div className="text-right space-y-1">
+                        <div className="text-sm font-black text-[#1E1548]">{tx.rightVal}</div>
+                        <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D] text-[10px] font-black">
+                          {tx.badge}
+                        </span>
+                      </div>
+                    )}
+
+                    {tx.rightType === 'offer' && (
+                      <div className="text-right space-y-1">
+                        <div className="text-sm font-black text-[#E11D48]">{tx.rightVal}</div>
+                        <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#F3EEFA] text-[#6D28D9] text-[10px] font-black">
+                          {tx.badge}
+                        </span>
+                      </div>
+                    )}
+
+                    <ChevronRight className="w-4 h-4 text-[#9890A8] group-hover:text-[#58258B] transition-colors" />
                   </div>
-                )}
-
-                {tx.rightType === 'order' && (
-                  <div className="text-right space-y-1">
-                    <div className="text-sm font-black text-[#1E1548]">{tx.rightVal}</div>
-                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D] text-[10px] font-black">
-                      {tx.badge}
-                    </span>
-                  </div>
-                )}
-
-                {tx.rightType === 'offer' && (
-                  <div className="text-right space-y-1">
-                    <div className="text-sm font-black text-[#E11D48]">{tx.rightVal}</div>
-                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#F3EEFA] text-[#6D28D9] text-[10px] font-black">
-                      {tx.badge}
-                    </span>
-                  </div>
-                )}
-
-                <ChevronRight className="w-4 h-4 text-[#9890A8] group-hover:text-[#58258B] transition-colors" />
-              </div>
-            </button>
-          ))}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -2137,7 +2152,7 @@ export const CustomerProfileHubView: React.FC<CustomerProfileHubViewProps> = ({
   /* ── INSIDE PAGE 2: MY ORDERS / CURRENT PROCESS ORDER (Matches current process order.png) ── */
   if (subView === 'orders') {
     return (
-      <div className="max-w-2xl mx-auto space-y-5 animate-in fade-in duration-200">
+      <div className="max-w-2xl lg:max-w-5xl mx-auto space-y-5 animate-in fade-in duration-200">
         {/* Back Row */}
         <div className="flex items-center justify-between gap-2">
           <button
@@ -2151,135 +2166,140 @@ export const CustomerProfileHubView: React.FC<CustomerProfileHubViewProps> = ({
           <div className="w-9" />
         </div>
 
-        {/* Greeting Banner + Soft Storefront Illustration (current process order.png) */}
-        <div className="flex items-center justify-between gap-4 pt-1">
-          <div className="space-y-1">
-            <h2 className="text-2xl sm:text-3xl font-black text-[#1E1548] tracking-tight flex items-center gap-2">
-              <span>Hi {profile.firstName}!</span>
-              <span>👋</span>
-            </h2>
-            <p className="text-xs sm:text-sm text-[#7B748C] font-medium max-w-xs leading-relaxed">
-              Discover offers, earn rewards, and enjoy more at your favourite spots!
-            </p>
-          </div>
-          <div className="w-22 h-18 sm:w-28 sm:h-22 rounded-3xl bg-gradient-to-br from-[#F3EEFA] to-[#EDE5FA] border border-[#E5DEF5] flex flex-col items-center justify-center text-[#A78BFA] shrink-0">
-            <Store className="w-9 h-9 sm:w-11 sm:h-11 stroke-[1.5]" />
-          </div>
-        </div>
-
-        {/* Active Processing Order Card (Exact match to current process order.png) */}
-        <div className="space-y-3">
-          <div className="bg-white rounded-3xl p-4 sm:p-5 border border-[#EFEAF7] shadow-md shadow-purple-950/5 space-y-4">
-            <div className="flex items-center gap-3.5">
-              {/* Glowing Purple Cloche Dish Icon */}
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#F3EEFA] to-[#EDE5FA] flex items-center justify-center shrink-0 relative">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#58258B] via-[#7C3AED] to-[#A855F7] text-white flex items-center justify-center shadow-lg shadow-purple-700/30">
-                  <Utensils className="w-6 h-6" />
-                </div>
+        <div className="space-y-5 lg:grid lg:grid-cols-12 lg:gap-6 lg:space-y-0 lg:items-start">
+          {/* Left 6 Cols on Desktop: Greeting + Active Order Card */}
+          <div className="lg:col-span-6 space-y-5">
+            {/* Greeting Banner + Soft Storefront Illustration (current process order.png) */}
+            <div className="flex items-center justify-between gap-4 pt-1">
+              <div className="space-y-1">
+                <h2 className="text-2xl sm:text-3xl font-black text-[#1E1548] tracking-tight flex items-center gap-2">
+                  <span>Hi {profile.firstName}!</span>
+                  <span>👋</span>
+                </h2>
+                <p className="text-xs sm:text-sm text-[#7B748C] font-medium max-w-xs leading-relaxed">
+                  Discover offers, earn rewards, and enjoy more at your favourite spots!
+                </p>
               </div>
-
-              <div className="flex-1 min-w-0 space-y-2">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <h3 className="text-sm sm:text-base font-black text-[#1E1548] leading-tight">
-                      Your Order
-                    </h3>
-                    <div className="text-xs font-bold text-[#8C84A0] mt-0.5">#SG1045</div>
-                  </div>
-
-                  <span className="px-3 py-1 rounded-full bg-[#FAF6FF] border border-[#EAE2FB] text-[#240B4C] text-[11px] font-black flex items-center gap-1.5 shrink-0">
-                    <Clock className="w-3 h-3 text-[#58258B]" />
-                    <span>In Kitchen</span>
-                  </span>
-                </div>
-
-                {/* Clickable Estimated Time Row -> Opens Live Tracker */}
-                <button
-                  type="button"
-                  onClick={onOpenOrders}
-                  className="w-full pt-2 border-t border-[#F4F0FA] flex items-center justify-between text-xs cursor-pointer group"
-                >
-                  <div className="flex items-center gap-1.5 text-[#7B748C]">
-                    <Clock className="w-3.5 h-3.5 text-[#8C84A0]" />
-                    <span>Estimated Time</span>
-                    <strong className="text-[#1E1548] font-black ml-1">15–20 mins</strong>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-[#8C84A0] group-hover:text-[#58258B] group-hover:translate-x-0.5 transition-all" />
-                </button>
+              <div className="w-22 h-18 sm:w-28 sm:h-22 rounded-3xl bg-gradient-to-br from-[#F3EEFA] to-[#EDE5FA] border border-[#E5DEF5] flex flex-col items-center justify-center text-[#A78BFA] shrink-0">
+                <Store className="w-9 h-9 sm:w-11 sm:h-11 stroke-[1.5]" />
               </div>
             </div>
 
-            {/* Dual Action Buttons: Call Waiter | Request Item */}
-            <div className="grid grid-cols-2 gap-3 pt-1">
-              <button
-                type="button"
-                onClick={() => (onCallWaiter ? onCallWaiter() : onOpenOrders())}
-                className="h-11 rounded-full bg-white hover:bg-[#FAF8FF] border border-[#2F0E45]/45 text-[#1E1548] text-xs sm:text-sm font-black flex items-center justify-center gap-2 cursor-pointer transition active:scale-[0.99]"
-              >
-                <Bell className="w-4 h-4 text-[#2F0E45]" />
-                <span>Call Waiter</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => (onRequestItems ? onRequestItems() : onOpenOrders())}
-                className="h-11 rounded-full bg-[#2F0E45] hover:bg-[#441763] text-white text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-md shadow-purple-950/20 cursor-pointer transition active:scale-[0.99]"
-              >
-                <Box className="w-4 h-4 text-white" />
-                <span>Request Item</span>
-              </button>
-            </div>
-          </div>
-
-          {/* 3-Dot Carousel Indicator */}
-          <div className="flex items-center justify-center gap-1.5">
-            <span className="w-5 h-1.5 rounded-full bg-[#2F0E45]" />
-            <span className="w-1.5 h-1.5 rounded-full bg-[#DDD5EC]" />
-            <span className="w-1.5 h-1.5 rounded-full bg-[#DDD5EC]" />
-          </div>
-        </div>
-
-        {/* Past Orders Summary */}
-        <div className="space-y-3 pt-2">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-black text-[#1E1548]">Past Orders</h3>
-            <button
-              type="button"
-              onClick={onOpenOrders}
-              className="text-xs font-black text-[#58258B] hover:underline cursor-pointer"
-            >
-              Track Live Order &rarr;
-            </button>
-          </div>
-
-          <div className="space-y-2.5">
-            {[
-              { id: '#SG1038', title: 'Burger Order', date: '10 Apr 2025, 02:15 PM', amount: '₹249' },
-              { id: '#SG1021', title: 'Coffee Order', date: '05 Apr 2025, 11:32 AM', amount: '₹180' }
-            ].map((ord) => (
-              <div
-                key={ord.id}
-                onClick={onOpenOrders}
-                className="bg-white hover:bg-[#FDFBFF] rounded-3xl p-4 border border-[#EFEAF7] shadow-2xs flex items-center justify-between gap-3 cursor-pointer transition"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-full bg-[#F5F0FC] text-[#58258B] flex items-center justify-center shrink-0">
-                    <ShoppingBag className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-sm font-black text-[#1E1548] truncate">
-                      {ord.title} <span className="text-xs font-semibold text-[#8C84A0]">{ord.id}</span>
+            {/* Active Processing Order Card (Exact match to current process order.png) */}
+            <div className="space-y-3">
+              <div className="bg-white rounded-3xl p-4 sm:p-5 border border-[#EFEAF7] shadow-md shadow-purple-950/5 space-y-4">
+                <div className="flex items-center gap-3.5">
+                  {/* Glowing Purple Cloche Dish Icon */}
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#F3EEFA] to-[#EDE5FA] flex items-center justify-center shrink-0 relative">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#58258B] via-[#7C3AED] to-[#A855F7] text-white flex items-center justify-center shadow-lg shadow-purple-700/30">
+                      <Utensils className="w-6 h-6" />
                     </div>
-                    <div className="text-[11px] text-[#8C84A0]">{merchantName} • {ord.date}</div>
+                  </div>
+
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <h3 className="text-sm sm:text-base font-black text-[#1E1548] leading-tight">
+                          Your Order
+                        </h3>
+                        <div className="text-xs font-bold text-[#8C84A0] mt-0.5">#SG1045</div>
+                      </div>
+
+                      <span className="px-3 py-1 rounded-full bg-[#FAF6FF] border border-[#EAE2FB] text-[#240B4C] text-[11px] font-black flex items-center gap-1.5 shrink-0">
+                        <Clock className="w-3 h-3 text-[#58258B]" />
+                        <span>In Kitchen</span>
+                      </span>
+                    </div>
+
+                    {/* Clickable Estimated Time Row -> Opens Live Tracker */}
+                    <button
+                      type="button"
+                      onClick={onOpenOrders}
+                      className="w-full pt-2 border-t border-[#F4F0FA] flex items-center justify-between text-xs cursor-pointer group"
+                    >
+                      <div className="flex items-center gap-1.5 text-[#7B748C]">
+                        <Clock className="w-3.5 h-3.5 text-[#8C84A0]" />
+                        <span>Estimated Time</span>
+                        <strong className="text-[#1E1548] font-black ml-1">15–20 mins</strong>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-[#8C84A0] group-hover:text-[#58258B] group-hover:translate-x-0.5 transition-all" />
+                    </button>
                   </div>
                 </div>
-                <div className="text-right shrink-0">
-                  <div className="text-sm font-black text-[#1E1548]">{ord.amount}</div>
-                  <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D] text-[10px] font-black mt-0.5">
-                    Completed
-                  </span>
+
+                {/* Dual Action Buttons: Call Waiter | Request Item */}
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => (onCallWaiter ? onCallWaiter() : onOpenOrders())}
+                    className="h-11 rounded-full bg-white hover:bg-[#FAF8FF] border border-[#2F0E45]/45 text-[#1E1548] text-xs sm:text-sm font-black flex items-center justify-center gap-2 cursor-pointer transition active:scale-[0.99]"
+                  >
+                    <Bell className="w-4 h-4 text-[#2F0E45]" />
+                    <span>Call Waiter</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => (onRequestItems ? onRequestItems() : onOpenOrders())}
+                    className="h-11 rounded-full bg-[#2F0E45] hover:bg-[#441763] text-white text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-md shadow-purple-950/20 cursor-pointer transition active:scale-[0.99]"
+                  >
+                    <Box className="w-4 h-4 text-white" />
+                    <span>Request Item</span>
+                  </button>
                 </div>
               </div>
-            ))}
+
+              {/* 3-Dot Carousel Indicator */}
+              <div className="flex items-center justify-center gap-1.5">
+                <span className="w-5 h-1.5 rounded-full bg-[#2F0E45]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#DDD5EC]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#DDD5EC]" />
+              </div>
+            </div>
+          </div>
+
+          {/* Right 6 Cols on Desktop: Past Orders Summary */}
+          <div className="lg:col-span-6 space-y-3 pt-2 lg:pt-0">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-black text-[#1E1548]">Past Orders</h3>
+              <button
+                type="button"
+                onClick={onOpenOrders}
+                className="text-xs font-black text-[#58258B] hover:underline cursor-pointer"
+              >
+                Track Live Order &rarr;
+              </button>
+            </div>
+
+            <div className="space-y-2.5">
+              {[
+                { id: '#SG1038', title: 'Burger Order', date: '10 Apr 2025, 02:15 PM', amount: '₹249' },
+                { id: '#SG1021', title: 'Coffee Order', date: '05 Apr 2025, 11:32 AM', amount: '₹180' }
+              ].map((ord) => (
+                <div
+                  key={ord.id}
+                  onClick={onOpenOrders}
+                  className="bg-white hover:bg-[#FDFBFF] rounded-3xl p-4 border border-[#EFEAF7] shadow-2xs flex items-center justify-between gap-3 cursor-pointer transition"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-full bg-[#F5F0FC] text-[#58258B] flex items-center justify-center shrink-0">
+                      <ShoppingBag className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-sm font-black text-[#1E1548] truncate">
+                        {ord.title} <span className="text-xs font-semibold text-[#8C84A0]">{ord.id}</span>
+                      </div>
+                      <div className="text-[11px] text-[#8C84A0]">{merchantName} • {ord.date}</div>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="text-sm font-black text-[#1E1548]">{ord.amount}</div>
+                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D] text-[10px] font-black mt-0.5">
+                      Completed
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -2289,7 +2309,7 @@ export const CustomerProfileHubView: React.FC<CustomerProfileHubViewProps> = ({
   /* ── INSIDE PAGE 3: EDIT PROFILE (Matches profile-1.png) ── */
   if (subView === 'edit') {
     return (
-      <div className="max-w-2xl mx-auto space-y-5 animate-in fade-in duration-200">
+      <div className="max-w-2xl lg:max-w-4xl mx-auto space-y-5 animate-in fade-in duration-200">
         <div className="flex items-center justify-between">
           <button
             type="button"
@@ -2484,124 +2504,151 @@ export const CustomerProfileHubView: React.FC<CustomerProfileHubViewProps> = ({
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-5 animate-in fade-in duration-200">
-      <h1 className="text-2xl font-black text-[#240B4C]">My Profile</h1>
-
-      {/* Identity Row */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5 min-w-0">
-          <div className="relative shrink-0">
-            <img
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=240&auto=format&fit=crop&q=80"
-              alt="Salena Mishra"
-              className="w-18 h-18 rounded-full object-cover border-3 border-white shadow-md"
-            />
-            <span className="w-6 h-6 rounded-full bg-[#2F0E45] text-white flex items-center justify-center absolute bottom-0 right-0 border-2 border-white">
-              <Camera className="w-3 h-3" />
-            </span>
-          </div>
-          <div className="min-w-0">
-            <div className="text-lg font-black text-[#1E1548] truncate">
-              {profile.firstName} {profile.lastName}
-            </div>
-            <div className="text-xs text-[#6B657E] flex items-center gap-1.5 mt-0.5">
-              <Phone className="w-3 h-3" /> {profile.phone}
-            </div>
-            <div className="text-xs text-[#6B657E] flex items-center gap-1.5 mt-0.5 truncate">
-              <Mail className="w-3 h-3" /> {profile.email}
-            </div>
-          </div>
-        </div>
+    <div className="max-w-2xl lg:max-w-5xl mx-auto space-y-5 animate-in fade-in duration-200">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-black text-[#240B4C]">My Profile</h1>
         <button
           type="button"
           onClick={() => setSubView('edit')}
-          className="w-10 h-10 rounded-2xl bg-white border border-[#EFEAF7] hover:border-[#58258B] flex items-center justify-center text-[#1E1548] shadow-2xs cursor-pointer shrink-0 transition"
-          title="Edit Profile"
+          className="hidden lg:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#EFEAF7] hover:border-[#58258B] text-xs font-black text-[#240B4C] shadow-2xs cursor-pointer transition"
         >
-          <Edit3 className="w-4 h-4" />
+          <Edit3 className="w-3.5 h-3.5" />
+          <span>Edit Profile</span>
         </button>
       </div>
 
-      {/* Deep Purple My Wallet Card (profile.png) */}
-      <div
-        onClick={() => setSubView('wallet')}
-        className="rounded-3xl p-5 bg-gradient-to-br from-[#3B125E] via-[#2B0C47] to-[#1D0733] text-white shadow-xl space-y-4 cursor-pointer hover:opacity-98 transition"
-      >
-        <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-[#7C3AED] text-white flex items-center justify-center shadow-md relative">
-            <Wallet className="w-6 h-6" />
-            <span className="w-5 h-5 rounded-full bg-amber-400 text-[#240B4C] text-[10px] font-black flex items-center justify-center absolute -top-1.5 -right-1 shadow-xs">
-              ₹
-            </span>
-          </div>
-          <div>
-            <div className="text-xs text-purple-200 font-semibold">My Wallet</div>
-            <div className="text-2xl sm:text-3xl font-black tracking-tight">₹1,250.00</div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/15">
-          <div className="flex items-center gap-2">
-            <span className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-              <Clock className="w-3.5 h-3.5 text-purple-200" />
-            </span>
-            <div>
-              <div className="text-[11px] text-purple-200/80">Total Cashback</div>
-              <div className="text-sm font-black">₹200.00</div>
-            </div>
-          </div>
-          <div className="border-l border-white/15 pl-3 flex items-center gap-2">
-            <span className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-              <ArrowLeftRight className="w-3.5 h-3.5 text-purple-200" />
-            </span>
-            <div>
-              <div className="text-[11px] text-purple-200/80">Total Transactions</div>
-              <div className="text-sm font-black">12</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Profile Action Menu List */}
-      <div className="bg-white rounded-3xl border border-[#EFEAF7] shadow-2xs divide-y divide-[#F4F0FA] overflow-hidden">
-        {[
-          { label: 'My Orders', icon: ShoppingBag, action: () => setSubView('orders') },
-          { label: 'Offers & Rewards', icon: Percent, action: onOpenOffers },
-          { label: 'Wallet History', icon: CreditCard, action: () => setSubView('wallet') },
-          { label: 'Saved Addresses', icon: MapPin, action: () => onNotify('Saved Addresses: Home & Downtown Office') },
-          { label: 'Payment Methods', icon: Wallet, action: () => onNotify('UPI & Saved Cards verified') },
-          { label: 'Support & Help', icon: HelpCircle, action: () => onNotify('24/7 Guest Support connected') },
-          { label: `About ${merchantName}`, icon: Info, action: () => onNotify(`${merchantName} • Powered by Loyaltics`) }
-        ].map((row) => {
-          const IconComp = row.icon;
-          return (
-            <button
-              key={row.label}
-              type="button"
-              onClick={row.action}
-              className="w-full px-5 py-4 flex items-center justify-between hover:bg-[#FAF8FF] transition-colors cursor-pointer"
-            >
-              <div className="flex items-center gap-3.5">
-                <span className="w-9 h-9 rounded-full bg-[#F3EEFA] text-[#58258B] flex items-center justify-center">
-                  <IconComp className="w-4 h-4" />
+      <div className="space-y-5 lg:grid lg:grid-cols-12 lg:gap-6 lg:space-y-0 lg:items-start">
+        {/* Left 5 Cols on Desktop: Identity + My Wallet + Log Out */}
+        <div className="lg:col-span-5 space-y-5">
+          {/* Identity Row */}
+          <div className="flex items-center justify-between gap-4 lg:bg-white lg:rounded-3xl lg:p-5 lg:border lg:border-[#EFEAF7] lg:shadow-2xs">
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="relative shrink-0">
+                <img
+                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=240&auto=format&fit=crop&q=80"
+                  alt="Salena Mishra"
+                  className="w-18 h-18 rounded-full object-cover border-3 border-white shadow-md"
+                />
+                <span className="w-6 h-6 rounded-full bg-[#2F0E45] text-white flex items-center justify-center absolute bottom-0 right-0 border-2 border-white">
+                  <Camera className="w-3 h-3" />
                 </span>
-                <span className="text-sm font-bold text-[#1E1548]">{row.label}</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-[#9890A8]" />
+              <div className="min-w-0">
+                <div className="text-lg font-black text-[#1E1548] truncate">
+                  {profile.firstName} {profile.lastName}
+                </div>
+                <div className="text-xs text-[#6B657E] flex items-center gap-1.5 mt-0.5">
+                  <Phone className="w-3 h-3" /> {profile.phone}
+                </div>
+                <div className="text-xs text-[#6B657E] flex items-center gap-1.5 mt-0.5 truncate">
+                  <Mail className="w-3 h-3" /> {profile.email}
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSubView('edit')}
+              className="w-10 h-10 rounded-2xl bg-white border border-[#EFEAF7] hover:border-[#58258B] flex items-center justify-center text-[#1E1548] shadow-2xs cursor-pointer shrink-0 transition lg:hidden"
+              title="Edit Profile"
+            >
+              <Edit3 className="w-4 h-4" />
             </button>
-          );
-        })}
-      </div>
+          </div>
 
-      {/* Soft Rose Log Out Button */}
-      <button
-        type="button"
-        onClick={onLogout}
-        className="w-full h-13 rounded-2xl bg-[#FFF2F2] hover:bg-[#FFE4E6] border border-[#FECDD3] text-[#DC2626] text-sm font-black flex items-center justify-center gap-2 cursor-pointer transition"
-      >
-        <LogOut className="w-4 h-4" />
-        <span>Log Out</span>
-      </button>
+          {/* Deep Purple My Wallet Card (profile.png) */}
+          <div
+            onClick={() => setSubView('wallet')}
+            className="rounded-3xl p-5 bg-gradient-to-br from-[#3B125E] via-[#2B0C47] to-[#1D0733] text-white shadow-xl space-y-4 cursor-pointer hover:opacity-98 transition"
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-[#7C3AED] text-white flex items-center justify-center shadow-md relative">
+                <Wallet className="w-6 h-6" />
+                <span className="w-5 h-5 rounded-full bg-amber-400 text-[#240B4C] text-[10px] font-black flex items-center justify-center absolute -top-1.5 -right-1 shadow-xs">
+                  ₹
+                </span>
+              </div>
+              <div>
+                <div className="text-xs text-purple-200 font-semibold">My Wallet</div>
+                <div className="text-2xl sm:text-3xl font-black tracking-tight">₹1,250.00</div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/15">
+              <div className="flex items-center gap-2">
+                <span className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                  <Clock className="w-3.5 h-3.5 text-purple-200" />
+                </span>
+                <div>
+                  <div className="text-[11px] text-purple-200/80">Total Cashback</div>
+                  <div className="text-sm font-black">₹200.00</div>
+                </div>
+              </div>
+              <div className="border-l border-white/15 pl-3 flex items-center gap-2">
+                <span className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                  <ArrowLeftRight className="w-3.5 h-3.5 text-purple-200" />
+                </span>
+                <div>
+                  <div className="text-[11px] text-purple-200/80">Total Transactions</div>
+                  <div className="text-sm font-black">12</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop Log Out Button */}
+          <button
+            type="button"
+            onClick={onLogout}
+            className="hidden lg:flex w-full h-12 rounded-2xl bg-[#FFF2F2] hover:bg-[#FFE4E6] border border-[#FECDD3] text-[#DC2626] text-sm font-black items-center justify-center gap-2 cursor-pointer transition"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Log Out</span>
+          </button>
+        </div>
+
+        {/* Right 7 Cols on Desktop: Profile Action Menu List */}
+        <div className="lg:col-span-7 space-y-4">
+          <div className="bg-white rounded-3xl border border-[#EFEAF7] shadow-2xs divide-y divide-[#F4F0FA] overflow-hidden">
+            {[
+              { label: 'My Orders', icon: ShoppingBag, action: () => setSubView('orders') },
+              { label: 'Offers & Rewards', icon: Percent, action: onOpenOffers },
+              { label: 'Wallet History', icon: CreditCard, action: () => setSubView('wallet') },
+              { label: 'Saved Addresses', icon: MapPin, action: () => onNotify('Saved Addresses: Home & Downtown Office') },
+              { label: 'Payment Methods', icon: Wallet, action: () => onNotify('UPI & Saved Cards verified') },
+              { label: 'Support & Help', icon: HelpCircle, action: () => onNotify('24/7 Guest Support connected') },
+              { label: `About ${merchantName}`, icon: Info, action: () => onNotify(`${merchantName} • Powered by Loyaltics`) }
+            ].map((row) => {
+              const IconComp = row.icon;
+              return (
+                <button
+                  key={row.label}
+                  type="button"
+                  onClick={row.action}
+                  className="w-full px-5 py-4 flex items-center justify-between hover:bg-[#FAF8FF] transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <span className="w-9 h-9 rounded-full bg-[#F3EEFA] text-[#58258B] flex items-center justify-center">
+                      <IconComp className="w-4 h-4" />
+                    </span>
+                    <span className="text-sm font-bold text-[#1E1548]">{row.label}</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-[#9890A8]" />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Mobile / Tablet Log Out Button */}
+          <button
+            type="button"
+            onClick={onLogout}
+            className="lg:hidden w-full h-13 rounded-2xl bg-[#FFF2F2] hover:bg-[#FFE4E6] border border-[#FECDD3] text-[#DC2626] text-sm font-black flex items-center justify-center gap-2 cursor-pointer transition"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Log Out</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

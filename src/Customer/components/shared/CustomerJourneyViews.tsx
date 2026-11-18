@@ -429,7 +429,7 @@ export const RequestItemsView: React.FC<RequestItemsViewProps> = ({
   };
 
   return (
-    <div className="space-y-4 sm:space-y-5 max-w-3xl mx-auto animate-in fade-in duration-200">
+    <div className="space-y-4 sm:space-y-5 max-w-3xl lg:max-w-5xl mx-auto animate-in fade-in duration-200">
       {/* Top Bar when inside Mobile/Tablet */}
       {onBack && (
         <div className="flex items-center justify-between">
