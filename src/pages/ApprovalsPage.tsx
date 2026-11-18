@@ -248,7 +248,7 @@ export const ApprovalsPage: React.FC<ApprovalsPageProps> = ({ onNavigate }) => {
       const p = new URLSearchParams(window.location.search);
       if (p.get('view') === 'mobile' || p.get('device') === 'mobile') return true;
       if (p.get('view') === 'desktop' || p.get('device') === 'desktop') return false;
-      return window.innerWidth < 768;
+      return window.innerWidth < 1024;
     }
     return false;
   });
@@ -257,12 +257,12 @@ export const ApprovalsPage: React.FC<ApprovalsPageProps> = ({ onNavigate }) => {
     const handleResize = () => {
       const p = new URLSearchParams(window.location.search);
       if (!p.get('view') && !p.get('device')) {
-        setIsMobile(window.innerWidth < 768);
+        setIsMobile(window.innerWidth < 1024);
       }
     };
     window.addEventListener('resize', handleResize);
 
-    const mql = window.matchMedia('(max-width: 767px)');
+    const mql = window.matchMedia('(max-width: 1023px)');
     const handleMedia = (e: MediaQueryListEvent) => {
       const p = new URLSearchParams(window.location.search);
       if (!p.get('view') && !p.get('device')) {

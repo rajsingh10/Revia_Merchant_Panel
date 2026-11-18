@@ -285,3 +285,8 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #47368E;
 }
+
+/* Hide mobile bottom navigation bar when inside a subview or modal flow */
+body.hide-mobile-bottom-nav nav[aria-label="Mobile Bottom Navigation"] {
+  display: none !important;
+}

@@ -8,7 +8,8 @@ import {
   Users,
   UserPlus,
   Award,
-  X
+  X,
+  UtensilsCrossed
 } from 'lucide-react';
 import { NavRoute } from '../../types';
 
@@ -55,13 +56,20 @@ const RIGHT_NAV_ITEMS: NavItem[] = [
 ];
 
 interface ModuleAddConfig {
-  type: 'branch' | 'campaign' | 'staff' | 'customer' | 'reward' | 'qrcode' | 'general';
+  type: 'branch' | 'campaign' | 'staff' | 'customer' | 'reward' | 'qrcode' | 'menu' | 'general';
   label: string;
   shortLabel: string;
   route?: NavRoute;
 }
 
 const getModuleAddConfig = (route: string): ModuleAddConfig => {
+  if (route.startsWith('/item-catalog') || route.startsWith('/menu')) {
+    return {
+      type: 'menu',
+      label: 'Upload / Update Menu',
+      shortLabel: 'Menu',
+    };
+  }
   if (route.startsWith('/branches')) {
     return {
       type: 'branch',
@@ -157,14 +165,23 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
       window.dispatchEvent(new CustomEvent('revia:add-action', { detail: { type: 'qrcode' } }));
       return;
     }
+    if (addConfig.type === 'menu') {
+      window.dispatchEvent(new CustomEvent('revia:add-action', { detail: { type: 'menu' } }));
+      return;
+    }
 
     // 2. Fallback on other pages: open Quick Add drawer
     setIsQuickAddOpen(true);
   };
 
-  const handleQuickAddOption = (type: 'branch' | 'campaign' | 'staff' | 'customer' | 'reward') => {
+  const handleQuickAddOption = (type: 'branch' | 'campaign' | 'staff' | 'customer' | 'reward' | 'menu') => {
     setIsQuickAddOpen(false);
-    if (type === 'branch') {
+    if (type === 'menu') {
+      onNavigate('/item-catalog');
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('revia:add-action', { detail: { type: 'menu' } }));
+      }, 100);
+    } else if (type === 'branch') {
       onNavigate('/branches');
       setTimeout(() => {
         window.dispatchEvent(new CustomEvent('revia:add-action', { detail: { type: 'branch' } }));
@@ -365,14 +382,28 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               <button
                 type="button"
                 onClick={() => handleQuickAddOption('reward')}
-                className="col-span-2 flex items-center gap-3 p-3 rounded-2xl bg-amber-50/70 hover:bg-amber-100/70 text-left transition-colors cursor-pointer group"
+                className="flex items-center gap-3 p-3 rounded-2xl bg-amber-50/70 hover:bg-amber-100/70 text-left transition-colors cursor-pointer group"
               >
                 <div className="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-xs">
                   <Award className="w-5 h-5" />
                 </div>
                 <div>
                   <div className="text-xs font-bold text-[#1A1615] group-hover:text-amber-900">Create Reward</div>
-                  <div className="text-[10px] text-[#8C877D]">Stamp & point redemption reward</div>
+                  <div className="text-[10px] text-[#8C877D]">Stamp & point reward</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleQuickAddOption('menu')}
+                className="flex items-center gap-3 p-3 rounded-2xl bg-purple-50/70 hover:bg-purple-100/70 text-left transition-colors cursor-pointer group"
+              >
+                <div className="w-10 h-10 rounded-xl bg-[#5844A8] text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <UtensilsCrossed className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[#1A1615] group-hover:text-purple-900">Upload Menu</div>
+                  <div className="text-[10px] text-[#8C877D]">Items &amp; categories</div>
                 </div>
               </button>
             </div>

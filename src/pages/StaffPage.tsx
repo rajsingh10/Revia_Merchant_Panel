@@ -990,18 +990,11 @@ const WebStaffView: React.FC<StaffPageProps> = ({ onNavigate }) => {
         </div>
       )}
 
-      <div className="max-w-[1400px] mx-auto space-y-6">
+      <div className="max-w-[1600px] mx-auto space-y-6">
         {viewMode === 'details' ? (
           renderStaffDetails()
         ) : (
           <>
-            {/* Breadcrumb Navigation */}
-            <div className="flex items-center gap-2 text-xs font-semibold text-gray-400">
-              <span>Home</span>
-              <span>&gt;</span>
-              <span className="text-[#1E1548] font-bold">Staff Directory</span>
-            </div>
-
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
@@ -1777,7 +1770,7 @@ export const StaffPage: React.FC<StaffPageProps> = (props) => {
       if (params.get('view') === 'tablet' || params.get('device') === 'tablet') {
         return true;
       }
-      return window.innerWidth < 1024;
+      return window.innerWidth < 1280;
     }
     return false;
   });
@@ -1786,7 +1779,7 @@ export const StaffPage: React.FC<StaffPageProps> = (props) => {
     const handleResize = () => {
       const params = new URLSearchParams(window.location.search);
       if (!params.get('view') && !params.get('device')) {
-        setIsTablet(window.innerWidth < 1024);
+        setIsTablet(window.innerWidth < 1280);
       }
     };
     window.addEventListener('resize', handleResize);

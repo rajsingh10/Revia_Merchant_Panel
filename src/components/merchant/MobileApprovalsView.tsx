@@ -137,34 +137,20 @@ export const MobileApprovalsView: React.FC<Props> = ({ onNavigate, onRequestActi
   );
 
   return (
-    <div className="fixed inset-0 z-[100] bg-[#FAF8FF] text-[#1E1548] font-sans flex flex-col overflow-hidden select-none">
+    <div className="w-full min-h-[calc(100vh-4rem)] bg-[#FAF8FF] text-[#1A1615] font-sans flex flex-col px-3.5 sm:px-6 py-3.5 sm:py-5 pb-28 space-y-4 select-none max-w-4xl mx-auto">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-12 left-1/2 -translate-x-1/2 z-[120] bg-[#1E1548] text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 border border-purple-500/30 animate-in fade-in slide-in-from-top-4">
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-[60] bg-[#1A1615] text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 border border-purple-500/30 animate-in fade-in slide-in-from-top-4">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Mobile Status Bar Simulation */}
-      {/* <div className="pt-2 px-6 pb-1 flex items-center justify-between text-xs font-semibold text-gray-700 bg-transparent shrink-0">
-        <span className="font-bold text-sm tracking-tight">9:41</span>
-        <div className="flex items-center gap-1.5 text-gray-700">
-          <span className="text-[11px]">📶</span>
-          <span className="text-[11px]">⚡</span>
-          <div className="w-5 h-2.5 rounded-xs border border-gray-700 flex items-center p-0.5">
-            <div className="h-full w-3 bg-gray-700 rounded-2xs" />
-          </div>
-        </div>
-      </div> */}
-
-      {/* Main Scrollable Content */}
-      <div className="flex-1 min-h-0 overflow-y-auto px-4 pt-2 pb-24 space-y-4">
-        {/* Header Title */}
-        <div className="px-1">
-          <h1 className="text-2xl font-black text-[#1E1548] tracking-tight">Approvals</h1>
-          <p className="text-xs text-gray-400 font-medium mt-0.5">Review customer reward requests</p>
-        </div>
+      {/* Header Title */}
+      <div className="px-1">
+        <h1 className="text-xl sm:text-2xl font-black text-[#1A1615] tracking-tight">Approvals</h1>
+        <p className="text-xs text-[#8C877D] font-medium mt-0.5">Review customer reward requests</p>
+      </div>
 
         {/* 3 Metric Summary Cards */}
         <div className="grid grid-cols-3 gap-2.5">
@@ -203,7 +189,7 @@ export const MobileApprovalsView: React.FC<Props> = ({ onNavigate, onRequestActi
             onClick={() => setActiveTab('pending')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer shadow-2xs ${
               activeTab === 'pending'
-                ? 'bg-[#1E1548] text-white shadow-purple-900/10'
+                ? 'bg-[#5844A8] text-white shadow-xs'
                 : 'bg-white text-gray-600 border border-gray-200/80 hover:border-purple-200'
             }`}
           >
@@ -214,7 +200,7 @@ export const MobileApprovalsView: React.FC<Props> = ({ onNavigate, onRequestActi
             onClick={() => setActiveTab('approved')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer shadow-2xs ${
               activeTab === 'approved'
-                ? 'bg-[#1E1548] text-white shadow-purple-900/10'
+                ? 'bg-[#5844A8] text-white shadow-xs'
                 : 'bg-white text-gray-600 border border-gray-200/80 hover:border-purple-200'
             }`}
           >
@@ -225,7 +211,7 @@ export const MobileApprovalsView: React.FC<Props> = ({ onNavigate, onRequestActi
             onClick={() => setActiveTab('declined')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer shadow-2xs ${
               activeTab === 'declined'
-                ? 'bg-[#1E1548] text-white shadow-purple-900/10'
+                ? 'bg-[#5844A8] text-white shadow-xs'
                 : 'bg-white text-gray-600 border border-gray-200/80 hover:border-purple-200'
             }`}
           >
@@ -345,14 +331,14 @@ export const MobileApprovalsView: React.FC<Props> = ({ onNavigate, onRequestActi
                     <button
                       type="button"
                       onClick={() => handleAction(item.id, 'decline')}
-                      className="flex-1 py-2.5 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-xs font-bold text-[#1E1548] cursor-pointer shadow-2xs transition active:scale-98"
+                      className="flex-1 py-2.5 rounded-xl bg-white border border-[#EAE6E1] hover:bg-gray-50 text-xs font-bold text-[#1A1615] cursor-pointer shadow-2xs transition active:scale-98"
                     >
                       Review
                     </button>
                     <button
                       type="button"
                       onClick={() => handleAction(item.id, 'accept')}
-                      className="flex-1 py-2.5 rounded-xl bg-[#2D1A47] hover:bg-[#3D255E] text-white text-xs font-bold cursor-pointer shadow-md shadow-purple-950/20 transition active:scale-98"
+                      className="flex-1 py-2.5 rounded-xl bg-[#5844A8] hover:bg-[#47368E] text-white text-xs font-bold cursor-pointer shadow-xs transition active:scale-98"
                     >
                       Accept
                     </button>
@@ -361,7 +347,7 @@ export const MobileApprovalsView: React.FC<Props> = ({ onNavigate, onRequestActi
                   <button
                     type="button"
                     onClick={() => showToast(`Viewing details for ${item.name}`)}
-                    className="w-full py-2.5 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-xs font-bold text-[#1E1548] cursor-pointer shadow-2xs transition active:scale-98"
+                    className="w-full py-2.5 rounded-xl bg-white border border-[#EAE6E1] hover:bg-gray-50 text-xs font-bold text-[#1A1615] cursor-pointer shadow-2xs transition active:scale-98"
                   >
                     Details
                   </button>
@@ -370,9 +356,6 @@ export const MobileApprovalsView: React.FC<Props> = ({ onNavigate, onRequestActi
             ))
           )}
         </div>
-      </div>
-
-
     </div>
   );
 };

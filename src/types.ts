@@ -151,6 +151,7 @@ export type NavRoute =
   | '/qr-codes'
   | '/approvals'
   | '/item-catalog'
+  | '/menu'
   | '/redemption-rules'
   | '/masters/rule-fields'
   | '/masters/tier-options'

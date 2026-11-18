@@ -19,7 +19,8 @@ import {
   SlidersHorizontal,
   Heart,
   Ticket,
-  TrendingUp
+  TrendingUp,
+  UtensilsCrossed
 } from 'lucide-react';
 import { NavRoute } from '../../types';
 
@@ -72,7 +73,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { name: 'Campaign', route: '/campaigns', icon: Megaphone },
     { name: 'QR Codes', route: '/qr-codes', icon: QrCode },
     { name: 'Approvals', route: '/approvals', icon: Heart, badge: 2 },
-    { name: 'Item Catalog', route: '/item-catalog', icon: Package },
+    { name: 'Menu', route: '/item-catalog', icon: UtensilsCrossed },
     { name: 'Redemption rule', route: '/redemption-rules', icon: Ticket },
   ];
 
@@ -105,16 +106,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside
       className={`
-        bg-white border-r border-[#EAE6E1] flex flex-col shrink-0 h-screen transition-all duration-200
+        bg-white border-r border-[#EAE6E1] flex-col shrink-0 h-screen transition-all duration-200
         lg:static lg:w-[240px] lg:translate-x-0 lg:z-auto
         ${isMobileOpen
-          ? 'fixed inset-y-0 left-0 w-[280px] max-w-[85vw] translate-x-0 shadow-2xl z-[60]'
+          ? 'hidden md:flex fixed inset-y-0 left-0 w-[280px] sm:w-[320px] max-w-[85vw] translate-x-0 shadow-2xl z-[80] animate-in slide-in-from-left duration-200 bg-white'
           : 'hidden lg:flex'
         }
       `}
     >
       {/* Brand Header: Revia only with older R logo in purple colour */}
-      <div className="p-4 border-b border-[#EAE6E1] flex items-center justify-between">
+      <div className="p-4 border-b border-[#EAE6E1] flex items-center justify-between shrink-0 bg-white">
         <div className="flex items-center gap-2.5">
           <svg className="w-8 h-8 rounded-xl shadow-xs shrink-0" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -148,7 +149,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             const isActive =
               currentRoute === item.route ||
               (item.route === '/branches' && currentRoute === '/branches/new') ||
-              (item.route === '/campaigns' && (currentRoute === '/campaigns/new' || currentRoute.startsWith('/campaigns')));
+              (item.route === '/campaigns' && (currentRoute === '/campaigns/new' || currentRoute.startsWith('/campaigns'))) ||
+              (item.route === '/item-catalog' && (currentRoute === '/item-catalog' || currentRoute === '/menu'));
 
             return (
               <button

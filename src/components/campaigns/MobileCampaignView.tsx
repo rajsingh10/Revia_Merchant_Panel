@@ -453,60 +453,24 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
   if (viewMode === 'dashboard') {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#FDF9FE] via-[#FFFDFE] to-[#FBF8FD] pb-24 font-sans text-[#1A102F]">
-        {/* Mobile Header Bar */}
-        <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#F0EBF5] px-4 py-3 shadow-2xs">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  if (onToggleMobileMenu) {
-                    onToggleMobileMenu();
-                  }
-                }}
-                className="w-8 h-8 -ml-1 flex items-center justify-center rounded-xl text-[#1A102F] hover:bg-purple-100/60 active:scale-95 transition-all cursor-pointer"
-                aria-label="Open sidebar menu"
-                title="Open menu"
-              >
-                <Menu className="w-5 h-5 text-[#1A102F]" />
-              </button>
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#6366F1] to-[#EC4899] flex items-center justify-center text-white font-black text-sm shadow-xs">
-                ★
-              </div>
-              <div>
-                <div className="text-sm font-black text-[#1A102F] leading-tight">Loyalitics</div>
-                <div className="text-[10px] text-gray-400 font-medium">Rewards • Engage • Grow</div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => {
-                  setCreationSetupStep('choose_type');
-                  setViewMode('builder');
-                }}
-                className="px-3 py-1.5 rounded-xl bg-[#2D0F55] text-white text-xs font-bold hover:bg-[#3D1472] transition-all shadow-xs cursor-pointer flex items-center gap-1"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>New</span>
-              </button>
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-                alt="Profile"
-                className="w-8 h-8 rounded-full object-cover border border-purple-200"
-              />
-            </div>
-          </div>
-        </div>
-
         {/* Dashboard Main Content */}
         <div className="p-4 space-y-4">
           {/* Top Title */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <div>
               <h1 className="text-xl font-black text-[#1A102F] tracking-tight">Campaigns</h1>
               <p className="text-xs text-gray-500">Monitor active promotions and customer response</p>
             </div>
+            <button
+              onClick={() => {
+                setCreationSetupStep('choose_type');
+                setViewMode('builder');
+              }}
+              className="px-3.5 py-2 rounded-xl bg-[#2D0F55] text-white text-xs font-bold hover:bg-[#3D1472] transition-all shadow-xs cursor-pointer flex items-center gap-1 shrink-0"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>New</span>
+            </button>
           </div>
 
           {/* 4 Summary KPI Cards in 2x2 grid */}
@@ -731,17 +695,9 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
   // ---------------------------------------------------------------------------
   if (creationSetupStep === 'choose_type') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#FDF8FD] via-[#FFF9FA] to-[#FAF8FD] flex flex-col justify-between p-6 font-sans text-[#1A102F]">
-        {/* Top Header with Menu & Exit */}
-        <div className="flex items-center justify-between -mt-1 pb-1 max-w-sm mx-auto w-full">
-          <button
-            type="button"
-            onClick={() => onToggleMobileMenu && onToggleMobileMenu()}
-            className="w-9 h-9 -ml-1 flex items-center justify-center rounded-xl text-[#1A102F] hover:bg-purple-100/60 active:scale-95 transition-all cursor-pointer"
-            aria-label="Open sidebar menu"
-          >
-            <Menu className="w-5 h-5 text-[#1A102F]" />
-          </button>
+      <div className="min-h-[calc(100vh-53px)] bg-gradient-to-b from-[#FDF8FD] via-[#FFF9FA] to-[#FAF8FD] flex flex-col justify-between p-6 font-sans text-[#1A102F]">
+        {/* Top Close Action */}
+        <div className="flex items-center justify-end -mt-1 pb-1 max-w-sm mx-auto w-full">
           <button
             type="button"
             onClick={() => setViewMode('dashboard')}
@@ -915,18 +871,10 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
   // ---------------------------------------------------------------------------
   if (creationSetupStep === 'configure_multiple') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#FDF8FD] via-[#FFF9FA] to-[#FAF8FD] flex flex-col justify-between p-6 font-sans text-[#1A102F]">
+      <div className="min-h-[calc(100vh-53px)] bg-gradient-to-b from-[#FDF8FD] via-[#FFF9FA] to-[#FAF8FD] flex flex-col justify-between p-6 font-sans text-[#1A102F]">
         <div className="space-y-4 max-w-sm mx-auto w-full">
-          {/* Top Header with Menu & Exit */}
-          <div className="flex items-center justify-between -mt-1 pb-1">
-            <button
-              type="button"
-              onClick={() => onToggleMobileMenu && onToggleMobileMenu()}
-              className="w-9 h-9 -ml-1 flex items-center justify-center rounded-xl text-[#1A102F] hover:bg-purple-100/60 active:scale-95 transition-all cursor-pointer"
-              aria-label="Open sidebar menu"
-            >
-              <Menu className="w-5 h-5 text-[#1A102F]" />
-            </button>
+          {/* Top Close Action */}
+          <div className="flex items-center justify-end -mt-1 pb-1">
             <button
               type="button"
               onClick={() => setViewMode('dashboard')}
@@ -1085,9 +1033,9 @@ export const MobileCampaignView: React.FC<MobileCampaignViewProps> = ({
   // 6-STEP WIZARD CONTAINER WITH PROGRESS BAR (NO fake phone status bar!)
   // ---------------------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FDF8FD] via-[#FFF9FA] to-[#FAF8FD] flex flex-col justify-between pb-6 font-sans text-[#1A102F]">
+    <div className="min-h-[calc(100vh-53px)] bg-gradient-to-b from-[#FDF8FD] via-[#FFF9FA] to-[#FAF8FD] flex flex-col justify-between pb-6 font-sans text-[#1A102F]">
       {/* Top Header with 6-Step Connected Progress Stepper (Matching Image 3 & 4) */}
-      <div className="px-5 pt-4 pb-3 border-b border-[#F0EBF5] bg-white/90 backdrop-blur-md sticky top-0 z-30">
+      <div className="px-5 pt-4 pb-3 border-b border-[#F0EBF5] bg-white/95 backdrop-blur-md sticky top-[53px] z-20">
         {/* Connected Step Indicator */}
         <div className="flex items-center justify-between relative px-2">
           {/* Horizontal connecting background line */}

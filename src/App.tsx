@@ -14,6 +14,7 @@ import { INITIAL_OUTLETS } from './data/outletsData';
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { MobileBottomNav } from './components/layout/MobileBottomNav';
+import { MobileMenuSheet } from './components/layout/MobileMenuSheet';
 import { CommandPalette } from './components/common/CommandPalette';
 import { PendingApprovalModal } from './components/common/PendingApprovalModal';
 import apiClient from './api/apiClient';
@@ -68,7 +69,7 @@ import { NotEnoughCreditModal } from './components/wallet/NotEnoughCreditModal';
 
 const VALID_ROUTES = [
   '/dashboard', '/control-panel', '/sales-rewards', '/insights-config', '/atelier', '/branches', '/branches/new', '/staff',
-  '/loyalty', '/qr-codes', '/approvals', '/item-catalog', '/redemption-rules', '/masters/rule-fields', '/masters/tier-options', '/masters/reward-types', '/masters/asset-types', '/masters/placement-types', '/catalog', '/orders', '/invoices',
+  '/loyalty', '/qr-codes', '/approvals', '/item-catalog', '/menu', '/redemption-rules', '/masters/rule-fields', '/masters/tier-options', '/masters/reward-types', '/masters/asset-types', '/masters/placement-types', '/catalog', '/orders', '/invoices',
   '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
   '/terminal', '/rewards', '/rewards/new', '/analytics', '/billing', '/notifications',
   '/settings/audit', '/settings/branding', '/login', '/onboarding',
@@ -260,7 +261,7 @@ export default function App() {
       <div className="flex h-screen bg-[#FAF8FF] text-[#111827] font-sans antialiased selection:bg-purple-100 selection:text-[#5844A8] overflow-hidden">
         {isMobileMenuOpen && (
           <div
-            className="fixed inset-0 bg-black/50 z-[50] lg:hidden backdrop-blur-xs transition-opacity cursor-pointer"
+            className="fixed inset-0 bg-black/60 z-[70] lg:hidden backdrop-blur-xs transition-opacity cursor-pointer animate-in fade-in duration-200"
             onClick={() => setIsMobileMenuOpen(false)}
           />
         )}
@@ -283,16 +284,22 @@ export default function App() {
           onMobileClose={() => setIsMobileMenuOpen(false)}
         />
 
+        <MobileMenuSheet
+          isOpen={isMobileMenuOpen}
+          currentRoute={currentRoute}
+          onClose={() => setIsMobileMenuOpen(false)}
+          onNavigate={handleNavigate as any}
+        />
+
         <div ref={mainContentRef} className="flex-1 flex flex-col min-w-0 h-screen overflow-y-scroll">
           <LowBalanceBanner />
-          {!currentRoute.startsWith('/campaigns') && (
-            <Header
-              currentRoute={currentRoute as NavRoute}
-              onOpenSearch={() => setIsSearchOpen(true)}
-              onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              onNavigate={handleNavigate as any}
-            />
-          )}
+          <Header
+            currentRoute={currentRoute as NavRoute}
+            onOpenSearch={() => setIsSearchOpen(true)}
+            onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            onNavigate={handleNavigate as any}
+            className={currentRoute.startsWith('/campaigns') ? 'sm:hidden' : ''}
+          />
           <main className={`flex-1 pb-20 lg:pb-0 ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
             {!isValidRoute ? (
               <NotFoundPage onNavigate={(route) => handleNavigate(route as NavRoute)} />
@@ -307,6 +314,7 @@ export default function App() {
                 <Route path="/qr-codes" element={<ProtectedRoute><QrCodesPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/approvals" element={<ProtectedRoute><ApprovalsPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/item-catalog" element={<ProtectedRoute><ItemCatalogPage /></ProtectedRoute>} />
+                <Route path="/menu" element={<ProtectedRoute><ItemCatalogPage /></ProtectedRoute>} />
                 <Route path="/redemption-rules" element={<ProtectedRoute><RedemptionRulesPage onNavigate={handleNavigate as any} /></ProtectedRoute>} />
                 <Route path="/masters/rule-fields" element={<ProtectedRoute><MastersPage defaultTab="fields" /></ProtectedRoute>} />
                 <Route path="/masters/tier-options" element={<ProtectedRoute><MastersPage defaultTab="tiers" /></ProtectedRoute>} />

@@ -52,7 +52,10 @@ import {
   DollarSign,
   Gift,
   QrCode,
-  Tag
+  Tag,
+  Menu,
+  Heart,
+  Zap
 } from 'lucide-react';
 import { NavRoute } from '../../types';
 
@@ -101,7 +104,7 @@ const INITIAL_STAFF: StaffMember[] = [
     initials: 'AS',
     employeeId: 'EMP001',
     joinDate: '12 Jan 2024',
-    location: 'Noida - Sector 18',
+    location: 'Main Branch',
     accountStatus: 'Active',
     state: 'Uttar Pradesh',
     city: 'Noida'
@@ -109,9 +112,9 @@ const INITIAL_STAFF: StaffMember[] = [
   {
     id: 'st-2',
     name: 'Priya Mehta',
-    role: 'Branch Manager',
-    roleType: 'System',
-    branch: 'Sector 62',
+    role: 'Marketing',
+    roleType: 'Custom',
+    branch: 'City Mall',
     status: 'Active',
     email: 'priya.mehta@thecoffeeclub.com',
     phone: '+91 98765 43211',
@@ -123,7 +126,7 @@ const INITIAL_STAFF: StaffMember[] = [
     initials: 'PM',
     employeeId: 'EMP002',
     joinDate: '20 Feb 2024',
-    location: 'Noida - Sector 62',
+    location: 'City Mall',
     accountStatus: 'Active',
     state: 'Uttar Pradesh',
     city: 'Noida'
@@ -163,7 +166,7 @@ const INITIAL_STAFF: StaffMember[] = [
     hours: 120,
     tasks: 94,
     lastActive: '3 days ago',
-    avatarBg: 'bg-teal-100 text-teal-700',
+    avatarBg: 'bg-lime-100 text-lime-800',
     initials: 'SI',
     employeeId: 'EMP004',
     joinDate: '01 Apr 2024',
@@ -174,47 +177,47 @@ const INITIAL_STAFF: StaffMember[] = [
   },
   {
     id: 'st-5',
-    name: 'Rohan Singh',
-    role: 'Senior Waiter',
+    name: 'Karan Malhotra',
+    role: 'Administrator',
     roleType: 'System',
-    branch: 'Sector 18',
+    branch: 'Central Plaza',
     status: 'Active',
-    email: 'rohan.s@thecoffeeclub.com',
-    phone: '+91 98765 43215',
+    email: 'karan.m@thecoffeeclub.com',
+    phone: '+91 98765 43214',
     shifts: 46,
     hours: 210,
     tasks: 340,
-    lastActive: '10:42 AM',
-    avatarBg: 'bg-purple-100 text-purple-700',
-    initials: 'RS',
+    lastActive: '6 days ago',
+    avatarBg: 'bg-amber-100 text-amber-800',
+    initials: 'KM',
     employeeId: 'EMP005',
     joinDate: '10 Jan 2024',
-    location: 'Noida - Sector 18',
+    location: 'Central Plaza',
     accountStatus: 'Active',
     state: 'Uttar Pradesh',
     city: 'Noida'
   },
   {
     id: 'st-6',
-    name: 'Neha Kapoor',
-    role: 'Service Staff',
+    name: 'Neha Taneja',
+    role: 'Supervisor',
     roleType: 'System',
-    branch: 'Sector 18',
-    status: 'Pending',
-    email: 'neha.k@thecoffeeclub.com',
-    phone: '+91 98765 43216',
-    shifts: 0,
-    hours: 0,
-    tasks: 0,
-    lastActive: '10:18 AM',
-    avatarBg: 'bg-pink-100 text-pink-700',
-    initials: 'NK',
+    branch: 'Connaught Place',
+    status: 'Active',
+    email: 'neha.t@thecoffeeclub.com',
+    phone: '+91 65422 10917',
+    shifts: 26,
+    hours: 154,
+    tasks: 118,
+    lastActive: 'Yesterday',
+    avatarBg: 'bg-purple-100 text-purple-700',
+    initials: 'NT',
     employeeId: 'EMP006',
     joinDate: '05 May 2024',
-    location: 'Noida - Sector 18',
-    accountStatus: 'Pending',
-    state: 'Uttar Pradesh',
-    city: 'Noida'
+    location: 'Connaught Place',
+    accountStatus: 'Active',
+    state: 'Delhi',
+    city: 'New Delhi'
   },
   {
     id: 'st-7',
@@ -229,34 +232,34 @@ const INITIAL_STAFF: StaffMember[] = [
     hours: 168,
     tasks: 145,
     lastActive: '9:56 AM',
-    avatarBg: 'bg-amber-100 text-amber-700',
+    avatarBg: 'bg-orange-100 text-orange-700',
     initials: 'AP',
     employeeId: 'EMP007',
     joinDate: '18 Jun 2024',
-    location: 'Noida - Expressway',
+    location: 'Expressway',
     accountStatus: 'Active',
     state: 'Uttar Pradesh',
     city: 'Noida'
   },
   {
     id: 'st-8',
-    name: 'Vikram Kumar',
-    role: 'Floor Manager',
+    name: 'Meera Kapoor',
+    role: 'Cashier',
     roleType: 'System',
     branch: 'Sector 18',
-    status: 'Disabled',
-    email: 'vikram.k@thecoffeeclub.com',
-    phone: '+91 98765 43218',
+    status: 'Active',
+    email: 'meera.k@thecoffeeclub.com',
+    phone: '+91 97180 54321',
     shifts: 22,
     hours: 140,
     tasks: 102,
     lastActive: '3 days ago',
-    avatarBg: 'bg-gray-100 text-gray-700',
-    initials: 'VK',
+    avatarBg: 'bg-amber-100 text-amber-700',
+    initials: 'MK',
     employeeId: 'EMP008',
     joinDate: '25 Jul 2024',
-    location: 'Noida - Sector 18',
-    accountStatus: 'Disabled',
+    location: 'Sector 18',
+    accountStatus: 'Active',
     state: 'Uttar Pradesh',
     city: 'Noida'
   }
@@ -299,6 +302,34 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
   const [isAddRoleOpen, setIsAddRoleOpen] = useState(false);
   const [addRoleStep, setAddRoleStep] = useState<1 | 2 | 3 | 4>(2);
 
+  // Center Floating Menu Popover (Tablet Bottom Nav)
+  const [isCenterMenuOpen, setIsCenterMenuOpen] = useState(false);
+
+  // Insights Mode: 'analytics' (iPad Pro 14) vs 'operations' (iPad Pro 80)
+  const [insightsTabMode, setInsightsTabMode] = useState<'analytics' | 'operations'>('analytics');
+
+  // Screen size check for tablet bottom nav vs mobile nav
+  const [isTabletScreen, setIsTabletScreen] = useState(typeof window !== 'undefined' ? window.innerWidth >= 768 : true);
+
+  // Manage hide-mobile-bottom-nav class on tablet so MobileBottomNav does not collide
+  useEffect(() => {
+    const handleScreenSize = () => {
+      const tablet = window.innerWidth >= 768;
+      setIsTabletScreen(tablet);
+      if (tablet) {
+        document.body.classList.add('hide-mobile-bottom-nav');
+      } else {
+        document.body.classList.remove('hide-mobile-bottom-nav');
+      }
+    };
+    handleScreenSize();
+    window.addEventListener('resize', handleScreenSize);
+    return () => {
+      window.removeEventListener('resize', handleScreenSize);
+      document.body.classList.remove('hide-mobile-bottom-nav');
+    };
+  }, []);
+
   // Listen for bottom bar add action
   useEffect(() => {
     const handleBottomBarAdd = (e: any) => {
@@ -330,53 +361,95 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
   const activeStaff = INITIAL_STAFF.find(s => s.id === selectedStaffId) || INITIAL_STAFF[0];
 
   return (
-    <div className="min-h-screen bg-[#FAF8FF] text-[#1A1615] flex flex-col font-sans pb-28">
+    <div className="min-h-screen bg-[#FAF8FF] text-[#1A1615] flex flex-col font-sans pb-36 sm:pb-32 lg:pb-16">
       {/* Top Tablet Navigation Header */}
-      <div className="bg-white/95 backdrop-blur-md border-b border-[#F1EFEA] px-4 sm:px-6 md:px-8 py-3.5 sm:py-4 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
-        <div className="flex items-center gap-3.5">
-          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#5844A8] to-[#7C3AED] flex items-center justify-center text-white shadow-xs">
-            <Sparkles className="w-5 h-5" />
+      <div className="bg-white/95 backdrop-blur-md border-b border-[#F1EFEA] px-3.5 sm:px-6 lg:px-8 py-3 sm:py-3.5 flex flex-wrap items-center justify-between gap-2.5 sm:gap-4 sticky top-0 z-30 shadow-2xs">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-[#5844A8] to-[#7C3AED] flex items-center justify-center text-white shadow-xs shrink-0">
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
           <div>
-            <div className="text-base font-black text-[#1A1615] flex items-center gap-2">
+            <div className="text-sm sm:text-base font-black text-[#1A1615] flex items-center gap-1.5 sm:gap-2">
               <span>Loyaltics</span>
               <span className="text-[10px] bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full font-bold">
-                Tablet
+                Merchant App
               </span>
             </div>
-            <div className="text-[11px] text-[#8C877D] font-bold">Merchant App • Staff Management</div>
+            <div className="text-[10px] sm:text-[11px] text-[#8C877D] font-bold">
+              {currentTab === 'staff' && staffSubView === 'insights' && (insightsTabMode === 'analytics' ? 'Staff Insights & Store Analytics' : 'Staff Management Overview')}
+              {currentTab === 'staff' && staffSubView === 'directory' && 'Staff Directory & Access Control'}
+              {currentTab === 'staff' && staffSubView === 'states' && 'Staff by Location & State Coverage'}
+              {currentTab === 'permissions' && 'Roles & System Permissions'}
+              {currentTab === 'activity' && 'Staff Software Activity & Audit Log'}
+              {currentTab === 'reports' && 'Exportable Performance & Activity Reports'}
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          <button className="px-3 sm:px-4 py-2 rounded-xl border border-gray-200 text-xs font-bold text-[#1A1615] flex items-center gap-1.5 bg-white shadow-2xs hover:border-gray-300">
+        <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap sm:flex-nowrap">
+          <button className="px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl border border-gray-200 text-xs font-bold text-[#1A1615] flex items-center gap-1.5 bg-white shadow-2xs hover:border-gray-300">
             <span>Last 30 Days</span>
             <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
           </button>
           <button
             type="button"
             onClick={() => onNavigate?.('/staff-portal' as any)}
-            className="px-3 py-2 rounded-xl border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] text-xs font-bold text-[#5844A8] flex items-center gap-1.5 shadow-2xs hover:border-[#5844A8]/40 transition cursor-pointer"
+            className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] text-xs font-bold text-[#5844A8] flex items-center gap-1.5 shadow-2xs hover:border-[#5844A8]/40 transition cursor-pointer"
             title="Launch Waiter & Floor Table Service Portal"
           >
             <Sparkles className="w-3.5 h-3.5 text-[#5844A8]" />
-            <span className="hidden sm:inline">Floor Portal</span>
+            <span>Floor Portal</span>
           </button>
-          <button
-            onClick={() => {
-              setIsAddStaffOpen(true);
-              setAddStaffStep(1);
-            }}
-            className="px-3.5 sm:px-5 py-2 sm:py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 sm:gap-2 shadow-md shadow-purple-900/10 cursor-pointer transition-all shrink-0"
-          >
-            <UserPlus className="w-4 h-4" />
-            <span>+ Invite Staff</span>
-          </button>
+          {currentTab === 'staff' && staffSubView === 'insights' ? (
+            <button
+              onClick={() => {
+                setIsAddStaffOpen(true);
+                setAddStaffStep(1);
+              }}
+              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-[#1F1641] hover:bg-[#2D215E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md shadow-purple-900/10 cursor-pointer transition-all shrink-0"
+            >
+              <UserPlus className="w-4 h-4" />
+              <span>+ Invite Staff</span>
+            </button>
+          ) : currentTab === 'staff' && staffSubView === 'directory' ? (
+            <button
+              onClick={() => {
+                setIsAddStaffOpen(true);
+                setAddStaffStep(1);
+              }}
+              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-[#1F1641] hover:bg-[#2D215E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md shadow-purple-900/10 cursor-pointer transition-all shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              <span>+ Add Staff</span>
+            </button>
+          ) : currentTab === 'permissions' ? (
+            <button
+              onClick={() => {
+                setIsAddRoleOpen(true);
+                setAddRoleStep(2);
+              }}
+              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-[#1F1641] hover:bg-[#2D215E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md shadow-purple-900/10 cursor-pointer transition-all shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              <span>+ Add New Role</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                setIsAddStaffOpen(true);
+                setAddStaffStep(1);
+              }}
+              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-[#1F1641] hover:bg-[#2D215E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md shadow-purple-900/10 cursor-pointer transition-all shrink-0"
+            >
+              <UserPlus className="w-4 h-4" />
+              <span>+ Invite Staff</span>
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Staff View Sub-Tabs for Tablet/Mobile */}
-      <div className="bg-white border-b border-[#F1EFEA] px-4 sm:px-8 py-2.5 flex items-center gap-2 overflow-x-auto no-scrollbar">
+      {/* Staff View Sub-Tabs (for Mobile screens where bottom bar is standard mobile nav) */}
+      <div className="md:hidden bg-white border-b border-[#F1EFEA] px-3.5 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar">
         {[
           { id: 'staff', label: 'Staff', icon: Users },
           { id: 'permissions', label: 'Permissions', icon: Shield },
@@ -394,7 +467,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
               setIsAddStaffOpen(false);
               setIsAddRoleOpen(false);
             }}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
               currentTab === tab.id
                 ? 'bg-[#5844A8] text-white shadow-xs'
                 : 'bg-gray-50 text-[#8C877D] hover:text-[#1A1615] hover:bg-gray-100'
@@ -407,33 +480,67 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
       </div>
 
       {/* Main Container */}
-      <div className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full">
+      <div className="flex-1 p-3.5 sm:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
         {/* ======================================================== */}
         {/* TAB 1: STAFF (Management, Overview, Directory & Location) */}
         {/* ======================================================== */}
         {currentTab === 'staff' && !selectedStaffId && !isAddStaffOpen && !isAddRoleOpen && (
-          <div className="space-y-6 animate-in fade-in duration-200">
+          <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-200">
             {/* SUB-VIEW 1: STAFF INSIGHTS / OVERVIEW (iPad Pro 12.9_ - 14 & 80) */}
             {staffSubView === 'insights' && (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
+                {/* Header Row & Subview Switcher */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <h1 className="text-2xl font-black text-[#1A1615]">Staff Management</h1>
+                    <h1 className="text-xl sm:text-2xl font-black text-[#1A1615]">
+                      {insightsTabMode === 'analytics' ? 'Staff Insights' : 'Staff Management'}
+                    </h1>
                     <p className="text-xs text-[#8C877D] mt-0.5">
-                      Manage staff, roles, access and activity across all branches.
+                      {insightsTabMode === 'analytics'
+                        ? 'Track staff engagement, attendance and store performance across all branches.'
+                        : 'Manage staff, roles, access and activity across all branches.'}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {/* Insights Sub-View Switcher: Analytics (iPad 14) vs Location Operations (iPad 80) */}
+                    <div className="flex items-center gap-1 p-1 bg-white border border-[#EAE6E1] rounded-2xl shadow-2xs">
+                      <button
+                        type="button"
+                        onClick={() => setInsightsTabMode('analytics')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                          insightsTabMode === 'analytics'
+                            ? 'bg-[#1F1641] text-white shadow-xs'
+                            : 'text-[#8C877D] hover:text-[#1A1615]'
+                        }`}
+                      >
+                        Insights
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setInsightsTabMode('operations')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                          insightsTabMode === 'operations'
+                            ? 'bg-[#1F1641] text-white shadow-xs'
+                            : 'text-[#8C877D] hover:text-[#1A1615]'
+                        }`}
+                      >
+                        Operations
+                      </button>
+                    </div>
+
                     <button
+                      type="button"
                       onClick={() => setStaffSubView('directory')}
-                      className="px-4 py-2 bg-white border border-gray-200 text-xs font-black rounded-xl hover:border-purple-300 shadow-2xs flex items-center gap-1.5"
+                      className="px-3 sm:px-4 py-2 bg-white border border-gray-200 text-xs font-bold rounded-xl hover:border-purple-300 shadow-2xs flex items-center gap-1.5 cursor-pointer text-[#1A1615]"
                     >
                       <Users className="w-4 h-4 text-purple-700" />
                       <span>Staff Directory</span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => setStaffSubView('states')}
-                      className="px-4 py-2 bg-purple-50 text-purple-800 text-xs font-black rounded-xl hover:bg-purple-100 transition-all flex items-center gap-1.5"
+                      className="px-3 sm:px-4 py-2 bg-purple-50 text-purple-800 text-xs font-bold rounded-xl hover:bg-purple-100 transition-all flex items-center gap-1.5 cursor-pointer"
                     >
                       <MapPin className="w-4 h-4 text-purple-700" />
                       <span>Staff by Location</span>
@@ -441,313 +548,756 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                   </div>
                 </div>
 
-                {/* 8 Stats Metrics Cards (Matching iPad Pro 12.9_ - 80) */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-                  <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <div className="flex items-center justify-between text-[#8C877D]">
-                      <span className="text-xs font-bold">Total Staff</span>
-                      <Users className="w-4 h-4 text-purple-600" />
-                    </div>
-                    <div className="text-2xl font-black text-[#1A1615] mt-2">142</div>
-                    <div className="text-[11px] font-bold text-gray-400 mt-0.5">All team members</div>
-                  </div>
-
-                  <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <div className="flex items-center justify-between text-[#8C877D]">
-                      <span className="text-xs font-bold">Active Accounts</span>
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    </div>
-                    <div className="text-2xl font-black text-[#1A1615] mt-2">128</div>
-                    <div className="text-[11px] font-bold text-emerald-600 mt-0.5">90% operational</div>
-                  </div>
-
-                  <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <div className="flex items-center justify-between text-[#8C877D]">
-                      <span className="text-xs font-bold">Pending Invitations</span>
-                      <Mail className="w-4 h-4 text-amber-500" />
-                    </div>
-                    <div className="text-2xl font-black text-[#1A1615] mt-2">10</div>
-                    <div className="text-[11px] font-bold text-amber-600 mt-0.5">Awaiting activation</div>
-                  </div>
-
-                  <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <div className="flex items-center justify-between text-[#8C877D]">
-                      <span className="text-xs font-bold">Roles Created</span>
-                      <FileText className="w-4 h-4 text-purple-600" />
-                    </div>
-                    <div className="text-2xl font-black text-[#1A1615] mt-2">18</div>
-                    <div className="text-[11px] font-bold text-purple-600 mt-0.5">System & custom</div>
-                  </div>
-
-                  <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <div className="flex items-center justify-between text-[#8C877D]">
-                      <span className="text-xs font-bold">Branches Covered</span>
-                      <Building2 className="w-4 h-4 text-sky-600" />
-                    </div>
-                    <div className="text-2xl font-black text-[#1A1615] mt-2">21</div>
-                    <div className="text-[11px] font-bold text-sky-600 mt-0.5">Across 4 states</div>
-                  </div>
-
-                  <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <div className="flex items-center justify-between text-[#8C877D]">
-                      <span className="text-xs font-bold">Avg Branches / Staff</span>
-                      <Share2 className="w-4 h-4 text-indigo-600" />
-                    </div>
-                    <div className="text-2xl font-black text-[#1A1615] mt-2">6.8</div>
-                    <div className="text-[11px] font-bold text-indigo-600 mt-0.5">Multi-branch access</div>
-                  </div>
-
-                  <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <div className="flex items-center justify-between text-[#8C877D]">
-                      <span className="text-xs font-bold">Full Access Users</span>
-                      <Award className="w-4 h-4 text-amber-600" />
-                    </div>
-                    <div className="text-2xl font-black text-[#1A1615] mt-2">36</div>
-                    <div className="text-[11px] font-bold text-amber-600 mt-0.5">Managers & Sups</div>
-                  </div>
-
-                  <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <div className="flex items-center justify-between text-[#8C877D]">
-                      <span className="text-xs font-bold">Suspended Accounts</span>
-                      <XCircle className="w-4 h-4 text-rose-500" />
-                    </div>
-                    <div className="text-2xl font-black text-[#1A1615] mt-2">4</div>
-                    <div className="text-[11px] font-bold text-rose-600 mt-0.5">Restricted access</div>
-                  </div>
-                </div>
-
-                {/* Explore Staff by Location Banner (Matching iPad Pro 12.9_ - 80) */}
-                <div className="bg-white rounded-3xl p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-12 h-12 rounded-2xl bg-[#5844A8] text-white flex items-center justify-center shadow-xs">
-                        <MapPin className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <h3 className="text-base font-black text-[#1A1615]">Explore Staff by Location</h3>
-                        <p className="text-xs text-gray-400">
-                          View assigned staff, roles, permissions and account status by state, city and branch
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setStaffSubView('states')}
-                      className="px-5 py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md shadow-purple-900/10 cursor-pointer"
-                    >
-                      <span>Explore Locations →</span>
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-1">
-                    <div className="p-4 rounded-2xl bg-[#FAF9F5] border border-gray-100 flex items-center gap-3">
-                      <span className="text-2xl font-black text-[#1A1615]">4</span>
-                      <span className="text-xs font-bold text-gray-500">States with Active Staff</span>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-[#FAF9F5] border border-gray-100 flex items-center gap-3">
-                      <span className="text-2xl font-black text-[#1A1615]">12</span>
-                      <span className="text-xs font-bold text-gray-500">Cities Covered</span>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-[#FAF9F5] border border-gray-100 flex items-center gap-3">
-                      <span className="text-2xl font-black text-[#1A1615]">21</span>
-                      <span className="text-xs font-bold text-gray-500">Branches with Staff</span>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-xs">
-                    <span className="text-gray-500">
-                      <strong>Location spotlight • Noida:</strong> 18 assigned staff across 3 branches • 16 active accounts
-                    </span>
-                    <button
-                      onClick={() => {
-                        setSelectedState('Uttar Pradesh');
-                        setSelectedCity('Noida');
-                        setStaffSubView('branches');
-                      }}
-                      className="text-purple-700 font-bold hover:underline"
-                    >
-                      View Noida →
-                    </button>
-                  </div>
-                </div>
-
-                {/* Role Distribution Donut & Quick Management Cards */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                  {/* Role Distribution Card */}
-                  <div className="bg-white rounded-3xl p-5 border border-[#F1EFEA] shadow-2xs space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-black text-[#1A1615]">Role Distribution</span>
-                      <button
-                        onClick={() => setCurrentTab('permissions')}
-                        className="text-xs font-bold text-purple-700 hover:underline"
-                      >
-                        Manage Roles →
-                      </button>
-                    </div>
-
-                    <div className="flex items-center gap-6">
-                      <div className="relative w-36 h-36 flex items-center justify-center flex-shrink-0">
-                        <div className="w-36 h-36 rounded-full border-8 border-purple-900 border-t-amber-500 border-r-pink-500 border-b-sky-500 animate-spin-slow" />
-                        <div className="absolute flex flex-col items-center">
-                          <span className="text-xl font-black text-[#1A1615]">142</span>
-                          <span className="text-[10px] text-gray-400 font-bold">Staff</span>
+                {/* MODE 1: STAFF INSIGHTS (Matching iPad Pro 12.9_ - 14) */}
+                {insightsTabMode === 'analytics' && (
+                  <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-200">
+                    {/* 8 KPI Metrics Cards (iPad Pro 12.9_ - 14) */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+                      {/* 1. Total Staff */}
+                      <div className="bg-white p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Total Staff</span>
+                          <span className="p-1.5 rounded-xl bg-purple-50 text-[#5844A8]">
+                            <Users className="w-4 h-4" />
+                          </span>
+                        </div>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-2">2,482</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-emerald-600 mt-0.5">
+                            ↑ 12% vs. previous period
+                          </div>
                         </div>
                       </div>
 
-                      <div className="flex-1 space-y-2 text-xs">
-                        <div className="flex justify-between">
-                          <span className="flex items-center gap-1.5 font-bold text-gray-600"><span className="w-2.5 h-2.5 rounded-full bg-purple-900" /> Managers</span>
-                          <span className="font-black text-[#1A1615]">18</span>
+                      {/* 2. Active Staff */}
+                      <div className="bg-white p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Active Staff</span>
+                          <span className="p-1.5 rounded-xl bg-pink-50 text-pink-600">
+                            <Zap className="w-4 h-4" />
+                          </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="flex items-center gap-1.5 font-bold text-gray-600"><span className="w-2.5 h-2.5 rounded-full bg-indigo-600" /> Supervisors</span>
-                          <span className="font-black text-[#1A1615]">26</span>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-2">1,320</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-emerald-600 mt-0.5">
+                            ↑ 8% vs. previous period
+                          </div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="flex items-center gap-1.5 font-bold text-gray-600"><span className="w-2.5 h-2.5 rounded-full bg-pink-500" /> Service Staff</span>
-                          <span className="font-black text-[#1A1615]">64</span>
+                      </div>
+
+                      {/* 3. Shift Attendance */}
+                      <div className="bg-white p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Shift Attendance</span>
+                          <span className="p-1.5 rounded-xl bg-sky-50 text-sky-600">
+                            <RefreshCw className="w-4 h-4" />
+                          </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="flex items-center gap-1.5 font-bold text-gray-600"><span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> Kitchen Staff</span>
-                          <span className="font-black text-[#1A1615]">28</span>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-2">640</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-emerald-600 mt-0.5">
+                            ↑ 10% vs. previous period
+                          </div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="flex items-center gap-1.5 font-bold text-gray-600"><span className="w-2.5 h-2.5 rounded-full bg-sky-500" /> Other</span>
-                          <span className="font-black text-[#1A1615]">6</span>
+                      </div>
+
+                      {/* 4. Avg Spend / Staff */}
+                      <div className="bg-white p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Avg Spend / Staff</span>
+                          <span className="p-1.5 rounded-xl bg-pink-50 text-pink-600">
+                            <Award className="w-4 h-4" />
+                          </span>
+                        </div>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-2">₹1,240</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-emerald-600 mt-0.5">
+                            ↑ 9% vs. previous period
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 5. Managers & Sups */}
+                      <div className="bg-white p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Managers &amp; Sups</span>
+                          <span className="p-1.5 rounded-xl bg-amber-50 text-amber-600">
+                            <Sparkles className="w-4 h-4" />
+                          </span>
+                        </div>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-2">430</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-emerald-600 mt-0.5">
+                            ↑ 15% vs. previous period
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 6. New Hires Month */}
+                      <div className="bg-white p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">New Hires Month</span>
+                          <span className="p-1.5 rounded-xl bg-purple-50 text-[#5844A8]">
+                            <UserPlus className="w-4 h-4" />
+                          </span>
+                        </div>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-2">186</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-emerald-600 mt-0.5">
+                            ↑ 22% vs. last month
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 7. Retention Rate */}
+                      <div className="bg-white p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Retention Rate</span>
+                          <span className="p-1.5 rounded-xl bg-rose-50 text-rose-600">
+                            <Heart className="w-4 h-4" />
+                          </span>
+                        </div>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-2">68%</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-emerald-600 mt-0.5">
+                            ↑ 6% vs. previous period
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 8. Avg Shifts / Week */}
+                      <div className="bg-white p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Avg Shifts / Week</span>
+                          <span className="p-1.5 rounded-xl bg-indigo-50 text-indigo-600">
+                            <BarChart2 className="w-4 h-4" />
+                          </span>
+                        </div>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-2">3.8</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-emerald-600 mt-0.5">
+                            ↑ 12% vs. previous period
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Middle Row: Role Distribution Donut & Attendance Trend Bar Chart */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                      {/* Left: Staff Role Distribution */}
+                      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm sm:text-base font-black text-[#1A1615]">Staff Role Distribution</h3>
+                          <button
+                            type="button"
+                            onClick={() => setCurrentTab('permissions')}
+                            className="text-xs font-bold text-[#5844A8] hover:underline"
+                          >
+                            View Details →
+                          </button>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row items-center gap-6 pt-2">
+                          {/* Donut Chart */}
+                          <div className="relative w-36 h-36 flex items-center justify-center flex-shrink-0">
+                            <div className="w-36 h-36 rounded-full border-10 border-[#47368E] border-t-pink-500 border-r-amber-400 border-b-sky-400" />
+                            <div className="absolute flex flex-col items-center">
+                              <span className="text-lg font-black text-[#1A1615]">2,482</span>
+                              <span className="text-[10px] text-gray-400 font-bold">Staff</span>
+                            </div>
+                          </div>
+
+                          {/* Legend Breakdown */}
+                          <div className="flex-1 w-full space-y-2 text-xs">
+                            <div className="flex justify-between items-center py-0.5">
+                              <span className="flex items-center gap-2 font-bold text-gray-700">
+                                <span className="w-2.5 h-2.5 rounded-full bg-[#47368E]" />
+                                Manager
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="font-extrabold text-[#1A1615]">120</span>
+                                <span className="text-gray-400 text-[11px] font-bold">5%</span>
+                              </div>
+                            </div>
+                            <div className="flex justify-between items-center py-0.5">
+                              <span className="flex items-center gap-2 font-bold text-gray-700">
+                                <span className="w-2.5 h-2.5 rounded-full bg-pink-500" />
+                                Cashier
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="font-extrabold text-[#1A1615]">370</span>
+                                <span className="text-gray-400 text-[11px] font-bold">15%</span>
+                              </div>
+                            </div>
+                            <div className="flex justify-between items-center py-0.5">
+                              <span className="flex items-center gap-2 font-bold text-gray-700">
+                                <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                                Sales Rep
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="font-extrabold text-[#1A1615]">620</span>
+                                <span className="text-gray-400 text-[11px] font-bold">25%</span>
+                              </div>
+                            </div>
+                            <div className="flex justify-between items-center py-0.5">
+                              <span className="flex items-center gap-2 font-bold text-gray-700">
+                                <span className="w-2.5 h-2.5 rounded-full bg-sky-400" />
+                                Support
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="font-extrabold text-[#1A1615]">830</span>
+                                <span className="text-gray-400 text-[11px] font-bold">33%</span>
+                              </div>
+                            </div>
+                            <div className="flex justify-between items-center py-0.5">
+                              <span className="flex items-center gap-2 font-bold text-gray-700">
+                                <span className="w-2.5 h-2.5 rounded-full bg-slate-400" />
+                                Trainee
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="font-extrabold text-[#1A1615]">542</span>
+                                <span className="text-gray-400 text-[11px] font-bold">22%</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right: Staff Attendance Trend (Bar Chart) */}
+                      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#F1EFEA] shadow-2xs space-y-4 flex flex-col justify-between">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm sm:text-base font-black text-[#1A1615]">Staff Attendance Trend</h3>
+                          <button className="px-2.5 py-1 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 flex items-center gap-1 bg-white">
+                            <span>Last 6 Months</span>
+                            <ChevronDown className="w-3 h-3 text-gray-400" />
+                          </button>
+                        </div>
+
+                        <div className="h-44 flex items-end justify-between gap-3 pt-4 px-2">
+                          {[
+                            { month: 'May', count: 420, height: '65%' },
+                            { month: 'Jun', count: 480, height: '75%' },
+                            { month: 'Jul', count: 520, height: '81%' },
+                            { month: 'Aug', count: 580, height: '90%' },
+                            { month: 'Sep', count: 620, height: '95%' },
+                            { month: 'Oct', count: 640, height: '100%' }
+                          ].map((bar) => (
+                            <div key={bar.month} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                              <span className="text-[10px] font-extrabold text-gray-500">{bar.count}</span>
+                              <div
+                                style={{ height: bar.height }}
+                                className="w-full max-w-[38px] rounded-t-xl bg-gradient-to-t from-pink-500/70 via-pink-400 to-rose-400 hover:opacity-90 transition-all cursor-pointer shadow-xs"
+                              />
+                              <span className="text-[11px] font-bold text-gray-500 mt-1">{bar.month}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Third Row: Recent Staff Activity & Performance & Payroll Insights */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                      {/* Left: Recent Staff Activity */}
+                      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#F1EFEA] shadow-2xs space-y-3.5">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm sm:text-base font-black text-[#1A1615]">Recent Staff Activity</h3>
+                          <button
+                            type="button"
+                            onClick={() => setCurrentTab('activity')}
+                            className="text-xs font-bold text-[#5844A8] hover:underline"
+                          >
+                            View All →
+                          </button>
+                        </div>
+
+                        <div className="divide-y divide-gray-100 text-xs">
+                          {[
+                            { initials: 'NG', name: 'Neha Gupta', action: 'Clocked in morning shift', sub: 'Verified via biometric • The Courtyard', time: '2 hours ago', bg: 'bg-[#1E1B4B] text-white' },
+                            { initials: 'PS', name: 'Priya Singh', action: 'Earned High Sales Incentive', sub: 'Completed quarterly audit • ₹1,280 bonus', time: '4 hours ago', bg: 'bg-purple-100 text-purple-700' },
+                            { initials: 'RK', name: 'Rahul Kumar', action: 'Transferred to Sector 18 Store', sub: 'Manager signoff approved', time: '6 hours ago', bg: 'bg-sky-100 text-sky-700' },
+                            { initials: 'AS', name: 'Aarav Sharma', action: 'Completed Onboarding Program', sub: 'Assigned to floor inventory team', time: '12 hours ago', bg: 'bg-amber-100 text-amber-700' },
+                            { initials: 'SK', name: 'Sneha Kapoor', action: 'Requested Shift Exchange', sub: 'Shift #ORD7283 • Plaza Mall', time: '1 day ago', bg: 'bg-pink-100 text-pink-700' }
+                          ].map((item, idx) => (
+                            <div key={idx} className="py-2.5 flex items-center justify-between gap-3">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${item.bg}`}>
+                                  {item.initials}
+                                </div>
+                                <div>
+                                  <div className="font-extrabold text-[#1A1615] flex items-center gap-1.5">
+                                    <span>{item.name}</span>
+                                    <span className="font-semibold text-gray-500">• {item.action}</span>
+                                  </div>
+                                  <div className="text-[10px] text-gray-400 font-medium">{item.sub}</div>
+                                </div>
+                              </div>
+                              <span className="text-[10px] text-gray-400 font-medium whitespace-nowrap">{item.time}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Right: Performance & Payroll Insights */}
+                      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#F1EFEA] shadow-2xs space-y-4 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between pb-3">
+                            <h3 className="text-sm sm:text-base font-black text-[#1A1615]">Performance &amp; Payroll Insights</h3>
+                            <button
+                              type="button"
+                              onClick={() => setCurrentTab('reports')}
+                              className="text-xs font-bold text-[#5844A8] hover:underline"
+                            >
+                              View Details →
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3 pt-1">
+                            <div className="p-3.5 rounded-2xl bg-[#FAF8FF] border border-purple-50">
+                              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Overtime Hours</span>
+                              <div className="text-lg font-black text-[#1A1615] mt-0.5">12,560</div>
+                              <span className="text-[10px] text-emerald-600 font-bold">↑ 18% vs. previous period</span>
+                            </div>
+
+                            <div className="p-3.5 rounded-2xl bg-[#FAF8FF] border border-purple-50">
+                              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Incentives Paid</span>
+                              <div className="text-lg font-black text-[#1A1615] mt-0.5">₹3,200</div>
+                              <span className="text-[10px] text-emerald-600 font-bold">↑ 12% vs. previous period</span>
+                            </div>
+
+                            <div className="p-3.5 rounded-2xl bg-[#FAF8FF] border border-purple-50">
+                              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Allowances Claimed</span>
+                              <div className="text-lg font-black text-[#1A1615] mt-0.5">₹2,680</div>
+                              <span className="text-[10px] text-emerald-600 font-bold">↑ 16% vs. previous period</span>
+                            </div>
+
+                            <div className="p-3.5 rounded-2xl bg-[#FAF8FF] border border-purple-50">
+                              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Active On-Duty Staff</span>
+                              <div className="text-lg font-black text-[#1A1615] mt-0.5">1,250</div>
+                              <span className="text-[10px] text-emerald-600 font-bold">↑ 14% vs. previous period</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Training progress */}
+                        <div className="p-3.5 rounded-2xl bg-gray-50/80 border border-gray-100 space-y-2 mt-2">
+                          <div className="flex items-center justify-between text-xs font-bold text-[#1A1615]">
+                            <span>50% of your staff completed training</span>
+                            <span className="text-gray-500 font-semibold text-[11px]">1,250 / 2,482</span>
+                          </div>
+                          <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                            <div className="bg-[#5844A8] h-2 rounded-full w-1/2" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Fourth Row: Branch Distribution & Pending Actions */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                      {/* Left: Branch Distribution */}
+                      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#F1EFEA] shadow-2xs space-y-3.5">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm sm:text-base font-black text-[#1A1615]">Branch Distribution</h3>
+                          <button
+                            type="button"
+                            onClick={() => setStaffSubView('states')}
+                            className="text-xs font-bold text-[#5844A8] hover:underline"
+                          >
+                            View All →
+                          </button>
+                        </div>
+
+                        <div className="space-y-2.5 text-xs">
+                          {[
+                            { name: 'Main Branch', count: '8 staff', width: '100%' },
+                            { name: 'City Mall', count: '6 staff', width: '75%' },
+                            { name: 'Riverside', count: '4 staff', width: '50%' },
+                            { name: 'Airport T2', count: '4 staff', width: '50%' },
+                            { name: 'Central Plaza', count: '2 staff', width: '25%' },
+                            { name: 'North Plaza', count: '2 staff', width: '25%' }
+                          ].map((b, idx) => (
+                            <div key={idx} className="space-y-1">
+                              <div className="flex justify-between font-bold text-gray-700">
+                                <span className="flex items-center gap-1.5">
+                                  <Building2 className="w-3.5 h-3.5 text-purple-600" />
+                                  {b.name}
+                                </span>
+                                <span className="text-gray-500">{b.count}</span>
+                              </div>
+                              <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                                <div style={{ width: b.width }} className="bg-[#5844A8] h-2 rounded-full" />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Right: Pending Actions */}
+                      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#F1EFEA] shadow-2xs space-y-3.5">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm sm:text-base font-black text-[#1A1615]">Pending Actions</h3>
+                          <button
+                            type="button"
+                            onClick={() => setStaffSubView('directory')}
+                            className="text-xs font-bold text-[#5844A8] hover:underline"
+                          >
+                            View All →
+                          </button>
+                        </div>
+
+                        <div className="space-y-2.5">
+                          {[
+                            { title: '4 Pending invitations', desc: 'Send reminder emails', icon: Mail, iconColor: 'text-amber-500', iconBg: 'bg-amber-50', action: 'Remind', isPrimary: false },
+                            { title: '2 Role change requests', desc: 'Review pending tier elevations', icon: UserCheck, iconColor: 'text-pink-500', iconBg: 'bg-pink-50', action: 'Review', isPrimary: false },
+                            { title: '1 Access request', desc: 'Needs administrator approval', icon: Key, iconColor: 'text-rose-500', iconBg: 'bg-rose-50', action: 'Approve', isPrimary: true },
+                            { title: '4 Pending invitations', desc: 'Send reminder emails', icon: Mail, iconColor: 'text-amber-500', iconBg: 'bg-amber-50', action: 'Remind', isPrimary: false }
+                          ].map((act, idx) => (
+                            <div key={idx} className="p-3 rounded-2xl border border-gray-100 flex items-center justify-between gap-3 bg-[#FAF8FF]/60 hover:bg-[#FAF8FF] transition-all">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-9 h-9 rounded-xl ${act.iconBg} ${act.iconColor} flex items-center justify-center shrink-0`}>
+                                  <act.icon className="w-4 h-4" />
+                                </div>
+                                <div>
+                                  <div className="text-xs font-bold text-[#1A1615]">{act.title}</div>
+                                  <div className="text-[10px] text-gray-400 font-medium">{act.desc}</div>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-all ${
+                                  act.isPrimary
+                                    ? 'bg-[#1F1641] hover:bg-[#2D215E] text-white shadow-xs'
+                                    : 'bg-white border border-gray-200 text-[#1A1615] hover:border-purple-300'
+                                }`}
+                              >
+                                {act.action}
+                              </button>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
                   </div>
+                )}
 
-                  {/* Quick Management 4 Tiles */}
-                  <div className="bg-white rounded-3xl p-5 border border-[#F1EFEA] shadow-2xs space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-black text-[#1A1615]">Quick Management</span>
-                      <button onClick={() => setStaffSubView('directory')} className="text-xs font-bold text-purple-700 hover:underline">
-                        View Staff Directory →
-                      </button>
+                {/* MODE 2: LOCATION & OPERATIONS (Matching iPad Pro 12.9_ - 80) */}
+                {insightsTabMode === 'operations' && (
+                  <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-200">
+                    {/* 8 Stats Metrics Cards (Matching iPad Pro 12.9_ - 80) */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+                      <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Total Staff</span>
+                          <Users className="w-4 h-4 text-purple-600" />
+                        </div>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1.5 sm:mt-2">142</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-gray-400 mt-0.5">All team members</div>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Active Accounts</span>
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        </div>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1.5 sm:mt-2">128</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-emerald-600 mt-0.5">90% operational</div>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Pending Invitations</span>
+                          <Mail className="w-4 h-4 text-amber-500" />
+                        </div>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1.5 sm:mt-2">10</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-amber-600 mt-0.5">Awaiting activation</div>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Roles Created</span>
+                          <FileText className="w-4 h-4 text-purple-600" />
+                        </div>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1.5 sm:mt-2">18</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-purple-600 mt-0.5">System & custom</div>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Branches Covered</span>
+                          <Building2 className="w-4 h-4 text-sky-600" />
+                        </div>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1.5 sm:mt-2">21</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-sky-600 mt-0.5">Across 4 states</div>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Avg Branches / Staff</span>
+                          <Share2 className="w-4 h-4 text-indigo-600" />
+                        </div>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1.5 sm:mt-2">6.8</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-indigo-600 mt-0.5">Multi-branch access</div>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Full Access Users</span>
+                          <Award className="w-4 h-4 text-amber-600" />
+                        </div>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1.5 sm:mt-2">36</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-amber-600 mt-0.5">Managers & Sups</div>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs flex flex-col justify-between">
+                        <div className="flex items-center justify-between text-[#8C877D]">
+                          <span className="text-[11px] sm:text-xs font-bold">Suspended Accounts</span>
+                          <XCircle className="w-4 h-4 text-rose-500" />
+                        </div>
+                        <div>
+                          <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1.5 sm:mt-2">4</div>
+                          <div className="text-[10px] sm:text-[11px] font-bold text-rose-600 mt-0.5">Restricted access</div>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 pt-1">
-                      <div
-                        onClick={() => setStaffSubView('directory')}
-                        className="p-3.5 rounded-2xl border border-gray-100 hover:border-purple-300 hover:bg-purple-50/20 cursor-pointer transition-all space-y-1"
-                      >
-                        <Users className="w-5 h-5 text-purple-700" />
-                        <div className="text-xs font-black text-[#1A1615]">Staff Directory</div>
-                        <div className="text-[10px] text-gray-400">Find and manage employees</div>
+                    {/* Explore Staff by Location Banner (Matching iPad Pro 12.9_ - 80) */}
+                    <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[#F1EFEA] shadow-2xs space-y-3.5 sm:space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                        <div className="flex items-center gap-3 sm:gap-3.5">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#5844A8] text-white flex items-center justify-center shadow-xs shrink-0">
+                            <MapPin className="w-5 h-5 sm:w-6 sm:h-6" />
+                          </div>
+                          <div>
+                            <h3 className="text-sm sm:text-base font-black text-[#1A1615]">Explore Staff by Location</h3>
+                            <p className="text-xs text-gray-400">
+                              View assigned staff, roles, permissions and account status by state, city and branch
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setStaffSubView('states')}
+                          className="w-full sm:w-auto px-4 sm:px-5 py-2 sm:py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black flex items-center justify-center gap-1.5 shadow-md shadow-purple-900/10 cursor-pointer shrink-0"
+                        >
+                          <span>Explore Locations →</span>
+                        </button>
                       </div>
 
-                      <div
-                        onClick={() => setCurrentTab('permissions')}
-                        className="p-3.5 rounded-2xl border border-gray-100 hover:border-purple-300 hover:bg-purple-50/20 cursor-pointer transition-all space-y-1"
-                      >
-                        <Shield className="w-5 h-5 text-purple-700" />
-                        <div className="text-xs font-black text-[#1A1615]">Roles & Permissions</div>
-                        <div className="text-[10px] text-gray-400">Control access levels</div>
+                      <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-1">
+                        <div className="p-2.5 sm:p-4 rounded-xl sm:rounded-2xl bg-[#FAF9F5] border border-gray-100 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1 sm:gap-3 text-center sm:text-left">
+                          <span className="text-lg sm:text-2xl font-black text-[#1A1615]">4</span>
+                          <span className="text-[10px] sm:text-xs font-bold text-gray-500">States Active</span>
+                        </div>
+                        <div className="p-2.5 sm:p-4 rounded-xl sm:rounded-2xl bg-[#FAF9F5] border border-gray-100 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1 sm:gap-3 text-center sm:text-left">
+                          <span className="text-lg sm:text-2xl font-black text-[#1A1615]">12</span>
+                          <span className="text-[10px] sm:text-xs font-bold text-gray-500">Cities Covered</span>
+                        </div>
+                        <div className="p-2.5 sm:p-4 rounded-xl sm:rounded-2xl bg-[#FAF9F5] border border-gray-100 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1 sm:gap-3 text-center sm:text-left">
+                          <span className="text-lg sm:text-2xl font-black text-[#1A1615]">21</span>
+                          <span className="text-[10px] sm:text-xs font-bold text-gray-500">Branches Active</span>
+                        </div>
                       </div>
 
-                      <div
-                        onClick={() => setStaffSubView('states')}
-                        className="p-3.5 rounded-2xl border border-gray-100 hover:border-purple-300 hover:bg-purple-50/20 cursor-pointer transition-all space-y-1"
-                      >
-                        <MapPin className="w-5 h-5 text-purple-700" />
-                        <div className="text-xs font-black text-[#1A1615]">Branch Assignments</div>
-                        <div className="text-[10px] text-gray-400">Assign work locations</div>
+                      <div className="pt-2.5 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                        <span className="text-gray-500">
+                          <strong>Location spotlight • Noida:</strong> 18 assigned staff across 3 branches • 16 active accounts
+                        </span>
+                        <button
+                          onClick={() => {
+                            setSelectedState('Uttar Pradesh');
+                            setSelectedCity('Noida');
+                            setStaffSubView('branches');
+                          }}
+                          className="text-purple-700 font-bold hover:underline shrink-0"
+                        >
+                          View Noida →
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Role Distribution Donut & Quick Management Cards */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                      {/* Role Distribution Card */}
+                      <div className="bg-white rounded-3xl p-5 border border-[#F1EFEA] shadow-2xs space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-black text-[#1A1615]">Role Distribution</span>
+                          <button
+                            onClick={() => setCurrentTab('permissions')}
+                            className="text-xs font-bold text-purple-700 hover:underline"
+                          >
+                            Manage Roles →
+                          </button>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+                          <div className="relative w-32 h-32 sm:w-36 sm:h-36 flex items-center justify-center flex-shrink-0">
+                            <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full border-8 border-purple-900 border-t-amber-500 border-r-pink-500 border-b-sky-500 animate-spin-slow" />
+                            <div className="absolute flex flex-col items-center">
+                              <span className="text-xl font-black text-[#1A1615]">142</span>
+                              <span className="text-[10px] text-gray-400 font-bold">Staff</span>
+                            </div>
+                          </div>
+
+                          <div className="flex-1 w-full space-y-2 text-xs">
+                            <div className="flex justify-between">
+                              <span className="flex items-center gap-1.5 font-bold text-gray-600"><span className="w-2.5 h-2.5 rounded-full bg-purple-900" /> Managers</span>
+                              <span className="font-black text-[#1A1615]">18</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="flex items-center gap-1.5 font-bold text-gray-600"><span className="w-2.5 h-2.5 rounded-full bg-indigo-600" /> Supervisors</span>
+                              <span className="font-black text-[#1A1615]">26</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="flex items-center gap-1.5 font-bold text-gray-600"><span className="w-2.5 h-2.5 rounded-full bg-pink-500" /> Service Staff</span>
+                              <span className="font-black text-[#1A1615]">64</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="flex items-center gap-1.5 font-bold text-gray-600"><span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> Kitchen Staff</span>
+                              <span className="font-black text-[#1A1615]">28</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="flex items-center gap-1.5 font-bold text-gray-600"><span className="w-2.5 h-2.5 rounded-full bg-sky-500" /> Other</span>
+                              <span className="font-black text-[#1A1615]">6</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
-                      <div
-                        onClick={() => setCurrentTab('activity')}
-                        className="p-3.5 rounded-2xl border border-gray-100 hover:border-purple-300 hover:bg-purple-50/20 cursor-pointer transition-all space-y-1"
-                      >
-                        <FileText className="w-5 h-5 text-purple-700" />
-                        <div className="text-xs font-black text-[#1A1615]">Audit Log</div>
-                        <div className="text-[10px] text-gray-400">Review Loyaltics actions</div>
+                      {/* Quick Management 4 Tiles */}
+                      <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-[#F1EFEA] shadow-2xs space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-black text-[#1A1615]">Quick Management</span>
+                          <button onClick={() => setStaffSubView('directory')} className="text-xs font-bold text-purple-700 hover:underline">
+                            View Staff Directory →
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+                          <div
+                            onClick={() => setStaffSubView('directory')}
+                            className="p-3 sm:p-3.5 rounded-2xl border border-gray-100 hover:border-purple-300 hover:bg-purple-50/20 cursor-pointer transition-all space-y-1"
+                          >
+                            <Users className="w-5 h-5 text-purple-700" />
+                            <div className="text-xs font-black text-[#1A1615]">Staff Directory</div>
+                            <div className="text-[10px] text-gray-400">Find and manage employees</div>
+                          </div>
+
+                          <div
+                            onClick={() => setCurrentTab('permissions')}
+                            className="p-3 sm:p-3.5 rounded-2xl border border-gray-100 hover:border-purple-300 hover:bg-purple-50/20 cursor-pointer transition-all space-y-1"
+                          >
+                            <Shield className="w-5 h-5 text-purple-700" />
+                            <div className="text-xs font-black text-[#1A1615]">Roles & Permissions</div>
+                            <div className="text-[10px] text-gray-400">Control access levels</div>
+                          </div>
+
+                          <div
+                            onClick={() => setStaffSubView('states')}
+                            className="p-3 sm:p-3.5 rounded-2xl border border-gray-100 hover:border-purple-300 hover:bg-purple-50/20 cursor-pointer transition-all space-y-1"
+                          >
+                            <MapPin className="w-5 h-5 text-purple-700" />
+                            <div className="text-xs font-black text-[#1A1615]">Branch Assignments</div>
+                            <div className="text-[10px] text-gray-400">Assign work locations</div>
+                          </div>
+
+                          <div
+                            onClick={() => setCurrentTab('activity')}
+                            className="p-3 sm:p-3.5 rounded-2xl border border-gray-100 hover:border-purple-300 hover:bg-purple-50/20 cursor-pointer transition-all space-y-1"
+                          >
+                            <FileText className="w-5 h-5 text-purple-700" />
+                            <div className="text-xs font-black text-[#1A1615]">Audit Log</div>
+                            <div className="text-[10px] text-gray-400">Review Revia actions</div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
 
-            {/* SUB-VIEW 2: STAFF DIRECTORY (iPad Pro 12.9_ - 15 / 90) */}
+            {/* SUB-VIEW 2: STAFF DIRECTORY (Matching iPad Pro 12.9_ - 15) */}
             {staffSubView === 'directory' && (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
+              <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-200">
+                {/* Title & Add Staff CTA Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <h1 className="text-2xl font-black text-[#1A1615]">Staff Directory</h1>
+                    <h1 className="text-xl sm:text-2xl font-black text-[#1A1615]">Staff Directory</h1>
                     <p className="text-xs text-[#8C877D] mt-0.5">
-                      Search, invite and manage staff across all your locations
+                      Search, filter and manage all your staff members
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
+                      type="button"
                       onClick={() => setStaffSubView('insights')}
-                      className="px-4 py-2 bg-white border border-gray-200 text-xs font-bold rounded-xl"
+                      className="px-3.5 sm:px-4 py-2 bg-white border border-gray-200 text-xs font-bold rounded-xl hover:border-gray-300 text-gray-700 cursor-pointer shadow-2xs"
                     >
                       ← Back to Insights
                     </button>
                     <button
+                      type="button"
                       onClick={() => {
                         setIsAddStaffOpen(true);
                         setAddStaffStep(1);
                       }}
-                      className="px-4 py-2 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md cursor-pointer"
+                      className="px-4 py-2 bg-[#1F1641] hover:bg-[#2D215E] text-white rounded-xl text-xs font-black flex items-center justify-center gap-1.5 shadow-md shadow-purple-950/20 cursor-pointer transition-all"
                     >
                       <Plus className="w-4 h-4" />
-                      <span>+ Invite Staff</span>
+                      <span>+ Add Staff</span>
                     </button>
                   </div>
                 </div>
 
-                {/* Segmented All Staff vs By Location Pill Switcher */}
-                <div className="grid grid-cols-2 p-1 bg-[#F1EFEA] rounded-2xl max-w-md">
+                {/* Search Bar + Filter Toggle */}
+                <div className="flex items-center gap-2.5">
+                  <div className="flex-1 bg-white border border-gray-200 rounded-2xl px-4 py-2.5 sm:py-3 flex items-center gap-2.5 shadow-2xs">
+                    <Search className="w-4 h-4 text-gray-400 shrink-0" />
+                    <input
+                      type="text"
+                      placeholder="Search by name, phone, email or staff ID..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="bg-transparent outline-none w-full text-xs text-[#1A1615] placeholder-gray-400"
+                    />
+                  </div>
                   <button
-                    onClick={() => setDirectoryMode('all')}
-                    className={`py-2 text-xs font-black rounded-xl transition-all cursor-pointer ${
-                      directoryMode === 'all' ? 'bg-[#5844A8] text-white shadow-xs' : 'text-gray-500'
-                    }`}
+                    type="button"
+                    className="p-3 bg-white border border-gray-200 rounded-2xl text-gray-600 hover:text-black hover:border-gray-300 shadow-2xs cursor-pointer shrink-0"
+                    title="Filters"
                   >
-                    All Staff
-                  </button>
-                  <button
-                    onClick={() => {
-                      setDirectoryMode('location');
-                      setStaffSubView('states');
-                    }}
-                    className={`py-2 text-xs font-black rounded-xl transition-all cursor-pointer ${
-                      directoryMode === 'location' ? 'bg-[#5844A8] text-white shadow-xs' : 'text-gray-500'
-                    }`}
-                  >
-                    ★ By Location
+                    <SlidersHorizontal className="w-4 h-4" />
                   </button>
                 </div>
 
-                {/* Search Bar */}
-                <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-2 shadow-2xs">
-                  <Search className="w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search by staff name, phone, role or employee ID..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="bg-transparent outline-none w-full text-xs text-[#1A1615] placeholder-gray-400"
-                  />
-                </div>
-
-                {/* Filter Pills */}
-                <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                {/* Primary Filter Pills (iPad Pro 12.9_ - 15) */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
                   {[
-                    { id: 'all', label: 'All (142)' },
-                    { id: 'active', label: 'Active (128)' },
-                    { id: 'pending', label: 'Pending (10)' },
-                    { id: 'disabled', label: 'Disabled (4)' }
+                    { id: 'all', label: 'All (24)' },
+                    { id: 'active', label: 'Active (18)' },
+                    { id: 'pending', label: 'Pending (4)' },
+                    { id: 'disabled', label: 'Suspended (2)' },
+                    { id: 'managers', label: 'Branch Managers (6)' }
                   ].map((f) => (
                     <button
                       key={f.id}
+                      type="button"
                       onClick={() => setDirectoryFilter(f.id as any)}
-                      className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                      className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                         directoryFilter === f.id
-                          ? 'bg-[#5844A8] text-white shadow-xs'
+                          ? 'bg-[#1F1641] text-white shadow-xs'
                           : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
                     >
@@ -756,51 +1306,104 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                   ))}
                 </div>
 
-                {/* 2-Column Grid of Staff Member Cards (iPad Pro 12.9_ - 90) */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+                {/* Secondary Dropdown Filter Row (iPad Pro 12.9_ - 15) */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-xs">
+                  <div className="bg-white border border-gray-200 rounded-xl px-3.5 py-2 flex items-center justify-between shadow-2xs cursor-pointer hover:border-gray-300">
+                    <span className="font-bold text-gray-700">All Branches</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                  </div>
+                  <div className="bg-white border border-gray-200 rounded-xl px-3.5 py-2 flex items-center justify-between shadow-2xs cursor-pointer hover:border-gray-300">
+                    <span className="font-bold text-gray-700">All Roles</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                  </div>
+                  <div className="bg-white border border-gray-200 rounded-xl px-3.5 py-2 flex items-center justify-between shadow-2xs cursor-pointer hover:border-gray-300">
+                    <span className="font-bold text-gray-700">Join Date</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                  </div>
+                  <div className="bg-white border border-gray-200 rounded-xl px-3.5 py-2 flex items-center justify-between shadow-2xs cursor-pointer hover:border-gray-300">
+                    <span className="font-bold text-gray-700">Status</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                  </div>
+                </div>
+
+                {/* 2-Column Grid of Staff Cards (iPad Pro 12.9_ - 15) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {INITIAL_STAFF.map((st) => (
                     <div
                       key={st.id}
                       onClick={() => setSelectedStaffId(st.id)}
-                      className="bg-white rounded-3xl p-5 border border-[#F1EFEA] shadow-2xs space-y-3 hover:border-purple-300 transition-all cursor-pointer"
+                      className="bg-white rounded-3xl p-5 border border-[#F1EFEA] shadow-xs space-y-4 hover:border-purple-300 transition-all cursor-pointer"
                     >
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-sm shadow-xs ${st.avatarBg}`}>
+                      {/* Top Row: Initials Avatar + Name + Phone + Role Badge + Last Active */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-3.5">
+                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-sm shadow-xs shrink-0 ${st.avatarBg}`}>
                             {st.initials}
                           </div>
                           <div>
-                            <div className="text-sm font-black text-[#1A1615]">{st.name}</div>
-                            <div className="text-xs text-gray-400 font-bold">{st.role}</div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h3 className="font-extrabold text-sm sm:text-base text-[#1A1615]">{st.name}</h3>
+                              <span
+                                className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
+                                  st.role === 'Branch Manager'
+                                    ? 'bg-amber-100/70 text-amber-800'
+                                    : st.role === 'Marketing'
+                                    ? 'bg-orange-100/70 text-orange-800'
+                                    : st.role === 'Cashier'
+                                    ? 'bg-slate-100 text-slate-700'
+                                    : st.role === 'Store Staff'
+                                    ? 'bg-lime-100/70 text-lime-800'
+                                    : st.role === 'Administrator'
+                                    ? 'bg-rose-100/70 text-rose-800'
+                                    : st.role === 'Supervisor'
+                                    ? 'bg-orange-100/70 text-orange-800'
+                                    : 'bg-emerald-100/70 text-emerald-800'
+                                }`}
+                              >
+                                {st.role}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-400 font-medium mt-0.5">{st.phone}</p>
                           </div>
                         </div>
-                        <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                            st.status === 'Active'
-                              ? 'bg-emerald-50 text-emerald-700'
-                              : st.status === 'Pending'
-                              ? 'bg-amber-50 text-amber-700'
-                              : 'bg-gray-100 text-gray-600'
-                          }`}
-                        >
-                          {st.status}
+                        <span className="text-[11px] text-gray-400 font-medium shrink-0">
+                          Last active: {st.lastActive}
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-100 text-xs">
+                      {/* Metrics 4 Columns: Shifts | Hours | Tasks | Branch */}
+                      <div className="grid grid-cols-4 gap-2 pt-3 border-t border-gray-100 text-left">
                         <div>
-                          <span className="text-[10px] text-gray-400 font-bold uppercase">Assigned Location</span>
-                          <div className="font-black text-[#1A1615] mt-0.5">{st.location}</div>
+                          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Shifts</span>
+                          <span className="text-sm sm:text-base font-extrabold text-[#1A1615] mt-0.5 block">{st.shifts}</span>
                         </div>
                         <div>
-                          <span className="text-[10px] text-gray-400 font-bold uppercase">Account / Invite</span>
-                          <div className="font-black text-[#1A1615] mt-0.5">{st.accountStatus}</div>
+                          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Hours</span>
+                          <span className="text-sm sm:text-base font-extrabold text-[#1A1615] mt-0.5 block">{st.hours} hrs</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Tasks</span>
+                          <span className="text-sm sm:text-base font-extrabold text-[#1A1615] mt-0.5 block">{st.tasks}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Branch</span>
+                          <span className="text-xs sm:text-sm font-extrabold text-[#1A1615] mt-0.5 block truncate">{st.branch}</span>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between pt-1 text-xs text-gray-400">
-                        <span className="text-purple-700 font-bold">{st.role}</span>
-                        <span className="text-purple-700 font-bold hover:underline">View Profile →</span>
+                      {/* Bottom Link: View Profile > */}
+                      <div className="flex justify-end pt-1">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedStaffId(st.id);
+                          }}
+                          className="text-xs font-bold text-[#5844A8] hover:text-[#47368E] flex items-center gap-1 group cursor-pointer"
+                        >
+                          <span>View Profile</span>
+                          <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -810,39 +1413,39 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
 
             {/* SUB-VIEW 3: STATES (iPad Pro 12.9_ - 87) */}
             {staffSubView === 'states' && (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <h1 className="text-2xl font-black text-[#1A1615]">Staff by Location</h1>
+                    <h1 className="text-xl sm:text-2xl font-black text-[#1A1615]">Staff by Location</h1>
                     <p className="text-xs text-[#8C877D] mt-0.5">
                       Explore employee counts, assignments by state, city and branch.
                     </p>
                   </div>
                   <button
                     onClick={() => setStaffSubView('insights')}
-                    className="px-4 py-2 bg-white border border-gray-200 text-xs font-bold rounded-xl"
+                    className="self-start sm:self-auto px-4 py-2 bg-white border border-gray-200 text-xs font-bold rounded-xl hover:border-gray-300"
                   >
                     ← Back to Management
                   </button>
                 </div>
 
                 {/* 4 Summary Stats */}
-                <div className="grid grid-cols-4 gap-4">
-                  <div className="bg-white p-4 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <span className="text-xs text-gray-400 font-bold">Assigned Staff</span>
-                    <div className="text-2xl font-black text-[#1A1615] mt-1">142</div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                    <span className="text-[11px] sm:text-xs text-gray-400 font-bold">Assigned Staff</span>
+                    <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">142</div>
                   </div>
-                  <div className="bg-white p-4 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <span className="text-xs text-gray-400 font-bold">Active Accounts</span>
-                    <div className="text-2xl font-black text-[#1A1615] mt-1">128</div>
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                    <span className="text-[11px] sm:text-xs text-gray-400 font-bold">Active Accounts</span>
+                    <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">128</div>
                   </div>
-                  <div className="bg-white p-4 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <span className="text-xs text-gray-400 font-bold">Pending Invites</span>
-                    <div className="text-2xl font-black text-[#1A1615] mt-1">10</div>
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                    <span className="text-[11px] sm:text-xs text-gray-400 font-bold">Pending Invites</span>
+                    <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">10</div>
                   </div>
-                  <div className="bg-white p-4 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <span className="text-xs text-gray-400 font-bold">Disabled</span>
-                    <div className="text-2xl font-black text-[#1A1615] mt-1">4</div>
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                    <span className="text-[11px] sm:text-xs text-gray-400 font-bold">Disabled</span>
+                    <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">4</div>
                   </div>
                 </div>
 
@@ -850,10 +1453,10 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-xs text-gray-500 font-bold">
                     <span>Staff Distribution by State</span>
-                    <span>Click on a state to view cities & branches</span>
+                    <span className="hidden sm:inline">Click on a state to view cities & branches</span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                     {[
                       { state: 'Uttar Pradesh', total: 48, active: 42, pending: 4, disabled: 2, mgr: 6, srv: 20, kit: 14, oth: 8 },
                       { state: 'Delhi', total: 28, active: 26, pending: 1, disabled: 1, mgr: 4, srv: 11, kit: 8, oth: 5 },
@@ -868,11 +1471,11 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                           setSelectedState(st.state);
                           setStaffSubView('cities');
                         }}
-                        className="bg-white rounded-3xl p-5 border border-[#F1EFEA] shadow-2xs hover:border-purple-300 transition-all cursor-pointer space-y-4"
+                        className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-[#F1EFEA] shadow-2xs hover:border-purple-300 transition-all cursor-pointer space-y-3 sm:space-y-4"
                       >
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="text-base font-black text-[#1A1615]">{st.state}</div>
+                            <div className="text-sm sm:text-base font-black text-[#1A1615]">{st.state}</div>
                             <div className="text-xs text-gray-400 font-bold">{st.total} Assigned Staff</div>
                           </div>
                           <ChevronRight className="w-5 h-5 text-gray-400" />
@@ -880,25 +1483,25 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
 
                         <div className="grid grid-cols-4 gap-2 text-center text-xs py-2 border-y border-gray-100">
                           <div>
-                            <div className="text-sm font-black text-[#1A1615]">{st.total}</div>
+                            <div className="text-xs sm:text-sm font-black text-[#1A1615]">{st.total}</div>
                             <div className="text-[10px] text-gray-400">Assigned</div>
                           </div>
                           <div>
-                            <div className="text-sm font-black text-emerald-600">{st.active}</div>
+                            <div className="text-xs sm:text-sm font-black text-emerald-600">{st.active}</div>
                             <div className="text-[10px] text-gray-400">Active</div>
                           </div>
                           <div>
-                            <div className="text-sm font-black text-amber-600">{st.pending}</div>
+                            <div className="text-xs sm:text-sm font-black text-amber-600">{st.pending}</div>
                             <div className="text-[10px] text-gray-400">Pending</div>
                           </div>
                           <div>
-                            <div className="text-sm font-black text-rose-600">{st.disabled}</div>
+                            <div className="text-xs sm:text-sm font-black text-rose-600">{st.disabled}</div>
                             <div className="text-[10px] text-gray-400">Disabled</div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-4 text-xs">
-                          <div className="relative w-16 h-16 rounded-full border-4 border-purple-900 border-t-amber-500 flex items-center justify-center font-black">
+                        <div className="flex items-center gap-3 sm:gap-4 text-xs">
+                          <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-4 border-purple-900 border-t-amber-500 flex items-center justify-center font-black shrink-0">
                             {st.total}
                           </div>
                           <div className="flex-1 space-y-1 text-[11px] text-gray-500">
@@ -916,21 +1519,21 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
 
             {/* SUB-VIEW 4: CITIES (iPad Pro 12.9_ - 86) */}
             {staffSubView === 'cities' && (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <h1 className="text-2xl font-black text-[#1A1615]">Staff in {selectedState}</h1>
+                    <h1 className="text-xl sm:text-2xl font-black text-[#1A1615]">Staff in {selectedState}</h1>
                     <p className="text-xs text-[#8C877D] mt-0.5">View staff details for the state and explore staff by branch.</p>
                   </div>
                   <button
                     onClick={() => setStaffSubView('states')}
-                    className="px-4 py-2 bg-white border border-gray-200 text-xs font-bold rounded-xl"
+                    className="self-start sm:self-auto px-4 py-2 bg-white border border-gray-200 text-xs font-bold rounded-xl hover:border-gray-300"
                   >
                     ← All States
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                   {[
                     { city: 'Noida', assigned: 18, active: 16, pending: 1, disabled: 1 },
                     { city: 'Lucknow', assigned: 14, active: 12, pending: 2, disabled: 0 },
@@ -943,11 +1546,11 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                         setSelectedCity(ct.city);
                         setStaffSubView('branches');
                       }}
-                      className="bg-white rounded-3xl p-5 border border-[#F1EFEA] shadow-2xs hover:border-purple-300 transition-all cursor-pointer space-y-3"
+                      className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-[#F1EFEA] shadow-2xs hover:border-purple-300 transition-all cursor-pointer space-y-3"
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="text-base font-black text-[#1A1615]">{ct.city}</div>
+                          <div className="text-sm sm:text-base font-black text-[#1A1615]">{ct.city}</div>
                           <div className="text-xs text-gray-400 font-bold">{ct.assigned} Assigned Staff</div>
                         </div>
                         <ChevronRight className="w-5 h-5 text-gray-400" />
@@ -966,21 +1569,21 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
 
             {/* SUB-VIEW 5: BRANCHES IN CITY (iPad Pro 12.9_ - 88) */}
             {staffSubView === 'branches' && (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <h1 className="text-2xl font-black text-[#1A1615]">Staff in {selectedCity}</h1>
+                    <h1 className="text-xl sm:text-2xl font-black text-[#1A1615]">Staff in {selectedCity}</h1>
                     <p className="text-xs text-[#8C877D] mt-0.5">{selectedState} &gt; {selectedCity} • Branches with assignments</p>
                   </div>
                   <button
                     onClick={() => setStaffSubView('cities')}
-                    className="px-4 py-2 bg-white border border-gray-200 text-xs font-bold rounded-xl"
+                    className="self-start sm:self-auto px-4 py-2 bg-white border border-gray-200 text-xs font-bold rounded-xl hover:border-gray-300"
                   >
                     ← All Cities
                   </button>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {[
                     { branch: 'Noida — Sector 18', tag: 'Home Appliances • Modern electronics', assigned: 8, active: 7, pending: 1, disabled: 0, status: 'Active' },
                     { branch: 'Noida — Sector 62', tag: 'Lifestyle & Fashion • Fashion & accessories', assigned: 6, active: 6, pending: 0, disabled: 0, status: 'Active' },
@@ -989,11 +1592,11 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                   ].map((br) => (
                     <div
                       key={br.branch}
-                      className="bg-white rounded-3xl p-5 border border-[#F1EFEA] shadow-2xs space-y-3"
+                      className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-[#F1EFEA] shadow-2xs space-y-3"
                     >
                       <div className="flex items-start justify-between">
                         <div>
-                          <div className="text-base font-black text-[#1A1615]">{br.branch}</div>
+                          <div className="text-sm sm:text-base font-black text-[#1A1615]">{br.branch}</div>
                           <div className="text-xs text-gray-400">{br.tag}</div>
                         </div>
                         <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${br.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
@@ -1001,8 +1604,8 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                        <div className="flex items-center gap-6 text-xs">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-gray-100">
+                        <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs">
                           <div><span className="font-black text-sm">{br.assigned}</span> <span className="text-gray-400">Assigned</span></div>
                           <div><span className="font-black text-sm text-emerald-600">{br.active}</span> <span className="text-gray-400">Active</span></div>
                           <div><span className="font-black text-sm text-amber-600">{br.pending}</span> <span className="text-gray-400">Pending</span></div>
@@ -1013,7 +1616,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                             setSelectedBranch(br.branch);
                             setStaffSubView('branch_staff');
                           }}
-                          className="px-4 py-2 bg-[#5844A8] text-white rounded-xl text-xs font-black hover:bg-[#47368E] cursor-pointer"
+                          className="self-end sm:self-auto px-4 py-2 bg-[#5844A8] text-white rounded-xl text-xs font-black hover:bg-[#47368E] cursor-pointer"
                         >
                           View Staff ↗
                         </button>
@@ -1026,30 +1629,30 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
 
             {/* SUB-VIEW 6: STAFF IN BRANCH (iPad Pro 12.9_ - 89) */}
             {staffSubView === 'branch_staff' && (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <h1 className="text-2xl font-black text-[#1A1615]">{selectedBranch} — Staff</h1>
+                    <h1 className="text-xl sm:text-2xl font-black text-[#1A1615]">{selectedBranch} — Staff</h1>
                     <p className="text-xs text-[#8C877D] mt-0.5">Showing assigned staff members for this location</p>
                   </div>
                   <button
                     onClick={() => setStaffSubView('branches')}
-                    className="px-4 py-2 bg-white border border-gray-200 text-xs font-bold rounded-xl"
+                    className="self-start sm:self-auto px-4 py-2 bg-white border border-gray-200 text-xs font-bold rounded-xl hover:border-gray-300"
                   >
                     ← All Branches
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                   {INITIAL_STAFF.map((st) => (
                     <div
                       key={st.id}
                       onClick={() => setSelectedStaffId(st.id)}
-                      className="bg-white rounded-3xl p-5 border border-[#F1EFEA] shadow-2xs space-y-3 cursor-pointer hover:border-purple-300"
+                      className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-[#F1EFEA] shadow-2xs space-y-3 cursor-pointer hover:border-purple-300"
                     >
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold ${st.avatarBg}`}>
+                          <div className={`w-10 h-10 rounded-xl sm:rounded-2xl flex items-center justify-center font-bold text-xs sm:text-sm ${st.avatarBg}`}>
                             {st.initials}
                           </div>
                           <div>
@@ -1075,44 +1678,44 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
         {/* TAB 2: ROLES & PERMISSIONS (iPad Pro 12.9_ - 34 & 31)     */}
         {/* ======================================================== */}
         {currentTab === 'permissions' && !selectedStaffId && !isAddStaffOpen && !isAddRoleOpen && (
-          <div className="space-y-6 animate-in fade-in duration-200">
-            <div className="flex items-center justify-between">
+          <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h1 className="text-2xl font-black text-[#1A1615]">Roles & Permissions</h1>
-                <p className="text-xs text-[#8C877D] mt-0.5">Manage staff access to Loyaltics and control what they can do in the system.</p>
+                <h1 className="text-xl sm:text-2xl font-black text-[#1A1615]">Roles & Permissions</h1>
+                <p className="text-xs text-[#8C877D] mt-0.5">Manage staff access to Revia and control what they can do in the system.</p>
               </div>
               <button
                 onClick={() => {
                   setIsAddRoleOpen(true);
                   setAddRoleStep(2);
                 }}
-                className="px-5 py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md shadow-purple-900/10 cursor-pointer"
+                className="self-start sm:self-auto px-4 sm:px-5 py-2 sm:py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md shadow-purple-900/10 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>+ Add New Role</span>
               </button>
             </div>
 
-            <div className="grid grid-cols-4 gap-4">
-              <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                <span className="text-xs text-gray-400 font-bold uppercase">Total Roles</span>
-                <div className="text-2xl font-black text-[#1A1615] mt-1">6</div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+              <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                <span className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase">Total Roles</span>
+                <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">6</div>
               </div>
-              <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                <span className="text-xs text-gray-400 font-bold uppercase">Active Staff with Access</span>
-                <div className="text-2xl font-black text-[#1A1615] mt-1">28</div>
+              <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                <span className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase">Active Access</span>
+                <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">28</div>
               </div>
-              <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                <span className="text-xs text-gray-400 font-bold uppercase">Custom Roles</span>
-                <div className="text-2xl font-black text-[#1A1615] mt-1">4</div>
+              <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                <span className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase">Custom Roles</span>
+                <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">4</div>
               </div>
-              <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                <span className="text-xs text-gray-400 font-bold uppercase">Branch-Limited Roles</span>
-                <div className="text-2xl font-black text-[#1A1615] mt-1">2</div>
+              <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                <span className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase">Branch Limited</span>
+                <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">2</div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
               {[
                 { name: 'Branch Manager', type: 'SYSTEM ROLE', desc: 'Full branch operations access including staff, menu and reports.', staff: '8 staff', perms: '24 permissions' },
                 { name: 'Cashier', type: 'SYSTEM ROLE', desc: 'Handle orders, payments and basic customer actions.', staff: '12 staff', perms: '8 permissions' },
@@ -1121,7 +1724,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                 { name: 'Waiter / Floor Staff', type: 'SYSTEM ROLE', desc: 'Take orders and manage table service.', staff: '6 staff', perms: '6 permissions' },
                 { name: 'Loyalty Specialist', type: 'CUSTOM ROLE', desc: 'Manage rewards, loyalty program and member data.', staff: '2 staff', perms: '12 permissions' }
               ].map((r) => (
-                <div key={r.name} className="bg-white rounded-3xl p-5 border border-[#F1EFEA] shadow-2xs space-y-3">
+                <div key={r.name} className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-[#F1EFEA] shadow-2xs space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-black text-[#1A1615]">{r.name}</span>
                     <span className="bg-purple-50 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full">{r.type}</span>
@@ -1149,44 +1752,44 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
         {/* TAB 3: ACTIVITY LOG & AUDIT TRAIL (iPad Pro 12.9_ - 38 & 39) */}
         {/* ======================================================== */}
         {currentTab === 'activity' && !selectedStaffId && !isAddStaffOpen && !isAddRoleOpen && (
-          <div className="space-y-6 animate-in fade-in duration-200">
+          <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-200">
             {activitySubView === 'list' ? (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <h1 className="text-2xl font-black text-[#1A1615]">Staff Activity Log</h1>
+                    <h1 className="text-xl sm:text-2xl font-black text-[#1A1615]">Staff Activity Log</h1>
                     <p className="text-xs text-[#8C877D] mt-0.5">Track software actions performed by your team across all branches.</p>
                   </div>
-                  <button className="px-5 py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md cursor-pointer">
+                  <button className="self-start sm:self-auto px-4 sm:px-5 py-2 sm:py-2.5 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md cursor-pointer">
                     <Download className="w-4 h-4" />
                     <span>Export</span>
                   </button>
                 </div>
 
-                <div className="grid grid-cols-4 gap-4">
-                  <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <span className="text-xs text-gray-400 font-bold uppercase">Total Actions</span>
-                    <div className="text-2xl font-black text-[#1A1615] mt-1">2,482</div>
-                    <div className="text-[11px] font-bold text-emerald-600 mt-0.5">↑ 12% vs previous period</div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+                  <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                    <span className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase">Total Actions</span>
+                    <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">2,482</div>
+                    <div className="text-[10px] sm:text-[11px] font-bold text-emerald-600 mt-0.5">↑ 12% vs last month</div>
                   </div>
-                  <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <span className="text-xs text-gray-400 font-bold uppercase">High-Impact Actions</span>
-                    <div className="text-2xl font-black text-[#1A1615] mt-1">186</div>
-                    <div className="text-[11px] font-bold text-pink-600 mt-0.5">↑ 8% vs previous period</div>
+                  <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                    <span className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase">High-Impact</span>
+                    <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">186</div>
+                    <div className="text-[10px] sm:text-[11px] font-bold text-pink-600 mt-0.5">↑ 8% vs last month</div>
                   </div>
-                  <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <span className="text-xs text-gray-400 font-bold uppercase">Approvals Handled</span>
-                    <div className="text-2xl font-black text-[#1A1615] mt-1">640</div>
-                    <div className="text-[11px] font-bold text-emerald-600 mt-0.5">↑ 24% vs previous period</div>
+                  <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                    <span className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase">Approvals</span>
+                    <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">640</div>
+                    <div className="text-[10px] sm:text-[11px] font-bold text-emerald-600 mt-0.5">↑ 24% vs last month</div>
                   </div>
-                  <div className="bg-white p-4.5 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <span className="text-xs text-gray-400 font-bold uppercase">Permission Changes</span>
-                    <div className="text-2xl font-black text-[#1A1615] mt-1">98</div>
-                    <div className="text-[11px] font-bold text-emerald-600 mt-0.5">↑ 16% vs previous period</div>
+                  <div className="bg-white p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                    <span className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase">Perm Changes</span>
+                    <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">98</div>
+                    <div className="text-[10px] sm:text-[11px] font-bold text-emerald-600 mt-0.5">↑ 16% vs last month</div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-3xl p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
+                <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-black text-[#1A1615]">Recent Staff Activity</span>
                     <span className="text-xs font-bold text-gray-400">Showing 1-10 of 2482</span>
@@ -1202,27 +1805,27 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                       <div
                         key={i}
                         onClick={() => setActivitySubView('detail')}
-                        className="py-3.5 flex items-center justify-between cursor-pointer hover:bg-gray-50/50 px-2 rounded-xl"
+                        className="py-3 sm:py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 cursor-pointer hover:bg-gray-50/50 px-2 rounded-xl transition-colors"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-black">
+                        <div className="flex items-start sm:items-center gap-3">
+                          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-black shrink-0">
                             {act.name[0]}
                           </div>
                           <div>
-                            <div className="font-black text-[#1A1615] flex items-center gap-2">
+                            <div className="font-black text-[#1A1615] flex flex-wrap items-center gap-1.5 sm:gap-2">
                               <span>{act.name}</span>
-                              <span className="text-gray-400 font-normal">({act.role} • {act.loc})</span>
+                              <span className="text-gray-400 font-normal text-[11px]">({act.role} • {act.loc})</span>
                             </div>
                             <div className="text-gray-700 font-bold mt-0.5">{act.action}</div>
                             <div className="text-gray-400 text-[11px]">{act.sub}</div>
                           </div>
                         </div>
 
-                        <div className="text-right">
+                        <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center shrink-0 pl-12 sm:pl-0">
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${act.status === 'High' ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700'}`}>
                             {act.status}
                           </span>
-                          <div className="text-gray-400 text-[10px] mt-1">{act.time}</div>
+                          <div className="text-gray-400 text-[10px] mt-0.5 sm:mt-1">{act.time}</div>
                           <span className="text-purple-700 font-bold text-[11px] hover:underline">View Details &gt;</span>
                         </div>
                       </div>
@@ -1232,30 +1835,30 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
               </div>
             ) : (
               /* Activity Detail & Audit Trail (iPad Pro 12.9_ - 39) */
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <h1 className="text-2xl font-black text-[#1A1615]">Activity Detail and Audit Trail</h1>
+                    <h1 className="text-xl sm:text-2xl font-black text-[#1A1615]">Activity Detail and Audit Trail</h1>
                     <p className="text-xs text-[#8C877D] mt-0.5">View Complete Details and Audit Trails for this Staff Activity</p>
                   </div>
                   <button
                     onClick={() => setActivitySubView('list')}
-                    className="px-4 py-2 bg-white border border-gray-200 text-xs font-bold rounded-xl"
+                    className="self-start sm:self-auto px-4 py-2 bg-white border border-gray-200 text-xs font-bold rounded-xl hover:border-gray-300"
                   >
                     ← Back to Activity Log
                   </button>
                 </div>
 
-                <div className="bg-white rounded-3xl p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
-                  <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-gray-100 pb-4">
                     <div>
                       <div className="text-base font-black text-[#1A1615]">Campaign Activated</div>
                       <div className="text-xs text-gray-400">A staff member activated a campaign in the system.</div>
                     </div>
-                    <span className="bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-full">Success • High Impact</span>
+                    <span className="self-start sm:self-auto bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-full">Success • High Impact</span>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4 text-xs py-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs py-2">
                     <div>
                       <span className="text-gray-400 font-bold uppercase text-[10px]">Staff Member</span>
                       <div className="font-black text-[#1A1615] mt-1">Aarav Sharma</div>
@@ -1273,7 +1876,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 space-y-2">
+                  <div className="p-3.5 sm:p-4 rounded-2xl bg-gray-50 border border-gray-100 space-y-2">
                     <span className="text-xs font-black text-[#1A1615]">Change Summary</span>
                     <div className="flex items-center gap-6 text-xs">
                       <div>
@@ -1297,28 +1900,28 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
         {/* TAB 4: REPORTS & AUDIT (iPad Pro 12.9_ - 40, 41 & 42)     */}
         {/* ======================================================== */}
         {currentTab === 'reports' && !selectedStaffId && !isAddStaffOpen && !isAddRoleOpen && (
-          <div className="space-y-6 animate-in fade-in duration-200">
-            <div className="flex items-center justify-between">
+          <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h1 className="text-2xl font-black text-[#1A1615]">Staff Reports & Audits</h1>
+                <h1 className="text-xl sm:text-2xl font-black text-[#1A1615]">Staff Reports & Audits</h1>
                 <p className="text-xs text-[#8C877D] mt-0.5">Generate and export insights about team software activity and access.</p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
                 <button
                   onClick={() => setReportsSubView('categories')}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold ${reportsSubView === 'categories' ? 'bg-[#5844A8] text-white' : 'bg-white border text-gray-700'}`}
+                  className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap cursor-pointer ${reportsSubView === 'categories' ? 'bg-[#5844A8] text-white' : 'bg-white border text-gray-700'}`}
                 >
                   Categories
                 </button>
                 <button
                   onClick={() => setReportsSubView('performance')}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold ${reportsSubView === 'performance' ? 'bg-[#5844A8] text-white' : 'bg-white border text-gray-700'}`}
+                  className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap cursor-pointer ${reportsSubView === 'performance' ? 'bg-[#5844A8] text-white' : 'bg-white border text-gray-700'}`}
                 >
                   Performance
                 </button>
                 <button
                   onClick={() => setReportsSubView('audit')}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold ${reportsSubView === 'audit' ? 'bg-[#5844A8] text-white' : 'bg-white border text-gray-700'}`}
+                  className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap cursor-pointer ${reportsSubView === 'audit' ? 'bg-[#5844A8] text-white' : 'bg-white border text-gray-700'}`}
                 >
                   Audit Trail
                 </button>
@@ -1328,7 +1931,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
             {/* Sub-view 1: Report Categories (iPad Pro 12.9_ - 40) */}
             {reportsSubView === 'categories' && (
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                   {[
                     { title: 'Team Activity Report', desc: 'View overall staff activity across all modules and branches.', icon: BarChart2 },
                     { title: 'Staff Performance Report', desc: 'Analyse individual and team performance metrics.', icon: TrendingUp },
@@ -1336,9 +1939,9 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                     { title: 'Branch Access Report', desc: 'View staff access and activity across different branches.', icon: Building2 },
                     { title: 'Invitation Status Report', desc: 'Track pending, accepted and expired staff invitations.', icon: Mail }
                   ].map((rep) => (
-                    <div key={rep.title} className="bg-white rounded-3xl p-5 border border-[#F1EFEA] shadow-2xs space-y-3">
+                    <div key={rep.title} className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-[#F1EFEA] shadow-2xs space-y-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-purple-50 text-purple-700 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-2xl bg-purple-50 text-purple-700 flex items-center justify-center shrink-0">
                           <rep.icon className="w-5 h-5" />
                         </div>
                         <div>
@@ -1360,28 +1963,28 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
 
             {/* Sub-view 2: Staff Performance Report (iPad Pro 12.9_ - 41) */}
             {reportsSubView === 'performance' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-4 gap-4">
-                  <div className="bg-white p-4 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <span className="text-xs text-gray-400 font-bold uppercase">Campaign Actions</span>
-                    <div className="text-2xl font-black text-[#1A1615] mt-1">248</div>
+              <div className="space-y-4 sm:space-y-6">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                    <span className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase">Campaign Actions</span>
+                    <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">248</div>
                   </div>
-                  <div className="bg-white p-4 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <span className="text-xs text-gray-400 font-bold uppercase">Approvals Processed</span>
-                    <div className="text-2xl font-black text-[#1A1615] mt-1">186</div>
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                    <span className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase">Approvals Done</span>
+                    <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">186</div>
                   </div>
-                  <div className="bg-white p-4 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <span className="text-xs text-gray-400 font-bold uppercase">QR Codes Generated</span>
-                    <div className="text-2xl font-black text-[#1A1615] mt-1">640</div>
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                    <span className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase">QR Generated</span>
+                    <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">640</div>
                   </div>
-                  <div className="bg-white p-4 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <span className="text-xs text-gray-400 font-bold uppercase">Customer Updates</span>
-                    <div className="text-2xl font-black text-[#1A1615] mt-1">320</div>
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                    <span className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase">Updates</span>
+                    <div className="text-xl sm:text-2xl font-black text-[#1A1615] mt-1">320</div>
                   </div>
                 </div>
 
                 {/* Top Performing Staff Leaderboard */}
-                <div className="bg-white rounded-3xl p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
+                <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
                   <span className="text-sm font-black text-[#1A1615]">Top Performing Staff</span>
                   <div className="divide-y divide-gray-100 text-xs">
                     {[
@@ -1390,9 +1993,9 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                       { rank: 3, name: 'Rahul Verma', role: 'Cashier', campaigns: 40, approvals: 28, qr: 38, updates: 46, score: 84 },
                       { rank: 4, name: 'Sneha Iyer', role: 'Store Staff', campaigns: 32, approvals: 24, qr: 36, updates: 40, score: 76 }
                     ].map((row) => (
-                      <div key={row.rank} className="py-3 flex items-center justify-between">
+                      <div key={row.rank} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                         <div className="flex items-center gap-3">
-                          <span className="w-6 h-6 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-black text-xs">
+                          <span className="w-6 h-6 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-black text-xs shrink-0">
                             {row.rank}
                           </span>
                           <div>
@@ -1400,7 +2003,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                             <div className="text-gray-400 text-[11px]">{row.role}</div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-8 text-right">
+                        <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 text-right pl-9 sm:pl-0">
                           <div><div className="font-bold">{row.campaigns}</div><div className="text-[10px] text-gray-400">Campaigns</div></div>
                           <div><div className="font-bold">{row.approvals}</div><div className="text-[10px] text-gray-400">Approvals</div></div>
                           <div><div className="font-bold">{row.qr}</div><div className="text-[10px] text-gray-400">QR Codes</div></div>
@@ -1752,14 +2355,14 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
             </div>
 
             {/* Profile Hero Card */}
-            <div className="bg-white rounded-3xl p-6 border border-[#F1EFEA] shadow-2xs flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-700 font-black text-xl shadow-xs">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[#F1EFEA] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5 sm:gap-4">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-700 font-black text-lg sm:text-xl shadow-xs shrink-0">
                   {activeStaff.initials}
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-black text-[#1A1615]">{activeStaff.name}</h2>
+                    <h2 className="text-lg sm:text-xl font-black text-[#1A1615]">{activeStaff.name}</h2>
                     <span className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
                       {activeStaff.status}
                     </span>
@@ -1767,7 +2370,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                   <div className="text-xs text-gray-500 font-bold">
                     {activeStaff.role} • {activeStaff.employeeId}
                   </div>
-                  <div className="flex items-center gap-4 text-xs text-gray-400 font-medium pt-1">
+                  <div className="flex flex-wrap items-center gap-2.5 sm:gap-4 text-xs text-gray-400 font-medium pt-1">
                     <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5" /> {activeStaff.phone}</span>
                     <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> {activeStaff.email}</span>
                     <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> Joined {activeStaff.joinDate}</span>
@@ -1778,7 +2381,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
             </div>
 
             {/* Profile Tabs */}
-            <div className="flex items-center gap-2 border-b border-[#F1EFEA] pb-1">
+            <div className="flex items-center gap-1.5 sm:gap-2 border-b border-[#F1EFEA] pb-1 overflow-x-auto no-scrollbar">
               {[
                 { id: 'overview', label: 'Overview' },
                 { id: 'permissions', label: 'Permissions' },
@@ -1788,7 +2391,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                 <button
                   key={tb.id}
                   onClick={() => setProfileTab(tb.id as any)}
-                  className={`px-5 py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
+                  className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs font-black transition-all cursor-pointer whitespace-nowrap ${
                     profileTab === tb.id
                       ? 'bg-[#5844A8] text-white shadow-xs'
                       : 'text-gray-500 hover:text-gray-900'
@@ -1801,37 +2404,37 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
 
             {/* Profile Overview (iPad Pro 12.9_ - 16) */}
             {profileTab === 'overview' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-5 gap-3">
-                  <div className="bg-white p-4 rounded-3xl border border-[#F1EFEA] shadow-2xs">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3">
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
                     <span className="text-[10px] text-gray-400 font-bold uppercase">Total Shifts</span>
-                    <div className="text-xl font-black text-[#1A1615] mt-1">{activeStaff.shifts}</div>
+                    <div className="text-lg sm:text-xl font-black text-[#1A1615] mt-1">{activeStaff.shifts}</div>
                     <span className="text-[10px] text-emerald-600 font-bold">↑ 12% vs last month</span>
                   </div>
-                  <div className="bg-white p-4 rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
                     <span className="text-[10px] text-gray-400 font-bold uppercase">Hours Logged</span>
-                    <div className="text-xl font-black text-[#1A1615] mt-1">{activeStaff.hours * 8} hrs</div>
+                    <div className="text-lg sm:text-xl font-black text-[#1A1615] mt-1">{activeStaff.hours * 8} hrs</div>
                     <span className="text-[10px] text-gray-400 font-bold">On schedule</span>
                   </div>
-                  <div className="bg-white p-4 rounded-3xl border border-[#F1EFEA] shadow-2xs">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase">Tasks Completed</span>
-                    <div className="text-xl font-black text-[#1A1615] mt-1">{activeStaff.tasks * 4}</div>
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                    <span className="text-[10px] text-gray-400 font-bold uppercase">Tasks Done</span>
+                    <div className="text-lg sm:text-xl font-black text-[#1A1615] mt-1">{activeStaff.tasks * 4}</div>
                     <span className="text-[10px] text-emerald-600 font-bold">99.2% accuracy</span>
                   </div>
-                  <div className="bg-white p-4 rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs">
                     <span className="text-[10px] text-gray-400 font-bold uppercase">Last Active</span>
-                    <div className="text-xl font-black text-[#1A1615] mt-1">2 hours ago</div>
+                    <div className="text-lg sm:text-xl font-black text-[#1A1615] mt-1">2 hrs ago</div>
                     <span className="text-[10px] text-gray-400 font-bold">23 Apr 2024</span>
                   </div>
-                  <div className="bg-white p-4 rounded-3xl border border-[#F1EFEA] shadow-2xs">
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-[#F1EFEA] shadow-2xs col-span-2 sm:col-span-1">
                     <span className="text-[10px] text-gray-400 font-bold uppercase">Assigned Branch</span>
-                    <div className="text-base font-black text-[#1A1615] mt-1 truncate">{activeStaff.branch}</div>
+                    <div className="text-sm sm:text-base font-black text-[#1A1615] mt-1 truncate">{activeStaff.branch}</div>
                     <span className="text-[10px] text-gray-400 font-bold">Sector 18</span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="bg-white rounded-3xl p-5 border border-[#F1EFEA] shadow-2xs space-y-3">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-[#F1EFEA] shadow-2xs space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-black text-[#1A1615]">Personal Information</span>
                       <button className="text-xs font-bold text-purple-700 flex items-center gap-1"><Edit2 className="w-3.5 h-3.5" /> Edit</button>
@@ -1860,7 +2463,7 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-3xl p-5 border border-[#F1EFEA] shadow-2xs space-y-3">
+                  <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-[#F1EFEA] shadow-2xs space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-black text-[#1A1615]">Access & Role</span>
                       <button className="text-xs font-bold text-purple-700 flex items-center gap-1"><Edit2 className="w-3.5 h-3.5" /> Edit</button>
@@ -1895,14 +2498,14 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
 
             {/* Profile Permissions (iPad Pro 12.9_ - 18) */}
             {profileTab === 'permissions' && (
-              <div className="bg-white rounded-3xl p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-base font-black text-[#1A1615]">Active Module Permissions</h3>
-                  <button className="px-4 py-2 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-bold cursor-pointer">Edit Permissions</button>
+                  <h3 className="text-sm sm:text-base font-black text-[#1A1615]">Active Module Permissions</h3>
+                  <button className="px-3.5 sm:px-4 py-1.5 sm:py-2 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-bold cursor-pointer">Edit Permissions</button>
                 </div>
-                <div className="grid grid-cols-4 gap-3 text-xs">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
                   {['Campaigns', 'Approvals', 'QR Codes', 'Customer Data', 'Menu', 'Reports', 'Rewards', 'Branch Settings'].map((mod) => (
-                    <div key={mod} className="p-3.5 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-between">
+                    <div key={mod} className="p-3 sm:p-3.5 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-between">
                       <span className="font-bold text-[#1A1615]">{mod}</span>
                       <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-black">✓</span>
                     </div>
@@ -1913,14 +2516,14 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
 
             {/* Profile Branches (iPad Pro 12.9_ - 19) */}
             {profileTab === 'branches' && (
-              <div className="bg-white rounded-3xl p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-base font-black text-[#1A1615]">Assigned Branch Coverage</h3>
-                  <button className="px-4 py-2 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-bold cursor-pointer">Manage Branches</button>
+                  <h3 className="text-sm sm:text-base font-black text-[#1A1615]">Assigned Branch Coverage</h3>
+                  <button className="px-3.5 sm:px-4 py-1.5 sm:py-2 bg-[#5844A8] hover:bg-[#47368E] text-white rounded-xl text-xs font-bold cursor-pointer">Manage Branches</button>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2.5 sm:space-y-3">
                   {['Main Branch (Primary)', 'City Mall (View & Manage)', 'Riverside (View Only)'].map((br) => (
-                    <div key={br} className="p-3.5 rounded-2xl border border-gray-100 flex items-center justify-between">
+                    <div key={br} className="p-3 sm:p-3.5 rounded-2xl border border-gray-100 flex items-center justify-between">
                       <span className="text-xs font-bold text-[#1A1615]">{br}</span>
                       <span className="text-xs text-emerald-600 font-bold">Active</span>
                     </div>
@@ -1931,8 +2534,8 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
 
             {/* Profile Activity (iPad Pro 12.9_ - 17) */}
             {profileTab === 'activity' && (
-              <div className="bg-white rounded-3xl p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
-                <h3 className="text-base font-black text-[#1A1615]">Staff Audit History</h3>
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[#F1EFEA] shadow-2xs space-y-4">
+                <h3 className="text-sm sm:text-base font-black text-[#1A1615]">Staff Audit History</h3>
                 <div className="divide-y divide-gray-100 text-xs">
                   <div className="py-3 flex justify-between">
                     <div>
@@ -1955,7 +2558,252 @@ export const TabletStaffView: React.FC<TabletStaffViewProps> = ({ onNavigate }) 
         )}
       </div>
 
+      {/* Tablet Dedicated Bottom Navigation Bar (iPad Pro 12.9_ - 14 / 15 / 80) */}
+      <nav
+        aria-label="Tablet Staff Bottom Navigation"
+        className="hidden md:block fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#F1EFEA] shadow-[0_-4px_25px_rgba(0,0,0,0.06)] pb-[max(env(safe-area-inset-bottom,0px),8px)] select-none"
+      >
+        <div className="max-w-2xl mx-auto flex items-center justify-around h-16 px-4 relative">
+          {/* Tab 1: Insights */}
+          <button
+            type="button"
+            onClick={() => {
+              setCurrentTab('staff');
+              setStaffSubView('insights');
+              setSelectedStaffId(null);
+              setIsAddStaffOpen(false);
+              setIsAddRoleOpen(false);
+            }}
+            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all cursor-pointer group ${
+              currentTab === 'staff' && staffSubView === 'insights' && !selectedStaffId
+                ? 'text-[#5844A8]'
+                : 'text-[#8C877D] hover:text-[#1A1615]'
+            }`}
+          >
+            <BarChart2 className={`w-5 h-5 transition-transform ${
+              currentTab === 'staff' && staffSubView === 'insights' && !selectedStaffId
+                ? 'text-[#5844A8] scale-110'
+                : 'text-[#8C877D] group-hover:text-[#1A1615]'
+            }`} />
+            <span className={`text-[11px] mt-1 tracking-tight ${
+              currentTab === 'staff' && staffSubView === 'insights' && !selectedStaffId
+                ? 'font-extrabold text-[#5844A8]'
+                : 'font-semibold'
+            }`}>
+              Insights
+            </span>
+          </button>
 
+          {/* Tab 2: Directory */}
+          <button
+            type="button"
+            onClick={() => {
+              setCurrentTab('staff');
+              setStaffSubView('directory');
+              setSelectedStaffId(null);
+              setIsAddStaffOpen(false);
+              setIsAddRoleOpen(false);
+            }}
+            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all cursor-pointer group ${
+              (currentTab === 'staff' && staffSubView === 'directory') || selectedStaffId
+                ? 'text-[#5844A8]'
+                : 'text-[#8C877D] hover:text-[#1A1615]'
+            }`}
+          >
+            <Users className={`w-5 h-5 transition-transform ${
+              (currentTab === 'staff' && staffSubView === 'directory') || selectedStaffId
+                ? 'text-[#5844A8] scale-110'
+                : 'text-[#8C877D] group-hover:text-[#1A1615]'
+            }`} />
+            <span className={`text-[11px] mt-1 tracking-tight ${
+              (currentTab === 'staff' && staffSubView === 'directory') || selectedStaffId
+                ? 'font-extrabold text-[#5844A8]'
+                : 'font-semibold'
+            }`}>
+              Directory
+            </span>
+          </button>
+
+          {/* Center Elevated Dark Circle Button (≡ Menu) */}
+          <div className="flex-1 flex flex-col items-center justify-center -mt-6 relative">
+            <button
+              type="button"
+              onClick={() => setIsCenterMenuOpen(!isCenterMenuOpen)}
+              className="w-13 h-13 rounded-full bg-[#1F1641] hover:bg-[#2D215E] text-white flex items-center justify-center shadow-lg shadow-purple-950/25 active:scale-95 transition-all cursor-pointer border-2 border-white ring-4 ring-purple-100/60"
+              title="Staff Quick Actions"
+            >
+              {isCenterMenuOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
+            </button>
+          </div>
+
+          {/* Tab 3: Activity */}
+          <button
+            type="button"
+            onClick={() => {
+              setCurrentTab('activity');
+              setActivitySubView('list');
+              setSelectedStaffId(null);
+              setIsAddStaffOpen(false);
+              setIsAddRoleOpen(false);
+            }}
+            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all cursor-pointer group ${
+              currentTab === 'activity'
+                ? 'text-[#5844A8]'
+                : 'text-[#8C877D] hover:text-[#1A1615]'
+            }`}
+          >
+            <Bell className={`w-5 h-5 transition-transform ${
+              currentTab === 'activity'
+                ? 'text-[#5844A8] scale-110'
+                : 'text-[#8C877D] group-hover:text-[#1A1615]'
+            }`} />
+            <span className={`text-[11px] mt-1 tracking-tight ${
+              currentTab === 'activity'
+                ? 'font-extrabold text-[#5844A8]'
+                : 'font-semibold'
+            }`}>
+              Activity
+            </span>
+          </button>
+
+          {/* Tab 4: Reports */}
+          <button
+            type="button"
+            onClick={() => {
+              setCurrentTab('reports');
+              setReportsSubView('audit');
+              setSelectedStaffId(null);
+              setIsAddStaffOpen(false);
+              setIsAddRoleOpen(false);
+            }}
+            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all cursor-pointer group ${
+              currentTab === 'reports'
+                ? 'text-[#5844A8]'
+                : 'text-[#8C877D] hover:text-[#1A1615]'
+            }`}
+          >
+            <FileText className={`w-5 h-5 transition-transform ${
+              currentTab === 'reports'
+                ? 'text-[#5844A8] scale-110'
+                : 'text-[#8C877D] group-hover:text-[#1A1615]'
+            }`} />
+            <span className={`text-[11px] mt-1 tracking-tight ${
+              currentTab === 'reports'
+                ? 'font-extrabold text-[#5844A8]'
+                : 'font-semibold'
+            }`}>
+              Reports
+            </span>
+          </button>
+        </div>
+      </nav>
+
+      {/* Center Quick Action Popup / Bottom Sheet */}
+      {isCenterMenuOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4">
+          <div
+            className="fixed inset-0 bg-[#1A1615]/40 backdrop-blur-xs transition-opacity"
+            onClick={() => setIsCenterMenuOpen(false)}
+          />
+          <div className="bg-white rounded-3xl p-5 sm:p-6 w-full max-w-md relative z-10 shadow-2xl border border-[#F1EFEA] space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-3 border-b border-[#F1EFEA]">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-purple-100 text-[#5844A8] flex items-center justify-center">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-[#1A1615]">Quick Staff Actions</h3>
+                  <p className="text-[11px] text-[#8C877D]">Fast actions for staff &amp; team management</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsCenterMenuOpen(false)}
+                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-2.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCenterMenuOpen(false);
+                  setIsAddStaffOpen(true);
+                  setAddStaffStep(1);
+                }}
+                className="flex items-center gap-3 p-3 rounded-2xl bg-purple-50/70 hover:bg-purple-100 text-left transition-all cursor-pointer group"
+              >
+                <div className="w-10 h-10 rounded-xl bg-[#5844A8] text-white flex items-center justify-center shadow-xs shrink-0">
+                  <UserPlus className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[#1A1615] group-hover:text-purple-900">+ Invite Staff Member</div>
+                  <div className="text-[10px] text-[#8C877D]">Send email or SMS onboarding invitation</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCenterMenuOpen(false);
+                  setIsAddRoleOpen(true);
+                  setAddRoleStep(2);
+                }}
+                className="flex items-center gap-3 p-3 rounded-2xl bg-indigo-50/70 hover:bg-indigo-100 text-left transition-all cursor-pointer group"
+              >
+                <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[#1A1615] group-hover:text-indigo-900">+ Add New Role</div>
+                  <div className="text-[10px] text-[#8C877D]">Create custom access role &amp; permissions</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCenterMenuOpen(false);
+                  setCurrentTab('staff');
+                  setStaffSubView('states');
+                }}
+                className="flex items-center gap-3 p-3 rounded-2xl bg-sky-50/70 hover:bg-sky-100 text-left transition-all cursor-pointer group"
+              >
+                <div className="w-10 h-10 rounded-xl bg-sky-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[#1A1615] group-hover:text-sky-900">Explore Staff by Location</div>
+                  <div className="text-[10px] text-[#8C877D]">Drill down by states, cities and branches</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCenterMenuOpen(false);
+                  onNavigate?.('/staff-portal' as any);
+                }}
+                className="flex items-center gap-3 p-3 rounded-2xl bg-amber-50/70 hover:bg-amber-100 text-left transition-all cursor-pointer group"
+              >
+                <div className="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[#1A1615] group-hover:text-amber-900">Floor Table Service Portal</div>
+                  <div className="text-[10px] text-[#8C877D]">Live waiter orders &amp; customer floor service</div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

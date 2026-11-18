@@ -58,6 +58,7 @@ interface HeaderProps {
   onOpenSearch: () => void;
   onToggleMobileMenu: () => void;
   onNavigate: (route: NavRoute) => void;
+  className?: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -65,6 +66,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSearch,
   onToggleMobileMenu,
   onNavigate,
+  className = '',
 }) => {
   const { wallet, usableBalance } = useWallet();
   const { user } = useSelector((state: RootState) => state.auth);
@@ -174,7 +176,8 @@ export const Header: React.FC<HeaderProps> = ({
       case '/settings/branding':
         return { category: 'Governance', page: 'Business Profile & Branding' };
       case '/item-catalog':
-        return { category: 'Catalog', page: 'Item Catalog' };
+      case '/menu':
+        return { category: 'Catalog', page: 'Menu' };
       case '/orders':
         return { category: 'Orders', page: 'Order Queue' };
       case '/masters/rule-fields':
@@ -192,7 +195,7 @@ export const Header: React.FC<HeaderProps> = ({
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="sticky top-0 z-[60] bg-white border-b border-[#EAE6E1] px-4 lg:px-6 py-2.5 flex items-center gap-4 lg:gap-6">
+    <header className={`sticky top-0 z-30 bg-white border-b border-[#EAE6E1] px-4 lg:px-6 py-2.5 flex items-center gap-4 lg:gap-6 ${className}`}>
       {/* Left: Mobile hamburger & Clean Breadcrumbs */}
       <div className="flex items-center gap-3">
         <button
