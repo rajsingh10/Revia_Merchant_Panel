@@ -22,6 +22,11 @@ import {
   Check,
   ChevronDown
 } from 'lucide-react';
+import {
+  CustomerYourselfStep,
+  CustomerMoreDetailsStep,
+  CustomerOnboardingProfile
+} from './CustomerOnboardingSteps';
 
 export interface MobileAuthViewProps {
   onLoginSuccess: (role: 'merchant' | 'customer' | string) => void;
@@ -45,12 +50,29 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
     | 'branch_details'
     | 'customer_welcome'
     | 'customer_otp'
+    | 'customer_yourself'
+    | 'customer_details'
   >(initialRole === 'merchant' ? 'merchant_login' : 'role_select');
 
   // Login inputs
   const [loginTab, setLoginTab] = useState<'mobile' | 'email'>('mobile');
+  const [customerAuthMode, setCustomerAuthMode] = useState<'login' | 'signup'>('login');
+  const [customerOtp, setCustomerOtp] = useState<string[]>(['5', '2', '8', '4']);
   const [mobileNumber, setMobileNumber] = useState('98765 43210');
-  const [emailAddress, setEmailAddress] = useState('merchant@revia.co');
+  const [emailAddress, setEmailAddress] = useState('salena@loyaltics.app');
+  const [customerProfile, setCustomerProfile] = useState<CustomerOnboardingProfile>({
+    firstName: 'Salena',
+    lastName: 'Mishra',
+    gender: 'Female',
+    dob: '',
+    age: '25-34',
+    mobile: '98765 43210',
+    whatsappSame: true,
+    maritalStatus: '',
+    anniversaryDate: '',
+    partnerName: '',
+    partnerMobile: ''
+  });
 
   // OTP inputs
   const [otpValues, setOtpValues] = useState<string[]>(['4', '8', '2', '7', '6', '1']);
@@ -198,14 +220,14 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
   );
 
   return (
-    <div className="min-h-screen bg-[#FAF8FF] text-[#1E1548] font-sans antialiased flex flex-col justify-between max-w-md mx-auto w-full relative select-none">
+    <div className="min-h-[100dvh] w-full bg-gradient-to-b from-white via-[#FDF8FE] to-[#F3ECFC] text-[#1E1548] font-sans antialiased flex flex-col justify-between relative select-none overflow-x-hidden">
       {/* =====================================================================
           SCREEN 1: ROLE SELECTION (Merchant Access.png)
          ===================================================================== */}
       {screen === 'role_select' && (
-        <div className="flex-1 flex flex-col justify-between">
+        <div className="flex-1 flex flex-col justify-between w-full">
           {/* Top Hero Barista Image */}
-          <div className="relative w-full h-[46vh] sm:h-[48vh] min-h-[350px] max-h-[440px] flex items-end justify-center overflow-hidden bg-[#F3EBF7]">
+          <div className="relative w-full h-[46vh] sm:h-[48vh] min-h-[340px] max-h-[440px] flex items-end justify-center overflow-hidden bg-[#F3EBF7]">
             <img
               src="/assets/login/barista-hero.png"
               alt="Barista at cafe"
@@ -214,8 +236,8 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           </div>
 
           {/* Bottom Sheet Card */}
-          <div className="-mt-7 rounded-t-[32px] sm:rounded-t-[36px] bg-[#FAF8FF] px-5 sm:px-6 pt-5 pb-5 flex-1 flex flex-col justify-between shadow-2xl relative z-20 border-t border-purple-100/60">
-            <div className="max-w-sm mx-auto w-full">
+          <div className="-mt-7 rounded-t-[32px] sm:rounded-t-[36px] bg-[#FAF8FF] px-6 pt-6 pb-7 flex-1 flex flex-col justify-between shadow-2xl relative z-20 border-t border-purple-100/60 w-full">
+            <div className="max-w-lg mx-auto w-full">
               {renderBrandHeader()}
 
               <div className="text-center mt-1.5 mb-4">
@@ -278,7 +300,7 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           SCREEN 2: MERCHANT LOGIN (Login screen.png & Login screen-1.png)
          ===================================================================== */}
       {screen === 'merchant_login' && (
-        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
+        <div className="flex-1 flex flex-col justify-between pt-6 px-6 pb-8 max-w-lg mx-auto w-full">
           <div>
             {/* Top Bar with Back Navigation */}
             <div className="flex items-center justify-between mb-2">
@@ -407,7 +429,7 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           SCREEN 3: OTP VERIFICATION (Login OTP.png)
          ===================================================================== */}
       {screen === 'merchant_otp' && (
-        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
+        <div className="flex-1 flex flex-col justify-between pt-6 px-6 pb-8 max-w-lg mx-auto w-full">
           <div>
             <div className="flex items-center justify-between mb-2">
               <button
@@ -499,7 +521,7 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           SCREEN 4: ONBOARDING STEP 1 - BUSINESS DETAILS (Business Detials.png)
          ===================================================================== */}
       {screen === 'business_details' && (
-        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
+        <div className="flex-1 flex flex-col justify-between pt-6 px-6 pb-8 max-w-lg mx-auto w-full">
           <div>
             <div className="flex items-center justify-between mb-1">
               <button
@@ -664,7 +686,7 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           SCREEN 5: ONBOARDING STEP 2 - COMPANY DETAILS (Company Detailss.png)
          ===================================================================== */}
       {screen === 'company_details' && (
-        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
+        <div className="flex-1 flex flex-col justify-between pt-6 px-6 pb-8 max-w-lg mx-auto w-full">
           <div>
             <div className="flex items-center justify-between mb-1">
               <button
@@ -753,7 +775,7 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           SCREEN 6: ONBOARDING STEP 3 - BRANCH QUESTION (Branch Detailss.png)
          ===================================================================== */}
       {screen === 'branch_question' && (
-        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
+        <div className="flex-1 flex flex-col justify-between pt-6 px-6 pb-8 max-w-lg mx-auto w-full">
           <div>
             <div className="flex items-center justify-between mb-1">
               <button
@@ -848,7 +870,7 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
           SCREEN 7: ONBOARDING STEP 4 - ADD BRANCHES (Branch Details(No/Yes).png)
          ===================================================================== */}
       {screen === 'branch_details' && (
-        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
+        <div className="flex-1 flex flex-col justify-between pt-6 px-6 pb-8 max-w-lg mx-auto w-full">
           <div>
             <div className="flex items-center justify-between mb-1">
               <button
@@ -1024,106 +1046,313 @@ export const MobileAuthView: React.FC<MobileAuthViewProps> = ({
       )}
 
       {/* =====================================================================
-          CUSTOMER FLOW FALLBACK
+          CUSTOMER LOGIN & SIGN UP (Login screen.png & Login screen-1.png)
          ===================================================================== */}
       {screen === 'customer_welcome' && (
-        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <button
-                type="button"
-                onClick={() => setScreen('role_select')}
-                className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 font-medium py-1 cursor-pointer transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Change Role</span>
-              </button>
-            </div>
-
-            {renderBrandHeader()}
-
-            <div className="text-center mt-2 mb-5">
-              <h1 className="text-2xl font-black text-[#1E1548]">Customer Login</h1>
-              <p className="text-xs text-gray-500 font-medium mt-1">Enter your phone number to continue</p>
-            </div>
-
-            <div className="mb-4">
-              <div className="flex items-center h-12 bg-white border border-gray-200/90 rounded-2xl px-4 shadow-2xs focus-within:border-[#5844A8] focus-within:ring-2 focus-within:ring-purple-100 transition-all">
-                <span className="text-xs font-bold text-gray-700 pr-2 border-r border-gray-200 flex items-center gap-1 select-none">
-                  +91 <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
-                </span>
-                <input
-                  type="tel"
-                  value={mobileNumber}
-                  onChange={(e) => setMobileNumber(e.target.value)}
-                  placeholder="Enter your mobile number"
-                  className="w-full pl-3 text-xs sm:text-sm font-medium text-gray-900 bg-transparent outline-none placeholder:text-gray-400"
-                />
-              </div>
-            </div>
-
+        <div className="flex-1 flex flex-col justify-between pt-6 px-6 pb-8 max-w-lg mx-auto w-full">
+          {/* Top Bar */}
+          <div className="flex items-center justify-between">
             <button
               type="button"
-              onClick={() => setScreen('customer_otp')}
-              className="w-full h-12 rounded-2xl bg-[#5844A8] hover:bg-[#47368E] text-white font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center"
+              onClick={() => setScreen('role_select')}
+              className="inline-flex items-center gap-1.5 text-xs text-[#6B657E] hover:text-[#1E1548] font-bold py-1.5 -ml-1 px-1 cursor-pointer transition-colors"
             >
-              Get OTP
+              <ArrowLeft className="w-4 h-4" />
+              <span>Change Role</span>
             </button>
           </div>
 
-          <div className="text-center text-[10px] sm:text-[11px] text-gray-400 pt-4">
-            Powered by <span className="font-bold text-gray-700">Analytix Data</span>
+          {/* Center Form Content */}
+          <div className="my-auto py-8 w-full">
+            {/* Brand Logo */}
+            <div className="mb-8">{renderBrandHeader()}</div>
+
+            {/* Dynamic Heading (Welcome Back! vs Welcome to Loyaltics!) */}
+            <div className="text-left mb-7">
+              <h1 className="text-[26px] sm:text-[28px] font-black text-[#240B4C] tracking-tight leading-tight">
+                {customerAuthMode === 'login' ? 'Welcome Back!' : 'Welcome to Loyaltics!'}
+              </h1>
+              <p className="text-[13px] text-[#6B657E] font-medium mt-2 leading-relaxed">
+                {customerAuthMode === 'login'
+                  ? 'Enter your mobile number or email to get OTP and continue'
+                  : 'Enter your mobile number or email to get OTP and start earning rewards!'}
+              </p>
+            </div>
+
+            {/* Mobile Number | Email Segmented Pill */}
+            <div className="bg-[#F2ECF9] p-1.5 rounded-2xl flex items-center mb-5 border border-[#E8DFF6]">
+              <button
+                type="button"
+                onClick={() => setLoginTab('mobile')}
+                className={`flex-1 py-3 text-[13px] font-bold rounded-xl transition-all cursor-pointer ${
+                  loginTab === 'mobile'
+                    ? 'bg-[#E5D7FA] text-[#240B4C] shadow-2xs'
+                    : 'text-[#7B748C] hover:text-[#1E1548]'
+                }`}
+              >
+                Mobile Number
+              </button>
+              <button
+                type="button"
+                onClick={() => setLoginTab('email')}
+                className={`flex-1 py-3 text-[13px] font-bold rounded-xl transition-all cursor-pointer ${
+                  loginTab === 'email'
+                    ? 'bg-[#E5D7FA] text-[#240B4C] shadow-2xs'
+                    : 'text-[#7B748C] hover:text-[#1E1548]'
+                }`}
+              >
+                Email
+              </button>
+            </div>
+
+            {/* Input Field */}
+            {loginTab === 'mobile' ? (
+              <div className="mb-5">
+                <div className="flex items-center h-[54px] bg-white border border-[#E5DEF5] rounded-2xl px-4 shadow-2xs focus-within:border-[#240B4C] focus-within:ring-2 focus-within:ring-purple-100 transition-all">
+                  <span className="text-[13px] font-black text-[#1E1548] pr-3 border-r border-[#EAE2FB] flex items-center gap-1 select-none shrink-0">
+                    +91 <ChevronDown className="w-3.5 h-3.5 text-[#8C84A0]" />
+                  </span>
+                  <input
+                    type="tel"
+                    value={mobileNumber}
+                    onChange={(e) => setMobileNumber(e.target.value)}
+                    placeholder="Enter your mobile number"
+                    className="w-full pl-3.5 text-sm font-semibold text-[#1E1548] bg-transparent outline-none placeholder:text-[#9890A8]"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="mb-5">
+                <div className="flex items-center h-[54px] bg-white border border-[#E5DEF5] rounded-2xl px-4 shadow-2xs focus-within:border-[#240B4C] focus-within:ring-2 focus-within:ring-purple-100 transition-all">
+                  <Mail className="w-4 h-4 text-[#8C84A0] mr-3 shrink-0" />
+                  <input
+                    type="email"
+                    value={emailAddress}
+                    onChange={(e) => setEmailAddress(e.target.value)}
+                    placeholder="Enter your email address"
+                    className="w-full text-sm font-semibold text-[#1E1548] bg-transparent outline-none placeholder:text-[#9890A8]"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Primary CTA: Get OTP */}
+            <button
+              type="button"
+              onClick={() => {
+                setOtpTimer(45);
+                setScreen('customer_otp');
+              }}
+              className="w-full h-[54px] rounded-2xl bg-[#240B4C] hover:bg-[#321266] text-white font-black text-sm shadow-lg shadow-purple-950/20 transition-all cursor-pointer flex items-center justify-center active:scale-[0.99]"
+            >
+              Get OTP
+            </button>
+
+            {/* Login <-> Sign Up Toggle */}
+            <div className="text-center mt-6 text-[13px] text-[#7B748C] font-medium">
+              {customerAuthMode === 'login' ? (
+                <>
+                  New here?{' '}
+                  <button
+                    type="button"
+                    onClick={() => setCustomerAuthMode('signup')}
+                    className="font-black text-[#240B4C] hover:underline cursor-pointer"
+                  >
+                    Sign Up
+                  </button>
+                </>
+              ) : (
+                <>
+                  Already have an account?{' '}
+                  <button
+                    type="button"
+                    onClick={() => setCustomerAuthMode('login')}
+                    className="font-black text-[#240B4C] hover:underline cursor-pointer"
+                  >
+                    Login
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="text-center text-[11px] text-[#8C84A0] pt-4">
+            Powered by <span className="font-bold text-[#1E1548]">Analytix Data</span>
           </div>
         </div>
       )}
 
       {screen === 'customer_otp' && (
-        <div className="flex-1 flex flex-col justify-between pt-5 px-5 sm:px-6 pb-6 max-w-sm mx-auto w-full">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <button
-                type="button"
-                onClick={() => setScreen('customer_welcome')}
-                className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 font-medium py-1 cursor-pointer transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Back</span>
-              </button>
+        <div className="flex-1 flex flex-col justify-between pt-6 px-6 pb-8 max-w-lg mx-auto w-full">
+          {/* Top Bar */}
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setScreen('customer_welcome')}
+              className="inline-flex items-center gap-1.5 text-xs text-[#6B657E] hover:text-[#1E1548] font-bold py-1.5 -ml-1 px-1 cursor-pointer transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back</span>
+            </button>
+          </div>
+
+          {/* Center OTP Content */}
+          <div className="my-auto py-8 w-full">
+            <div className="mb-8">{renderBrandHeader()}</div>
+
+            <div className="text-left mb-7">
+              <h1 className="text-[26px] sm:text-[28px] font-black text-[#240B4C] tracking-tight leading-tight">
+                Verify OTP
+              </h1>
+              <p className="text-[13px] text-[#6B657E] font-medium mt-2 leading-relaxed">
+                Enter the 4-digit code sent to{' '}
+                <strong className="text-[#1E1548]">
+                  {loginTab === 'mobile' ? `+91 ${mobileNumber}` : emailAddress}
+                </strong>
+              </p>
             </div>
 
-            {renderBrandHeader()}
-
-            <div className="text-center mt-2 mb-5">
-              <h1 className="text-2xl font-black text-[#1E1548]">Verify OTP</h1>
-              <p className="text-xs text-gray-500 font-medium mt-1">Sent to +91 {mobileNumber}</p>
-            </div>
-
-            <div className="flex items-center justify-center gap-2.5 mb-5">
-              {['5', '2', '8', '4'].map((d, i) => (
-                <div
+            <div className="grid grid-cols-4 gap-3.5 max-w-[320px] mx-auto mb-6">
+              {customerOtp.map((d, i) => (
+                <input
                   key={i}
-                  className="w-12 h-12 rounded-2xl bg-white border border-gray-200/90 flex items-center justify-center text-lg font-black text-[#1E1548] shadow-2xs"
-                >
-                  {d}
-                </div>
+                  id={`cust-mob-otp-${i}`}
+                  type="text"
+                  maxLength={1}
+                  value={d}
+                  onChange={(e) => {
+                    const next = [...customerOtp];
+                    next[i] = e.target.value.replace(/\D/g, '').slice(-1);
+                    setCustomerOtp(next);
+                    if (next[i] && i < 3) {
+                      document.getElementById(`cust-mob-otp-${i + 1}`)?.focus();
+                    }
+                  }}
+                  className="w-full h-14 rounded-2xl bg-white border border-[#E5DEF5] focus:border-[#240B4C] focus:ring-2 focus:ring-purple-100 text-center text-xl font-black text-[#1E1548] shadow-2xs outline-none"
+                />
               ))}
             </div>
 
             <button
               type="button"
               onClick={() => {
+                if (customerAuthMode === 'signup') {
+                  setCustomerProfile((prev) => ({ ...prev, mobile: mobileNumber }));
+                  setScreen('customer_yourself');
+                  return;
+                }
                 localStorage.setItem('customer_token', 'mock_cust_' + Date.now());
+                localStorage.setItem(
+                  'customer',
+                  JSON.stringify({
+                    id: 'cust_001',
+                    name: `${customerProfile.firstName} ${customerProfile.lastName}`.trim() || 'Salena',
+                    phone: mobileNumber,
+                    email: emailAddress,
+                    tier: 'VIP',
+                    points: 2164
+                  })
+                );
                 onLoginSuccess('customer');
               }}
-              className="w-full h-12 rounded-2xl bg-[#5844A8] hover:bg-[#47368E] text-white font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center"
+              className="w-full h-[54px] rounded-2xl bg-[#240B4C] hover:bg-[#321266] text-white font-black text-sm shadow-lg shadow-purple-950/20 transition-all cursor-pointer flex items-center justify-center active:scale-[0.99]"
             >
               Verify &amp; Continue
             </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setCustomerProfile((prev) => ({ ...prev, mobile: mobileNumber }));
+                setScreen('customer_yourself');
+              }}
+              className="w-full mt-3 py-2.5 text-xs font-bold text-[#5844A8] hover:underline cursor-pointer"
+            >
+              Personalise my profile first &rarr;
+            </button>
+
+            <div className="text-center mt-6 text-[13px] text-[#7B748C]">
+              {otpTimer > 0 ? (
+                <span>
+                  Resend OTP in <strong className="text-[#240B4C]">00:{String(otpTimer).padStart(2, '0')}</strong>
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setOtpTimer(45)}
+                  className="font-black text-[#240B4C] hover:underline cursor-pointer"
+                >
+                  Resend OTP
+                </button>
+              )}
+            </div>
           </div>
 
-          <div className="text-center text-[10px] sm:text-[11px] text-gray-400 pt-4">
-            Powered by <span className="font-bold text-gray-700">Analytix Data</span>
+          <div className="text-center text-[11px] text-[#8C84A0] pt-4">
+            Powered by <span className="font-bold text-[#1E1548]">Analytix Data</span>
           </div>
+        </div>
+      )}
+
+      {/* CUSTOMER ONBOARDING STEP 1: TELL US ABOUT YOURSELF (Yourself.png) */}
+      {screen === 'customer_yourself' && (
+        <div className="flex-1 flex flex-col justify-between pt-5 px-6 pb-8 max-w-lg mx-auto w-full">
+          <CustomerYourselfStep
+            profile={customerProfile}
+            onChange={setCustomerProfile}
+            onBack={() => setScreen('customer_otp')}
+            onNext={() => setScreen('customer_details')}
+          />
+        </div>
+      )}
+
+      {/* CUSTOMER ONBOARDING STEP 2: A FEW MORE DETAILS (Details.png) */}
+      {screen === 'customer_details' && (
+        <div className="flex-1 flex flex-col justify-between pt-5 px-6 pb-8 max-w-lg mx-auto w-full">
+          <CustomerMoreDetailsStep
+            profile={customerProfile}
+            onChange={setCustomerProfile}
+            onBack={() => setScreen('customer_yourself')}
+            onSkip={() => {
+              localStorage.setItem('customer_token', 'mock_cust_' + Date.now());
+              localStorage.setItem(
+                'customer',
+                JSON.stringify({
+                  id: 'cust_001',
+                  name: `${customerProfile.firstName} ${customerProfile.lastName}`.trim() || 'Salena',
+                  phone: customerProfile.mobile || mobileNumber,
+                  email: emailAddress,
+                  gender: customerProfile.gender,
+                  dob: customerProfile.dob,
+                  age: customerProfile.age,
+                  tier: 'VIP',
+                  points: 2164
+                })
+              );
+              onLoginSuccess('customer');
+            }}
+            onComplete={() => {
+              localStorage.setItem('customer_token', 'mock_cust_' + Date.now());
+              localStorage.setItem(
+                'customer',
+                JSON.stringify({
+                  id: 'cust_001',
+                  name: `${customerProfile.firstName} ${customerProfile.lastName}`.trim() || 'Salena',
+                  phone: customerProfile.mobile || mobileNumber,
+                  email: emailAddress,
+                  gender: customerProfile.gender,
+                  dob: customerProfile.dob,
+                  age: customerProfile.age,
+                  maritalStatus: customerProfile.maritalStatus,
+                  anniversaryDate: customerProfile.anniversaryDate,
+                  partnerName: customerProfile.partnerName,
+                  tier: 'VIP',
+                  points: 2164
+                })
+              );
+              onLoginSuccess('customer');
+            }}
+          />
         </div>
       )}
     </div>

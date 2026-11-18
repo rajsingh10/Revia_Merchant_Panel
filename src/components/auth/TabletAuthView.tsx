@@ -21,6 +21,11 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react';
+import {
+  CustomerYourselfStep,
+  CustomerMoreDetailsStep,
+  CustomerOnboardingProfile
+} from './CustomerOnboardingSteps';
 
 export interface TabletAuthViewProps {
   onLoginSuccess: (role: 'merchant' | 'customer' | string) => void;
@@ -42,6 +47,8 @@ export const TabletAuthView: React.FC<TabletAuthViewProps> = ({
     | 'onboarding_step4'
     | 'customer_login'
     | 'customer_otp'
+    | 'customer_yourself'
+    | 'customer_details'
   >(initialRole === 'merchant' ? 'merchant_login' : 'role_select');
 
   // Login inputs
@@ -84,8 +91,24 @@ export const TabletAuthView: React.FC<TabletAuthViewProps> = ({
   ]);
 
   // Customer states
+  const [customerAuthMode, setCustomerAuthMode] = useState<'login' | 'signup'>('login');
+  const [customerLoginTab, setCustomerLoginTab] = useState<'mobile' | 'email'>('mobile');
   const [customerPhone, setCustomerPhone] = useState('98765 43210');
+  const [customerEmail, setCustomerEmail] = useState('salena@loyaltics.app');
   const [customerOtpValues, setCustomerOtpValues] = useState<string[]>(['5', '2', '8', '4']);
+  const [customerProfile, setCustomerProfile] = useState<CustomerOnboardingProfile>({
+    firstName: 'Salena',
+    lastName: 'Mishra',
+    gender: 'Female',
+    dob: '',
+    age: '25-34',
+    mobile: '98765 43210',
+    whatsappSame: true,
+    maritalStatus: '',
+    anniversaryDate: '',
+    partnerName: '',
+    partnerMobile: ''
+  });
 
   // Timer countdown
   useEffect(() => {
@@ -1315,7 +1338,7 @@ export const TabletAuthView: React.FC<TabletAuthViewProps> = ({
           )}
 
           {/* ─────────────────────────────────────────────────────────────
-              VIEW 9: CUSTOMER LOGIN (For customer role)
+              VIEW 9: CUSTOMER LOGIN & SIGN UP (Login screen.png & -1.png)
              ───────────────────────────────────────────────────────────── */}
           {screen === 'customer_login' && (
             <div className="flex-1 flex flex-col justify-between max-w-md mx-auto w-full py-1 my-auto">
@@ -1323,41 +1346,76 @@ export const TabletAuthView: React.FC<TabletAuthViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setScreen('role_select')}
-                  className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-700 font-medium mb-3 cursor-pointer transition-colors"
+                  className="flex items-center gap-1.5 text-xs text-[#7B748C] hover:text-[#1E1548] font-bold mb-4 cursor-pointer transition-colors"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>Change Role</span>
                 </button>
 
-                <div className="text-center mb-4">
-                  <h2 className="text-xl sm:text-2xl font-bold text-[#1E1548]">
-                    Welcome <span className="text-[#EE4370]">Customer!</span>
+                <div className="mb-5">
+                  <h2 className="text-2xl sm:text-[26px] font-black text-[#240B4C] tracking-tight">
+                    {customerAuthMode === 'login' ? 'Welcome Back!' : 'Welcome to Loyaltics!'}
                   </h2>
-                  <p className="text-xs text-gray-500 mt-0.5 font-medium">
-                    Enter your phone number to view points and exclusive rewards.
+                  <p className="text-xs text-[#6B657E] mt-1 font-medium leading-relaxed">
+                    {customerAuthMode === 'login'
+                      ? 'Enter your mobile number or email to get OTP and continue'
+                      : 'Enter your mobile number or email to get OTP and start earning rewards!'}
                   </p>
                 </div>
 
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">
-                      Phone Number
-                    </label>
-                    <div className="flex items-center h-11 px-3 rounded-xl border border-gray-200 bg-white focus-within:border-pink-500 focus-within:ring-2 focus-within:ring-pink-100 transition-all">
-                      <div className="flex items-center gap-1 text-xs font-bold text-gray-700 pr-2 border-r border-gray-200 select-none">
-                        <Phone className="w-3.5 h-3.5 text-gray-400 mr-1" />
+                {/* Mobile Number | Email Segmented Pill */}
+                <div className="bg-[#F2ECF9] p-1 rounded-2xl flex items-center mb-4 border border-[#E8DFF6]">
+                  <button
+                    type="button"
+                    onClick={() => setCustomerLoginTab('mobile')}
+                    className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                      customerLoginTab === 'mobile'
+                        ? 'bg-[#E5D7FA] text-[#240B4C] shadow-2xs'
+                        : 'text-[#7B748C] hover:text-[#1E1548]'
+                    }`}
+                  >
+                    Mobile Number
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCustomerLoginTab('email')}
+                    className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                      customerLoginTab === 'email'
+                        ? 'bg-[#E5D7FA] text-[#240B4C] shadow-2xs'
+                        : 'text-[#7B748C] hover:text-[#1E1548]'
+                    }`}
+                  >
+                    Email
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {customerLoginTab === 'mobile' ? (
+                    <div className="flex items-center h-12 px-3.5 rounded-2xl border border-[#E5DEF5] bg-white focus-within:border-[#240B4C] focus-within:ring-2 focus-within:ring-purple-100 transition-all">
+                      <div className="flex items-center gap-1 text-xs font-black text-[#1E1548] pr-2.5 border-r border-[#EAE2FB] select-none">
                         <span>+91</span>
-                        <ChevronDown className="w-3 h-3 text-gray-400" />
+                        <ChevronDown className="w-3.5 h-3.5 text-[#8C84A0]" />
                       </div>
                       <input
                         type="tel"
                         value={customerPhone}
                         onChange={(e) => setCustomerPhone(e.target.value)}
-                        placeholder="Enter phone number"
-                        className="flex-1 pl-3 text-xs sm:text-sm text-gray-900 font-medium placeholder-gray-400 bg-transparent outline-none"
+                        placeholder="Enter your mobile number"
+                        className="flex-1 pl-3 text-xs sm:text-sm text-[#1E1548] font-semibold placeholder-[#9890A8] bg-transparent outline-none"
                       />
                     </div>
-                  </div>
+                  ) : (
+                    <div className="flex items-center h-12 px-3.5 rounded-2xl border border-[#E5DEF5] bg-white focus-within:border-[#240B4C] focus-within:ring-2 focus-within:ring-purple-100 transition-all">
+                      <Mail className="w-4 h-4 text-[#8C84A0] mr-2.5 shrink-0" />
+                      <input
+                        type="email"
+                        value={customerEmail}
+                        onChange={(e) => setCustomerEmail(e.target.value)}
+                        placeholder="Enter your email address"
+                        className="flex-1 text-xs sm:text-sm text-[#1E1548] font-semibold placeholder-[#9890A8] bg-transparent outline-none"
+                      />
+                    </div>
+                  )}
 
                   <button
                     type="button"
@@ -1365,15 +1423,41 @@ export const TabletAuthView: React.FC<TabletAuthViewProps> = ({
                       setOtpTimer(45);
                       setScreen('customer_otp');
                     }}
-                    className="w-full h-11 rounded-xl bg-gradient-to-r from-[#EE4370] to-[#E11D48] hover:opacity-95 text-white font-semibold text-xs sm:text-sm transition-all shadow-md shadow-pink-500/20 active:scale-[0.99] cursor-pointer"
+                    className="w-full h-12 rounded-2xl bg-[#240B4C] hover:bg-[#321266] text-white font-black text-xs sm:text-sm transition-all shadow-lg shadow-purple-950/20 active:scale-[0.99] cursor-pointer"
                   >
-                    Continue with OTP
+                    Get OTP
                   </button>
+
+                  <div className="text-center text-xs text-[#7B748C] pt-1">
+                    {customerAuthMode === 'login' ? (
+                      <>
+                        New here?{' '}
+                        <button
+                          type="button"
+                          onClick={() => setCustomerAuthMode('signup')}
+                          className="font-black text-[#240B4C] hover:underline cursor-pointer"
+                        >
+                          Sign Up
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        Already have an account?{' '}
+                        <button
+                          type="button"
+                          onClick={() => setCustomerAuthMode('login')}
+                          className="font-black text-[#240B4C] hover:underline cursor-pointer"
+                        >
+                          Login
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div className="text-center text-[11px] text-gray-400 pt-4">
-                Powered by <span className="font-bold text-gray-700">Analytix Data</span>
+              <div className="text-center text-[11px] text-[#8C84A0] pt-4">
+                Powered by <span className="font-bold text-[#1E1548]">Analytix Data</span>
               </div>
             </div>
           )}
@@ -1387,48 +1471,118 @@ export const TabletAuthView: React.FC<TabletAuthViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setScreen('customer_login')}
-                  className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-700 font-medium mb-3 cursor-pointer transition-colors"
+                  className="flex items-center gap-1.5 text-xs text-[#7B748C] hover:text-[#1E1548] font-bold mb-4 cursor-pointer transition-colors"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>Back</span>
                 </button>
 
-                <div className="text-center mb-4">
-                  <h2 className="text-xl sm:text-2xl font-bold text-[#1E1548]">Verify Mobile</h2>
-                  <p className="text-xs text-gray-500 mt-0.5 font-medium">
-                    We&apos;ve sent a code to <span className="font-bold text-gray-800">+91 {customerPhone}</span>
+                <div className="mb-5">
+                  <h2 className="text-2xl font-black text-[#240B4C]">Verify OTP</h2>
+                  <p className="text-xs text-[#6B657E] mt-1 font-medium">
+                    We&apos;ve sent a 4-digit code to{' '}
+                    <span className="font-bold text-[#1E1548]">
+                      {customerLoginTab === 'mobile' ? `+91 ${customerPhone}` : customerEmail}
+                    </span>
                   </p>
                 </div>
 
-                <div className="flex items-center justify-center gap-2.5 mb-3">
+                <div className="flex items-center justify-center gap-3 mb-4">
                   {customerOtpValues.map((digit, idx) => (
                     <input
                       key={idx}
+                      id={`tablet-cust-otp-${idx}`}
                       type="text"
                       maxLength={1}
                       value={digit}
                       onChange={(e) => {
                         const newArr = [...customerOtpValues];
-                        newArr[idx] = e.target.value.slice(-1);
+                        newArr[idx] = e.target.value.replace(/\D/g, '').slice(-1);
                         setCustomerOtpValues(newArr);
+                        if (newArr[idx] && idx < 3) {
+                          document.getElementById(`tablet-cust-otp-${idx + 1}`)?.focus();
+                        }
                       }}
-                      className="w-11 h-11 rounded-xl border border-gray-200 text-center font-bold text-base text-gray-800 bg-white focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none transition-all"
+                      className="w-12 h-12 rounded-2xl border border-[#E5DEF5] text-center font-black text-lg text-[#1E1548] bg-white focus:border-[#240B4C] focus:ring-2 focus:ring-purple-100 outline-none transition-all"
                     />
                   ))}
                 </div>
 
                 <button
                   type="button"
-                  onClick={handleCompleteCustomerAuth}
-                  className="w-full h-11 rounded-xl bg-gradient-to-r from-[#EE4370] to-[#E11D48] hover:opacity-95 text-white font-semibold text-xs sm:text-sm transition-all shadow-md shadow-pink-500/20 active:scale-[0.99] cursor-pointer mt-3"
+                  onClick={() => {
+                    if (customerAuthMode === 'signup') {
+                      setCustomerProfile((prev) => ({ ...prev, mobile: customerPhone }));
+                      setScreen('customer_yourself');
+                      return;
+                    }
+                    handleCompleteCustomerAuth();
+                  }}
+                  className="w-full h-12 rounded-2xl bg-[#240B4C] hover:bg-[#321266] text-white font-black text-xs sm:text-sm transition-all shadow-lg shadow-purple-950/20 active:scale-[0.99] cursor-pointer mt-2"
                 >
-                  Verify &amp; Enter
+                  Verify &amp; Continue
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCustomerProfile((prev) => ({ ...prev, mobile: customerPhone }));
+                    setScreen('customer_yourself');
+                  }}
+                  className="w-full mt-2.5 py-2 text-xs font-bold text-[#5844A8] hover:underline cursor-pointer"
+                >
+                  Personalise my profile first &rarr;
+                </button>
+
+                <div className="text-center mt-4 text-xs text-[#7B748C]">
+                  {otpTimer > 0 ? (
+                    <span>
+                      Resend OTP in <strong className="text-[#240B4C]">00:{String(otpTimer).padStart(2, '0')}</strong>
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setOtpTimer(45)}
+                      className="font-black text-[#240B4C] hover:underline cursor-pointer"
+                    >
+                      Resend OTP
+                    </button>
+                  )}
+                </div>
               </div>
 
-              <div className="text-center text-[11px] text-gray-400 pt-4">
-                Powered by <span className="font-bold text-gray-700">Analytix Data</span>
+              <div className="text-center text-[11px] text-[#8C84A0] pt-4">
+                Powered by <span className="font-bold text-[#1E1548]">Analytix Data</span>
               </div>
+            </div>
+          )}
+
+          {/* ─────────────────────────────────────────────────────────────
+              VIEW 11: CUSTOMER ONBOARDING STEP 1 (Yourself.png)
+             ───────────────────────────────────────────────────────────── */}
+          {screen === 'customer_yourself' && (
+            <div className="flex-1 flex flex-col justify-between max-w-md mx-auto w-full py-2">
+              <CustomerYourselfStep
+                profile={customerProfile}
+                onChange={setCustomerProfile}
+                onBack={() => setScreen('customer_otp')}
+                onNext={() => setScreen('customer_details')}
+              />
+            </div>
+          )}
+
+          {/* ─────────────────────────────────────────────────────────────
+              VIEW 12: CUSTOMER ONBOARDING STEP 2 (Details.png)
+             ───────────────────────────────────────────────────────────── */}
+          {screen === 'customer_details' && (
+            <div className="flex-1 flex flex-col justify-between max-w-md mx-auto w-full py-2">
+              <CustomerMoreDetailsStep
+                profile={customerProfile}
+                onChange={setCustomerProfile}
+                onBack={() => setScreen('customer_yourself')}
+                onSkip={handleCompleteCustomerAuth}
+                onComplete={handleCompleteCustomerAuth}
+              />
             </div>
           )}
 
